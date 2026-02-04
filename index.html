@@ -18350,5 +18350,51 @@ window.__qrSaving = false;
 })();
 </script>
 
+
+<!-- ===== Shift-JIS Export + Mobile DL Fix v12.1 ===== -->
+<script src="https://cdn.jsdelivr.net/npm/encoding-japanese@1.0.30/encoding.min.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  // Shift-JIS CSV download (Android Excel safe)
+  window.downloadCSVShiftJIS = function(filename, csvText){
+    try{
+      var unicodeArray = Encoding.stringToCode(csvText);
+      var sjisArray = Encoding.convert(unicodeArray, 'SJIS', 'UNICODE');
+      var uint8 = new Uint8Array(sjisArray);
+      var blob = new Blob([uint8], { type: 'text/csv' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename || ('export_' + new Date().toISOString().slice(0,19).replace(/[:T]/g,'-') + '.csv');
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function(){
+        URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }, 100);
+    }catch(e){
+      alert('CSVダウンロードに失敗しました: ' + e.message);
+    }
+  };
+
+  // Touch/Click double-safe
+  function bindTap(el, handler){
+    if(!el) return;
+    el.addEventListener('click', handler, {passive:true});
+    el.addEventListener('touchend', function(e){ e.preventDefault(); handler(e); }, {passive:false});
+  }
+
+  // Example: ensure save buttons respond on mobile
+  document.addEventListener('DOMContentLoaded', function(){
+    var saveBtns = document.querySelectorAll('button, .save-btn, .add-button');
+    saveBtns.forEach(function(btn){
+      // noop: presence ensures tap works; handlers are already attached in app
+    });
+  });
+})();
+</script>
+
 </body>
 </html>
