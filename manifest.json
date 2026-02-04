@@ -1,94 +1,28 @@
 {
-  "name": "ライフログ - 行動・お金・ジャーナル",
+  "name": "ライフログアプリ",
   "short_name": "ライフログ",
-  "description": "音声で話すだけで1日が整理され、明日のMUST/WANTが残るアプリ",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#111111",
-  "orientation": "portrait",
-  "lang": "ja",
-  "categories": [
-    "productivity",
-    "lifestyle",
-    "finance"
-  ],
+  "description": "音声で話すだけで1日が整理されるライフログアプリ",
   "icons": [
     {
-      "src": "icons/icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
-      "src": "icons/icon-maskable-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "icons/icon-maskable-512.png",
+      "src": "icon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "行動を記録",
-      "short_name": "行動",
-      "url": "./index.html?action=activity",
-      "icons": [
-        {
-          "src": "icons/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "支出を記録",
-      "short_name": "支出",
-      "url": "./index.html?action=money",
-      "icons": [
-        {
-          "src": "icons/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "ジャーナル",
-      "short_name": "日記",
-      "url": "./index.html?action=journal",
-      "icons": [
-        {
-          "src": "icons/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "screenshots/mobile.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "ホーム画面"
-    },
-    {
-      "src": "screenshots/desktop.png",
-      "sizes": "1920x1080",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "デスクトップ表示"
     }
   ]
 }
