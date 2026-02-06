@@ -18498,7 +18498,217 @@ window.__qrSaving = false;
 })();
 </script>
 
-<!-- === Stability Patch (merged) === -->
+
+
+<!-- ===== vAI.1 Journal Feedback Tone + generateAIComment fix (safe patch) ===== -->
+<script>
+(function(){
+  'use strict';
+
+  // ---- Tone state ----
+  var TONE_KEY = 'journalFeedbackTone';
+  var tone = (localStorage.getItem(TONE_KEY) || 'normal'); // harsh | normal | gentle
+
+  function setTone(t){
+    tone = t;
+    try { localStorage.setItem(TONE_KEY, tone); } catch(e){}
+    updateToneUI();
+  }
+
+  function updateToneUI(){
+    var root = document.getElementById('journalTonePicker');
+    if(!root) return;
+    var btns = root.querySelectorAll('button[data-tone]');
+    btns.forEach(function(b){
+      var t = b.getAttribute('data-tone');
+      if(t === tone) b.classList.add('active');
+      else b.classList.remove('active');
+    });
+    var label = document.getElementById('journalToneLabel');
+    if(label){
+      label.textContent = (tone === 'harsh') ? 'きつめ' : (tone === 'gentle' ? 'やさしい' : '普通');
+    }
+  }
+
+  // ---- Insert tone UI into the existing summary section ----
+  function injectToneUI(){
+    var summary = document.getElementById('summarySection');
+    if(!summary) return;
+    if(document.getElementById('journalTonePicker')) return;
+
+    var wrap = document.createElement('div');
+    wrap.id = 'journalTonePicker';
+    wrap.style.display = 'flex';
+    wrap.style.alignItems = 'center';
+    wrap.style.gap = '10px';
+    wrap.style.margin = '10px 0 14px';
+    wrap.style.flexWrap = 'wrap';
+
+    var title = document.createElement('div');
+    title.style.fontWeight = '700';
+    title.textContent = '🧠 フィードバックのトーン：';
+    wrap.appendChild(title);
+
+    var current = document.createElement('div');
+    current.id = 'journalToneLabel';
+    current.style.padding = '6px 10px';
+    current.style.border = '1px solid #e0e0e0';
+    current.style.borderRadius = '10px';
+    current.style.background = '#fff';
+    wrap.appendChild(current);
+
+    function mkBtn(text, t){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = text;
+      b.setAttribute('data-tone', t);
+      b.style.padding = '8px 12px';
+      b.style.border = '1px solid #e0e0e0';
+      b.style.borderRadius = '10px';
+      b.style.background = '#f7f7f7';
+      b.style.cursor = 'pointer';
+      b.onclick = function(){ setTone(t); };
+      return b;
+    }
+
+    wrap.appendChild(mkBtn('きつめ', 'harsh'));
+    wrap.appendChild(mkBtn('普通', 'normal'));
+    wrap.appendChild(mkBtn('やさしい', 'gentle'));
+
+    // Active style (minimal, no global CSS reliance)
+    var style = document.createElement('style');
+    style.textContent = `
+      #journalTonePicker button.active{
+        background:#111 !important;
+        color:#fff !important;
+        border-color:#111 !important;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Insert near the top of summary section
+    var h = summary.querySelector('.section-title');
+    if(h && h.parentNode){
+      h.parentNode.insertBefore(wrap, h.nextSibling);
+    }else{
+      summary.insertBefore(wrap, summary.firstChild);
+    }
+    updateToneUI();
+  }
+
+  // ---- Safe AI comment generator (was missing in some builds) ----
+  function tonePrefix(){
+    if(tone === 'harsh') return '率直に言うね：';
+    if(tone === 'gentle') return 'やさしく言うと：';
+    return '';
+  }
+
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  function normalizeText(s){
+    return (s || '').toString().replace(/\s+/g,' ').trim();
+  }
+
+  function hasAny(s, words){
+    s = normalizeText(s);
+    return words.some(function(w){ return s.indexOf(w) >= 0; });
+  }
+
+  // Expose globally for existing displaySummary()
+  window.generateAIComment = function(text, kind){
+    text = normalizeText(text);
+    kind = kind || 'general';
+
+    if(!text){
+      if(tone === 'harsh') return '空欄はもったいない。1行でもいいから書こう。';
+      if(tone === 'gentle') return 'まだ何も書けていなくても大丈夫。短く一言だけでも残してみよう。';
+      return '短く一言でもOK。今日の要点を書いてみよう。';
+    }
+
+    // Simple heuristic
+    var tired = hasAny(text, ['疲', '眠', 'しんど', 'だる']);
+    var procrast = hasAny(text, ['サボ', '後回し', 'できなかった', 'やれなかった', '無理']);
+    var good = hasAny(text, ['できた', '達成', '進んだ', '良かった', 'うまく']);
+    var money = hasAny(text, ['円', '支出', '買', '課金', '出費']);
+    var work = hasAny(text, ['仕事', '営業', '商談', '提案', '資料', '電話']);
+    var health = hasAny(text, ['運動', '散歩', '筋トレ', '睡眠', '体重']);
+
+    var lead = tonePrefix();
+    if(kind === 'good'){
+      if(tone === 'harsh'){
+        return lead + pick([
+          '良い点は続けて。ただし「なぜ出来たか」を言語化しないと再現できない。',
+          '成果はOK。次は再現性のために手順を1つ書き残そう。'
+        ]);
+      }
+      if(tone === 'gentle'){
+        return lead + pick([
+          'いい流れだね。うまくいった理由を一言メモすると、明日も再現しやすいよ。',
+          'よくできた！この調子。小さくても積み上げが効いてる。'
+        ]);
+      }
+      return lead + pick([
+        '良かった点を明日も再現できるように、要因を1つメモしよう。',
+        'ナイス。次は「再現ポイント」を短く残しておくと強い。'
+      ]);
+    }
+
+    if(kind === 'more'){
+      if(tone === 'harsh'){
+        return lead + (procrast
+          ? '後回し癖が出てる。最初の5分だけやる「着手トリガー」を決めよう。'
+          : '伸びしろはある。最短1アクションに分解して実行しよう。');
+      }
+      if(tone === 'gentle'){
+        return lead + (tired
+          ? '疲れている日は「量」より「継続」。小さく1つだけで十分だよ。'
+          : 'あと一歩だけ。明日やりやすい形に整えておこう。');
+      }
+      return lead + (tired
+        ? '疲れがありそう。明日は「最小タスク」だけに絞るのが良さそう。'
+        : '明日につながる改善点を1つだけ決めよう。');
+    }
+
+    if(kind === 'next'){
+      if(tone === 'harsh'){
+        return lead + '「いつ・どこで・何を」を書いてないと実行率が落ちる。具体化して。';
+      }
+      if(tone === 'gentle'){
+        return lead + '明日の自分が迷わないように、時間と最初の一手だけ決めておこう。';
+      }
+      return lead + '明日の実行率を上げるために、開始時刻と最初の一手を書こう。';
+    }
+
+    // general
+    var extra = '';
+    if(tired) extra = '今日はコンディション調整が最優先。';
+    else if(procrast) extra = '着手のハードルを下げよう。';
+    else if(good) extra = '良い流れ。再現ポイントを残そう。';
+
+    if(work) extra += ' 仕事面は「次の一手」まで落とすと強い。';
+    if(money) extra += ' お金は「固定費/変動費」を分けると傾向が見える。';
+    if(health) extra += ' 体調系は「睡眠→行動→気分」の因果をメモすると役立つ。';
+
+    if(!extra) extra = '要点を1つ決めて、明日の最初の5分に落とし込もう。';
+    return lead + extra;
+  };
+
+  document.addEventListener('DOMContentLoaded', function(){
+    injectToneUI();
+    if(typeof window.switchTab === 'function'){
+      var _orig = window.switchTab;
+      window.switchTab = function(name){
+        try { _orig.apply(this, arguments); } finally {
+          setTimeout(injectToneUI, 50);
+        }
+      };
+    }
+  });
+})();
+</script>
+
+
+<!-- ===== stability_patch_v1.js (merged inline) ===== -->
 <script>
 /*!
  * stability_patch_v1.js
@@ -18805,5 +19015,6 @@ window.__qrSaving = false;
   console.log('✅ stability_patch_v1 loaded', ns.version);
 })();
 </script>
+
 </body>
 </html>
