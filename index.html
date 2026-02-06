@@ -3897,9 +3897,83 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
   padding: 0 !important;
 }
 
+
+/* ===== v4 Install UI (Button + First-run Banner) ===== */
+.pwa-install-wrap{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:flex-end;
+  margin: 8px 0 0;
+}
+.pwa-install-btn{
+  appearance:none;
+  border:1px solid #111;
+  background:#111;
+  color:#fff;
+  padding:10px 12px;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+  font-size:14px;
+}
+.pwa-install-btn[disabled]{
+  opacity:.5;
+  cursor:not-allowed;
+}
+.pwa-install-status{
+  font-size:12px;
+  color:#666;
+}
+
+.pwa-install-banner{
+  position:fixed;
+  left:12px;
+  right:12px;
+  bottom:12px;
+  z-index:99999;
+  background:#111;
+  color:#fff;
+  border-radius:14px;
+  padding:12px 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  display:none;
+}
+.pwa-install-banner .row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:space-between;
+}
+.pwa-install-banner .msg{
+  font-size:13px;
+  line-height:1.35;
+  opacity:.95;
+}
+.pwa-install-banner .actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.pwa-banner-btn{
+  appearance:none;
+  border:1px solid rgba(255,255,255,.25);
+  background:transparent;
+  color:#fff;
+  padding:8px 10px;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+  font-size:13px;
+}
+.pwa-banner-btn.primary{
+  background:#fff;
+  color:#111;
+  border-color:#fff;
+}
+
 </style>
-
-
 <style>
 /* ===== Layout: Make Journal Wider ===== */
 .container {
@@ -4754,6 +4828,26 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <!-- 今日のタスク表示（ホームの一番上） -->
 <div class="today-tasks-section" id="homeTodayTasksSection">
     <div class="today-tasks-header">
+
+<!-- ===== v4 Install UI: Button Area ===== -->
+<div class="pwa-install-wrap" id="pwaInstallWrap" style="display:none;">
+  <button class="pwa-install-btn" id="pwaInstallBtn" type="button">アプリをインストール</button>
+  <div class="pwa-install-status" id="pwaInstallStatus"></div>
+</div>
+
+<!-- ===== v4 Install UI: First-run Banner ===== -->
+<div class="pwa-install-banner" id="pwaInstallBanner" aria-live="polite">
+  <div class="row">
+    <div class="msg" id="pwaInstallBannerMsg">ホーム画面に追加すると、アプリとして使えて快適です。</div>
+    <div class="actions">
+      <button class="pwa-banner-btn primary" id="pwaBannerInstallBtn" type="button">インストール</button>
+      <button class="pwa-banner-btn" id="pwaBannerLaterBtn" type="button">後で</button>
+      <button class="pwa-banner-btn" id="pwaBannerNeverBtn" type="button">今後表示しない</button>
+    </div>
+  </div>
+</div>
+
+
         <h3>📋 今日のタスク</h3>
         <button class="refresh-tasks-button" onclick="refreshHomeTodayTasks()">🔄 更新</button>
     </div>
@@ -19013,6 +19107,531 @@ window.__qrSaving = false;
   });
 
   console.log('✅ stability_patch_v1 loaded', ns.version);
+})();
+</script>
+
+
+<script>
+/* ===== v4 Install UI (Button + First-run Banner) ===== */
+(function(){
+  'use strict';
+
+  var deferredPrompt = null;
+  var isInstalled = false;
+
+  var LS_NEVER = 'pwa_install_banner_never';
+  var LS_LATER_TS = 'pwa_install_banner_later_ts';
+  var LATER_COOLDOWN_HOURS = 72; // 「後で」は3日空ける
+
+  function $(id){ return document.getElementById(id); }
+
+  function inStandalone(){
+    // iOS: navigator.standalone, others: display-mode
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+           (window.navigator && window.navigator.standalone === true);
+  }
+
+  function canShowBanner(){
+    if (inStandalone()) return false;
+    try{
+      if (localStorage.getItem(LS_NEVER) === '1') return false;
+      var ts = parseInt(localStorage.getItem(LS_LATER_TS) || '0', 10);
+      if (ts && !isNaN(ts)){
+        var diff = Date.now() - ts;
+        if (diff < LATER_COOLDOWN_HOURS * 3600 * 1000) return false;
+      }
+    }catch(e){}
+    return true;
+  }
+
+  function setLater(){
+    try{ localStorage.setItem(LS_LATER_TS, String(Date.now())); }catch(e){}
+  }
+  function setNever(){
+    try{ localStorage.setItem(LS_NEVER, '1'); }catch(e){}
+  }
+
+  function updateInstallUI(){
+    var wrap = $('pwaInstallWrap');
+    var btn = $('pwaInstallBtn');
+    var status = $('pwaInstallStatus');
+    if (!wrap || !btn || !status) return;
+
+    isInstalled = inStandalone();
+
+    if (isInstalled){
+      wrap.style.display = '';
+      btn.disabled = true;
+      btn.textContent = 'インストール済み';
+      status.textContent = '';
+      return;
+    }
+
+    if (deferredPrompt){
+      wrap.style.display = '';
+      btn.disabled = false;
+      btn.textContent = 'アプリをインストール';
+      status.textContent = '';
+      return;
+    }
+
+    // iOS Safariなどprompt不可の場合はボタンを出さない（誤解を避ける）
+    wrap.style.display = 'none';
+  }
+
+  async function doInstall(){
+    if (!deferredPrompt) return false;
+    try{
+      deferredPrompt.prompt();
+      var choice = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      updateInstallUI();
+      return choice && choice.outcome === 'accepted';
+    }catch(e){
+      return false;
+    }
+  }
+
+  function hideBanner(){
+    var b = $('pwaInstallBanner');
+    if (b) b.style.display = 'none';
+  }
+
+  function showBannerIfNeeded(){
+    var b = $('pwaInstallBanner');
+    if (!b) return;
+
+    // promptできない端末（iOS等）はここでは表示しない（誤認の元）
+    if (!deferredPrompt) return;
+
+    if (!canShowBanner()) return;
+    b.style.display = 'block';
+  }
+
+  window.addEventListener('beforeinstallprompt', function(e){
+    // Chrome等: 自動ミニインフォバー抑止 → 自前ボタンで案内
+    e.preventDefault();
+    deferredPrompt = e;
+    updateInstallUI();
+    // 初回だけ寄せたいのでロード後に表示
+    setTimeout(showBannerIfNeeded, 800);
+  });
+
+  window.addEventListener('appinstalled', function(){
+    deferredPrompt = null;
+    hideBanner();
+    updateInstallUI();
+  });
+
+  function wireEvents(){
+    var btn = $('pwaInstallBtn');
+    var bInstall = $('pwaBannerInstallBtn');
+    var bLater = $('pwaBannerLaterBtn');
+    var bNever = $('pwaBannerNeverBtn');
+
+    if (btn){
+      btn.addEventListener('click', function(){
+        doInstall();
+      });
+    }
+    if (bInstall){
+      bInstall.addEventListener('click', async function(){
+        var ok = await doInstall();
+        // 許可/拒否に関係なく、バナーは一旦閉じる
+        hideBanner();
+        setLater();
+      });
+    }
+    if (bLater){
+      bLater.addEventListener('click', function(){
+        hideBanner();
+        setLater();
+      });
+    }
+    if (bNever){
+      bNever.addEventListener('click', function(){
+        hideBanner();
+        setNever();
+      });
+    }
+  }
+
+  // 初期化
+  document.addEventListener('DOMContentLoaded', function(){
+    wireEvents();
+    updateInstallUI();
+  });
+})();
+</script>
+
+
+<!-- ===== v5.0 Patch: ジャーナル安定化 + AIフィードバック（きつめ/普通/やさしい） ===== -->
+<script>
+(function(){
+  'use strict';
+
+  // ------- util -------
+  function byId(id){ return document.getElementById(id); }
+  function safeJSONParse(str, fallback){
+    try { return JSON.parse(str || ''); } catch(e){ return fallback; }
+  }
+  function safeJSONStringify(obj){
+    try { return JSON.stringify(obj); } catch(e){ return null; }
+  }
+  function monthKeyFromDate(d){
+    var y=d.getFullYear();
+    var m=String(d.getMonth()+1).padStart(2,'0');
+    return y+'-'+m;
+  }
+  function dateKeyFromDate(d){
+    var y=d.getFullYear();
+    var m=String(d.getMonth()+1).padStart(2,'0');
+    var day=String(d.getDate()).padStart(2,'0');
+    return y+'-'+m+'-'+day;
+  }
+  function nowISO(){
+    return new Date().toISOString();
+  }
+  function normalizeText(s){
+    return (s==null?'':String(s)).replace(/\r\n/g,'\n').trim();
+  }
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g,function(ch){
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]);
+    });
+  }
+
+  // ------- storage keys -------
+  var KEY_V3 = 'journalEntriesV3'; // { "YYYY-MM-DD": { raw, ai:{tone, text, createdAt}, updatedAt } }
+  var KEY_V1 = 'journals';         // [ { id, timestamp, text } ]
+
+  function loadV3(){
+    var obj = safeJSONParse(localStorage.getItem(KEY_V3), {});
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) obj = {};
+    return obj;
+  }
+  function saveV3(obj){
+    var s = safeJSONStringify(obj);
+    if (!s) return false;
+    try { localStorage.setItem(KEY_V3, s); return true; } catch(e){ return false; }
+  }
+  function loadV1(){
+    var arr = safeJSONParse(localStorage.getItem(KEY_V1), []);
+    if (!Array.isArray(arr)) arr = [];
+    return arr;
+  }
+  function saveV1(arr){
+    var s = safeJSONStringify(arr);
+    if (!s) return false;
+    try { localStorage.setItem(KEY_V1, s); return true; } catch(e){ return false; }
+  }
+
+  // ------- migration (V1 -> V3) -------
+  function migrateIfNeeded(){
+    var v3 = loadV3();
+    var v1 = loadV1();
+
+    // すでにV3が十分にあれば終了
+    var v3Keys = Object.keys(v3 || {});
+    if (v3Keys.length >= Math.min(3, v1.length)) return;
+
+    v1.forEach(function(j){
+      try{
+        var d = new Date(j.timestamp || j.date || j.createdAt || j.ts);
+        if (isNaN(d.getTime())) return;
+        var dk = dateKeyFromDate(d);
+        if (!v3[dk]) {
+          v3[dk] = {
+            raw: normalizeText(j.text || j.raw || ''),
+            ai: null,
+            updatedAt: j.timestamp || nowISO()
+          };
+        }
+      }catch(e){}
+    });
+    saveV3(v3);
+  }
+
+  // ------- unified accessors -------
+  function upsertV1FromV3(dateKey, rawText){
+    // Overview / Goals が KEY_V1 を参照している可能性があるため、互換で更新する
+    var v1 = loadV1();
+    var targetDate = new Date(dateKey + 'T12:00:00');
+    var ts = targetDate.toISOString();
+
+    // 同日エントリがあれば更新、なければ追加
+    var found = false;
+    for (var i=0;i<v1.length;i++){
+      var d = new Date(v1[i].timestamp || v1[i].date || v1[i].createdAt || v1[i].ts);
+      if (!isNaN(d.getTime()) && dateKeyFromDate(d) === dateKey){
+        v1[i].text = rawText;
+        v1[i].timestamp = ts;
+        found = true;
+        break;
+      }
+    }
+    if (!found){
+      v1.push({ id: 'j_' + Date.now(), timestamp: ts, text: rawText });
+    }
+    // timestamp降順に整列
+    v1.sort(function(a,b){
+      return new Date(b.timestamp||0).getTime() - new Date(a.timestamp||0).getTime();
+    });
+    saveV1(v1);
+
+    // 既存の in-memory 変数があれば同期
+    try { window.journals = v1; } catch(e){}
+  }
+
+  function setEntry(dateKey, rawText, aiObj){
+    rawText = normalizeText(rawText);
+    var v3 = loadV3();
+    v3[dateKey] = v3[dateKey] || { raw:'', ai:null, updatedAt: nowISO() };
+    v3[dateKey].raw = rawText;
+    if (aiObj) v3[dateKey].ai = aiObj;
+    v3[dateKey].updatedAt = nowISO();
+    saveV3(v3);
+    upsertV1FromV3(dateKey, rawText);
+  }
+
+  function getEntry(dateKey){
+    var v3 = loadV3();
+    return v3[dateKey] || null;
+  }
+
+  // ------- AI feedback (local, rule-based) -------
+  function analyzeText(raw){
+    raw = normalizeText(raw);
+    var lines = raw.split('\n').map(function(s){return s.trim();}).filter(Boolean);
+    var len = raw.length;
+
+    // very simple heuristics
+    var hasMust = /must|やる|必ず|必須|タスク|TODO|ToDo|やること/i.test(raw);
+    var hasWant = /want|やりたい|したい|楽し/i.test(raw);
+    var negative = /(つら|疲れ|だめ|最悪|不安|イライラ|焦|やば)/i.test(raw);
+    var positive = /(良|よか|最高|嬉|助か|達成|できた|順調)/i.test(raw);
+
+    var bullets = [];
+    if (hasMust) bullets.push('MUSTが文章に含まれている');
+    if (hasWant) bullets.push('WANT/やりたいが含まれている');
+    if (positive) bullets.push('ポジティブ要素あり');
+    if (negative) bullets.push('ネガティブ要素あり');
+    if (!bullets.length) bullets.push('要点が散らばりやすい書き方');
+
+    // pull 1-2 highlights
+    var highlights = lines.slice(0,2);
+    return {
+      len: len,
+      lines: lines.length,
+      bullets: bullets,
+      highlights: highlights
+    };
+  }
+
+  function buildFeedback(tone, raw){
+    var a = analyzeText(raw);
+    var head = '';
+    var body = '';
+    var close = '';
+
+    if (tone === 'きつめ'){
+      head = '⚡ 少し厳しめに言うね。';
+      body += '<ul>';
+      body += '<li>まず、今日の文章は「次に何をするか」が曖昧になりやすい。</li>';
+      body += '<li>最初の1行で「明日のMUST」を1つだけ宣言してから書いて。</li>';
+      if (a.bullets.indexOf('ネガティブ要素あり')>=0){
+        body += '<li>疲れ/不安があるなら、先に睡眠・休憩をタスク化しないと崩れる。</li>';
+      }
+      body += '</ul>';
+      close = '✅ 明日のMUSTを1つ、WANTを1つだけ書いて終わり。';
+    } else if (tone === 'やさしい'){
+      head = '🌿 やさしめにいくね。';
+      body += '<p>書けたこと自体がまず前進。短くても「言語化」できてるのは強い。</p>';
+      body += '<ul>';
+      body += '<li>一番大事なのは、今日の中で「少しでも良かった点」を1つ拾うこと。</li>';
+      if (a.bullets.indexOf('ネガティブ要素あり')>=0){
+        body += '<li>しんどさがある日は、達成ラインを下げてもOK。継続が勝ち。</li>';
+      }
+      body += '<li>最後に「明日の最小MUST」を1つだけ決めよう。</li>';
+      body += '</ul>';
+      close = '✅ 明日は5分でできるMUSTを1つだけ。';
+    } else { // 普通
+      head = '🧠 ふつうモードで整理するね。';
+      body += '<ul>';
+      body += '<li>今日の要点を「事実→気づき→次の一手」の順で1行ずつにすると強い。</li>';
+      body += '<li>「明日のMUST」は最大3つまで。できれば1つに絞る。</li>';
+      if (a.bullets.indexOf('ネガティブ要素あり')>=0){
+        body += '<li>負荷が高いサインが出てるので、休息の確保も予定に入れる。</li>';
+      }
+      body += '</ul>';
+      close = '✅ 明日のMUST/WANTを短く書いて保存しよう。';
+    }
+
+    var highlights = a.highlights.length ? ('<p><strong>抜き出し:</strong> ' + escapeHtml(a.highlights.join(' / ')) + '</p>') : '';
+    return [
+      '<div class="ai-feedback-box">',
+      '<div style="font-weight:700;margin-bottom:6px;">' + head + '</div>',
+      highlights,
+      body,
+      '<div style="margin-top:8px;opacity:.9;">' + close + '</div>',
+      '</div>'
+    ].join('');
+  }
+
+  // ------- UI injection -------
+  function ensureJournalAIArea(){
+    var journalTab = byId('journal');
+    if (!journalTab) return;
+
+    // detect existing
+    if (byId('journalToneSelect') && byId('journalAIFeedback')) return;
+
+    // find textarea
+    var ta = byId('journalInput') || byId('journalV2Input') || journalTab.querySelector('textarea');
+    if (!ta) return;
+
+    // insert after textarea
+    var wrap = document.createElement('div');
+    wrap.style.marginTop = '12px';
+    wrap.innerHTML = [
+      '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">',
+      '  <div style="font-weight:600;">🤖 AIフィードバック</div>',
+      '  <select id="journalToneSelect" class="text-input-small" style="min-width:160px;">',
+      '    <option value="普通">普通</option>',
+      '    <option value="きつめ">きつめ</option>',
+      '    <option value="やさしい">やさしい</option>',
+      '  </select>',
+      '  <button id="journalFeedbackBtn" class="btn-primary-small" type="button">フィードバック生成</button>',
+      '  <button id="journalHealthBtn" class="btn-secondary-small" type="button">動作チェック</button>',
+      '</div>',
+      '<div id="journalAIFeedback" class="ai-feedback-container" style="margin-top:10px;display:none;"></div>'
+    ].join('');
+    ta.parentNode.insertBefore(wrap, ta.nextSibling);
+  }
+
+  function pickDateKey(){
+    // prefer V2 date picker if exists
+    var el = byId('journalV2Date') || byId('journalDate');
+    if (el && el.value){
+      // value may be "YYYY-MM-DD"
+      return el.value;
+    }
+    return dateKeyFromDate(new Date());
+  }
+
+  function bindJournalActions(){
+    var btn = byId('journalV2SaveBtn') || byId('saveJournalBtn');
+    var ta = byId('journalInput') || byId('journalV2Input') || byId('journalText') || (byId('journal') ? byId('journal').querySelector('textarea') : null);
+
+    if (btn && ta){
+      btn.addEventListener('click', function(){
+        var dk = pickDateKey();
+        var raw = normalizeText(ta.value);
+        if (!raw){
+          alert('ジャーナルが空です。ひとことでもOKなので入力してから保存してください。');
+          return;
+        }
+        setEntry(dk, raw, null);
+
+        // 既存の描画関数があれば呼ぶ
+        try { if (typeof window.renderJournalLogs === 'function') window.renderJournalLogs(); } catch(e){}
+        alert('保存しました ✅');
+      }, { passive:true });
+    }
+
+    var fbBtn = byId('journalFeedbackBtn');
+    if (fbBtn && ta){
+      fbBtn.addEventListener('click', function(){
+        var dk = pickDateKey();
+        var raw = normalizeText(ta.value);
+        if (!raw){
+          // その日の保存済みを使う
+          var entry = getEntry(dk);
+          raw = entry ? (entry.raw || '') : '';
+        }
+        if (!raw){
+          alert('フィードバック対象のジャーナルが見つかりません。先に保存するか、文章を入力してください。');
+          return;
+        }
+        var tone = (byId('journalToneSelect') && byId('journalToneSelect').value) || '普通';
+        var html = buildFeedback(tone, raw);
+
+        var box = byId('journalAIFeedback');
+        if (box){
+          box.innerHTML = html;
+          box.style.display = 'block';
+        }
+
+        // 保存もしておく（同日のAIを保持）
+        setEntry(dk, raw, { tone: tone, text: box ? box.innerHTML : html, createdAt: nowISO() });
+      }, { passive:true });
+    }
+
+    var healthBtn = byId('journalHealthBtn');
+    if (healthBtn){
+      healthBtn.addEventListener('click', function(){
+        var dk = pickDateKey();
+        var before = getEntry(dk);
+        // write/read cycle
+        var testText = '【動作チェック】' + new Date().toLocaleString() + '\n保存→再読込テスト';
+        setEntry(dk, testText, null);
+        var after = getEntry(dk);
+        // restore if there was before and it wasn't our test
+        if (before && normalizeText(before.raw) && normalizeText(before.raw) !== normalizeText(testText)){
+          setEntry(dk, before.raw, before.ai || null);
+        }
+        if (after && normalizeText(after.raw) === normalizeText(testText)){
+          alert('OK ✅（保存→読込が動いています）');
+        } else {
+          alert('NG ⚠️（保存/読込で問題があるかも。ブラウザのストレージ制限やプライベートモードを確認してください）');
+        }
+        try { if (typeof window.renderJournalLogs === 'function') window.renderJournalLogs(); } catch(e){}
+      }, { passive:true });
+    }
+  }
+
+  // ------- rendering compatibility -------
+  function ensureRenderUsesV3(){
+    if (typeof window.renderJournalLogs !== 'function') return;
+
+    var orig = window.renderJournalLogs;
+    window.renderJournalLogs = function(){
+      // まず V1 を同期（V3 -> V1）
+      try{
+        migrateIfNeeded();
+        var v3 = loadV3();
+        Object.keys(v3).forEach(function(dk){
+          var raw = normalizeText(v3[dk] && v3[dk].raw);
+          if (raw) upsertV1FromV3(dk, raw);
+        });
+      }catch(e){}
+      return orig.apply(this, arguments);
+    };
+  }
+
+  function cleanupJournalUI(){
+    // 古い日付UIが2つ並ぶケースの見た目事故を減らす
+    var legacy = byId('journalDate');
+    var v2 = byId('journalV2Date');
+    if (legacy && v2){
+      // legacyブロックを丸ごと隠す（存在しても機能させない）
+      var legacyBlock = legacy.closest('.date-section') || legacy.parentElement;
+      if (legacyBlock) legacyBlock.style.display = 'none';
+    }
+  }
+
+  // ------- init -------
+  try{
+    migrateIfNeeded();
+  }catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    try{ cleanupJournalUI(); }catch(e){}
+    try{ ensureJournalAIArea(); }catch(e){}
+    try{ bindJournalActions(); }catch(e){}
+    try{ ensureRenderUsesV3(); }catch(e){}
+  });
+
 })();
 </script>
 
