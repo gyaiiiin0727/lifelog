@@ -1,31 +1,37 @@
-/* Lifelog SW v3 */
-const CACHE_NAME = 'lifelog-cache-v3';
-const ASSETS = [
+const CACHE_NAME = 'lifelog-v1';
+const urlsToCache = [
   './',
   './index.html',
-  './manifest.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png'
+  './manifest.json'
 ];
 
-self.addEventListener('install', (event) => {
+// インストール時
+self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).then(()=>self.skipWaiting())
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(urlsToCache))
   );
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.map((k)=> (k===CACHE_NAME)?null:caches.delete(k)))).then(()=>self.clients.claim())
-  );
-});
-
-self.addEventListener('fetch', (event) => {
+// フェッチ時
+self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request).then((resp)=>{
-      const copy = resp.clone();
-      caches.open(CACHE_NAME).then((cache)=>cache.put(event.request, copy)).catch(()=>{});
-      return resp;
-    }).catch(()=>cached))
+    caches.match(event.request)
+      .then(response => response || fetch(event.request))
+  );
+});
+
+// アクティベート時（古いキャッシュ削除）
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
   );
 });
