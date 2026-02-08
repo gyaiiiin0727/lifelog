@@ -8487,7 +8487,7 @@ function drawMoneyChart(categoryData) {
                 const sum = journal.summary || {};
                 const hasSum = !!(sum.events || sum.learnings || sum.feelings || sum.gratitude || sum.must || sum.want);
                 const summaryHtml = hasSum ? '<div style="margin-bottom:14px;">'
-                  + '<div style="font-weight:700;font-size:13px;color:#666;margin-bottom:8px;">📊 AI要約</div>'
+                  + '<div class="small" style="margin:6px 0 8px;color:#666;">要約</div>'
                   + '<div class="summary-grid">'
                   + (sum.events ? '<div class="summary-k">出来事</div><div class="summary-v">' + escH(sum.events) + '</div>' : '')
                   + (sum.learnings ? '<div class="summary-k">学び</div><div class="summary-v">' + escH(sum.learnings) + '</div>' : '')
