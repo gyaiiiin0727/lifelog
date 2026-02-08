@@ -18091,6 +18091,28 @@ if ("serviceWorker" in navigator) {
   .fab-sub { padding: 10px 16px; }
   .fab-sub .fab-label { font-size: 13px; }
 }
+
+
+/* ===== Fix: ジャーナルのキャラ（フィードバック担当）をスマホでも横3並び固定 ===== */
+@media (max-width: 760px){
+  #journal .feedback-tone-options{
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    justify-content: initial !important;
+    flex-wrap: initial !important;
+  }
+  #journal .feedback-tone-btn{
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 10px !important;
+  }
+  #journal .feedback-tone-btn img{
+    max-width: 52px !important;
+    height: auto !important;
+  }
+}
+
 </style>
 
 <div class="fab-overlay" id="fabOverlay"></div>
@@ -19336,6 +19358,31 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
+</script>
+
+
+<script>
+// ===== SW cleanup & register (prefer service-worker.js) =====
+(function(){
+  if (!('serviceWorker' in navigator)) return;
+
+  window.addEventListener('load', async function(){
+    try {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      // 古い sw.js が登録されていたら解除
+      await Promise.all(regs.map(async (reg) => {
+        const url = (reg.active && reg.active.scriptURL) || (reg.installing && reg.installing.scriptURL) || (reg.waiting && reg.waiting.scriptURL) || '';
+        if (url.endsWith('/sw.js') || url.includes('/sw.js?')) {
+          await reg.unregister();
+        }
+      }));
+      // service-worker.js を登録
+      await navigator.serviceWorker.register('./service-worker.js');
+    } catch (e) {
+      console.warn('SW register/cleanup failed:', e);
+    }
+  });
+})();
 </script>
 
 </body>
