@@ -5156,10 +5156,6 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <div class="summary-k must">MUST</div><div class="summary-v" id="todaySumMust">—</div>
 <div class="summary-k want">WANT</div><div class="summary-v" id="todaySumWant">—</div>
 </div>
-<div id="todaySumHitokoto" style="display:none;margin-top:12px;padding:12px;border-radius:10px;border-left:4px solid #4a90e2;background:#f0f7ff;">
-<div id="todaySumHitokotoLabel" style="font-weight:700;font-size:13px;color:#4a90e2;margin-bottom:6px;">💬 整える一言</div>
-<div id="todaySumHitokotoText" style="font-size:14px;line-height:1.6;color:#333;"></div>
-</div>
 </div>
 </div>
 
@@ -7720,13 +7716,7 @@ function renderJournalLogs() {
           + '<div style="margin-top:6px;font-size:13px;color:#555;">' + escHtml(snippet) + (snippet.length>=100?'\u2026':'') + '</div>'
           + (hasMust ? '<div style="margin-top:4px;font-size:13px;">\u2705 MUST: ' + escHtml(summary.must).substring(0,60) + '</div>' : '')
           + (hasWant ? '<div style="margin-top:2px;font-size:13px;">\u{1F4A1} WANT: ' + escHtml(summary.want).substring(0,60) + '</div>' : '')
-          + (hasHitokoto ? (function(){
-              var tm = {harsh:{n:'マネージャー',c:'#e74c3c'},normal:{n:'タクヤ先輩',c:'#4a90e2'},gentle:{n:'ハナさん',c:'#27ae60'}};
-              var ci = tm[record.aiFeedbackTone] || {n:'',c:'#4a90e2'};
-              return '<div style="margin-top:8px;padding:10px;background:#f0f7ff;border-radius:10px;border-left:4px solid '+ci.c+';font-size:13px;">'
-                + (ci.n ? '<div style="font-weight:700;color:'+ci.c+';margin-bottom:4px;">\u{1F4AC} '+ci.n+' の一言</div>' : '')
-                + '<div style="color:#333;line-height:1.5;">'+escHtml(hitokoto)+'</div></div>';
-            })() : '')
+          + (hasHitokoto ? '<div style="margin-top:6px;padding:8px;background:#f0f7ff;border-radius:8px;font-size:13px;color:#4a90e2;">\u{1F4AC} ' + escHtml(hitokoto).substring(0,80) + (hitokoto.length>80?'...':'') + '</div>' : '')
           + '<div class="journal-detail" id="journal-' + escHtml(dateStr) + '" style="display:none;margin-top:10px;padding:10px;background:#fafafa;border-radius:8px;">'
           + '<div style="white-space:pre-wrap;font-size:14px;line-height:1.6;">' + escHtml(record.raw || '') + '</div>'
           + (aiFeedback ? '<div style="margin-top:10px;padding:10px;background:#fff;border:1px solid #e5e5e5;border-radius:8px;white-space:pre-wrap;font-size:13px;line-height:1.6;">' + escHtml(aiFeedback) + '</div>' : '')
@@ -8408,16 +8398,15 @@ function drawMoneyChart(categoryData) {
                 html += '<div class="calendar-day empty"></div>';
             }
             
-            const v3Entries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
             for (let date = 1; date <= lastDate; date++) {
                 const currentDate = new Date(year, month, date);
                 const dateStr = currentDate.toLocaleDateString('ja-JP');
                 
-                // その日のジャーナルを取得（V3形式）
-                // dateStr は "2026/2/9" のような形式 → V3キーは "2026-02-09"
-                const v3Key = currentDate.getFullYear() + '-' + String(currentDate.getMonth()+1).padStart(2,'0') + '-' + String(currentDate.getDate()).padStart(2,'0');
-                const journal = v3Entries[v3Key];
-                const hasJournal = !!(journal && (journal.raw || journal.summary || journal.aiFeedback));
+                // その日のジャーナルを取得
+                const journal = journals.find(j => 
+                    new Date(j.timestamp).toLocaleDateString('ja-JP') === dateStr
+                );
+                const hasJournal = !!journal;
                 
                 const isToday = 
                     today.getFullYear() === year &&
@@ -8431,8 +8420,7 @@ function drawMoneyChart(categoryData) {
                 // 気分絵文字を追加
                 let moodEmoji = '';
                 if (journal && journal.mood) {
-                    const calMoodEmojis = {'great':'😊','good':'🙂','normal':'😐','bad':'😔','terrible':'😢'};
-                    moodEmoji = '<div class="calendar-day-mood">' + (calMoodEmojis[journal.mood] || '') + '</div>';
+                    moodEmoji = `<div class="calendar-day-mood">${moodEmojis[journal.mood]}</div>`;
                 }
                 
                 html += `<div class="${className}" onclick="viewJournalByDate('${dateStr}')">${date}${moodEmoji}</div>`;
@@ -8449,104 +8437,15 @@ function drawMoneyChart(categoryData) {
         }
         
         function viewJournalByDate(dateStr) {
-            // V3形式から読み込む
-            const v3Entries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
-            // dateStr は "2026/2/9" 形式 → V3キーに変換
-            const parts = dateStr.split('/');
-            const v3Key = parts.length === 3 ? parts[0] + '-' + parts[1].padStart(2,'0') + '-' + parts[2].padStart(2,'0') : dateStr;
-            const journal = v3Entries[v3Key];
-
-            if (journal && (journal.raw || journal.summary || journal.aiFeedback)) {
-                showCalendarDetailModal(dateStr, v3Key, journal);
+            const journal = journals.find(j => 
+                new Date(j.timestamp).toLocaleDateString('ja-JP') === dateStr
+            );
+            
+            if (journal) {
+                const moodText = journal.mood ? `\n\n気分: ${moodEmojis[journal.mood]}` : '';
+                alert(`${dateStr}のジャーナル:${moodText}\n\n${journal.text}`);
             } else {
-                showCalendarDetailModal(dateStr, v3Key, null);
-            }
-        }
-
-        function showCalendarDetailModal(dateStr, v3Key, journal) {
-            // 既存のモーダルがあれば削除
-            const existing = document.getElementById('calendarDetailModal');
-            if (existing) existing.remove();
-
-            const escH = (s) => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-
-            let content = '';
-            if (!journal) {
-                content = '<div style="text-align:center;color:#999;padding:30px 0;">この日にはジャーナルがありません。</div>'
-                  + '<div style="text-align:center;margin-top:10px;"><button id="calModalGoBtn" style="background:#111;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;cursor:pointer;">📝 この日のジャーナルを書く</button></div>';
-            } else {
-                // 気分
-                const moodEmojis = {'great':'😊 最高','good':'🙂 良い','normal':'😐 普通','bad':'😔 悪い','terrible':'😢 最悪'};
-                const moodHtml = journal.mood ? '<div style="margin-bottom:12px;font-size:15px;">気分: <strong>' + (moodEmojis[journal.mood] || '') + '</strong></div>' : '';
-
-                // 本文（プレビュー）
-                const rawText = (journal.raw || '').trim();
-                const rawHtml = rawText ? '<div style="margin-bottom:14px;padding:12px;background:#f8f8f8;border-radius:10px;font-size:14px;line-height:1.6;white-space:pre-wrap;max-height:120px;overflow-y:auto;">' + escH(rawText) + '</div>' : '';
-
-                // サマリーグリッド
-                const sum = journal.summary || {};
-                const hasSum = !!(sum.events || sum.learnings || sum.feelings || sum.gratitude || sum.must || sum.want);
-                const summaryHtml = hasSum ? '<div style="margin-bottom:14px;">'
-                  + '<div class="small" style="margin:6px 0 8px;color:#666;">要約</div>'
-                  + '<div class="summary-grid">'
-                  + (sum.events ? '<div class="summary-k">出来事</div><div class="summary-v">' + escH(sum.events) + '</div>' : '')
-                  + (sum.learnings ? '<div class="summary-k">学び</div><div class="summary-v">' + escH(sum.learnings) + '</div>' : '')
-                  + (sum.feelings ? '<div class="summary-k">感情</div><div class="summary-v">' + escH(sum.feelings) + '</div>' : '')
-                  + (sum.gratitude ? '<div class="summary-k">感謝</div><div class="summary-v">' + escH(sum.gratitude) + '</div>' : '')
-                  + (sum.must ? '<div class="summary-k must">MUST</div><div class="summary-v">' + escH(sum.must) + '</div>' : '')
-                  + (sum.want ? '<div class="summary-k want">WANT</div><div class="summary-v">' + escH(sum.want) + '</div>' : '')
-                  + '</div></div>' : '';
-
-                // キャラクター＋整える一言
-                const hitokoto = journal.hitokoto || '';
-                const toneMap = {harsh:{name:'マネージャー',color:'#e74c3c'},normal:{name:'タクヤ先輩',color:'#4a90e2'},gentle:{name:'ハナさん',color:'#27ae60'}};
-                const charInfo = toneMap[journal.aiFeedbackTone] || null;
-                const hitokotoHtml = hitokoto ? '<div style="margin-bottom:14px;padding:12px;background:' + (charInfo ? '#f0f7ff' : '#f8f8f8') + ';border-radius:10px;border-left:4px solid ' + (charInfo ? charInfo.color : '#999') + ';">'
-                  + (charInfo ? '<div style="font-weight:700;font-size:13px;color:' + charInfo.color + ';margin-bottom:6px;">💬 ' + escH(charInfo.name) + ' の一言</div>' : '<div style="font-weight:700;font-size:13px;color:#666;margin-bottom:6px;">💬 整える一言</div>')
-                  + '<div style="font-size:14px;line-height:1.6;color:#333;">' + escH(hitokoto) + '</div>'
-                  + '</div>' : '';
-
-                // AIフィードバック全文（折りたたみ）
-                const aiFeedback = journal.aiFeedback || '';
-                const feedbackHtml = aiFeedback ? '<details style="margin-bottom:10px;">'
-                  + '<summary style="cursor:pointer;font-size:13px;color:#666;font-weight:700;padding:8px 0;">📝 AIフィードバック全文を表示</summary>'
-                  + '<div style="margin-top:8px;padding:12px;background:#fff;border:1px solid #e5e5e5;border-radius:8px;white-space:pre-wrap;font-size:13px;line-height:1.7;">' + escH(aiFeedback) + '</div>'
-                  + '</details>' : '';
-
-                content = moodHtml + rawHtml + summaryHtml + hitokotoHtml + feedbackHtml
-                  + '<div style="text-align:center;margin-top:10px;"><button id="calModalGoBtn" style="background:#111;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;cursor:pointer;">📖 この日のジャーナルを開く</button></div>';
-            }
-
-            const modal = document.createElement('div');
-            modal.id = 'calendarDetailModal';
-            modal.style.cssText = 'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);';
-            modal.innerHTML = '<div style="background:#fff;border-radius:16px;width:92%;max-width:440px;max-height:85vh;overflow-y:auto;padding:24px;position:relative;box-shadow:0 8px 32px rgba(0,0,0,0.2);">'
-              + '<button id="calModalCloseBtn" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:22px;cursor:pointer;color:#999;line-height:1;">✕</button>'
-              + '<div style="font-size:18px;font-weight:800;margin-bottom:16px;">📅 ' + escH(dateStr) + '</div>'
-              + content
-              + '</div>';
-
-            document.body.appendChild(modal);
-
-            // 閉じるボタン
-            document.getElementById('calModalCloseBtn').addEventListener('click', () => modal.remove());
-            // 背景クリックで閉じる
-            modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
-
-            // ジャーナルへ移動ボタン
-            const goBtn = document.getElementById('calModalGoBtn');
-            if (goBtn) {
-                goBtn.addEventListener('click', () => {
-                    const dateInput = document.getElementById('journalV2Date');
-                    if (dateInput) {
-                        dateInput.value = v3Key;
-                        if (typeof window.switchTab === 'function') window.switchTab('journal');
-                        // V3のload関数を呼ぶ
-                        try { load(); } catch(_){}
-                        try { renderTodaySummary(); } catch(_){}
-                    }
-                    modal.remove();
-                });
+                alert(`${dateStr}にはジャーナルがありません。`);
             }
         }
         
@@ -11902,11 +11801,6 @@ try{
     setStatus('✓ 保存しました', false);
     renderTodaySummary();
     renderLog();
-    // カレンダーとジャーナル履歴も更新
-    if (typeof renderCalendar === 'function') renderCalendar();
-    else if (typeof window.renderCalendar === 'function') window.renderCalendar();
-    if (typeof renderJournalLogs === 'function') renderJournalLogs();
-    else if (typeof window.renderJournalLogs === 'function') window.renderJournalLogs();
   }
   function clearDay(){
     if(!confirm('この日の内容をクリアしますか？')) return;
@@ -11919,11 +11813,6 @@ try{
     setStatus('✓ クリアしました', false);
     renderTodaySummary();
     renderLog();
-    // カレンダーとジャーナル履歴も更新
-    if (typeof renderCalendar === 'function') renderCalendar();
-    else if (typeof window.renderCalendar === 'function') window.renderCalendar();
-    if (typeof renderJournalLogs === 'function') renderJournalLogs();
-    else if (typeof window.renderJournalLogs === 'function') window.renderJournalLogs();
   }
 
   function esc(s){
@@ -11945,24 +11834,6 @@ try{
       set('todaySumGratitude', e.summary.gratitude);
       set('todaySumMust', e.summary.must);
       set('todaySumWant', e.summary.want);
-      // 整える一言＋キャラクター表示
-      const hitokotoBox = document.getElementById('todaySumHitokoto');
-      const hitokotoLabel = document.getElementById('todaySumHitokotoLabel');
-      const hitokotoText = document.getElementById('todaySumHitokotoText');
-      if (hitokotoBox && hitokotoLabel && hitokotoText) {
-        if (e.hitokoto) {
-          const toneMap = {harsh:{name:'マネージャー',color:'#e74c3c'},normal:{name:'タクヤ先輩',color:'#4a90e2'},gentle:{name:'ハナさん',color:'#27ae60'}};
-          const ci = toneMap[e.aiFeedbackTone] || {name:'',color:'#4a90e2'};
-          hitokotoBox.style.display = 'block';
-          hitokotoBox.style.borderLeftColor = ci.color;
-          hitokotoBox.style.background = '#f0f7ff';
-          hitokotoLabel.style.color = ci.color;
-          hitokotoLabel.textContent = ci.name ? '💬 ' + ci.name + ' の一言' : '💬 整える一言';
-          hitokotoText.textContent = e.hitokoto;
-        } else {
-          hitokotoBox.style.display = 'none';
-        }
-      }
     }else{
       if(empty) empty.style.display='block';
       if(body) body.style.display='none';
@@ -11988,19 +11859,6 @@ try{
       const snippet = (v.raw || '').trim().slice(0, 120);
       const hasSummary = !!v.summary;
       const sum = v.summary || {};
-      // キャラクター情報
-      const toneMap = { harsh: {name:'マネージャー',color:'#e74c3c'}, normal: {name:'タクヤ先輩',color:'#4a90e2'}, gentle: {name:'ハナさん',color:'#27ae60'} };
-      const charInfo = toneMap[v.aiFeedbackTone] || null;
-      const hitokoto = v.hitokoto || '';
-
-      // 整える一言（キャラクター付き）
-      const hitokotoHtml = hitokoto ? `
-        <div style="margin-top:10px;padding:12px;background:${charInfo ? '#f0f7ff' : '#f8f8f8'};border-radius:10px;border-left:4px solid ${charInfo ? charInfo.color : '#999'};">
-          ${charInfo ? '<div style="font-weight:700;font-size:13px;color:'+charInfo.color+';margin-bottom:6px;">💬 '+esc(charInfo.name)+' の一言</div>' : '<div style="font-weight:700;font-size:13px;color:#666;margin-bottom:6px;">💬 整える一言</div>'}
-          <div style="font-size:14px;line-height:1.6;color:#333;">${esc(hitokoto)}</div>
-        </div>
-      ` : '';
-
       const summaryHtml = hasSummary ? `
         <div class="journal-summary-open">
           <div class="small" style="margin:6px 0 8px;color:#666;">要約</div>
@@ -12012,9 +11870,8 @@ try{
             <div class="summary-k must">MUST</div><div class="summary-v">${esc(sum.must)}</div>
             <div class="summary-k want">WANT</div><div class="summary-v">${esc(sum.want)}</div>
           </div>
-          ${hitokotoHtml}
         </div>
-      ` : (hitokoto ? hitokotoHtml : `<div class="small" style="margin-top:8px;color:#666;">「✨ AIで整える」を押すとフィードバックが表示されます</div>`);
+      ` : `<div class="small" style="margin-top:8px;color:#666;">要約はまだありません（「要約（デモ）」を押す）</div>`;
 
       return `
         <div class="journal-log-item">
@@ -12114,10 +11971,6 @@ try{
           })();
           const allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
           const entry = allEntries[dateKey] || { date: dateKey };
-          // テキストも一緒に保存（未保存の場合に備えて）
-          if (!entry.raw || entry.raw.trim() === '') {
-            entry.raw = text;
-          }
           entry.aiFeedback = out;
           entry.aiFeedbackTone = tone;
           // AIの結果からMUST/WANTを抽出してsummaryに保存
@@ -12142,14 +11995,9 @@ try{
           // ホームのタスクも更新
           if (typeof renderHomeTodayTasks === 'function') renderHomeTodayTasks();
           if (typeof window.renderHomeTodayTasks === 'function') window.renderHomeTodayTasks();
-          // ジャーナル履歴・カレンダーも更新
+          // ジャーナル履歴も更新
           if (typeof renderJournalLogs === 'function') renderJournalLogs();
-          else if (typeof window.renderJournalLogs === 'function') window.renderJournalLogs();
-          if (typeof renderCalendar === 'function') renderCalendar();
-          else if (typeof window.renderCalendar === 'function') window.renderCalendar();
-          // V3のrenderLogも更新
-          try { renderLog(); } catch(_){}
-          try { renderTodaySummary(); } catch(_){}
+          if (typeof window.renderJournalLogs === 'function') window.renderJournalLogs();
         } catch(saveErr) { console.warn('AI結果の保存に失敗:', saveErr); }
 
         // キャラクター情報を取得してフィードバック表示
