@@ -1,5 +1,5 @@
 // ===== lifelog service worker (cache-bump) =====
-const CACHE_NAME = 'lifelog-cache-v20260208092016';
+const CACHE_NAME = 'lifelog-cache-v20260208092758';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -23,7 +23,6 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
-  // HTMLはネット優先（最新版を取りに行く）
   if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
     event.respondWith(
       fetch(req).then(res => {
@@ -34,8 +33,6 @@ self.addEventListener('fetch', (event) => {
     );
     return;
   }
-
-  // それ以外はキャッシュ優先
   event.respondWith(
     caches.match(req).then(hit => hit || fetch(req))
   );

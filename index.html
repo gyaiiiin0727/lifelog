@@ -19201,7 +19201,8 @@ window.__qrSaving = false;
     isInstalled = inStandalone();
 
     if (isInstalled){
-      wrap.style.display = '';
+      // インストール済みの場合は表示しない（変な場所に「インストール済み」が出るのを防ぐ）
+      wrap.style.display = 'none';
       btn.disabled = true;
       btn.textContent = 'インストール済み';
       status.textContent = '';
