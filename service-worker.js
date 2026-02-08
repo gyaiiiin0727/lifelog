@@ -1,5 +1,5 @@
 // ===== lifelog service worker (cache-bump) =====
-const CACHE_NAME = 'lifelog-cache-v20260208100532';
+const CACHE_NAME = 'lifelog-cache-v20260208200300';
 const CORE_ASSETS = ['./','./index.html','./manifest.json'];
 
 self.addEventListener('install', (event) => {
@@ -16,6 +16,13 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
+
+  // APIリクエスト（外部ドメイン）はService Workerを通さない
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) {
+    return; // ブラウザのデフォルト処理に任せる
+  }
+
   if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
     event.respondWith(
       fetch(req).then(res => {
