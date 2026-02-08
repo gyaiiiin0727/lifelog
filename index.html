@@ -7679,49 +7679,151 @@ function renderMoneyLogs() {
 // 改善版ジャーナルログ表示
 function renderJournalLogs() {
     const container = document.getElementById('journalLogs');
-    if (!container) return;
-
-    // V3形式（journalEntriesV3）から読み込む
-    const entriesV3 = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
-    const keys = Object.keys(entriesV3).sort().reverse();
-    const journals = keys
-      .map(k => ({ dateKey: k, ...entriesV3[k] }))
-      .filter(e => (e.raw && e.raw.trim()) || e.summary || e.aiFeedback);
-
+    const journals = JSON.parse(localStorage.getItem('journals') || '[]');
+    
     if (journals.length === 0) {
         container.innerHTML = '<div class="log-item">記録がありません</div>';
         return;
     }
-
-    const recent = journals.slice(0, 15);
-    const escHtml = (s) => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-
+    
+    const recent = journals.slice(0, 10);
     container.innerHTML = recent.map(record => {
-        const dateStr = record.dateKey || record.date || '';
-        const moodEmojis = { 'great':'\u{1F60A}', 'good':'\u{1F642}', 'normal':'\u{1F610}', 'bad':'\u{1F614}', 'terrible':'\u{1F622}' };
-        const moodEmoji = moodEmojis[record.mood] || '\u{1F4DD}';
-        const snippet = (record.raw || '').trim().slice(0, 100);
-        const summary = record.summary || {};
-        const aiFeedback = record.aiFeedback || '';
-        const hitokoto = record.hitokoto || '';
-        const hasMust = !!(summary.must && summary.must !== '\u2014');
-        const hasWant = !!(summary.want && summary.want !== '\u2014');
-        const hasHitokoto = !!hitokoto;
-
-        return '<div class="journal-log-item">'
-          + '<div class="journal-log-header" onclick="toggleJournalDetail(\'journal-' + escHtml(dateStr) + '\')" style="cursor:pointer;">'
-          + '<div class="journal-date" style="font-weight:700;">' + moodEmoji + ' ' + escHtml(dateStr) + '</div>'
-          + '<span class="toggle-icon">\u25BC</span>'
-          + '</div>'
-          + '<div style="margin-top:6px;font-size:13px;color:#555;">' + escHtml(snippet) + (snippet.length>=100?'\u2026':'') + '</div>'
-          + (hasMust ? '<div style="margin-top:4px;font-size:13px;">\u2705 MUST: ' + escHtml(summary.must).substring(0,60) + '</div>' : '')
-          + (hasWant ? '<div style="margin-top:2px;font-size:13px;">\u{1F4A1} WANT: ' + escHtml(summary.want).substring(0,60) + '</div>' : '')
-          + (hasHitokoto ? '<div style="margin-top:6px;padding:8px;background:#f0f7ff;border-radius:8px;font-size:13px;color:#4a90e2;">\u{1F4AC} ' + escHtml(hitokoto).substring(0,80) + (hitokoto.length>80?'...':'') + '</div>' : '')
-          + '<div class="journal-detail" id="journal-' + escHtml(dateStr) + '" style="display:none;margin-top:10px;padding:10px;background:#fafafa;border-radius:8px;">'
-          + '<div style="white-space:pre-wrap;font-size:14px;line-height:1.6;">' + escHtml(record.raw || '') + '</div>'
-          + (aiFeedback ? '<div style="margin-top:10px;padding:10px;background:#fff;border:1px solid #e5e5e5;border-radius:8px;white-space:pre-wrap;font-size:13px;line-height:1.6;">' + escHtml(aiFeedback) + '</div>' : '')
-          + '</div>'
-          + '</div>';
+        const date = new Date(record.timestamp);
+        const dateStr = date.toLocaleDateString('ja-JP', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            weekday: 'short'
+        });
+        
+        // 気分の絵文字
+        const moodEmojis = {
+            'great': '😊',
+            'good': '🙂',
+            'normal': '😐',
+            'bad': '😔',
+            'terrible': '😢'
+        };
+        const moodEmoji = moodEmojis[record.mood] || '😐';
+        
+        // AI分析結果を使用（または空のオブジェクト）
+        const summary = record.aiAnalysis || { good: [], more: [], worry: [], task: [] };
+        
+        // 要約が空でないかチェック
+        const hasGood = summary.good && summary.good.length > 0;
+        const hasMore = summary.more && summary.more.length > 0;
+        const hasWorry = summary.worry && summary.worry.length > 0;
+        const hasTask = summary.task && summary.task.length > 0;
+        
+        const hasSummary = hasGood || hasMore || hasWorry || hasTask;
+        
+        return `
+            <div class="journal-log-item">
+                <div class="journal-log-header" onclick="toggleJournalDetail('journal-${record.id}')">
+                    <div class="journal-date">
+                        ${moodEmoji} ${dateStr}
+                    </div>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                
+                ${hasSummary ? `
+                <div class="journal-summary-preview">
+                    ${hasGood ? `
+                        <div class="summary-preview-item">
+                            <span class="summary-label-mini">😊 Good</span>
+                            <div class="summary-items">
+                                ${summary.good.slice(0, 2).map(item => 
+                                    `<div class="summary-bullet">• ${item}</div>`
+                                ).join('')}
+                                ${summary.good.length > 2 ? 
+                                    `<div class="summary-more">他${summary.good.length - 2}件</div>` 
+                                    : ''}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${hasWorry ? `
+                        <div class="summary-preview-item">
+                            <span class="summary-label-mini">🤔 悩み</span>
+                            <div class="summary-items">
+                                ${summary.worry.slice(0, 2).map(item => 
+                                    `<div class="summary-bullet">• ${item}</div>`
+                                ).join('')}
+                                ${summary.worry.length > 2 ? 
+                                    `<div class="summary-more">他${summary.worry.length - 2}件</div>` 
+                                    : ''}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${hasTask ? `
+                        <div class="summary-preview-item">
+                            <span class="summary-label-mini">✅ タスク</span>
+                            <div class="summary-items">
+                                ${summary.task.slice(0, 2).map(item => 
+                                    `<div class="summary-bullet">• ${item}</div>`
+                                ).join('')}
+                                ${summary.task.length > 2 ? 
+                                    `<div class="summary-more">他${summary.task.length - 2}件</div>` 
+                                    : ''}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+                ` : ''}
+                
+                <div id="journal-${record.id}" class="journal-detail">
+                    <div class="journal-full-text">
+                        <strong>📄 全文:</strong>
+                        <div style="white-space: pre-wrap; margin-top: 10px; line-height: 1.6;">
+                            ${record.text || ''}
+                        </div>
+                    </div>
+                    
+                    ${hasSummary ? `
+                    <div class="journal-full-summary">
+                        <strong>📝 詳細な要約:</strong>
+                        
+                        ${hasGood ? `
+                            <div class="summary-detail-section">
+                                <div class="summary-detail-label">😊 Good（良かったこと）</div>
+                                ${summary.good.map(item => 
+                                    `<div class="summary-detail-item">• ${item}</div>`
+                                ).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${hasMore ? `
+                            <div class="summary-detail-section">
+                                <div class="summary-detail-label">📈 More（もっと良くできること）</div>
+                                ${summary.more.map(item => 
+                                    `<div class="summary-detail-item">• ${item}</div>`
+                                ).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${hasWorry ? `
+                            <div class="summary-detail-section">
+                                <div class="summary-detail-label">🤔 悩んでいること</div>
+                                ${summary.worry.map(item => 
+                                    `<div class="summary-detail-item">• ${item}</div>`
+                                ).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${hasTask ? `
+                            <div class="summary-detail-section">
+                                <div class="summary-detail-label">✅ 明日のタスク</div>
+                                ${summary.task.map(item => 
+                                    `<div class="summary-detail-item">• ${item}</div>`
+                                ).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
     }).join('');
 }
 
@@ -11963,63 +12065,8 @@ try{
         }
         const data = await res.json();
         const out = (data && (data.result || data.analysis)) ? (data.result || data.analysis) : '';
-
-        // AIの結果をjournalEntriesV3に保存（MUST/WANTをホームに表示するため）
-        try {
-          const dateKey = document.getElementById('journalV2Date')?.value || (function(){
-            const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-          })();
-          const allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
-          const entry = allEntries[dateKey] || { date: dateKey };
-          entry.aiFeedback = out;
-          entry.aiFeedbackTone = tone;
-          // AIの結果からMUST/WANTを抽出してsummaryに保存
-          const mustMatch = out.match(/【明日のMUST】\n([\s\S]*?)(?=【|$)/);
-          const wantMatch = out.match(/【明日のWANT】\n([\s\S]*?)(?=【|$)/);
-          const eventsMatch = out.match(/【よかったこと】\n([\s\S]*?)(?=【|$)/);
-          const moreMatch = out.match(/【改善したいこと】\n([\s\S]*?)(?=【|$)/);
-          const feelMatch = out.match(/【気づいたこと】\n([\s\S]*?)(?=【|$)/);
-          const worryMatch = out.match(/【もやっとしたこと】\n([\s\S]*?)(?=【|$)/);
-          const hitokotoMatch = out.match(/【整える一言】\n([\s\S]*?)(?=【|$)/);
-          if (!entry.summary) entry.summary = {};
-          if (mustMatch) entry.summary.must = mustMatch[1].trim();
-          if (wantMatch) entry.summary.want = wantMatch[1].trim();
-          if (eventsMatch) entry.summary.events = eventsMatch[1].trim();
-          if (moreMatch) entry.summary.learnings = moreMatch[1].trim();
-          if (feelMatch) entry.summary.feelings = feelMatch[1].trim();
-          if (worryMatch) entry.summary.gratitude = worryMatch[1].trim();
-          if (hitokotoMatch) entry.hitokoto = hitokotoMatch[1].trim();
-          entry.updatedAt = new Date().toISOString();
-          allEntries[dateKey] = entry;
-          localStorage.setItem('journalEntriesV3', JSON.stringify(allEntries));
-          // ホームのタスクも更新
-          if (typeof renderHomeTodayTasks === 'function') renderHomeTodayTasks();
-          if (typeof window.renderHomeTodayTasks === 'function') window.renderHomeTodayTasks();
-          // ジャーナル履歴も更新
-          if (typeof renderJournalLogs === 'function') renderJournalLogs();
-          if (typeof window.renderJournalLogs === 'function') window.renderJournalLogs();
-        } catch(saveErr) { console.warn('AI結果の保存に失敗:', saveErr); }
-
-        // キャラクター情報を取得してフィードバック表示
-        const toneNames = { harsh: 'マネージャー', normal: 'タクヤ先輩', gentle: 'ハナさん' };
-        const toneColors = { harsh: '#e74c3c', normal: '#4a90e2', gentle: '#27ae60' };
-        const charName = toneNames[tone] || 'タクヤ先輩';
-        const charColor = toneColors[tone] || '#4a90e2';
-
-        // キャラクターの画像を取得
-        const selectedBtn = document.querySelector('.feedback-tone-btn.active, .feedback-tone-btn.selected');
-        const charImg = selectedBtn ? selectedBtn.querySelector('img')?.src : '';
-
         box.style.display = 'block';
-        if (out) {
-          box.innerHTML = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #eee;">'
-            + (charImg ? '<img src="' + charImg + '" style="width:40px;height:40px;border-radius:50%;object-fit:cover;" alt="' + charName + '">' : '')
-            + '<span style="font-weight:700;color:' + charColor + ';">' + charName + ' のフィードバック</span>'
-            + '</div>'
-            + '<div style="white-space:pre-wrap;line-height:1.7;">' + out.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>';
-        } else {
-          box.textContent = '（AIの返答が空でした）';
-        }
+        box.textContent = out || '（AIの返答が空でした）';
 
         btn.textContent = original;
         btn.disabled = false;
