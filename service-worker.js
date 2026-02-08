@@ -1,5 +1,5 @@
 // ===== lifelog service worker (cache-bump) =====
-const CACHE_NAME = 'lifelog-cache-v20260208094242';
+const CACHE_NAME = 'lifelog-cache-v20260208100532';
 const CORE_ASSETS = ['./','./index.html','./manifest.json'];
 
 self.addEventListener('install', (event) => {

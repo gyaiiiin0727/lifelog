@@ -5216,7 +5216,8 @@ body.qr-open .fab-container{ pointer-events:none !important; }
     </div>
 
 <div class="journal-ai-inline">
-<button class="journal-ai-big" id="journalAiBigBtn">✨ AIで整える</button>
+<button class="journal-ai-big" id="journalAiBigBtn" type="button">✨ AIで整える</button>
+<div id="journalAiFeedbackBox" class="journal-ai-result" style="display:none; margin-top:10px; padding:12px; border:1px solid #e5e5e5; border-radius:12px; background:#fff; white-space:pre-wrap; font-size:14px; line-height:1.6;"></div>
 </div>
 <div class="journal-simple-row">
 <button class="btn-secondary" id="journalV3ClearBtn">この日の内容をクリア</button>
@@ -10111,6 +10112,10 @@ function setupMoneyVoice(){
                 
                 const data = await response.json();
                 console.log('✅ AI Analysis result:', data);
+                // Worker互換: {result: '...'} を {analysis: '...'} に寄せる
+                if (data && data.result && !data.analysis) {
+                    data.analysis = data.result;
+                }
                 return data;
             } catch (error) {
                 console.error('❌ AI Analysis failed:', error);
@@ -12168,7 +12173,71 @@ try{
     });
 
     document.getElementById('journalV3ClearBtn')?.addEventListener('click', clearDay);
-    document.getElementById('journalAiBigBtn')?.addEventListener('click', ()=>{ document.getElementById('journalV3SummarizeBtn')?.click(); });
+    // AIで整える（ジャーナル本文をその場でAIに送ってフィードバック表示）
+    document.getElementById('journalAiBigBtn')?.addEventListener('click', async function(){
+      try{
+        const btn = document.getElementById('journalAiBigBtn');
+        const box = document.getElementById('journalAiFeedbackBox');
+        if (!btn || !box) return;
+
+        // 入力本文（既存の入力欄が複数あるため、見つかったものを優先）
+        const candidates = [
+          document.getElementById('journalV3Raw'),
+          document.getElementById('journalInput'),
+          document.getElementById('journalV3Text'),
+        ].filter(Boolean);
+        const text = (candidates[0]?.value || '').trim();
+        if (!text){
+          box.style.display = 'block';
+          box.textContent = '文章が空です。先にジャーナルを書いてから押してね。';
+          return;
+        }
+
+        // トーン取得（フィードバック担当の選択状態から推定）
+        let tone = 'normal';
+        const selected = document.querySelector('#journal .feedback-tone-btn.selected') || document.querySelector('#journal .feedback-tone-btn.active');
+        if (selected){
+          const t = selected.getAttribute('data-tone') || selected.getAttribute('data-type') || '';
+          if (t) tone = t;
+        } else if (window.journalFeedbackTone){
+          tone = window.journalFeedbackTone;
+        }
+
+        btn.disabled = true;
+        const original = btn.textContent;
+        btn.textContent = '🤖 AI分析中...';
+
+        // Worker側は /api/analyze を想定（なければ root でも受けられるよう、まず /api/analyze を叩く）
+        const endpoint = `${BACKEND_URL}/api/analyze`;
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ text, tone, type: 'journal' })
+        });
+
+        if (!res.ok){
+          throw new Error('HTTP ' + res.status);
+        }
+        const data = await res.json();
+        const out = (data && (data.result || data.analysis)) ? (data.result || data.analysis) : '';
+        box.style.display = 'block';
+        box.textContent = out || '（AIの返答が空でした）';
+
+        btn.textContent = original;
+        btn.disabled = false;
+      }catch(e){
+        const box = document.getElementById('journalAiFeedbackBox');
+        if (box){
+          box.style.display = 'block';
+          box.textContent = 'AI接続に失敗しました: ' + (e && e.message ? e.message : e);
+        }
+        const btn = document.getElementById('journalAiBigBtn');
+        if (btn){
+          btn.disabled = false;
+          btn.textContent = '✨ AIで整える';
+        }
+      }
+    });
 
     // mood bind
     document.querySelectorAll('#journalMoodWrap .mood-card').forEach(card=>{
@@ -18109,6 +18178,12 @@ if ("serviceWorker" in navigator) {
   .fab-sub { padding: 10px 16px; }
   .fab-sub .fab-label { font-size: 13px; }
 }
+
+
+/* ===== Fix: AIボタンが押せない対策（重なり防止） ===== */
+.journal-ai-inline{ position: relative; z-index: 5; }
+.journal-ai-big{ position: relative; z-index: 6; pointer-events: auto; }
+
 </style>
 
 <div class="fab-overlay" id="fabOverlay"></div>
