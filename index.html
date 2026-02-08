@@ -4808,6 +4808,24 @@ body.qr-open .fab-overlay{ display:none !important; pointer-events:none !importa
 body.qr-open .fab-container{ pointer-events:none !important; }
 </style>
 
+
+<script>
+// ===== Backend URL bootstrap (AI Worker) =====
+// localStorage 'journalAiEndpoint' があればそれを優先。なければ既定のWorker URLを使用。
+(function(){
+  try {
+    var saved = localStorage.getItem('journalAiEndpoint');
+    var url = (saved && saved.trim()) ? saved.trim() : 'https://lifelog-ai.little-limit-621c.workers.dev';
+    window.BACKEND_URL = url;
+    // 互換用（既存コードが BACKEND_URL 変数を参照する場合）
+    window.__BACKEND_URL__ = url;
+  } catch(e) {
+    window.BACKEND_URL = 'https://lifelog-ai.little-limit-621c.workers.dev';
+    window.__BACKEND_URL__ = 'https://lifelog-ai.little-limit-621c.workers.dev';
+  }
+})();
+</script>
+
 </head>
 <body>
 <div class="container">
@@ -10056,7 +10074,7 @@ function setupMoneyVoice(){
         // AI Backend Integration
         // ================================
         
-        var BACKEND_URL = 'https://lifelog-backend.vercel.app';
+        var BACKEND_URL = (window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-backend.vercel.app');
         
         // バックエンドAPI接続テスト
         async function testBackendAPI() {
@@ -18091,28 +18109,6 @@ if ("serviceWorker" in navigator) {
   .fab-sub { padding: 10px 16px; }
   .fab-sub .fab-label { font-size: 13px; }
 }
-
-
-/* ===== Fix: ジャーナルのキャラ（フィードバック担当）をスマホでも横3並び固定 ===== */
-@media (max-width: 760px){
-  #journal .feedback-tone-options{
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 10px !important;
-    justify-content: initial !important;
-    flex-wrap: initial !important;
-  }
-  #journal .feedback-tone-btn{
-    width: 100% !important;
-    min-width: 0 !important;
-    padding: 10px !important;
-  }
-  #journal .feedback-tone-btn img{
-    max-width: 52px !important;
-    height: auto !important;
-  }
-}
-
 </style>
 
 <div class="fab-overlay" id="fabOverlay"></div>
@@ -19201,8 +19197,7 @@ window.__qrSaving = false;
     isInstalled = inStandalone();
 
     if (isInstalled){
-      // インストール済みの場合は表示しない（変な場所に「インストール済み」が出るのを防ぐ）
-      wrap.style.display = 'none';
+      wrap.style.display = '';
       btn.disabled = true;
       btn.textContent = 'インストール済み';
       status.textContent = '';
@@ -19359,31 +19354,6 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
-</script>
-
-
-<script>
-// ===== SW cleanup & register (prefer service-worker.js) =====
-(function(){
-  if (!('serviceWorker' in navigator)) return;
-
-  window.addEventListener('load', async function(){
-    try {
-      const regs = await navigator.serviceWorker.getRegistrations();
-      // 古い sw.js が登録されていたら解除
-      await Promise.all(regs.map(async (reg) => {
-        const url = (reg.active && reg.active.scriptURL) || (reg.installing && reg.installing.scriptURL) || (reg.waiting && reg.waiting.scriptURL) || '';
-        if (url.endsWith('/sw.js') || url.includes('/sw.js?')) {
-          await reg.unregister();
-        }
-      }));
-      // service-worker.js を登録
-      await navigator.serviceWorker.register('./service-worker.js');
-    } catch (e) {
-      console.warn('SW register/cleanup failed:', e);
-    }
-  });
-})();
 </script>
 
 </body>
