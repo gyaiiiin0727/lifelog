@@ -11816,6 +11816,11 @@ try{
     setStatus('✓ 保存しました', false);
     renderTodaySummary();
     renderLog();
+    // カレンダーとジャーナル履歴も更新
+    if (typeof renderCalendar === 'function') renderCalendar();
+    else if (typeof window.renderCalendar === 'function') window.renderCalendar();
+    if (typeof renderJournalLogs === 'function') renderJournalLogs();
+    else if (typeof window.renderJournalLogs === 'function') window.renderJournalLogs();
   }
   function clearDay(){
     if(!confirm('この日の内容をクリアしますか？')) return;
@@ -11986,6 +11991,10 @@ try{
           })();
           const allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
           const entry = allEntries[dateKey] || { date: dateKey };
+          // テキストも一緒に保存（未保存の場合に備えて）
+          if (!entry.raw || entry.raw.trim() === '') {
+            entry.raw = text;
+          }
           entry.aiFeedback = out;
           entry.aiFeedbackTone = tone;
           // AIの結果からMUST/WANTを抽出してsummaryに保存
@@ -12010,9 +12019,14 @@ try{
           // ホームのタスクも更新
           if (typeof renderHomeTodayTasks === 'function') renderHomeTodayTasks();
           if (typeof window.renderHomeTodayTasks === 'function') window.renderHomeTodayTasks();
-          // ジャーナル履歴も更新
+          // ジャーナル履歴・カレンダーも更新
           if (typeof renderJournalLogs === 'function') renderJournalLogs();
-          if (typeof window.renderJournalLogs === 'function') window.renderJournalLogs();
+          else if (typeof window.renderJournalLogs === 'function') window.renderJournalLogs();
+          if (typeof renderCalendar === 'function') renderCalendar();
+          else if (typeof window.renderCalendar === 'function') window.renderCalendar();
+          // V3のrenderLogも更新
+          try { renderLog(); } catch(_){}
+          try { renderTodaySummary(); } catch(_){}
         } catch(saveErr) { console.warn('AI結果の保存に失敗:', saveErr); }
 
         // キャラクター情報を取得してフィードバック表示
