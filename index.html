@@ -22,7 +22,6 @@
 /* removed duplicate renderDonutChart (dedup) */
 
 
-
 // ===== 目標追加モーダル =====
 function openGoalAddModal(){
   const modal = document.getElementById('goalAddModal');
@@ -2700,7 +2699,6 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 }
 
 
-
 /* ===== v37.9 UX: mood under date + big AI button under content ===== */
 #journal .mood-selector{ margin: 12px 0 14px; border:1px solid #e6e6e6; border-radius:14px; padding:14px; background:#fff; }
 #journal .mood-selector-title{ font-weight:900; text-align:center; margin-bottom:12px; }
@@ -2806,7 +2804,6 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
   cursor: pointer;
 }
 .save-btn-big:active{ transform: scale(0.99); }
-
 
 
 /* お金レポート：円グラフの凡例（スマホでも崩れにくい：グラフの下に固定） */
@@ -2961,7 +2958,6 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
   text-align:right;
   color:#666;
 }
-
 
 
 /* Money report bar chart styles */
@@ -3663,136 +3659,6 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 }
 
 
-/* ===== v40.20 クイック記録: コンパクト版 ===== */
-
-/* セクション全体を小さく */
-#home .dashboard-quick,
-.dashboard-quick {
-  background: #fff !important;
-  padding: 12px 14px !important;
-  margin-bottom: 14px !important;
-  min-height: auto !important;
-}
-
-/* ヘッダー：横並び＆コンパクト */
-#home .dashboard-quick .quick-header,
-.dashboard-quick .quick-header {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 10px !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  background: transparent !important;
-}
-
-/* タイトル小さく */
-#home .dashboard-quick .quick-header h3,
-.dashboard-quick .quick-header h3 {
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  margin: 0 !important;
-  color: #333 !important;
-}
-
-/* 切り替えボタン：コンパクト */
-#home .dashboard-quick .quick-mode-switch,
-.dashboard-quick .quick-mode-switch {
-  background: #f0f0f0 !important;
-  padding: 3px !important;
-  border-radius: 6px !important;
-  box-shadow: none !important;
-  gap: 2px !important;
-}
-
-#home .dashboard-quick .quick-mode-switch .seg-btn,
-.dashboard-quick .quick-mode-switch .seg-btn {
-  min-width: 60px !important;
-  padding: 6px 12px !important;
-  font-size: 12px !important;
-  font-weight: 700 !important;
-  border: none !important;
-  border-radius: 4px !important;
-  background: transparent !important;
-  color: #666 !important;
-}
-
-#home .dashboard-quick .quick-mode-switch .seg-btn.active,
-.dashboard-quick .quick-mode-switch .seg-btn.active {
-  background: #111 !important;
-  color: #fff !important;
-}
-
-/* カテゴリグリッド非表示（モーダルで選ぶので不要） */
-#home .dashboard-quick .quick-grid,
-.dashboard-quick .quick-grid {
-  display: none !important;
-}
-
-/* スマホ */
-@media (max-width: 480px) {
-  #home .dashboard-quick,
-  .dashboard-quick {
-    padding: 10px 12px !important;
-  }
-  
-  #home .dashboard-quick .quick-mode-switch .seg-btn,
-  .dashboard-quick .quick-mode-switch .seg-btn {
-    min-width: 54px !important;
-    padding: 5px 10px !important;
-    font-size: 11px !important;
-  }
-}
-
-
-/* ===== v40.21 Quick: ヒーロー化（縦並び＋目立たせ） ===== */
-#home .dashboard-quick,
-.dashboard-quick {
-  background: linear-gradient(180deg, #111 0%, #2a2a2a 100%) !important;
-  color: #fff !important;
-  padding: 14px 16px !important;
-  border-radius: 14px !important;
-  margin-bottom: 16px !important;
-}
-
-#home .dashboard-quick .quick-header,
-.dashboard-quick .quick-header {
-  display: block !important;
-  text-align: center !important;
-  margin-bottom: 8px !important;
-  background: transparent !important;
-}
-
-#home .dashboard-quick .quick-header h3,
-.dashboard-quick .quick-header h3 {
-  font-size: 15px !important;
-  font-weight: 900 !important;
-  color: #fff !important;
-  letter-spacing: .04em !important;
-  margin: 0 !important;
-}
-
-#home .dashboard-quick .quick-mode-switch,
-.dashboard-quick .quick-mode-switch {
-  margin: 0 auto !important;
-  background: #000 !important;
-  padding: 4px !important;
-  border-radius: 10px !important;
-  box-shadow: none !important;
-}
-
-#home .dashboard-quick .quick-mode-switch .seg-btn,
-.dashboard-quick .quick-mode-switch .seg-btn {
-  color: #bbb !important;
-}
-
-#home .dashboard-quick .quick-mode-switch .seg-btn.active,
-.dashboard-quick .quick-mode-switch .seg-btn.active {
-  background: #fff !important;
-  color: #111 !important;
-  border-radius: 8px !important;
-}
 
 
 /* ===== v40.21 Quick: Hero化（目立たせる・縦並び） ===== */
@@ -5507,7 +5373,6 @@ function escapeHtml(str) {
 }
 
 
-
 // ✅ 月キー生成（ローカル時間ベース）
 // iOS/Androidで toISOString() を使うと、タイムゾーン差で「月が1つ戻る」ことがあり、
 // 例: 2026-01-01 00:00(JST) -> 2025-12-31T15:00Z -> '2025-12' となって月移動が2ヶ月飛ぶ。
@@ -5563,8 +5428,6 @@ const Storage = {
     }
   }
 };
-
-
 
 
         // データ格納
@@ -9900,22 +9763,6 @@ function setupMoneyVoice(){
 
   const normalizeDigits = (s)=> String(s||'').replace(/[０-９]/g, d => String.fromCharCode(d.charCodeAt(0) - 0xFEE0));
 
-  const parseMemoAndAmount = (raw)=>{
-    const t = normalizeDigits(raw).trim();
-    const amtMatches = [...t.matchAll(/(\d{1,3}(?:,\d{3})+|\d+)\s*(?:円|えん|¥)?/g)];
-    let amount = '';
-    if(amtMatches.length){
-      amount = amtMatches[amtMatches.length-1][1].replace(/,/g,'');
-    }
-    let memo = t;
-    if(amount){
-      const lastFull = amtMatches[amtMatches.length-1][0];
-      memo = memo.replace(lastFull, ' ').replace(/\s+/g,' ').trim();
-      memo = memo.replace(/(円|えん|¥)\s*$/,'').trim();
-    }
-    return { memo, amount, raw: t };
-  };
-
   btn.addEventListener('click', ()=>{
     btn.disabled = true;
     if(status) status.textContent = '🎙️ 聞き取り中...';
@@ -10534,8 +10381,6 @@ function selectActivityCategory(category) {
     }
 }
 window.selectActivityCategory = selectActivityCategory;
-
-
 
 
 /* removed duplicate renderDonutChart (dedup) */
@@ -12435,7 +12280,6 @@ textarea { width: 100%; }
 #journal .calendar-header { display: none !important; } /* legacy */
 
 
-
 /* ===== v39.7 Fix: タブ下の余白を詰める ===== */
 
 /* tab-content の上余白を小さく */
@@ -13099,7 +12943,7 @@ textarea { width: 100%; }
     }
   }catch(e){}
 })();
-</script><script>\n/* ===== v39.5 Money Voice One-shot (memo+amount) ===== */\n(function(){\n  'use strict';\n\n  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;\n  if(!SR){\n    console.warn('SpeechRecognition not supported');\n    return;\n  }\n\n  let recognition = null;\n  let isListening = false;\n  let autoStopTimer = null;\n\n  const $ = (id)=>document.getElementById(id);\n\n  function setStatus(msg, isError){\n    const el = $('moneyVoiceStatus');\n    if(!el) return;\n    el.textContent = msg || '';\n    el.style.color = isError ? '#b00020' : '#666';\n  }\n\n  function normalizeTranscript(t){\n    return (t||'')\n      .replace(/[\u3000\t\n\r]+/g,' ')\n      .replace(/\s+/g,' ')\n      .trim();\n  }\n\n  function parseMemoAmount(t){\n    // 例: 「ランチ代 800円」→ memo=ランチ代, amount=800\n    const s = normalizeTranscript(t);\n    // 数字（カンマあり）を拾う\n    const m = s.match(/(\d{1,3}(?:,\d{3})*|\d+)(?:\s*円)?/);\n    let amount = null;\n    if(m){\n      amount = parseInt(m[1].replace(/,/g,''),10);\n    }\n    // 金額部分と「円」を除去してメモ\n    let memo = s;\n    if(m){\n      memo = memo.replace(m[0],' ').replace(/円/g,' ');\n    }\n    memo = memo.replace(/\s+/g,' ').trim();\n    // よくある言い回しの除去\n    memo = memo.replace(/^(メモ|内容|項目)\s*/,'');\n    return { memo, amount, raw:s };\n  }\n\n  function updateBtn(){\n    const btn = $('moneyVoiceBtn');\n    if(!btn) return;\n    if(isListening){\n      btn.classList.add('listening');\n      btn.textContent = '🎙️ 聞き取り中…（数秒で自動停止）';\n    }else{\n      btn.classList.remove('listening');\n      btn.textContent = '🎤 音声入力（メモ+金額）';\n    }\n  }\n\n  function stop(fromError){\n    if(autoStopTimer){ clearTimeout(autoStopTimer); autoStopTimer=null; }\n    if(recognition){\n      try{ recognition.stop(); }catch(e){}\n      recognition = null;\n    }\n    isListening = false;\n    updateBtn();\n    if(fromError) setStatus('❌ 音声入力に失敗しました（マイク許可/通信）', true);\n  }\n\n  function start(){\n    if(isListening) return;\n\n    const btn = $('moneyVoiceBtn');\n    const memoEl = $('moneyInput');\n    const amtEl  = $('moneyAmount');\n    if(!btn || !memoEl || !amtEl){\n      console.warn('money elements missing');\n      return;\n    }\n\n    recognition = new SR();\n    recognition.lang = 'ja-JP';\n    recognition.interimResults = true;\n    recognition.continuous = false;\n    recognition.maxAlternatives = 1;\n\n    isListening = true;\n    updateBtn();\n    setStatus('🎤 例:「ランチ代 800円」', false);\n\n    let finalTranscript = '';\n\n    recognition.onresult = (event)=>{\n      let interim = '';\n      for(let i=event.resultIndex;i<event.results.length;i++){\n        const res = event.results[i];\n        const t = res[0].transcript || '';\n        if(res.isFinal) finalTranscript += t;\n        else interim += t;\n      }\n      const preview = normalizeTranscript(finalTranscript + interim);\n      if(preview) setStatus('🎙️ ' + preview, false);\n    };\n\n    recognition.onerror = (e)=>{\n      console.warn('money voice error:', e.error);\n      stop(true);\n      if(e.error === 'not-allowed' || e.error === 'service-not-allowed'){\n        alert('マイクの使用が許可されていません（ブラウザ設定を確認してください）');\n      }\n    };\n\n    recognition.onend = ()=>{\n      // auto-stop or natural end\n      const text = normalizeTranscript(finalTranscript);\n      stop(false);\n      if(!text){\n        setStatus('（聞き取れませんでした）', true);\n        return;\n      }\n      const {memo, amount} = parseMemoAmount(text);\n      if(memo) memoEl.value = memo;\n      if(amount!=null && !Number.isNaN(amount)) amtEl.value = String(amount);\n\n      // 自動でカテゴリ推定がある場合は呼ぶ（既存関数があれば）\n      if(typeof window.autoSelectMoneyCategory === 'function'){\n        try{ window.autoSelectMoneyCategory(memoEl.value); }catch(_){}\n      }\n\n      // 「追加」ボタンを自動クリック（ユーザーの希望に近い）\n      const addBtn = document.querySelector('#money .add-button');\n      if(addBtn){\n        // 金額が取れた時だけ自動追加\n        if(amount!=null && !Number.isNaN(amount)) addBtn.click();\n      }\n\n      if(amount==null || Number.isNaN(amount)){\n        setStatus('✅ メモを入力しました（数字が見つからなかったので金額は空です）', false);\n      }else{\n        setStatus('✅ 反映しました（必要なら修正して保存してください）', false);\n      }\n    };\n\n    try{\n      recognition.start();\n    }catch(e){\n      console.error('recognition.start failed', e);\n      stop(true);\n      return;\n    }\n\n    // 数秒で自動停止（ワンショット）\n    autoStopTimer = setTimeout(()=>{\n      if(isListening) stop(false);\n    }, 4200);\n  }\n\n  function toggle(){\n    if(isListening) stop(false);\n    else start();\n  }\n\n  document.addEventListener('DOMContentLoaded', ()=>{\n    const btn = $('moneyVoiceBtn');\n    if(!btn) return;\n    // 既存リスナー競合を避ける\n    const fresh = btn.cloneNode(true);\n    btn.parentNode.replaceChild(fresh, btn);\n    fresh.addEventListener('click', (e)=>{\n      e.preventDefault();\n      toggle();\n    });\n  });\n\n  window.startMoneyVoice = start;\n  window.stopMoneyVoice = stop;\n})();\n</script><!-- ===== v39.6.1 Hotfix: Money voice binding robust ===== -->
+</script>
 <script>
 (function(){
   'use strict';
@@ -13952,19 +13796,6 @@ document.addEventListener('DOMContentLoaded', function(){
         if (!el) return;
         el.textContent = msg || '';
         el.style.color = isError ? '#c00' : '#666';
-    }
-
-    function parseMemoAndAmount(text) {
-        const t = (text || '').trim();
-        const match = t.match(/(\d{1,3}(?:,\d{3})*|\d+)\s*(?:円|えん)?/);
-        let amount = '';
-        let memo = t;
-
-        if (match) {
-            amount = match[1].replace(/,/g, '');
-            memo = t.replace(match[0], '').replace(/円|えん/g, '').trim();
-        }
-        return { memo, amount };
     }
 
     // ========== 保存処理 ==========
@@ -15535,8 +15366,6 @@ const modal = $('qrModal');
 </style>
 
 
-
-
 <script>
 /* ===== v40.1 AIタブ & タブ横スクロール（修正版） ===== */
 (function(){
@@ -16256,504 +16085,6 @@ const modal = $('qrModal');
 
 
 <script>
-/* ===== v40.3 CSV Export (試作版): 行動 / お金 / ジャーナル ===== */
-(function(){
-  'use strict';
-
-  // Excelで文字化けしにくいようにBOM付きUTF-8
-  function downloadTextFile(filename, text, mime) {
-    try {
-      var bom = '\ufeff';
-      var blob = new Blob([bom + text], { type: (mime || 'text/plain') + ';charset=utf-8' });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    } catch(e) {
-      console.error('download failed', e);
-      alert('❌ ダウンロードに失敗しました');
-    }
-  }
-
-  function csvEscape(value) {
-    if (value === null || value === undefined) return '';
-    var s = String(value);
-    // 改行はCSVとしてはOK。Excel対策でCRLFへ
-    s = s.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '\r\n');
-    if (/[",\r\n]/.test(s)) {
-      s = '"' + s.replace(/"/g, '""') + '"';
-    }
-    return s;
-  }
-
-  function toCSV(headers, rows) {
-    var lines = [];
-    lines.push(headers.map(csvEscape).join(','));
-    rows.forEach(function(r){
-      lines.push(r.map(csvEscape).join(','));
-    });
-    return lines.join('\r\n');
-  }
-
-  function ymdFromDate(d) {
-    var y = d.getFullYear();
-    var m = String(d.getMonth() + 1).padStart(2,'0');
-    var day = String(d.getDate()).padStart(2,'0');
-    return y + '-' + m + '-' + day;
-  }
-
-  function readJSON(key, fallback) {
-    try {
-      var raw = localStorage.getItem(key);
-      if (!raw) return fallback;
-      return JSON.parse(raw);
-    } catch(e) {
-      return fallback;
-    }
-  }
-
-  // ===== CSV: 行動 =====
-  window.downloadActivitiesCSV = function(){
-    var activities = readJSON('activities', []);
-    if (!Array.isArray(activities)) activities = [];
-
-    var headers = [
-      'id','date','time','startTime','endTime',
-      'category','categoryEmoji','text','durationMinutes','timestamp'
-    ];
-
-    var rows = activities.map(function(a){
-      var st = a.startTime || a.timestamp || '';
-      var dt = st ? new Date(st) : null;
-      var date = dt ? ymdFromDate(dt) : '';
-      var time = dt ? String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0') : '';
-      return [
-        a.id || '',
-        date,
-        time,
-        a.startTime || '',
-        a.endTime || '',
-        a.category || '',
-        a.categoryEmoji || '',
-        a.text || '',
-        (a.durationMinutes !== undefined ? a.durationMinutes : ''),
-        a.timestamp || ''
-      ];
-    });
-
-    var csv = toCSV(headers, rows);
-    var fn = 'lifelog-activities-' + ymdFromDate(new Date()) + '.csv';
-    downloadTextFile(fn, csv, 'text/csv');
-    alert('✅ 行動CSVをダウンロードしました');
-  };
-
-  // ===== CSV: お金 =====
-  window.downloadMoneyCSV = function(){
-    var money = readJSON('moneyRecords', []);
-    if (!Array.isArray(money)) money = [];
-
-    var headers = [
-      'id','date','time','timestamp',
-      'type','category','categoryEmoji','text','amount'
-    ];
-
-    var rows = money.map(function(m){
-      var ts = m.timestamp || '';
-      var dt = ts ? new Date(ts) : null;
-      var date = dt ? ymdFromDate(dt) : '';
-      var time = dt ? String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0') : '';
-      var amt = (m.amount !== undefined ? Number(m.amount) : '');
-      return [
-        m.id || '',
-        date,
-        time,
-        ts,
-        m.type || ((amt !== '' && !Number.isNaN(amt) && amt < 0) ? 'expense' : 'income'),
-        m.category || '',
-        m.categoryEmoji || '',
-        m.text || '',
-        (amt === '' || Number.isNaN(amt)) ? '' : amt
-      ];
-    });
-
-    var csv = toCSV(headers, rows);
-    var fn = 'lifelog-money-' + ymdFromDate(new Date()) + '.csv';
-    downloadTextFile(fn, csv, 'text/csv');
-    alert('✅ お金CSVをダウンロードしました');
-  };
-
-  // ===== CSV: ジャーナル =====
-  window.downloadJournalCSV = function(){
-    var journal = readJSON('journalEntriesV3', {});
-    if (!journal || typeof journal !== 'object' || Array.isArray(journal)) journal = {};
-
-    var headers = ['date','raw'];
-    var keys = Object.keys(journal).sort();
-    var rows = keys.map(function(k){
-      var entry = journal[k] || {};
-      return [k, entry.raw || ''];
-    });
-
-    var csv = toCSV(headers, rows);
-    var fn = 'lifelog-journal-' + ymdFromDate(new Date()) + '.csv';
-    downloadTextFile(fn, csv, 'text/csv');
-    alert('✅ ジャーナルCSVをダウンロードしました');
-  };
-
-  // ===== AIタブのCSVボタンを有効化（試作） =====
-  function bindCSVButtons(){
-    var ai = document.getElementById('ai');
-    if (!ai) return;
-
-    var btnAct = ai.querySelector('.data-btn[data-premium="csv-activity"]');
-    var btnMoney = ai.querySelector('.data-btn[data-premium="csv-money"]');
-    var btnJournal = ai.querySelector('.data-btn[data-premium="csv-journal"]');
-
-    function enable(btn, handler){
-      if (!btn) return;
-      btn.classList.remove('disabled');
-      var clone = btn.cloneNode(true);
-      btn.parentNode.replaceChild(clone, btn);
-      clone.addEventListener('click', function(e){
-        e.preventDefault();
-        handler();
-      });
-    }
-
-    enable(btnAct, window.downloadActivitiesCSV);
-    enable(btnMoney, window.downloadMoneyCSV);
-    enable(btnJournal, window.downloadJournalCSV);
-  }
-
-  function init(){
-    bindCSVButtons();
-    setTimeout(bindCSVButtons, 300);
-    setTimeout(bindCSVButtons, 800);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  console.log('✅ v40.3 CSV Export (試作版) を適用しました');
-})();
-</script>
-
-
-<script>
-/* ===== v40.4 CSV Export: 期間指定（今月/先月/全期間） ===== */
-(function(){
-  'use strict';
-
-  function startOfMonth(d){
-    return new Date(d.getFullYear(), d.getMonth(), 1, 0,0,0,0);
-  }
-  function startOfNextMonth(d){
-    return new Date(d.getFullYear(), d.getMonth()+1, 1, 0,0,0,0);
-  }
-  function startOfPrevMonth(d){
-    return new Date(d.getFullYear(), d.getMonth()-1, 1, 0,0,0,0);
-  }
-
-  function getRange(rangeKey){
-    var now = new Date();
-    if (rangeKey === 'thisMonth') {
-      return { from: startOfMonth(now), to: startOfNextMonth(now), label: 'this-month' };
-    }
-    if (rangeKey === 'lastMonth') {
-      var from = startOfPrevMonth(now);
-      var to = startOfMonth(now);
-      return { from: from, to: to, label: 'last-month' };
-    }
-    return { from: null, to: null, label: 'all' };
-  }
-
-  function inRange(dt, range){
-    if (!dt || !(dt instanceof Date) || isNaN(dt.getTime())) return false;
-    if (!range || (!range.from && !range.to)) return true;
-    if (range.from && dt < range.from) return false;
-    if (range.to && dt >= range.to) return false;
-    return true;
-  }
-
-  // ===== 期間選択モーダル =====
-  function ensureModal(){
-    if (document.getElementById('csvRangeModal')) return;
-
-    var modal = document.createElement('div');
-    modal.id = 'csvRangeModal';
-    modal.style.cssText = [
-      'position:fixed','inset:0','background:rgba(0,0,0,.35)','display:none',
-      'align-items:flex-end','justify-content:center','z-index:9999','padding:16px'
-    ].join(';');
-
-    modal.innerHTML = '\
-      <div style="width:100%;max-width:520px;background:#fff;border-radius:16px;border:2px solid #111;overflow:hidden;">\
-        <div style="padding:14px 16px;border-bottom:1px solid #eee;font-weight:800;">📅 期間を選択</div>\
-        <div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px;">\
-          <button type="button" data-range="thisMonth" style="padding:12px 14px;border:2px solid #111;border-radius:12px;background:#fff;font-weight:800;">今月</button>\
-          <button type="button" data-range="lastMonth" style="padding:12px 14px;border:2px solid #111;border-radius:12px;background:#fff;font-weight:800;">先月</button>\
-          <button type="button" data-range="all" style="padding:12px 14px;border:2px solid #111;border-radius:12px;background:#fff;font-weight:800;">全期間</button>\
-          <button type="button" data-range="cancel" style="padding:12px 14px;border:2px solid #ddd;border-radius:12px;background:#f7f7f7;font-weight:800;">キャンセル</button>\
-        </div>\
-      </div>';
-
-    modal.addEventListener('click', function(e){
-      if (e.target === modal) hideModal();
-    });
-
-    document.body.appendChild(modal);
-  }
-
-  var currentResolve = null;
-  function showModal(){
-    ensureModal();
-    var modal = document.getElementById('csvRangeModal');
-    modal.style.display = 'flex';
-
-    // click handlers
-    modal.querySelectorAll('button[data-range]').forEach(function(btn){
-      btn.onclick = function(){
-        var key = btn.getAttribute('data-range');
-        hideModal();
-        if (!currentResolve) return;
-        if (key === 'cancel') currentResolve(null);
-        else currentResolve(key);
-        currentResolve = null;
-      };
-    });
-  }
-
-  function hideModal(){
-    var modal = document.getElementById('csvRangeModal');
-    if (modal) modal.style.display = 'none';
-  }
-
-  function pickRange(){
-    return new Promise(function(resolve){
-      currentResolve = resolve;
-      showModal();
-    });
-  }
-
-  // ===== CSV生成関数の上書き（期間対応） =====
-  function csvEscape(value) {
-    if (value === null || value === undefined) return '';
-    var s = String(value);
-    s = s.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '\r\n');
-    if (/[",\r\n]/.test(s)) {
-      s = '"' + s.replace(/"/g, '""') + '"';
-    }
-    return s;
-  }
-
-  function toCSV(headers, rows) {
-    var lines = [];
-    lines.push(headers.map(csvEscape).join(','));
-    rows.forEach(function(r){
-      lines.push(r.map(csvEscape).join(','));
-    });
-    return lines.join('\r\n');
-  }
-
-  function ymd(d){
-    var y = d.getFullYear();
-    var m = String(d.getMonth()+1).padStart(2,'0');
-    var day = String(d.getDate()).padStart(2,'0');
-    return y + '-' + m + '-' + day;
-  }
-
-  function downloadTextFile(filename, text, mime) {
-    try {
-      var bom = '\ufeff';
-      var blob = new Blob([bom + text], { type: (mime || 'text/plain') + ';charset=utf-8' });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    } catch(e) {
-      console.error('download failed', e);
-      alert('❌ ダウンロードに失敗しました');
-    }
-  }
-
-  function readJSON(key, fallback) {
-    try {
-      var raw = localStorage.getItem(key);
-      if (!raw) return fallback;
-      return JSON.parse(raw);
-    } catch(e) {
-      return fallback;
-    }
-  }
-
-  // 行動CSV（期間対応）
-  window.downloadActivitiesCSV = function(rangeKey){
-    var range = getRange(rangeKey || 'all');
-    var activities = readJSON('activities', []);
-    if (!Array.isArray(activities)) activities = [];
-
-    var headers = [
-      'id','date','time','startTime','endTime',
-      'category','categoryEmoji','text','durationMinutes','timestamp'
-    ];
-
-    var rows = activities
-      .filter(function(a){
-        var st = a.startTime || a.timestamp;
-        if (!st) return false;
-        return inRange(new Date(st), range);
-      })
-      .map(function(a){
-        var st = a.startTime || a.timestamp || '';
-        var dt = st ? new Date(st) : null;
-        var date = dt ? ymd(dt) : '';
-        var time = dt ? String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0') : '';
-        return [
-          a.id || '',
-          date,
-          time,
-          a.startTime || '',
-          a.endTime || '',
-          a.category || '',
-          a.categoryEmoji || '',
-          a.text || '',
-          (a.durationMinutes !== undefined ? a.durationMinutes : ''),
-          a.timestamp || ''
-        ];
-      });
-
-    var csv = toCSV(headers, rows);
-    var fn = 'lifelog-activities-' + range.label + '-' + ymd(new Date()) + '.csv';
-    downloadTextFile(fn, csv, 'text/csv');
-    alert('✅ 行動CSVをダウンロードしました（' + (rangeKey==='thisMonth'?'今月':rangeKey==='lastMonth'?'先月':'全期間') + '）');
-  };
-
-  // お金CSV（期間対応）
-  window.downloadMoneyCSV = function(rangeKey){
-    var range = getRange(rangeKey || 'all');
-    var money = readJSON('moneyRecords', []);
-    if (!Array.isArray(money)) money = [];
-
-    var headers = [
-      'id','date','time','timestamp',
-      'type','category','categoryEmoji','text','amount'
-    ];
-
-    var rows = money
-      .filter(function(m){
-        if (!m.timestamp) return false;
-        return inRange(new Date(m.timestamp), range);
-      })
-      .map(function(m){
-        var ts = m.timestamp || '';
-        var dt = ts ? new Date(ts) : null;
-        var date = dt ? ymd(dt) : '';
-        var time = dt ? String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0') : '';
-        var amt = (m.amount !== undefined ? Number(m.amount) : '');
-        return [
-          m.id || '',
-          date,
-          time,
-          ts,
-          m.type || ((amt !== '' && !Number.isNaN(amt) && amt < 0) ? 'expense' : 'income'),
-          m.category || '',
-          m.categoryEmoji || '',
-          m.text || '',
-          (amt === '' || Number.isNaN(amt)) ? '' : amt
-        ];
-      });
-
-    var csv = toCSV(headers, rows);
-    var fn = 'lifelog-money-' + range.label + '-' + ymd(new Date()) + '.csv';
-    downloadTextFile(fn, csv, 'text/csv');
-    alert('✅ お金CSVをダウンロードしました（' + (rangeKey==='thisMonth'?'今月':rangeKey==='lastMonth'?'先月':'全期間') + '）');
-  };
-
-  // ジャーナルCSV（期間対応）
-  window.downloadJournalCSV = function(rangeKey){
-    var range = getRange(rangeKey || 'all');
-    var journal = readJSON('journalEntriesV3', {});
-    if (!journal || typeof journal !== 'object' || Array.isArray(journal)) journal = {};
-
-    var headers = ['date','raw'];
-
-    var keys = Object.keys(journal).sort();
-    var rows = keys
-      .filter(function(k){
-        // k is YYYY-MM-DD
-        if (!k) return false;
-        var dt = new Date(k + 'T00:00:00');
-        return inRange(dt, range);
-      })
-      .map(function(k){
-        var entry = journal[k] || {};
-        return [k, entry.raw || ''];
-      });
-
-    var csv = toCSV(headers, rows);
-    var fn = 'lifelog-journal-' + range.label + '-' + ymd(new Date()) + '.csv';
-    downloadTextFile(fn, csv, 'text/csv');
-    alert('✅ ジャーナルCSVをダウンロードしました（' + (rangeKey==='thisMonth'?'今月':rangeKey==='lastMonth'?'先月':'全期間') + '）');
-  };
-
-  // ===== AIタブのCSVボタンを「期間選択 → ダウンロード」にする =====
-  function bindRangePickers(){
-    var ai = document.getElementById('ai');
-    if (!ai) return;
-
-    var btnAct = ai.querySelector('.data-btn[data-premium="csv-activity"]');
-    var btnMoney = ai.querySelector('.data-btn[data-premium="csv-money"]');
-    var btnJournal = ai.querySelector('.data-btn[data-premium="csv-journal"]');
-
-    function attach(btn, handler){
-      if (!btn) return;
-      var clone = btn.cloneNode(true);
-      btn.parentNode.replaceChild(clone, btn);
-      clone.addEventListener('click', function(e){
-        e.preventDefault();
-        pickRange().then(function(key){
-          if (!key) return;
-          handler(key);
-        });
-      });
-    }
-
-    attach(btnAct, window.downloadActivitiesCSV);
-    attach(btnMoney, window.downloadMoneyCSV);
-    attach(btnJournal, window.downloadJournalCSV);
-  }
-
-  function init(){
-    ensureModal();
-    bindRangePickers();
-    // AIタブ生成タイミング保険
-    setTimeout(bindRangePickers, 300);
-    setTimeout(bindRangePickers, 800);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  console.log('✅ v40.4 CSV 期間指定を適用しました');
-})();
-</script>
-
-
-<script>
 /* ===== v40.5 CSV Export: カレンダーで開始日〜終了日 ===== */
 (function(){
   'use strict';
@@ -17317,7 +16648,6 @@ const modal = $('qrModal');
 </script>
 
 
-
 <style>
 /* ===== v40.9 目標カードを“プロジェクトカード”風に ===== */
 /* ねらい: 目標名を主役に / カテゴリはバッジ化 / カードの情報設計を整理 */
@@ -17460,65 +16790,6 @@ const modal = $('qrModal');
 </style>
 
 
-
-<script>
-/* ===== v40.10 Fix: CSV文字化け対策（UTF-16LEで出力） =====
-   Excel/スプレッドシートで日本語が崩れるケースがあったため、
-   CSVだけUTF-16LE(BOM付き)でダウンロードするように上書きします。
-*/
-(function(){
-  'use strict';
-
-  // 既存があれば退避
-  var _origDownloadTextFile = window.downloadTextFile;
-
-  window.downloadTextFile = function(filename, text, mime){
-    try {
-      var isCSV = (mime === 'text/csv') || (/\.csv$/i.test(String(filename || '')));
-      if (!isCSV) {
-        // CSV以外は従来通り（UTF-8 BOM）
-        if (typeof _origDownloadTextFile === 'function') return _origDownloadTextFile(filename, text, mime);
-        var bom8 = '\ufeff';
-        var blob8 = new Blob([bom8 + String(text || '')], { type: (mime || 'text/plain') + ';charset=utf-8' });
-        var url8 = URL.createObjectURL(blob8);
-        var a8 = document.createElement('a');
-        a8.href = url8; a8.download = filename || 'download.txt';
-        document.body.appendChild(a8); a8.click(); document.body.removeChild(a8);
-        URL.revokeObjectURL(url8);
-        return;
-      }
-
-      // ===== CSVは UTF-16LE (BOM) =====
-      var s = String(text || '');
-      // DataViewで確実にLittle Endianで詰める（先頭BOM=0xFEFF）
-      var buf = new ArrayBuffer(2 * (s.length + 1));
-      var view = new DataView(buf);
-      view.setUint16(0, 0xFEFF, true); // BOM (FF FE)
-      for (var i = 0; i < s.length; i++) {
-        view.setUint16(2 * (i + 1), s.charCodeAt(i), true);
-      }
-
-      var blob = new Blob([buf], { type: 'text/csv;charset=utf-16le' });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = url;
-      a.download = filename || ('export-' + Date.now() + '.csv');
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    } catch(e) {
-      console.error('CSV download failed', e);
-      alert('❌ CSVダウンロードに失敗しました');
-    }
-  };
-
-  console.log('✅ v40.10 CSV文字化け対策（UTF-16LE）を適用しました');
-})();
-</script>
-
-
-
 <script>
 /* ===== v40.11 Fix: Android版Excel向け CSV文字化け対策（UTF-8 BOM + CRLF） =====
    AndroidのExcelでUTF-16LEが文字化けするケースがあるため、
@@ -17573,7 +16844,6 @@ const modal = $('qrModal');
   console.log('✅ v40.11 Android Excel向け CSV文字化け対策（UTF-8 BOM + CRLF）を適用しました');
 })();
 </script>
-
 
 
 <style>
@@ -17693,7 +16963,6 @@ const modal = $('qrModal');
 }
 
 </style>
-
 
 
 <style>
@@ -17857,7 +17126,6 @@ input, select, textarea,
 }
 
 </style>
-
 
 
 <style>
@@ -18340,7 +17608,6 @@ document.addEventListener('click', function(e){
 </script>
 
 
-
 <script>
 /* ===== Quick Record: window公開ブリッジ（安全パッチ） ===== */
 (function(){
@@ -18495,7 +17762,6 @@ window.__qrSaving = false;
   }, { capture: true, passive: false });
 })();
 </script>
-
 
 
 <script>
@@ -18717,7 +17983,6 @@ window.__qrSaving = false;
   console.log('✅ v41.2.2 クイック記録→お金ログ同期修正を適用しました');
 })();
 </script>
-
 
 
 <!-- ===== vAI.1 Journal Feedback Tone + generateAIComment fix (safe patch) ===== -->
