@@ -1543,6 +1543,41 @@ select.text-input{
             text-decoration: line-through;
             color: #999;
         }
+
+        .task-edit-btn {
+            background: none;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            opacity: 0.4;
+            padding: 4px 6px;
+            transition: opacity 0.2s;
+            flex-shrink: 0;
+        }
+        .task-item:hover .task-edit-btn {
+            opacity: 0.8;
+        }
+        .task-edit-btn:hover {
+            opacity: 1 !important;
+        }
+        .task-add-btn {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            background: none;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            color: #999;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 4px;
+        }
+        .task-add-btn:hover {
+            border-color: #4a90e2;
+            color: #4a90e2;
+            background: #f0f7ff;
+        }
         
         .loading-tasks,
         .no-tasks {
@@ -5576,16 +5611,46 @@ const Storage = {
         // 気分選択
         function selectMood(mood) {
             selectedMood = mood;
-            
+
             // ボタンの選択状態を更新
             document.querySelectorAll('.mood-button').forEach(btn => {
                 btn.classList.remove('selected');
             });
-            
+
             const selectedButton = document.querySelector(`.mood-button[data-mood="${mood}"]`);
             if (selectedButton) {
                 selectedButton.classList.add('selected');
             }
+
+            // 即座にlocalStorageに保存してカレンダーに反映
+            try {
+                const now = new Date();
+                const dateKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+                // 英語→日本語マッピング（カレンダー互換）
+                const moodToJP = { great:'最高', good:'良い', normal:'普通', bad:'悪い', terrible:'最悪' };
+                const moodJP = moodToJP[mood] || mood;
+                const allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+                const entry = allEntries[dateKey] || { date: dateKey };
+                entry.mood = moodJP;
+                allEntries[dateKey] = entry;
+                localStorage.setItem('journalEntriesV3', JSON.stringify(allEntries));
+                // V3側のmood-cardも同期
+                if (typeof window.App !== 'undefined' && window.App.core) {
+                    try { window.App.core.storage.set('journalEntriesV3', allEntries); } catch(_){}
+                }
+                // カレンダー更新
+                if (typeof renderCalendar === 'function') renderCalendar();
+                else if (typeof window.renderCalendar === 'function') window.renderCalendar();
+                // mood-card側も同期表示
+                const cards = document.querySelectorAll('#journalMoodWrap .mood-card');
+                cards.forEach(c => {
+                    const on = c.getAttribute('data-mood') === moodJP;
+                    c.classList.toggle('active', on);
+                    c.setAttribute('aria-checked', on ? 'true' : 'false');
+                });
+                const wrap = document.getElementById('journalMoodWrap');
+                if (wrap) wrap.setAttribute('data-selected', moodJP);
+            } catch(e) { console.warn('selectMood save error:', e); }
         }
         
         // タブ切り替え
@@ -6466,7 +6531,11 @@ function renderHomeTodayTasks() {
     const yesterdayJournal = journalEntries[yesterdayStr];
 
     if (!yesterdayJournal || !yesterdayJournal.summary) {
-        container.innerHTML = '<div class="no-tasks">昨日のジャーナルがありません。<br>ジャーナルを記録するとMUST/WANTが表示されます。</div>';
+        container.innerHTML = '<div class="no-tasks">昨日のジャーナルがありません。<br>ジャーナルを記録するとMUST/WANTが表示されます。</div>'
+          + '<div style="display:flex;gap:8px;margin-top:10px;">'
+          + '<button type="button" class="task-add-btn" style="flex:1;" onclick="addTask(\'must\')">＋ MUST追加</button>'
+          + '<button type="button" class="task-add-btn" style="flex:1;" onclick="addTask(\'want\')">＋ WANT追加</button>'
+          + '</div>';
         return;
     }
 
@@ -6485,7 +6554,11 @@ function renderHomeTodayTasks() {
     const wantTasks = parseTasks(wantText);
 
     if (mustTasks.length === 0 && wantTasks.length === 0) {
-        container.innerHTML = '<div class="no-tasks">昨日のタスク（MUST/WANT）がありません</div>';
+        container.innerHTML = '<div class="no-tasks">昨日のタスク（MUST/WANT）がありません</div>'
+          + '<div style="display:flex;gap:8px;margin-top:10px;">'
+          + '<button type="button" class="task-add-btn" style="flex:1;" onclick="addTask(\'must\')">＋ MUST追加</button>'
+          + '<button type="button" class="task-add-btn" style="flex:1;" onclick="addTask(\'want\')">＋ WANT追加</button>'
+          + '</div>';
         return;
     }
 
@@ -6497,12 +6570,14 @@ function renderHomeTodayTasks() {
         mustTasks.forEach((task, index) => {
             const id = `homeMustTask${index}`;
             html += `
-                <div class="task-item">
+                <div class="task-item" id="taskItem_must_${index}">
                     <input type="checkbox" id="${id}" class="task-checkbox" onchange="saveTaskCheck('${id}', this.checked)">
                     <label for="${id}" class="task-label">${escapeHtml(task)}</label>
+                    <button type="button" class="task-edit-btn" onclick="editTask('must',${index})" title="編集">✏️</button>
                 </div>
             `;
         });
+        html += '<button type="button" class="task-add-btn" onclick="addTask(\'must\')">＋ 追加</button>';
         html += '</div>';
     }
 
@@ -6512,13 +6587,25 @@ function renderHomeTodayTasks() {
         wantTasks.forEach((task, index) => {
             const id = `homeWantTask${index}`;
             html += `
-                <div class="task-item">
+                <div class="task-item" id="taskItem_want_${index}">
                     <input type="checkbox" id="${id}" class="task-checkbox" onchange="saveTaskCheck('${id}', this.checked)">
                     <label for="${id}" class="task-label">${escapeHtml(task)}</label>
+                    <button type="button" class="task-edit-btn" onclick="editTask('want',${index})" title="編集">✏️</button>
                 </div>
             `;
         });
+        html += '<button type="button" class="task-add-btn" onclick="addTask(\'want\')">＋ 追加</button>';
         html += '</div>';
+    }
+
+    // MUST/WANTが両方空でもタスク追加ボタンを表示
+    if (mustTasks.length === 0) {
+        html += '<div class="task-group"><div class="task-group-title">✅ MUST</div>';
+        html += '<button type="button" class="task-add-btn" onclick="addTask(\'must\')">＋ 追加</button></div>';
+    }
+    if (wantTasks.length === 0) {
+        html += '<div class="task-group"><div class="task-group-title">💡 WANT</div>';
+        html += '<button type="button" class="task-add-btn" onclick="addTask(\'want\')">＋ 追加</button></div>';
     }
 
     container.innerHTML = html;
@@ -6538,10 +6625,124 @@ function refreshHomeTodayTasks() {
     }
 }
 
+// タスク編集機能
+function getTaskDateKey() {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    return localDateKey(yesterday);
+}
+
+function editTask(type, index) {
+    const item = document.getElementById('taskItem_' + type + '_' + index);
+    if (!item) return;
+    const label = item.querySelector('.task-label');
+    if (!label) return;
+    const currentText = label.textContent;
+
+    // インライン編集UIに置き換え
+    const editWrap = document.createElement('div');
+    editWrap.style.cssText = 'display:flex;gap:6px;align-items:center;flex:1;';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = currentText;
+    input.style.cssText = 'flex:1;padding:6px 10px;border:2px solid #4a90e2;border-radius:8px;font-size:14px;outline:none;';
+    const saveBtn = document.createElement('button');
+    saveBtn.type = 'button';
+    saveBtn.textContent = '✓';
+    saveBtn.style.cssText = 'background:#16a34a;color:#fff;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:14px;';
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.textContent = '🗑️';
+    delBtn.style.cssText = 'background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:14px;';
+    const cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.textContent = '✕';
+    cancelBtn.style.cssText = 'background:#999;color:#fff;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:14px;';
+
+    editWrap.appendChild(input);
+    editWrap.appendChild(saveBtn);
+    editWrap.appendChild(delBtn);
+    editWrap.appendChild(cancelBtn);
+
+    // 既存の内容を隠してeditWrapを挿入
+    const origHTML = item.innerHTML;
+    item.innerHTML = '';
+    item.appendChild(editWrap);
+    input.focus();
+    input.select();
+
+    saveBtn.addEventListener('click', function() { saveTaskEdit(type, index, input.value.trim()); });
+    delBtn.addEventListener('click', function() { deleteTask(type, index); });
+    cancelBtn.addEventListener('click', function() { item.innerHTML = origHTML; restoreTaskChecks(); });
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') saveTaskEdit(type, index, input.value.trim());
+        if (e.key === 'Escape') { item.innerHTML = origHTML; restoreTaskChecks(); }
+    });
+}
+
+function saveTaskEdit(type, index, newText) {
+    if (!newText) { deleteTask(type, index); return; }
+    const dateKey = getTaskDateKey();
+    const allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+    const entry = allEntries[dateKey];
+    if (!entry || !entry.summary) return;
+
+    const field = (type === 'must') ? 'must' : 'want';
+    const text = entry.summary[field] || '';
+    const tasks = String(text).split(/[\n・]/).map(s => s.trim()).filter(s => s && s !== '—');
+    if (index < tasks.length) {
+        tasks[index] = newText;
+    }
+    entry.summary[field] = tasks.join('\n');
+    allEntries[dateKey] = entry;
+    localStorage.setItem('journalEntriesV3', JSON.stringify(allEntries));
+    renderHomeTodayTasks();
+}
+
+function deleteTask(type, index) {
+    const dateKey = getTaskDateKey();
+    const allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+    const entry = allEntries[dateKey];
+    if (!entry || !entry.summary) return;
+
+    const field = (type === 'must') ? 'must' : 'want';
+    const text = entry.summary[field] || '';
+    const tasks = String(text).split(/[\n・]/).map(s => s.trim()).filter(s => s && s !== '—');
+    if (index < tasks.length) {
+        tasks.splice(index, 1);
+    }
+    entry.summary[field] = tasks.join('\n');
+    allEntries[dateKey] = entry;
+    localStorage.setItem('journalEntriesV3', JSON.stringify(allEntries));
+    renderHomeTodayTasks();
+}
+
+function addTask(type) {
+    const dateKey = getTaskDateKey();
+    const allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+    const entry = allEntries[dateKey] || { date: dateKey, summary: {} };
+    if (!entry.summary) entry.summary = {};
+
+    const field = (type === 'must') ? 'must' : 'want';
+    const text = entry.summary[field] || '';
+    const tasks = String(text).split(/[\n・]/).map(s => s.trim()).filter(s => s && s !== '—');
+    tasks.push('新しいタスク');
+    entry.summary[field] = tasks.join('\n');
+    allEntries[dateKey] = entry;
+    localStorage.setItem('journalEntriesV3', JSON.stringify(allEntries));
+    renderHomeTodayTasks();
+    // 追加直後に編集モードに
+    setTimeout(function() { editTask(type, tasks.length - 1); }, 100);
+}
+
 // グローバル公開（onclickから呼べるように）
 window.renderHomeTodayTasks = renderHomeTodayTasks;
 window.refreshHomeTodayTasks = refreshHomeTodayTasks;
 window.saveTaskCheck = saveTaskCheck;
+window.editTask = editTask;
+window.saveTaskEdit = saveTaskEdit;
+window.deleteTask = deleteTask;
+window.addTask = addTask;
 
 
 // レポート機能
@@ -12493,10 +12694,14 @@ try{
         // Worker側は /api/analyze を想定（なければ root でも受けられるよう、まず /api/analyze を叩く）
         const endpoint = `${BACKEND_URL}/api/analyze`;
         const characterPrompt = (typeof getCharacterPrompt === 'function') ? getCharacterPrompt(tone) : '';
+        // キャラクター口調指示をテキストに直接前置（バックエンドがcharacterPromptを無視する場合の保険）
+        const textWithCharacter = characterPrompt
+          ? `【指示】以下のキャラクターになりきって、この口調で全文を書いてください。\n${characterPrompt}\n【ユーザーのジャーナル】\n${text}`
+          : text;
         const res = await fetch(endpoint, {
           method: 'POST',
           headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ text, tone, type: 'journal', characterPrompt })
+          body: JSON.stringify({ text: textWithCharacter, tone, type: 'journal', characterPrompt })
         });
 
         if (!res.ok){
