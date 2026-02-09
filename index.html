@@ -766,6 +766,67 @@ select.text-input{
             background: linear-gradient(to right, #f0fdf4, #ffffff);
         }
 
+        /* ホーム: 継続中の行動 */
+        .home-ongoing-wrap {
+            background: #fff;
+            border: 2px solid #22c55e;
+            border-radius: 14px;
+            padding: 14px;
+        }
+        .home-ongoing-title {
+            font-weight: 800;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+        .home-ongoing-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-top: 1px solid #eee;
+        }
+        .home-ongoing-item:first-of-type {
+            border-top: none;
+            padding-top: 0;
+        }
+        .home-ongoing-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+        .home-ongoing-emoji {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .home-ongoing-detail {
+            min-width: 0;
+        }
+        .home-ongoing-name {
+            font-weight: 700;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .home-ongoing-time {
+            font-size: 13px;
+            color: #22c55e;
+            font-weight: 600;
+        }
+        .home-ongoing-end-btn {
+            flex-shrink: 0;
+            background: #111;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
         .log-item {
             padding: 12px;
             margin-bottom: 10px;
@@ -4756,6 +4817,9 @@ body.qr-open .fab-container{ pointer-events:none !important; }
         <h2 id="dashboardDate">📊 今日の概要</h2>
     </div>
 
+    <!-- 継続中の行動 -->
+    <div id="homeOngoingActivities" style="display:none;margin:0 0 16px;"></div>
+
     <div class="dashboard-cards">
         <div class="dashboard-card" onclick="switchTab('activity')">
             <div class="card-icon">⏱️</div>
@@ -7327,8 +7391,47 @@ setInterval(() => {
     const hasOngoing = activities.some(a => !a.endTime);
     if (hasOngoing) {
         renderActivityLogs();
+        renderHomeOngoingActivities();
     }
 }, 60000);
+
+// ホーム画面に継続中の行動を表示
+function renderHomeOngoingActivities() {
+    const container = document.getElementById('homeOngoingActivities');
+    if (!container) return;
+
+    const ongoing = (typeof activities !== 'undefined' ? activities : []).filter(a => !a.endTime);
+
+    if (ongoing.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    container.style.display = 'block';
+    container.innerHTML = '<div class="home-ongoing-wrap">'
+      + '<div class="home-ongoing-title">⏱️ 継続中の行動</div>'
+      + ongoing.map(a => {
+          const start = new Date(a.startTime || a.timestamp);
+          const elapsed = Math.round((Date.now() - start.getTime()) / 60000);
+          const h = Math.floor(elapsed / 60);
+          const m = elapsed % 60;
+          const timeStr = h > 0 ? h + '時間' + m + '分' : m + '分';
+          const emoji = a.categoryEmoji || '📋';
+          const name = a.text || a.category || '行動';
+          return '<div class="home-ongoing-item">'
+            + '<div class="home-ongoing-info">'
+            + '<span class="home-ongoing-emoji">' + emoji + '</span>'
+            + '<div class="home-ongoing-detail">'
+            + '<div class="home-ongoing-name">' + name.replace(/</g,'&lt;') + '</div>'
+            + '<div class="home-ongoing-time">' + timeStr + '経過</div>'
+            + '</div>'
+            + '</div>'
+            + '<button class="home-ongoing-end-btn" onclick="endActivity(' + a.id + '); setTimeout(renderHomeOngoingActivities, 300);">⏹️ 終了</button>'
+            + '</div>';
+        }).join('')
+      + '</div>';
+}
+window.renderHomeOngoingActivities = renderHomeOngoingActivities;
 
 
 // 編集中の行動ID
@@ -16199,6 +16302,11 @@ const modal = $('qrModal');
     // ===== 今日のタスク =====
     if (typeof window.renderHomeTodayTasks === 'function') {
       window.renderHomeTodayTasks();
+    }
+
+    // ===== 継続中の行動 =====
+    if (typeof window.renderHomeOngoingActivities === 'function') {
+      window.renderHomeOngoingActivities();
     }
   }
 
