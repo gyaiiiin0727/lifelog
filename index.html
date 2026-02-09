@@ -577,8 +577,9 @@ select.text-input{
         }
         
         .calendar-day-mood {
-            font-size: 1.2em;
-            margin-top: 2px;
+            font-size: 0.7em;
+            margin-top: 1px;
+            line-height: 1;
         }
         
         /* レポート */
@@ -12248,9 +12249,24 @@ try{
       }
     });
 
-    // mood bind
+    // mood bind — 選んだ瞬間にlocalStorageにも保存してカレンダーに即反映
     document.querySelectorAll('#journalMoodWrap .mood-card').forEach(card=>{
-      const pick = ()=>{ setMood(card.getAttribute('data-mood')); };
+      const pick = ()=>{
+        const mood = card.getAttribute('data-mood');
+        setMood(mood);
+        // 即保存
+        try {
+          const d = getDateKey();
+          const obj = entries();
+          const entry = obj[d] || { date:d };
+          entry.mood = mood;
+          obj[d] = entry;
+          saveEntries(obj);
+          // カレンダー更新
+          if (typeof renderCalendar === 'function') renderCalendar();
+          else if (typeof window.renderCalendar === 'function') window.renderCalendar();
+        } catch(_){}
+      };
       card.addEventListener('click', pick);
       card.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); pick(); }});
     });
