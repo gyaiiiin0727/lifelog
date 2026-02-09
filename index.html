@@ -8453,12 +8453,17 @@ function drawMoneyChart(categoryData) {
                 if (isToday) className += ' today';
                 if (hasJournal) className += ' has-journal';
                 
-                // 気分絵文字を追加（moodがなくてもAI済みなら✨を表示）
+                // 気分絵文字を追加（日本語キー・英語キー両対応）
                 let moodEmoji = '';
                 if (journal && journal.mood) {
-                    const calMoodEmojis = {'great':'😊','good':'🙂','normal':'😐','bad':'😔','terrible':'😢'};
-                    moodEmoji = '<div class="calendar-day-mood">' + (calMoodEmojis[journal.mood] || '') + '</div>';
-                } else if (journal && (journal.aiFeedback || journal.summary)) {
+                    const calMoodEmojis = {
+                      'great':'😊','good':'🙂','normal':'😐','bad':'😔','terrible':'😢',
+                      '最高':'😊','良い':'🙂','普通':'😐','悪い':'😔','最悪':'😢'
+                    };
+                    const emojiStr = calMoodEmojis[journal.mood] || '';
+                    moodEmoji = emojiStr ? '<div class="calendar-day-mood">' + emojiStr + '</div>' : '';
+                }
+                if (!moodEmoji && journal && (journal.aiFeedback || journal.summary)) {
                     moodEmoji = '<div class="calendar-day-mood">✨</div>';
                 }
                 
@@ -8548,14 +8553,14 @@ function drawMoneyChart(categoryData) {
                   + '<div style="text-align:center;margin-top:10px;"><button id="calModalGoBtn" style="background:#111;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;cursor:pointer;">📖 この日のジャーナルを開く</button></div>';
             }
 
-            // 気分選択UI
+            // 気分選択UI（data-mood値はジャーナルの気分カードと同じ日本語キー）
             const currentMood = (journal && journal.mood) || '';
             const moodOptions = [
-              {key:'great', emoji:'😊', label:'最高'},
-              {key:'good', emoji:'🙂', label:'良い'},
-              {key:'normal', emoji:'😐', label:'普通'},
-              {key:'bad', emoji:'😔', label:'悪い'},
-              {key:'terrible', emoji:'😢', label:'最悪'}
+              {key:'最高', emoji:'😊', label:'最高'},
+              {key:'良い', emoji:'🙂', label:'良い'},
+              {key:'普通', emoji:'😐', label:'普通'},
+              {key:'悪い', emoji:'😔', label:'悪い'},
+              {key:'最悪', emoji:'😢', label:'最悪'}
             ];
             const moodPickerHtml = '<div style="margin-bottom:16px;">'
               + '<div style="font-size:13px;color:#666;margin-bottom:8px;">この日の気分</div>'
