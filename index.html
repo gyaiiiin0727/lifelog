@@ -2428,11 +2428,12 @@ details.journal-summary{ margin-top:8px; }
 details.journal-summary summary{ cursor:pointer; font-weight:800; }
 .journal-summary-open{ margin-top:8px; padding-top:8px; border-top:1px dashed #e0e0e0; }
 
-.summary-grid{ display:grid; grid-template-columns:auto 1fr; gap:6px 10px; margin-top:8px; }
-.summary-k{ font-size:12px; padding:4px 8px; border-radius:999px; background:#eee; font-weight:700; white-space:nowrap; }
+.summary-grid{ display:flex; flex-direction:column; gap:14px; margin-top:8px; }
+.summary-item{ display:flex; flex-direction:column; gap:4px; }
+.summary-k{ font-size:12px; padding:4px 10px; border-radius:999px; background:#eee; font-weight:700; white-space:nowrap; align-self:flex-start; }
 .summary-k.must{ background:#111; color:#fff; }
 .summary-k.want{ background:#fff; color:#111; border:2px dashed #111; }
-.summary-v{ white-space:pre-wrap; font-size:13px; }
+.summary-v{ white-space:pre-wrap; font-size:14px; line-height:1.6; padding-left:4px; }
 .journal-controls-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:12px; }
 #journalV3SummarizeBtn{ background:#fff !important; color:#111 !important; border:2px solid #111 !important; }
 
@@ -5153,12 +5154,12 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <span id="todaySumCharName" style="font-weight:700;font-size:15px;color:#4a90e2;"></span>
 </div>
 <div class="summary-grid">
-<div class="summary-k">よかったこと</div><div class="summary-v" id="todaySumEvents">—</div>
-<div class="summary-k">できなかったこと</div><div class="summary-v" id="todaySumLearnings">—</div>
-<div class="summary-k">気づいたこと</div><div class="summary-v" id="todaySumFeelings">—</div>
-<div class="summary-k">もやっとしていること</div><div class="summary-v" id="todaySumGratitude">—</div>
-<div class="summary-k must">MUST</div><div class="summary-v" id="todaySumMust">—</div>
-<div class="summary-k want">WANT</div><div class="summary-v" id="todaySumWant">—</div>
+<div class="summary-item"><div class="summary-k">よかったこと</div><div class="summary-v" id="todaySumEvents">—</div></div>
+<div class="summary-item"><div class="summary-k">できなかったこと</div><div class="summary-v" id="todaySumLearnings">—</div></div>
+<div class="summary-item"><div class="summary-k">気づいたこと</div><div class="summary-v" id="todaySumFeelings">—</div></div>
+<div class="summary-item"><div class="summary-k">もやっとしていること</div><div class="summary-v" id="todaySumGratitude">—</div></div>
+<div class="summary-item"><div class="summary-k must">MUST</div><div class="summary-v" id="todaySumMust">—</div></div>
+<div class="summary-item"><div class="summary-k want">WANT</div><div class="summary-v" id="todaySumWant">—</div></div>
 </div>
 <div id="todaySumHitokoto" style="display:none;margin-top:12px;padding:12px;border-radius:10px;border-left:4px solid #4a90e2;background:#f0f7ff;">
 <div id="todaySumHitokotoLabel" style="font-weight:700;font-size:13px;color:#4a90e2;margin-bottom:6px;">💬 整える一言</div>
@@ -7729,12 +7730,12 @@ function renderJournalLogs() {
 
         // サマリーグリッド（項目名変更）
         var summaryGridHtml = hasSum ? '<div style="margin-top:8px;"><div class="summary-grid">'
-          + (summary.events ? '<div class="summary-k">よかったこと</div><div class="summary-v">'+escHtml(summary.events)+'</div>' : '')
-          + (summary.learnings ? '<div class="summary-k">できなかったこと</div><div class="summary-v">'+escHtml(summary.learnings)+'</div>' : '')
-          + (summary.feelings ? '<div class="summary-k">気づいたこと</div><div class="summary-v">'+escHtml(summary.feelings)+'</div>' : '')
-          + (summary.gratitude ? '<div class="summary-k">もやっとしていること</div><div class="summary-v">'+escHtml(summary.gratitude)+'</div>' : '')
-          + (hasMust ? '<div class="summary-k must">MUST</div><div class="summary-v">'+escHtml(summary.must)+'</div>' : '')
-          + (hasWant ? '<div class="summary-k want">WANT</div><div class="summary-v">'+escHtml(summary.want)+'</div>' : '')
+          + (summary.events ? '<div class="summary-item"><div class="summary-k">よかったこと</div><div class="summary-v">'+escHtml(summary.events)+'</div></div>' : '')
+          + (summary.learnings ? '<div class="summary-item"><div class="summary-k">できなかったこと</div><div class="summary-v">'+escHtml(summary.learnings)+'</div></div>' : '')
+          + (summary.feelings ? '<div class="summary-item"><div class="summary-k">気づいたこと</div><div class="summary-v">'+escHtml(summary.feelings)+'</div></div>' : '')
+          + (summary.gratitude ? '<div class="summary-item"><div class="summary-k">もやっとしていること</div><div class="summary-v">'+escHtml(summary.gratitude)+'</div></div>' : '')
+          + (hasMust ? '<div class="summary-item"><div class="summary-k must">MUST</div><div class="summary-v">'+escHtml(summary.must)+'</div></div>' : '')
+          + (hasWant ? '<div class="summary-item"><div class="summary-k want">WANT</div><div class="summary-v">'+escHtml(summary.want)+'</div></div>' : '')
           + '</div></div>' : '';
 
         return '<div class="journal-log-item">'
@@ -8519,12 +8520,12 @@ function drawMoneyChart(categoryData) {
                 const summaryHtml = hasSum ? '<div style="margin-bottom:14px;">'
                   + '<div class="small" style="margin:6px 0 8px;color:#666;">要約</div>'
                   + '<div class="summary-grid">'
-                  + (sum.events ? '<div class="summary-k">よかったこと</div><div class="summary-v">' + escH(sum.events) + '</div>' : '')
-                  + (sum.learnings ? '<div class="summary-k">できなかったこと</div><div class="summary-v">' + escH(sum.learnings) + '</div>' : '')
-                  + (sum.feelings ? '<div class="summary-k">気づいたこと</div><div class="summary-v">' + escH(sum.feelings) + '</div>' : '')
-                  + (sum.gratitude ? '<div class="summary-k">もやっとしていること</div><div class="summary-v">' + escH(sum.gratitude) + '</div>' : '')
-                  + (sum.must ? '<div class="summary-k must">MUST</div><div class="summary-v">' + escH(sum.must) + '</div>' : '')
-                  + (sum.want ? '<div class="summary-k want">WANT</div><div class="summary-v">' + escH(sum.want) + '</div>' : '')
+                  + (sum.events ? '<div class="summary-item"><div class="summary-k">よかったこと</div><div class="summary-v">' + escH(sum.events) + '</div></div>' : '')
+                  + (sum.learnings ? '<div class="summary-item"><div class="summary-k">できなかったこと</div><div class="summary-v">' + escH(sum.learnings) + '</div></div>' : '')
+                  + (sum.feelings ? '<div class="summary-item"><div class="summary-k">気づいたこと</div><div class="summary-v">' + escH(sum.feelings) + '</div></div>' : '')
+                  + (sum.gratitude ? '<div class="summary-item"><div class="summary-k">もやっとしていること</div><div class="summary-v">' + escH(sum.gratitude) + '</div></div>' : '')
+                  + (sum.must ? '<div class="summary-item"><div class="summary-k must">MUST</div><div class="summary-v">' + escH(sum.must) + '</div></div>' : '')
+                  + (sum.want ? '<div class="summary-item"><div class="summary-k want">WANT</div><div class="summary-v">' + escH(sum.want) + '</div></div>' : '')
                   + '</div></div>' : '';
 
                 // キャラクター＋整える一言
@@ -12059,12 +12060,12 @@ try{
           ${charHeaderHtml}
           <div class="small" style="margin:6px 0 8px;color:#666;">要約</div>
           <div class="summary-grid">
-            <div class="summary-k">よかったこと</div><div class="summary-v">${esc(sum.events)}</div>
-            <div class="summary-k">できなかったこと</div><div class="summary-v">${esc(sum.learnings)}</div>
-            <div class="summary-k">気づいたこと</div><div class="summary-v">${esc(sum.feelings)}</div>
-            <div class="summary-k">もやっとしていること</div><div class="summary-v">${esc(sum.gratitude)}</div>
-            <div class="summary-k must">MUST</div><div class="summary-v">${esc(sum.must)}</div>
-            <div class="summary-k want">WANT</div><div class="summary-v">${esc(sum.want)}</div>
+            <div class="summary-item"><div class="summary-k">よかったこと</div><div class="summary-v">${esc(sum.events)}</div></div>
+            <div class="summary-item"><div class="summary-k">できなかったこと</div><div class="summary-v">${esc(sum.learnings)}</div></div>
+            <div class="summary-item"><div class="summary-k">気づいたこと</div><div class="summary-v">${esc(sum.feelings)}</div></div>
+            <div class="summary-item"><div class="summary-k">もやっとしていること</div><div class="summary-v">${esc(sum.gratitude)}</div></div>
+            <div class="summary-item"><div class="summary-k must">MUST</div><div class="summary-v">${esc(sum.must)}</div></div>
+            <div class="summary-item"><div class="summary-k want">WANT</div><div class="summary-v">${esc(sum.want)}</div></div>
           </div>
           ${hitokotoHtml}
         </div>
