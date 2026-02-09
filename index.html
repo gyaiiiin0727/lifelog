@@ -4933,6 +4933,16 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <div id="activityLogs"></div>
 </div>
 
+<!-- 過去の行動履歴 -->
+<div class="logs-section" style="margin-top:20px;">
+<div class="section-title"><span>📂 過去の行動履歴</span></div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;justify-content:center;">
+<button class="quick-adjust-btn" onclick="changeActivityHistoryDate(-1)" style="padding:6px 12px;">◀</button>
+<input type="date" id="activityHistoryDate" style="padding:8px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;" onchange="renderActivityHistory()">
+<button class="quick-adjust-btn" onclick="changeActivityHistoryDate(1)" style="padding:6px 12px;">▶</button>
+</div>
+<div id="activityHistoryLogs"></div>
+</div>
 
 </div>
 <!-- お金タブ -->
@@ -4992,6 +5002,18 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <h2 class="section-title">今日のお金</h2>
 <div id="moneyLogs"></div>
 </div>
+
+<!-- 過去のお金履歴 -->
+<div class="logs-section" style="margin-top:20px;">
+<div class="section-title"><span>📂 過去のお金履歴</span></div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;justify-content:center;">
+<button class="quick-adjust-btn" onclick="changeMoneyHistoryDate(-1)" style="padding:6px 12px;">◀</button>
+<input type="date" id="moneyHistoryDate" style="padding:8px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;" onchange="renderMoneyHistory()">
+<button class="quick-adjust-btn" onclick="changeMoneyHistoryDate(1)" style="padding:6px 12px;">▶</button>
+</div>
+<div id="moneyHistoryLogs"></div>
+</div>
+
 </div>
 <!-- ジャーナルタブ -->
 <div class="tab-content journal-tab" id="journal">
@@ -5595,7 +5617,8 @@ const Storage = {
     console.error("switchTab error:", e);
   }
 
-    if (tabName === 'activity') { setTimeout(() => { try { renderActivityLogs(); } catch(e) {} }, 0); }
+    if (tabName === 'activity') { setTimeout(() => { try { renderActivityLogs(); initActivityHistoryDate(); } catch(e) {} }, 0); }
+    if (tabName === 'money') { setTimeout(() => { try { renderMoneyLogs(); initMoneyHistoryDate(); } catch(e) {} }, 0); }
     if (tabName === 'reportMoney') { setTimeout(() => { try { renderMoneyReport(); } catch(e) {} }, 0); }
 }
 
@@ -7386,6 +7409,69 @@ function renderActivityLogs() {
     }).join('');
 }
 
+// === 過去の行動履歴表示 ===
+function initActivityHistoryDate() {
+    const input = document.getElementById('activityHistoryDate');
+    if (input && !input.value) {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        input.value = yesterday.toISOString().split('T')[0];
+        renderActivityHistory();
+    }
+}
+window.initActivityHistoryDate = initActivityHistoryDate;
+
+function changeActivityHistoryDate(delta) {
+    const input = document.getElementById('activityHistoryDate');
+    if (!input) return;
+    const d = input.value ? new Date(input.value) : new Date();
+    d.setDate(d.getDate() + delta);
+    input.value = d.toISOString().split('T')[0];
+    renderActivityHistory();
+}
+window.changeActivityHistoryDate = changeActivityHistoryDate;
+
+function renderActivityHistory() {
+    const container = document.getElementById('activityHistoryLogs');
+    const input = document.getElementById('activityHistoryDate');
+    if (!container || !input || !input.value) return;
+
+    const targetDate = new Date(input.value).toLocaleDateString('ja-JP');
+    const targetActivities = activities.filter(a => {
+        return new Date(a.startTime || a.timestamp).toLocaleDateString('ja-JP') === targetDate;
+    }).sort((a, b) => new Date(a.startTime || a.timestamp) - new Date(b.startTime || b.timestamp));
+
+    if (targetActivities.length === 0) {
+        container.innerHTML = '<p style="color:#999;text-align:center;padding:12px;">この日の記録はありません</p>';
+        return;
+    }
+
+    container.innerHTML = targetActivities.map(record => {
+        const startTime = new Date(record.startTime || record.timestamp);
+        const startStr = startTime.toLocaleTimeString('ja-JP', {hour:'2-digit', minute:'2-digit'});
+        let timeDisplay = '';
+        if (record.endTime) {
+            const endTime = new Date(record.endTime);
+            const endStr = endTime.toLocaleTimeString('ja-JP', {hour:'2-digit', minute:'2-digit'});
+            const dur = record.durationMinutes || Math.round((endTime - startTime) / 60000);
+            const h = Math.floor(dur / 60), m = dur % 60;
+            timeDisplay = startStr + '〜' + endStr + ' (' + (h > 0 ? h + '時間' + m + '分' : m + '分') + ')';
+        } else {
+            timeDisplay = startStr + '〜 (継続中)';
+        }
+        const catBadge = record.category && record.categoryEmoji
+            ? '<span class="category-badge">' + record.categoryEmoji + ' ' + record.category + '</span>' : '';
+        return '<div class="log-item">'
+          + '<div class="log-header"><strong>' + (record.text || '').replace(/</g,'&lt;') + '</strong></div>'
+          + '<div class="log-info"><span class="time-display">' + timeDisplay + '</span>' + catBadge + '</div>'
+          + '<div class="log-actions">'
+          + '<button onclick="editActivity(' + record.id + ')">✏️ 編集</button>'
+          + '<button onclick="deleteActivity(' + record.id + '); setTimeout(renderActivityHistory,100);">🗑️</button>'
+          + '</div></div>';
+    }).join('');
+}
+window.renderActivityHistory = renderActivityHistory;
+
 // 継続中の記録を定期的に更新（1分ごと）
 setInterval(() => {
     const hasOngoing = activities.some(a => !a.endTime);
@@ -7519,10 +7605,11 @@ if (isNaN(amount)) {
     
     // 再描画
     renderMoneyLogs();
-    
+    try { renderMoneyHistory(); } catch(e) {}
+
     // モーダルを閉じる
     closeEditMoneyModal();
-    
+
     showStatus('moneyStatus', '✓ 記録を更新しました');
 }
 
@@ -7531,10 +7618,11 @@ function deleteMoney(id) {
     if (!confirm('この記録を削除しますか？')) {
         return;
     }
-    
+
     window.moneyRecords = window.moneyRecords.filter(r => r.id !== id);
     Storage.set(Storage.keys.MONEY, window.moneyRecords);
     renderMoneyLogs();
+    try { renderMoneyHistory(); } catch(e) {}
     showStatus('moneyStatus', '✓ 記録を削除しました');
 }
 
@@ -7632,7 +7720,9 @@ if (!startTime) {
     
     // 再レンダリング
     renderActivityLogs();
-    
+    try { renderActivityHistory(); } catch(e) {}
+    try { renderHomeOngoingActivities(); } catch(e) {}
+
     alert('✓ 保存しました');
 }
 
@@ -7768,7 +7858,67 @@ function renderMoneyLogs() {
         `;
     }).join('');
 }
-        
+
+// === 過去のお金履歴表示 ===
+function initMoneyHistoryDate() {
+    const input = document.getElementById('moneyHistoryDate');
+    if (input && !input.value) {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        input.value = yesterday.toISOString().split('T')[0];
+        renderMoneyHistory();
+    }
+}
+window.initMoneyHistoryDate = initMoneyHistoryDate;
+
+function changeMoneyHistoryDate(delta) {
+    const input = document.getElementById('moneyHistoryDate');
+    if (!input) return;
+    const d = input.value ? new Date(input.value) : new Date();
+    d.setDate(d.getDate() + delta);
+    input.value = d.toISOString().split('T')[0];
+    renderMoneyHistory();
+}
+window.changeMoneyHistoryDate = changeMoneyHistoryDate;
+
+function renderMoneyHistory() {
+    const container = document.getElementById('moneyHistoryLogs');
+    const input = document.getElementById('moneyHistoryDate');
+    if (!container || !input || !input.value) return;
+
+    const moneyRecords = window.moneyRecords || [];
+    const targetDate = new Date(input.value).toLocaleDateString('ja-JP');
+    const targetMoney = moneyRecords.filter(m =>
+        new Date(m.timestamp).toLocaleDateString('ja-JP') === targetDate
+    ).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+    if (targetMoney.length === 0) {
+        container.innerHTML = '<p style="color:#999;text-align:center;padding:12px;">この日の記録はありません</p>';
+        return;
+    }
+
+    const total = targetMoney.reduce((sum, r) => sum + r.amount, 0);
+    container.innerHTML = '<div class="log-item" style="background:' + (total >= 0 ? '#f0f8ff' : '#fff5f5') + ';">'
+      + '<strong>この日の収支: ¥' + total.toLocaleString() + '</strong></div>'
+      + targetMoney.map(record => {
+        const catText = record.categoryEmoji
+            ? record.categoryEmoji + ' ' + (record.category || '')
+            : (record.category || '');
+        return '<div class="log-item">'
+          + '<div style="display:flex;justify-content:space-between;align-items:start;">'
+          + '<div style="flex:1;">'
+          + '<strong>' + (record.text || '').replace(/</g,'&lt;') + '</strong> - ¥' + record.amount.toLocaleString()
+          + (catText ? '<br><span class="category-badge">' + catText + '</span>' : '')
+          + '<br><small>' + new Date(record.timestamp).toLocaleTimeString('ja-JP', {hour:'2-digit', minute:'2-digit'}) + '</small>'
+          + '</div>'
+          + '<div style="display:flex;gap:5px;">'
+          + '<button class="btn-icon" onclick="editMoney(' + record.id + ')" title="編集">✏️</button>'
+          + '<button class="btn-icon" onclick="deleteMoney(' + record.id + '); setTimeout(renderMoneyHistory,100);" title="削除">🗑️</button>'
+          + '</div></div></div>';
+    }).join('');
+}
+window.renderMoneyHistory = renderMoneyHistory;
+
         // ログ表示：体重
         function renderWeightLogs() {
             const container = document.getElementById('weightLogs');
