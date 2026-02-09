@@ -4937,9 +4937,9 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <div class="logs-section" style="margin-top:20px;">
 <div class="section-title"><span>📂 過去の行動履歴</span></div>
 <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;justify-content:center;">
-<button class="quick-adjust-btn" onclick="changeActivityHistoryDate(-1)" style="padding:6px 12px;">◀</button>
-<input type="date" id="activityHistoryDate" style="padding:8px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;" onchange="renderActivityHistory()">
-<button class="quick-adjust-btn" onclick="changeActivityHistoryDate(1)" style="padding:6px 12px;">▶</button>
+<button type="button" class="quick-adjust-btn" id="activityHistoryPrev" style="padding:6px 12px;font-size:16px;">◀</button>
+<input type="date" id="activityHistoryDate" style="padding:8px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;">
+<button type="button" class="quick-adjust-btn" id="activityHistoryNext" style="padding:6px 12px;font-size:16px;">▶</button>
 </div>
 <div id="activityHistoryLogs"></div>
 </div>
@@ -5007,9 +5007,9 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <div class="logs-section" style="margin-top:20px;">
 <div class="section-title"><span>📂 過去のお金履歴</span></div>
 <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;justify-content:center;">
-<button class="quick-adjust-btn" onclick="changeMoneyHistoryDate(-1)" style="padding:6px 12px;">◀</button>
-<input type="date" id="moneyHistoryDate" style="padding:8px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;" onchange="renderMoneyHistory()">
-<button class="quick-adjust-btn" onclick="changeMoneyHistoryDate(1)" style="padding:6px 12px;">▶</button>
+<button type="button" class="quick-adjust-btn" id="moneyHistoryPrev" style="padding:6px 12px;font-size:16px;">◀</button>
+<input type="date" id="moneyHistoryDate" style="padding:8px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;">
+<button type="button" class="quick-adjust-btn" id="moneyHistoryNext" style="padding:6px 12px;font-size:16px;">▶</button>
 </div>
 <div id="moneyHistoryLogs"></div>
 </div>
@@ -7415,21 +7415,35 @@ function renderActivityLogs() {
 // === 過去の行動履歴表示 ===
 function initActivityHistoryDate() {
     const input = document.getElementById('activityHistoryDate');
-    if (input && !input.value) {
+    if (!input) return;
+    // 初期値を昨日にセット
+    if (!input.value) {
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
         input.value = yesterday.toISOString().split('T')[0];
-        renderActivityHistory();
     }
+    // イベントリスナーを一度だけ登録
+    if (!input.__histBound) {
+        input.__histBound = true;
+        input.addEventListener('change', function(){ renderActivityHistory(); });
+        var prevBtn = document.getElementById('activityHistoryPrev');
+        var nextBtn = document.getElementById('activityHistoryNext');
+        if (prevBtn) prevBtn.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); changeActivityHistoryDate(-1); });
+        if (nextBtn) nextBtn.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); changeActivityHistoryDate(1); });
+    }
+    renderActivityHistory();
 }
 window.initActivityHistoryDate = initActivityHistoryDate;
 
 function changeActivityHistoryDate(delta) {
-    const input = document.getElementById('activityHistoryDate');
+    var input = document.getElementById('activityHistoryDate');
     if (!input) return;
-    const d = input.value ? new Date(input.value) : new Date();
+    var d = input.value ? new Date(input.value + 'T00:00:00') : new Date();
     d.setDate(d.getDate() + delta);
-    input.value = d.toISOString().split('T')[0];
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var dd = String(d.getDate()).padStart(2, '0');
+    input.value = y + '-' + m + '-' + dd;
     renderActivityHistory();
 }
 window.changeActivityHistoryDate = changeActivityHistoryDate;
@@ -7865,21 +7879,33 @@ function renderMoneyLogs() {
 // === 過去のお金履歴表示 ===
 function initMoneyHistoryDate() {
     const input = document.getElementById('moneyHistoryDate');
-    if (input && !input.value) {
+    if (!input) return;
+    if (!input.value) {
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
         input.value = yesterday.toISOString().split('T')[0];
-        renderMoneyHistory();
     }
+    if (!input.__histBound) {
+        input.__histBound = true;
+        input.addEventListener('change', function(){ renderMoneyHistory(); });
+        var prevBtn = document.getElementById('moneyHistoryPrev');
+        var nextBtn = document.getElementById('moneyHistoryNext');
+        if (prevBtn) prevBtn.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); changeMoneyHistoryDate(-1); });
+        if (nextBtn) nextBtn.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); changeMoneyHistoryDate(1); });
+    }
+    renderMoneyHistory();
 }
 window.initMoneyHistoryDate = initMoneyHistoryDate;
 
 function changeMoneyHistoryDate(delta) {
-    const input = document.getElementById('moneyHistoryDate');
+    var input = document.getElementById('moneyHistoryDate');
     if (!input) return;
-    const d = input.value ? new Date(input.value) : new Date();
+    var d = input.value ? new Date(input.value + 'T00:00:00') : new Date();
     d.setDate(d.getDate() + delta);
-    input.value = d.toISOString().split('T')[0];
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var dd = String(d.getDate()).padStart(2, '0');
+    input.value = y + '-' + m + '-' + dd;
     renderMoneyHistory();
 }
 window.changeMoneyHistoryDate = changeMoneyHistoryDate;
