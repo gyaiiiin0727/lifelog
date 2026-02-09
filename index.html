@@ -5167,14 +5167,11 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 </div>
 </div>
 
-<!-- ログ・履歴はカレンダーのポップアウトで確認する形に変更 -->
-<div class="journal-log" id="journalV3Log" data-only-tab="journal" style="display:none;">
-<div class="journal-log-title">🧾 ログ（要約はここで確認）</div>
-<div class="small" id="journalV3LogList">まだログがありません。</div>
+<!-- ログ・履歴は非表示（カレンダーのポップアウトで確認） -->
+<div id="journalV3Log" style="display:none !important;">
+<div class="small" id="journalV3LogList"></div>
 </div>
-
-<div id="journalLogsSection" style="display:none;">
-<h2 class="section-title" style="margin-top: 30px;">ジャーナル履歴</h2>
+<div id="journalLogsSection" style="display:none !important;">
 <div id="journalLogs"></div>
 </div>
 
@@ -8455,11 +8452,13 @@ function drawMoneyChart(categoryData) {
                 if (isToday) className += ' today';
                 if (hasJournal) className += ' has-journal';
                 
-                // 気分絵文字を追加
+                // 気分絵文字を追加（moodがなくてもAI済みなら✨を表示）
                 let moodEmoji = '';
                 if (journal && journal.mood) {
                     const calMoodEmojis = {'great':'😊','good':'🙂','normal':'😐','bad':'😔','terrible':'😢'};
                     moodEmoji = '<div class="calendar-day-mood">' + (calMoodEmojis[journal.mood] || '') + '</div>';
+                } else if (journal && (journal.aiFeedback || journal.summary)) {
+                    moodEmoji = '<div class="calendar-day-mood">✨</div>';
                 }
                 
                 html += `<div class="${className}" onclick="viewJournalByDate('${dateStr}')">${date}${moodEmoji}</div>`;
@@ -12177,6 +12176,9 @@ try{
           }
           entry.aiFeedback = out;
           entry.aiFeedbackTone = tone;
+          // 気分も保存（カレンダー絵文字表示のため）
+          const currentMood = (typeof getMood === 'function') ? getMood() : '';
+          if (currentMood) entry.mood = currentMood;
           // AIの結果からMUST/WANTを抽出してsummaryに保存
           const mustMatch = out.match(/【明日のMUST】\n([\s\S]*?)(?=【|$)/);
           const wantMatch = out.match(/【明日のWANT】\n([\s\S]*?)(?=【|$)/);
