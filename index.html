@@ -5168,13 +5168,16 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 </div>
 </div>
 
-<div class="journal-log" id="journalV3Log" data-only-tab="journal">
+<!-- ログ・履歴はカレンダーのポップアウトで確認する形に変更 -->
+<div class="journal-log" id="journalV3Log" data-only-tab="journal" style="display:none;">
 <div class="journal-log-title">🧾 ログ（要約はここで確認）</div>
 <div class="small" id="journalV3LogList">まだログがありません。</div>
 </div>
 
+<div id="journalLogsSection" style="display:none;">
 <h2 class="section-title" style="margin-top: 30px;">ジャーナル履歴</h2>
 <div id="journalLogs"></div>
+</div>
 
 </div></div>
 </div>
