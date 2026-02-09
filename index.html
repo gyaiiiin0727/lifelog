@@ -8548,16 +8548,69 @@ function drawMoneyChart(categoryData) {
                   + '<div style="text-align:center;margin-top:10px;"><button id="calModalGoBtn" style="background:#111;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;cursor:pointer;">📖 この日のジャーナルを開く</button></div>';
             }
 
+            // 気分選択UI
+            const currentMood = (journal && journal.mood) || '';
+            const moodOptions = [
+              {key:'great', emoji:'😊', label:'最高'},
+              {key:'good', emoji:'🙂', label:'良い'},
+              {key:'normal', emoji:'😐', label:'普通'},
+              {key:'bad', emoji:'😔', label:'悪い'},
+              {key:'terrible', emoji:'😢', label:'最悪'}
+            ];
+            const moodPickerHtml = '<div style="margin-bottom:16px;">'
+              + '<div style="font-size:13px;color:#666;margin-bottom:8px;">この日の気分</div>'
+              + '<div style="display:flex;gap:6px;justify-content:center;">'
+              + moodOptions.map(m =>
+                  '<button class="calModalMoodBtn" data-mood="' + m.key + '" style="'
+                  + 'display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 10px;'
+                  + 'border-radius:12px;cursor:pointer;transition:all 0.2s;font-size:12px;flex:1;'
+                  + (currentMood === m.key
+                    ? 'background:#111;color:#fff;border:2px solid #111;'
+                    : 'background:#fff;color:#333;border:2px solid #e0e0e0;')
+                  + '">'
+                  + '<span style="font-size:20px;">' + m.emoji + '</span>'
+                  + '<span>' + m.label + '</span>'
+                  + '</button>'
+                ).join('')
+              + '</div></div>';
+
             const modal = document.createElement('div');
             modal.id = 'calendarDetailModal';
             modal.style.cssText = 'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);';
             modal.innerHTML = '<div style="background:#fff;border-radius:16px;width:92%;max-width:440px;max-height:85vh;overflow-y:auto;padding:24px;position:relative;box-shadow:0 8px 32px rgba(0,0,0,0.2);">'
               + '<button id="calModalCloseBtn" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:22px;cursor:pointer;color:#999;line-height:1;">✕</button>'
               + '<div style="font-size:18px;font-weight:800;margin-bottom:16px;">📅 ' + escH(dateStr) + '</div>'
+              + moodPickerHtml
               + content
               + '</div>';
 
             document.body.appendChild(modal);
+
+            // 気分ボタンのイベント
+            modal.querySelectorAll('.calModalMoodBtn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const mood = btn.getAttribute('data-mood');
+                    // UIの選択状態を更新
+                    modal.querySelectorAll('.calModalMoodBtn').forEach(b => {
+                        b.style.background = '#fff';
+                        b.style.color = '#333';
+                        b.style.borderColor = '#e0e0e0';
+                    });
+                    btn.style.background = '#111';
+                    btn.style.color = '#fff';
+                    btn.style.borderColor = '#111';
+                    // localStorageに保存
+                    try {
+                        const allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+                        const entry = allEntries[v3Key] || { date: v3Key };
+                        entry.mood = mood;
+                        allEntries[v3Key] = entry;
+                        localStorage.setItem('journalEntriesV3', JSON.stringify(allEntries));
+                        // カレンダー即更新
+                        renderCalendar();
+                    } catch(_){}
+                });
+            });
 
             // 閉じるボタン
             document.getElementById('calModalCloseBtn').addEventListener('click', () => modal.remove());
