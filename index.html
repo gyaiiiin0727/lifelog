@@ -1410,21 +1410,20 @@ select.text-input{
         }
         
         .refresh-tasks-button {
-            padding: 8px 15px;
-            background: white;
-            border: 2px solid #667eea;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            color: #667eea;
+            padding: 4px 10px;
+            background: transparent;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #999;
             cursor: pointer;
             transition: all 0.3s ease;
         }
         
         .refresh-tasks-button:hover {
-            background: #667eea;
-            color: white;
-            transform: scale(1.05);
+            background: #f0f0f0;
+            color: #666;
         }
         
         .today-tasks-content {
@@ -2211,11 +2210,11 @@ h1 { font-size:20px !important; }
 }
 .tab-content{ padding-top:16px !important; }
 
-button, .btn-primary, .refresh-tasks-button, .action-btn, .save-btn{
+button, .btn-primary, .action-btn, .save-btn{
   border-radius: 10px !important;
 }
 
-.btn-primary, .save-btn, .action-btn.primary, .refresh-tasks-button{
+.btn-primary, .save-btn, .action-btn.primary{
   background:#111 !important;
   border:2px solid #111 !important;
   color:#fff !important;
@@ -5155,7 +5154,7 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 </div>
 <div class="summary-grid">
 <div class="summary-item"><div class="summary-k">よかったこと</div><div class="summary-v" id="todaySumEvents">—</div></div>
-<div class="summary-item"><div class="summary-k">できなかったこと</div><div class="summary-v" id="todaySumLearnings">—</div></div>
+<div class="summary-item"><div class="summary-k">改善したいこと</div><div class="summary-v" id="todaySumLearnings">—</div></div>
 <div class="summary-item"><div class="summary-k">気づいたこと</div><div class="summary-v" id="todaySumFeelings">—</div></div>
 <div class="summary-item"><div class="summary-k">もやっとしていること</div><div class="summary-v" id="todaySumGratitude">—</div></div>
 <div class="summary-item"><div class="summary-k must">MUST</div><div class="summary-v" id="todaySumMust">—</div></div>
@@ -7734,7 +7733,7 @@ function renderJournalLogs() {
         // サマリーグリッド（項目名変更）
         var summaryGridHtml = hasSum ? '<div style="margin-top:8px;"><div class="summary-grid">'
           + (summary.events ? '<div class="summary-item"><div class="summary-k">よかったこと</div><div class="summary-v">'+escHtml(summary.events)+'</div></div>' : '')
-          + (summary.learnings ? '<div class="summary-item"><div class="summary-k">できなかったこと</div><div class="summary-v">'+escHtml(summary.learnings)+'</div></div>' : '')
+          + (summary.learnings ? '<div class="summary-item"><div class="summary-k">改善したいこと</div><div class="summary-v">'+escHtml(summary.learnings)+'</div></div>' : '')
           + (summary.feelings ? '<div class="summary-item"><div class="summary-k">気づいたこと</div><div class="summary-v">'+escHtml(summary.feelings)+'</div></div>' : '')
           + (summary.gratitude ? '<div class="summary-item"><div class="summary-k">もやっとしていること</div><div class="summary-v">'+escHtml(summary.gratitude)+'</div></div>' : '')
           + (hasMust ? '<div class="summary-item"><div class="summary-k must">MUST</div><div class="summary-v">'+escHtml(summary.must)+'</div></div>' : '')
@@ -8524,7 +8523,7 @@ function drawMoneyChart(categoryData) {
                   + '<div class="small" style="margin:6px 0 8px;color:#666;">要約</div>'
                   + '<div class="summary-grid">'
                   + (sum.events ? '<div class="summary-item"><div class="summary-k">よかったこと</div><div class="summary-v">' + escH(sum.events) + '</div></div>' : '')
-                  + (sum.learnings ? '<div class="summary-item"><div class="summary-k">できなかったこと</div><div class="summary-v">' + escH(sum.learnings) + '</div></div>' : '')
+                  + (sum.learnings ? '<div class="summary-item"><div class="summary-k">改善したいこと</div><div class="summary-v">' + escH(sum.learnings) + '</div></div>' : '')
                   + (sum.feelings ? '<div class="summary-item"><div class="summary-k">気づいたこと</div><div class="summary-v">' + escH(sum.feelings) + '</div></div>' : '')
                   + (sum.gratitude ? '<div class="summary-item"><div class="summary-k">もやっとしていること</div><div class="summary-v">' + escH(sum.gratitude) + '</div></div>' : '')
                   + (sum.must ? '<div class="summary-item"><div class="summary-k must">MUST</div><div class="summary-v">' + escH(sum.must) + '</div></div>' : '')
@@ -12064,7 +12063,7 @@ try{
           <div class="small" style="margin:6px 0 8px;color:#666;">要約</div>
           <div class="summary-grid">
             <div class="summary-item"><div class="summary-k">よかったこと</div><div class="summary-v">${esc(sum.events)}</div></div>
-            <div class="summary-item"><div class="summary-k">できなかったこと</div><div class="summary-v">${esc(sum.learnings)}</div></div>
+            <div class="summary-item"><div class="summary-k">改善したいこと</div><div class="summary-v">${esc(sum.learnings)}</div></div>
             <div class="summary-item"><div class="summary-k">気づいたこと</div><div class="summary-v">${esc(sum.feelings)}</div></div>
             <div class="summary-item"><div class="summary-k">もやっとしていること</div><div class="summary-v">${esc(sum.gratitude)}</div></div>
             <div class="summary-item"><div class="summary-k must">MUST</div><div class="summary-v">${esc(sum.must)}</div></div>
@@ -12182,7 +12181,7 @@ try{
           const mustMatch = out.match(/【明日のMUST】\n([\s\S]*?)(?=【|$)/);
           const wantMatch = out.match(/【明日のWANT】\n([\s\S]*?)(?=【|$)/);
           const eventsMatch = out.match(/【よかったこと】\n([\s\S]*?)(?=【|$)/);
-          const moreMatch = out.match(/【(?:改善したいこと|できなかったこと)】\n([\s\S]*?)(?=【|$)/);
+          const moreMatch = out.match(/【改善したいこと】\n([\s\S]*?)(?=【|$)/);
           const feelMatch = out.match(/【気づいたこと】\n([\s\S]*?)(?=【|$)/);
           const worryMatch = out.match(/【もやっと(?:した|している)こと】\n([\s\S]*?)(?=【|$)/);
           const hitokotoMatch = out.match(/【整える一言】\n([\s\S]*?)(?=【|$)/);
@@ -18714,10 +18713,7 @@ window.__qrSaving = false;
     isInstalled = inStandalone();
 
     if (isInstalled){
-      wrap.style.display = '';
-      btn.disabled = true;
-      btn.textContent = 'インストール済み';
-      status.textContent = '';
+      wrap.style.display = 'none';
       return;
     }
 
