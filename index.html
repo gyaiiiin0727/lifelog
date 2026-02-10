@@ -6566,7 +6566,7 @@ function renderHomeTodayTasks() {
 
     if (mustTasks.length > 0) {
         html += '<div class="task-group">';
-        html += '<div class="task-group-title">✅ MUST（やらなきゃいけないこと）</div>';
+        html += '<div class="task-group-title">✅ MUST</div>';
         mustTasks.forEach((task, index) => {
             const id = `homeMustTask${index}`;
             html += `
@@ -6583,7 +6583,7 @@ function renderHomeTodayTasks() {
 
     if (wantTasks.length > 0) {
         html += '<div class="task-group">';
-        html += '<div class="task-group-title">💡 WANT（やりたいこと）</div>';
+        html += '<div class="task-group-title">💡 WANT</div>';
         wantTasks.forEach((task, index) => {
             const id = `homeWantTask${index}`;
             html += `
