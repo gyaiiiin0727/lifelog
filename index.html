@@ -4575,6 +4575,143 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
   opacity: .95;
 }
 
+/* ===== AI相談タブ ===== */
+.ai-consult-tab-container{
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 10px 0;
+}
+.ai-consult-chars{
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.ai-char-btn{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 8px;
+  background: #fff;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  max-width: 110px;
+}
+.ai-char-btn.active{
+  background: #f0f0ff;
+  border-color: #667eea;
+}
+.ai-char-btn:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.ai-char-emoji{
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+.ai-char-name{
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+.ai-char-desc{
+  font-size: 10px;
+  color: #999;
+  margin-top: 2px;
+}
+.ai-consult-input-area{
+  margin-bottom: 12px;
+}
+.ai-consult-textarea{
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.ai-consult-textarea:focus{
+  border-color: #667eea;
+}
+.ai-consult-send-btn{
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.ai-consult-send-btn:hover{
+  opacity: 0.9;
+}
+.ai-consult-send-btn:active{
+  transform: scale(0.98);
+}
+.ai-consult-send-btn:disabled{
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.ai-consult-loading{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  color: #667eea;
+  font-size: 14px;
+  font-weight: 600;
+}
+.ai-consult-loading-spinner{
+  width: 20px;
+  height: 20px;
+  border: 3px solid #e0e0e0;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: ai-spin 0.8s linear infinite;
+}
+@keyframes ai-spin{
+  to{ transform: rotate(360deg); }
+}
+.ai-consult-answer{
+  margin-top: 16px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f0ff 100%);
+  border: 1px solid #e0e0f0;
+  border-radius: 16px;
+  padding: 16px;
+}
+.ai-consult-answer-header{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.ai-consult-answer-emoji{
+  font-size: 24px;
+}
+.ai-consult-answer-name{
+  font-size: 15px;
+  font-weight: 700;
+  color: #333;
+}
+.ai-consult-answer-text{
+  font-size: 14px;
+  line-height: 1.7;
+  color: #444;
+  white-space: pre-wrap;
+}
+
 /* ===== Coming Soon Modal ===== */
 .ai-coming-modal{
   max-width: 460px;
@@ -4803,6 +4940,7 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <button class="tab-button" onclick="switchTab('reportMoney')">💰 お金レポート</button>
 <button class="tab-button" onclick="switchTab('journal')">📔 ジャーナル</button>
 <button class="tab-button" onclick="switchTab('goals')">🎯 目標</button>
+<button class="tab-button" onclick="switchTab('aiConsult')">🤖 AI相談</button>
 </div>
 
 <!-- ホーム（ダッシュボード）タブ -->
@@ -4889,43 +5027,6 @@ body.qr-open .fab-container{ pointer-events:none !important; }
         <button class="journal-cta" id="dashJournalBtn" onclick="switchTab('journal')">今すぐ書く</button>
     </div>
 
-    
-    <!-- AI相談セクション（Coming Soon） -->
-    <div class="ai-consult-section">
-        <div class="ai-consult-header">
-            <span class="ai-icon">🤖</span>
-            <span class="ai-title">AIに相談</span>
-            <span class="coming-soon-badge">Coming Soon</span>
-        </div>
-        <p class="ai-description">あなたの行動・お金の記録をもとに、AIがアドバイスします</p>
-        <div class="ai-consult-buttons">
-            <button class="ai-btn disabled" onclick="showComingSoon('activity')" type="button">
-                <span>⏱️</span>
-                <span>行動について</span>
-            </button>
-            <button class="ai-btn disabled" onclick="showComingSoon('money')" type="button">
-                <span>💰</span>
-                <span>お金について</span>
-            </button>
-            <button class="ai-btn disabled" onclick="showComingSoon('goals')" type="button">
-                <span>🎯</span>
-                <span>目標について</span>
-            </button>
-            <button class="ai-btn disabled" onclick="showComingSoon('weekly')" type="button">
-                <span>📊</span>
-                <span>週間レビュー</span>
-            </button>
-        </div>
-
-        <div class="ai-notify-section">
-            <p class="ai-notify-text">リリース時に通知を受け取る</p>
-            <div class="ai-notify-form">
-                <input type="email" id="notifyEmail" placeholder="メールアドレス" class="notify-input" />
-                <button class="notify-btn" onclick="subscribeNotify()" type="button">登録</button>
-            </div>
-            <p class="ai-notify-status" id="notifyStatus"></p>
-        </div>
-    </div>
 
     <div class="dashboard-recent">
         <h3>🕐 最近の記録</h3>
@@ -5365,6 +5466,59 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 </div>
 </div>
 </div>
+
+<!-- AI相談タブ -->
+<div class="tab-content" id="aiConsult">
+<div class="ai-consult-tab-container">
+    <h2 class="section-title" style="text-align:center;">🤖 AIに相談</h2>
+    <p style="text-align:center; color:#666; font-size:13px; margin:0 0 16px;">キャラクターを選んで、なんでも相談してみよう</p>
+
+    <!-- キャラクター選択 -->
+    <div class="ai-consult-chars" id="aiConsultChars">
+        <button type="button" class="ai-char-btn" data-ai-tone="harsh" onclick="selectAIConsultTone('harsh')">
+            <span class="ai-char-emoji">👔</span>
+            <span class="ai-char-name">マネージャー</span>
+            <span class="ai-char-desc">厳しい元コンサル</span>
+        </button>
+        <button type="button" class="ai-char-btn active" data-ai-tone="normal" onclick="selectAIConsultTone('normal')">
+            <span class="ai-char-emoji">😎</span>
+            <span class="ai-char-name">タクヤ先輩</span>
+            <span class="ai-char-desc">フランクな兄貴</span>
+        </button>
+        <button type="button" class="ai-char-btn" data-ai-tone="gentle" onclick="selectAIConsultTone('gentle')">
+            <span class="ai-char-emoji">🌸</span>
+            <span class="ai-char-name">ハナさん</span>
+            <span class="ai-char-desc">寄り添うカウンセラー</span>
+        </button>
+    </div>
+
+    <!-- テキスト入力 -->
+    <div class="ai-consult-input-area">
+        <textarea id="aiConsultInput" class="ai-consult-textarea" rows="3" placeholder="何でも気軽に相談してね！&#10;例：最近モチベーションが上がらない..."></textarea>
+    </div>
+
+    <!-- 送信ボタン -->
+    <button type="button" class="ai-consult-send-btn" id="aiConsultSendBtn" onclick="sendAIConsult()">
+        💬 相談する
+    </button>
+
+    <!-- ローディング -->
+    <div class="ai-consult-loading" id="aiConsultLoading" style="display:none;">
+        <div class="ai-consult-loading-spinner"></div>
+        <span>考え中...</span>
+    </div>
+
+    <!-- 回答エリア -->
+    <div class="ai-consult-answer" id="aiConsultAnswer" style="display:none;">
+        <div class="ai-consult-answer-header">
+            <span class="ai-consult-answer-emoji" id="aiConsultAnswerEmoji"></span>
+            <span class="ai-consult-answer-name" id="aiConsultAnswerName"></span>
+        </div>
+        <div class="ai-consult-answer-text" id="aiConsultAnswerText"></div>
+    </div>
+</div>
+</div>
+
 <!-- 行動レポートタブ -->
 <div class="tab-content" id="reportActivity">
 <h2 class="section-title">📊 行動レポート</h2>
@@ -19460,6 +19614,89 @@ function getCharacterPrompt(tone) {
   return prompts[tone] || prompts['normal'];
 }
 window.getCharacterPrompt = getCharacterPrompt;
+
+// ========== AI相談タブ機能 ==========
+var aiConsultTone = localStorage.getItem('journalFeedbackTone') || 'normal';
+
+function selectAIConsultTone(tone) {
+  aiConsultTone = tone;
+  var btns = document.querySelectorAll('.ai-char-btn');
+  btns.forEach(function(btn) {
+    if (btn.getAttribute('data-ai-tone') === tone) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+}
+window.selectAIConsultTone = selectAIConsultTone;
+
+async function sendAIConsult() {
+  var input = document.getElementById('aiConsultInput');
+  var text = (input ? input.value : '').trim();
+  if (!text) {
+    alert('相談内容を入力してください');
+    return;
+  }
+
+  var sendBtn = document.getElementById('aiConsultSendBtn');
+  var loading = document.getElementById('aiConsultLoading');
+  var answer = document.getElementById('aiConsultAnswer');
+
+  // UI: ローディング表示
+  if (sendBtn) sendBtn.disabled = true;
+  if (loading) loading.style.display = 'flex';
+  if (answer) answer.style.display = 'none';
+
+  try {
+    var tone = aiConsultTone || 'normal';
+    var charPrompt = (typeof getCharacterPrompt === 'function') ? getCharacterPrompt(tone) : '';
+    var textWithChar = charPrompt
+      ? '【指示】以下のキャラクターになりきって、この口調で全文を書いてください。相談に対して200文字程度で簡潔に回答してください。\n' + charPrompt + '\n【ユーザーの相談】\n' + text
+      : text;
+
+    var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-ai.little-limit-621c.workers.dev';
+    var endpoint = BACKEND_URL + '/api/analyze';
+
+    var res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: textWithChar, tone: tone, type: 'consult' })
+    });
+
+    if (!res.ok) throw new Error('API error: ' + res.status);
+
+    var data = await res.json();
+    var responseText = data.comment || data.feedback || data.analysis || data.result || data.response || '';
+    if (!responseText && typeof data === 'string') responseText = data;
+    if (!responseText) responseText = 'すみません、回答を取得できませんでした。';
+
+    // キャラ情報
+    var charMap = {
+      harsh:  { emoji: '👔', name: 'マネージャー' },
+      normal: { emoji: '😎', name: 'タクヤ先輩' },
+      gentle: { emoji: '🌸', name: 'ハナさん' }
+    };
+    var charInfo = charMap[tone] || charMap['normal'];
+
+    // 回答表示
+    var emojiEl = document.getElementById('aiConsultAnswerEmoji');
+    var nameEl = document.getElementById('aiConsultAnswerName');
+    var textEl = document.getElementById('aiConsultAnswerText');
+    if (emojiEl) emojiEl.textContent = charInfo.emoji;
+    if (nameEl) nameEl.textContent = charInfo.name;
+    if (textEl) textEl.textContent = responseText;
+    if (answer) answer.style.display = 'block';
+
+  } catch(e) {
+    console.error('AI consult error:', e);
+    alert('AI相談でエラーが発生しました: ' + e.message);
+  } finally {
+    if (sendBtn) sendBtn.disabled = false;
+    if (loading) loading.style.display = 'none';
+  }
+}
+window.sendAIConsult = sendAIConsult;
 
 // フィードバックトーン選択
 // キャラクター情報ヘルパー（画像URL・名前・色）
