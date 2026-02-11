@@ -4823,6 +4823,103 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
   color: #667eea;
 }
 
+
+/* ===== AI相談 音声入力ボタン ===== */
+.ai-consult-voice-row{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.ai-consult-voice-btn{
+  width: 100%;
+  padding: 12px 16px;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.ai-consult-voice-btn.recording{
+  background: #111 !important;
+  color: #fff !important;
+  border-color: #111 !important;
+}
+.ai-consult-voice-btn:disabled{ opacity: .5; cursor: not-allowed; }
+.ai-consult-voice-status{
+  font-size: 12px;
+  color: #666;
+  min-height: 16px;
+}
+
+/* ===== AI相談 回数制限バナー ===== */
+.ai-consult-limit-banner{
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: #795548;
+  text-align: center;
+}
+.ai-consult-limit-banner .upgrade-link{
+  color: #b8860b;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ===== 週間レポート / 分析グラフ セクション ===== */
+.ai-premium-section{
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e8e8e8;
+}
+.ai-premium-section h3{
+  font-size: 15px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 12px;
+}
+.ai-premium-btn{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 16px;
+  background: #fff;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  transition: all 0.2s;
+  margin-bottom: 8px;
+  text-align: left;
+}
+.ai-premium-btn:hover{
+  border-color: #111;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.ai-premium-btn .premium-icon{ font-size: 20px; }
+.ai-premium-btn .premium-arrow{ margin-left: auto; color: #999; }
+.ai-premium-btn.locked{ opacity: 0.7; }
+.ai-premium-btn.locked .lock-badge{
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 700;
+  color: #b8860b;
+  background: #fff8e1;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid #ffe082;
+}
+
 /* ===== CSVダウンロード ===== */
 .ai-consult-csv-section{
   margin-top: 24px;
@@ -5690,7 +5787,16 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 
     <!-- テキスト入力 -->
     <div class="ai-consult-input-area">
+        <div class="ai-consult-voice-row">
+          <button type="button" class="ai-consult-voice-btn" id="aiConsultVoiceBtn">🎤 音声入力</button>
+          <span class="ai-consult-voice-status" id="aiConsultVoiceStatus"></span>
+        </div>
         <textarea id="aiConsultInput" class="ai-consult-textarea" rows="3" placeholder="何でも気軽に相談してね！&#10;例：最近モチベーションが上がらない..."></textarea>
+    </div>
+
+    <!-- 回数制限バナー -->
+    <div class="ai-consult-limit-banner" id="aiConsultLimitBanner" style="display:none;">
+      残り <strong id="aiConsultLimitCount">0</strong> 回（今週）｜<span class="upgrade-link" id="aiConsultUpgradeLink">有料会員なら無制限 →</span>
     </div>
 
     <!-- 送信ボタン -->
@@ -5711,6 +5817,31 @@ body.qr-open .fab-container{ pointer-events:none !important; }
             <span class="ai-consult-answer-name" id="aiConsultAnswerName"></span>
         </div>
         <div class="ai-consult-answer-text" id="aiConsultAnswerText"></div>
+    </div>
+
+    <!-- 有料会員限定機能 -->
+    <div class="ai-consult-data-section">
+        <h3 style="font-size:15px; font-weight:700; color:#333; margin:0 0 12px;">👑 有料会員限定</h3>
+        <button type="button" class="ai-premium-btn" id="aiConsultWeeklyReport" onclick="generateAIReport('weekly')">
+            <span class="premium-icon">📊</span>
+            <span>週間AIレポート</span>
+            <span class="premium-arrow">→</span>
+        </button>
+        <button type="button" class="ai-premium-btn" id="aiConsultMonthlyReport" onclick="generateAIReport('monthly')">
+            <span class="premium-icon">📈</span>
+            <span>月間AIレポート</span>
+            <span class="premium-arrow">→</span>
+        </button>
+        <button type="button" class="ai-premium-btn" id="aiConsultGoalTracker" onclick="showGoalTracker()">
+            <span class="premium-icon">🎯</span>
+            <span>目標達成トラッカー</span>
+            <span class="premium-arrow">→</span>
+        </button>
+        <button type="button" class="ai-premium-btn" id="aiConsultCloudBackup" onclick="doCloudBackup()">
+            <span class="premium-icon">☁️</span>
+            <span>クラウドバックアップ</span>
+            <span class="premium-arrow">→</span>
+        </button>
     </div>
 
     <!-- データ管理セクション -->
@@ -16587,7 +16718,16 @@ const modal = $('qrModal');
 
           <!-- テキスト入力 -->
           <div class="ai-consult-input-area">
+            <div class="ai-consult-voice-row">
+              <button type="button" class="ai-consult-voice-btn" id="aiTabConsultVoiceBtn">🎤 音声入力</button>
+              <span class="ai-consult-voice-status" id="aiTabConsultVoiceStatus"></span>
+            </div>
             <textarea id="aiTabConsultInput" class="ai-consult-textarea" rows="3" placeholder="何でも気軽に相談してね！&#10;例：最近モチベーションが上がらない..."></textarea>
+          </div>
+
+          <!-- 回数制限バナー -->
+          <div class="ai-consult-limit-banner" id="aiTabLimitBanner" style="display:none;">
+            残り <strong id="aiTabLimitCount">0</strong> 回（今週）｜<span class="upgrade-link" id="aiTabUpgradeLink">有料会員なら無制限 →</span>
           </div>
 
           <!-- 送信ボタン -->
@@ -16612,11 +16752,31 @@ const modal = $('qrModal');
         </div>
 
         <div class="ai-section">
-          <h3 class="ai-section-title">
-            📊 CSVダウンロード
-            <span class="premium-badge-inline">👑 有料会員</span>
-          </h3>
-          <p style="font-size:12px; color:#888; margin:0 0 12px;">データをCSV形式でダウンロードできます</p>
+          <h3 class="ai-section-title">👑 有料会員限定 <span class="premium-badge-inline">Premium</span></h3>
+
+          <button type="button" class="ai-premium-btn" id="aiTabWeeklyReport">
+            <span class="premium-icon">📊</span>
+            <span>週間AIレポート</span>
+            <span class="premium-arrow">→</span>
+          </button>
+          <button type="button" class="ai-premium-btn" id="aiTabMonthlyReport">
+            <span class="premium-icon">📈</span>
+            <span>月間AIレポート</span>
+            <span class="premium-arrow">→</span>
+          </button>
+          <button type="button" class="ai-premium-btn" id="aiTabGoalTracker">
+            <span class="premium-icon">🎯</span>
+            <span>目標達成トラッカー</span>
+            <span class="premium-arrow">→</span>
+          </button>
+          <button type="button" class="ai-premium-btn" id="aiTabCloudBackup">
+            <span class="premium-icon">☁️</span>
+            <span>クラウドバックアップ</span>
+            <span class="premium-arrow">→</span>
+          </button>
+
+          <div style="margin-top:12px; padding-top:12px; border-top:1px solid #eee;">
+            <p style="font-size:13px; font-weight:600; color:#555; margin:0 0 8px;">📊 CSVダウンロード</p>
           <div class="ai-consult-csv-btns">
             <button type="button" class="ai-csv-btn" id="aiTabCsvActivity">
               <div class="ai-csv-btn-left">
@@ -16739,6 +16899,35 @@ const modal = $('qrModal');
 
     // キャラクターアイコン初期化
     initAITabCharIcons();
+
+    // 音声入力ボタン
+    var voiceBtn = document.getElementById('aiTabConsultVoiceBtn');
+    if (voiceBtn) voiceBtn.addEventListener('click', function() {
+      toggleAIConsultVoice('aiTabConsultInput', 'aiTabConsultVoiceBtn', 'aiTabConsultVoiceStatus');
+    });
+
+    // 回数制限バナー更新
+    updateAIConsultLimitBanner('aiTabLimitBanner', 'aiTabLimitCount');
+
+    // アップグレードリンク
+    var upgradeLink = document.getElementById('aiTabUpgradeLink');
+    if (upgradeLink) upgradeLink.addEventListener('click', promptPremiumUpgrade);
+
+    // 週間レポート
+    var weeklyBtn = document.getElementById('aiTabWeeklyReport');
+    if (weeklyBtn) weeklyBtn.addEventListener('click', function() { generateAIReport('weekly'); });
+
+    // 月間レポート
+    var monthlyBtn = document.getElementById('aiTabMonthlyReport');
+    if (monthlyBtn) monthlyBtn.addEventListener('click', function() { generateAIReport('monthly'); });
+
+    // 目標達成トラッカー
+    var goalBtn = document.getElementById('aiTabGoalTracker');
+    if (goalBtn) goalBtn.addEventListener('click', showGoalTracker);
+
+    // クラウドバックアップ
+    var cloudBtn = document.getElementById('aiTabCloudBackup');
+    if (cloudBtn) cloudBtn.addEventListener('click', doCloudBackup);
   }
 
   // AIタブ用キャラクターアイコン初期化
@@ -16763,6 +16952,12 @@ const modal = $('qrModal');
 
   // AIタブ用相談送信
   async function sendAITabConsult() {
+    // 回数制限チェック
+    if (typeof canUseAIConsult === 'function' && !canUseAIConsult()) {
+      if (typeof promptPremiumUpgrade === 'function') promptPremiumUpgrade();
+      return;
+    }
+
     var input = document.getElementById('aiTabConsultInput');
     var text = (input ? input.value : '').trim();
     if (!text) {
@@ -16830,6 +17025,13 @@ const modal = $('qrModal');
       if (nameEl) nameEl.textContent = charInfo.name;
       if (textEl) textEl.textContent = responseText;
       if (answer) answer.style.display = 'block';
+
+      // 成功時に使用回数カウント
+      if (typeof incrementUsage === 'function') incrementUsage();
+      if (typeof updateAIConsultLimitBanner === 'function') {
+        updateAIConsultLimitBanner('aiTabLimitBanner', 'aiTabLimitCount');
+        updateAIConsultLimitBanner('aiConsultLimitBanner', 'aiConsultLimitCount');
+      }
 
     } catch(e) {
       console.error('AI tab consult error:', e);
@@ -20377,6 +20579,481 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
+</script>
+
+
+<script>
+/* ===== v40.6 AI相談: 音声入力 + 回数制限 + プレミアム機能 ===== */
+(function(){
+  'use strict';
+
+  // ============================
+  // 1) 音声入力（AI相談用）
+  // ============================
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  var voiceInstances = {};
+
+  function getVoiceState(key) {
+    if (!voiceInstances[key]) {
+      voiceInstances[key] = { recognition: null, isListening: false, shouldRestart: false, timer: null, baseText: '', finalAccum: '', lastFinal: '' };
+    }
+    return voiceInstances[key];
+  }
+
+  window.toggleAIConsultVoice = function(textareaId, btnId, statusId) {
+    var state = getVoiceState(textareaId);
+    if (state.isListening) {
+      stopAIVoice(textareaId, btnId, statusId);
+    } else {
+      startAIVoice(textareaId, btnId, statusId);
+    }
+  };
+
+  function startAIVoice(textareaId, btnId, statusId) {
+    if (!SR) {
+      setVoiceStatus(statusId, '❌ このブラウザは音声入力に対応していません', true);
+      return;
+    }
+    var state = getVoiceState(textareaId);
+    var textarea = document.getElementById(textareaId);
+    state.baseText = textarea ? (textarea.value || '').trim() : '';
+    state.finalAccum = '';
+    state.lastFinal = '';
+
+    var r = new SR();
+    r.lang = 'ja-JP';
+    r.interimResults = true;
+    r.continuous = !isMobile;
+
+    r.onresult = function(event) {
+      var el = document.getElementById(textareaId);
+      if (!el) return;
+      var interim = '';
+      for (var i = event.resultIndex; i < event.results.length; i++) {
+        var res = event.results[i];
+        var t = (res[0] && res[0].transcript) ? res[0].transcript : '';
+        if (!t) continue;
+        if (res.isFinal) {
+          if (t.trim() && t.trim() !== state.lastFinal) {
+            state.finalAccum += t.trim();
+            state.lastFinal = t.trim();
+          }
+        } else {
+          interim += t;
+        }
+      }
+      var sep = (state.baseText && (state.finalAccum || interim)) ? '\n' : '';
+      el.value = state.baseText + sep + state.finalAccum + interim;
+    };
+
+    r.onerror = function(e) {
+      if (state.isListening && state.shouldRestart && e && (e.error === 'no-speech' || e.error === 'network')) {
+        scheduleVoiceRestart(textareaId, btnId, statusId);
+        return;
+      }
+      stopAIVoice(textareaId, btnId, statusId, true);
+      if (e && e.error === 'not-allowed') {
+        setVoiceStatus(statusId, '❌ マイクの使用が許可されていません', true);
+      }
+    };
+
+    r.onend = function() {
+      if (state.isListening && state.shouldRestart) {
+        scheduleVoiceRestart(textareaId, btnId, statusId);
+      } else {
+        state.isListening = false;
+        state.shouldRestart = false;
+        updateVoiceBtn(btnId, false);
+        setVoiceStatus(statusId, '✓ 停止しました', false);
+      }
+    };
+
+    state.recognition = r;
+    state.shouldRestart = true;
+    state.isListening = true;
+    updateVoiceBtn(btnId, true);
+    setVoiceStatus(statusId, '🎤 音声入力中…', false);
+    try { r.start(); } catch(e) {
+      setTimeout(function() { if (state.isListening) try { r.start(); } catch(err){} }, 300);
+    }
+  }
+
+  function stopAIVoice(textareaId, btnId, statusId, fromError) {
+    var state = getVoiceState(textareaId);
+    state.shouldRestart = false;
+    clearTimeout(state.timer);
+    if (state.recognition) { try { state.recognition.stop(); } catch(e){} state.recognition = null; }
+    state.isListening = false;
+    updateVoiceBtn(btnId, false);
+    if (!fromError) setVoiceStatus(statusId, '✓ 停止しました', false);
+  }
+
+  function scheduleVoiceRestart(textareaId, btnId, statusId) {
+    var state = getVoiceState(textareaId);
+    clearTimeout(state.timer);
+    var delay = isMobile ? 1100 : 350;
+    state.timer = setTimeout(function() {
+      if (!state.isListening || !state.shouldRestart) return;
+      try { state.recognition.start(); } catch(e) {
+        try { startAIVoice(textareaId, btnId, statusId); } catch(err){}
+      }
+    }, delay);
+  }
+
+  function updateVoiceBtn(btnId, isRecording) {
+    var btn = document.getElementById(btnId);
+    if (!btn) return;
+    if (isRecording) {
+      btn.classList.add('recording');
+      btn.textContent = '⏹️ 停止';
+    } else {
+      btn.classList.remove('recording');
+      btn.textContent = '🎤 音声入力';
+    }
+  }
+
+  function setVoiceStatus(statusId, msg, isError) {
+    var el = document.getElementById(statusId);
+    if (!el) return;
+    el.textContent = msg || '';
+    el.style.color = isError ? '#b00020' : '#666';
+  }
+
+  // #aiConsult タブの音声ボタンもバインド
+  function bindAiConsultVoice() {
+    var btn = document.getElementById('aiConsultVoiceBtn');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        toggleAIConsultVoice('aiConsultInput', 'aiConsultVoiceBtn', 'aiConsultVoiceStatus');
+      });
+    }
+  }
+
+  // ============================
+  // 2) 回数制限（週1回 / 有料:無制限）
+  // ============================
+  var LIMIT_KEY = 'aiConsultUsage';
+  var FREE_LIMIT = 1; // 週1回
+
+  function isPremiumUser() {
+    try { var v = localStorage.getItem('isPremium'); return v === 'true' || v === '1' || v === 'yes'; } catch(e) { return false; }
+  }
+
+  function getWeekKey() {
+    var d = new Date();
+    // 月曜始まりの週番号
+    var jan1 = new Date(d.getFullYear(), 0, 1);
+    var days = Math.floor((d - jan1) / 86400000);
+    var week = Math.ceil((days + jan1.getDay() + 1) / 7);
+    return d.getFullYear() + '-W' + String(week).padStart(2, '0');
+  }
+
+  function getUsageThisWeek() {
+    try {
+      var data = JSON.parse(localStorage.getItem(LIMIT_KEY) || '{}');
+      var key = getWeekKey();
+      return (data[key] && typeof data[key] === 'number') ? data[key] : 0;
+    } catch(e) { return 0; }
+  }
+
+  function incrementUsage() {
+    try {
+      var data = JSON.parse(localStorage.getItem(LIMIT_KEY) || '{}');
+      var key = getWeekKey();
+      data[key] = (data[key] || 0) + 1;
+      localStorage.setItem(LIMIT_KEY, JSON.stringify(data));
+    } catch(e) {}
+  }
+
+  function getRemainingCount() {
+    if (isPremiumUser()) return Infinity;
+    return Math.max(0, FREE_LIMIT - getUsageThisWeek());
+  }
+
+  function canUseAIConsult() {
+    if (isPremiumUser()) return true;
+    return getUsageThisWeek() < FREE_LIMIT;
+  }
+
+  window.updateAIConsultLimitBanner = function(bannerId, countId) {
+    var banner = document.getElementById(bannerId);
+    var countEl = document.getElementById(countId);
+    if (!banner) return;
+    if (isPremiumUser()) {
+      banner.style.display = 'none';
+      return;
+    }
+    var remaining = getRemainingCount();
+    banner.style.display = 'block';
+    if (countEl) countEl.textContent = remaining;
+    if (remaining <= 0) {
+      banner.style.background = '#fce4ec';
+      banner.style.borderColor = '#ef9a9a';
+      banner.style.color = '#c62828';
+    }
+  };
+
+  window.promptPremiumUpgrade = function() {
+    var msg = '👑 有料会員になる\n\n有料会員になると:\n• AI相談 無制限\n• 週間/月間AIレポート\n• カテゴリ別 分析グラフ\n• CSVダウンロード\n• クラウドバックアップ\n\n有料会員になりますか？';
+    if (confirm(msg)) {
+      try { localStorage.setItem('isPremium', 'true'); } catch(e) {}
+      alert('✅ 有料会員になりました！');
+      // バナー更新
+      updateAIConsultLimitBanner('aiTabLimitBanner', 'aiTabLimitCount');
+      updateAIConsultLimitBanner('aiConsultLimitBanner', 'aiConsultLimitCount');
+    }
+  };
+
+  // 既存の sendAIConsult / sendAITabConsult に回数チェックを挟む
+  var origSendAIConsult = window.sendAIConsult;
+  window.sendAIConsult = function() {
+    if (!canUseAIConsult()) {
+      promptPremiumUpgrade();
+      return;
+    }
+    incrementUsage();
+    updateAIConsultLimitBanner('aiConsultLimitBanner', 'aiConsultLimitCount');
+    updateAIConsultLimitBanner('aiTabLimitBanner', 'aiTabLimitCount');
+    if (typeof origSendAIConsult === 'function') origSendAIConsult();
+  };
+
+  // ============================
+  // 3) 週間/月間レポート（有料）
+  // ============================
+  window.generateAIReport = async function(period) {
+    if (!isPremiumUser()) { promptPremiumUpgrade(); return; }
+
+    var periodLabel = period === 'weekly' ? '週間' : '月間';
+    var btn = document.getElementById(period === 'weekly' ? 'aiTabWeeklyReport' : 'aiTabMonthlyReport');
+    if (btn) { btn.disabled = true; btn.querySelector('span:nth-child(2)').textContent = periodLabel + 'レポート生成中...'; }
+
+    try {
+      var activities = JSON.parse(localStorage.getItem('activities') || '[]');
+      var money = JSON.parse(localStorage.getItem('moneyRecords') || '[]');
+      var journal = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+
+      // 期間フィルタ
+      var now = new Date();
+      var from;
+      if (period === 'weekly') {
+        from = new Date(now.getTime() - 7 * 86400000);
+      } else {
+        from = new Date(now.getFullYear(), now.getMonth(), 1);
+      }
+
+      var filteredAct = (Array.isArray(activities) ? activities : []).filter(function(a) {
+        var t = new Date(a.startTime || a.timestamp);
+        return t >= from;
+      });
+      var filteredMoney = (Array.isArray(money) ? money : []).filter(function(m) {
+        return m.timestamp && new Date(m.timestamp) >= from;
+      });
+
+      var totalExpense = 0, totalIncome = 0;
+      filteredMoney.forEach(function(m) {
+        var amt = Number(m.amount) || 0;
+        if (amt < 0 || m.type === 'expense') totalExpense += Math.abs(amt);
+        else totalIncome += amt;
+      });
+
+      var summary = '【' + periodLabel + 'データサマリー】\n';
+      summary += '行動記録: ' + filteredAct.length + '件\n';
+      summary += '収入合計: ' + totalIncome.toLocaleString() + '円\n';
+      summary += '支出合計: ' + totalExpense.toLocaleString() + '円\n';
+      summary += '差額: ' + (totalIncome - totalExpense).toLocaleString() + '円\n';
+
+      var prompt = '以下の' + periodLabel + 'データを分析して、200文字程度で振り返りレポートを書いてください。良かった点と改善点を含めてください。\n\n' + summary;
+
+      var BACKEND_URL = window.BACKEND_URL || 'https://lifelog-ai.little-limit-621c.workers.dev';
+      var res = await fetch(BACKEND_URL + '/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: prompt, tone: 'normal', type: 'report' })
+      });
+
+      if (!res.ok) throw new Error('API error: ' + res.status);
+      var data = await res.json();
+      var report = data.comment || data.feedback || data.analysis || data.result || data.response || '';
+      if (!report) report = 'レポートを生成できませんでした。';
+
+      alert('📊 ' + periodLabel + 'AIレポート\n\n' + summary + '\n---\n' + report);
+
+    } catch(e) {
+      console.error('Report error:', e);
+      alert('❌ レポート生成に失敗しました: ' + e.message);
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.querySelector('span:nth-child(2)').textContent = (period === 'weekly' ? '週間' : '月間') + 'AIレポート';
+      }
+    }
+  };
+
+  // ============================
+  // 4) カテゴリ別 分析グラフ（有料）
+  // ============================
+  window.showGoalTracker = function() {
+    if (!isPremiumUser()) { promptPremiumUpgrade(); return; }
+
+    var existing = document.getElementById('goalTrackerModal');
+    if (existing) existing.remove();
+
+    var goals = [];
+    try { goals = JSON.parse(localStorage.getItem('monthlyGoals') || '[]'); } catch(e) {}
+    if (!Array.isArray(goals)) goals = [];
+
+    // 今月の目標をフィルタ
+    var now = new Date();
+    var thisMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+    var thisMonthGoals = goals.filter(function(g) { return g.month === thisMonth; });
+    var totalGoals = thisMonthGoals.length;
+    var completedGoals = thisMonthGoals.filter(function(g) { return g.completed; }).length;
+    var rate = totalGoals > 0 ? Math.round((completedGoals / totalGoals) * 100) : 0;
+
+    // 過去3ヶ月の推移
+    var monthlyStats = [];
+    for (var i = 2; i >= 0; i--) {
+      var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      var mKey = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+      var mGoals = goals.filter(function(g) { return g.month === mKey; });
+      var mTotal = mGoals.length;
+      var mDone = mGoals.filter(function(g) { return g.completed; }).length;
+      var mRate = mTotal > 0 ? Math.round((mDone / mTotal) * 100) : 0;
+      var label = d.getFullYear() + '/' + (d.getMonth() + 1);
+      monthlyStats.push({ label: label, total: mTotal, done: mDone, rate: mRate });
+    }
+
+    // モーダル作成
+    var modal = document.createElement('div');
+    modal.id = 'goalTrackerModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:10001;padding:16px;';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#fff;border-radius:16px;max-width:500px;width:100%;max-height:85vh;overflow-y:auto;padding:20px;';
+
+    var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
+    html += '<h3 style="font-size:16px;font-weight:700;">🎯 目標達成トラッカー</h3>';
+    html += '<button type="button" id="closeGoalTracker" style="border:none;background:transparent;font-size:20px;cursor:pointer;">✕</button>';
+    html += '</div>';
+
+    // 今月のサマリー
+    html += '<div style="text-align:center;margin-bottom:20px;">';
+    html += '<div style="font-size:48px;font-weight:900;color:' + (rate >= 80 ? '#27ae60' : rate >= 50 ? '#f39c12' : '#e74c3c') + ';">' + rate + '%</div>';
+    html += '<div style="font-size:14px;color:#666;">今月の達成率（' + completedGoals + ' / ' + totalGoals + '）</div>';
+    html += '</div>';
+
+    // プログレスバー
+    html += '<div style="background:#f0f0f0;border-radius:999px;height:12px;margin-bottom:20px;overflow:hidden;">';
+    html += '<div style="background:' + (rate >= 80 ? '#27ae60' : rate >= 50 ? '#f39c12' : '#e74c3c') + ';height:100%;width:' + rate + '%;border-radius:999px;transition:width 0.5s;"></div>';
+    html += '</div>';
+
+    // 今月の目標リスト
+    html += '<h4 style="font-size:14px;font-weight:600;margin:0 0 10px;">今月の目標</h4>';
+    if (thisMonthGoals.length === 0) {
+      html += '<p style="color:#999;font-size:13px;">目標がまだありません。目標タブから追加してね。</p>';
+    } else {
+      thisMonthGoals.forEach(function(g) {
+        var icon = g.completed ? '✅' : '⬜';
+        html += '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f0f0f0;">';
+        html += '<span style="font-size:18px;">' + icon + '</span>';
+        html += '<span style="font-size:14px;color:' + (g.completed ? '#27ae60' : '#333') + ';' + (g.completed ? 'text-decoration:line-through;' : '') + '">' + (g.text || '(無題)') + '</span>';
+        html += '</div>';
+      });
+    }
+
+    // 過去3ヶ月推移
+    html += '<h4 style="font-size:14px;font-weight:600;margin:20px 0 10px;">📈 月別推移</h4>';
+    html += '<canvas id="goalTrackerChart" width="400" height="200"></canvas>';
+
+    box.innerHTML = html;
+    modal.appendChild(box);
+    document.body.appendChild(modal);
+
+    modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
+    document.getElementById('closeGoalTracker').addEventListener('click', function() { modal.remove(); });
+
+    // Chart.js で棒グラフ
+    if (typeof Chart !== 'undefined') {
+      var ctx = document.getElementById('goalTrackerChart');
+      if (ctx) {
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: monthlyStats.map(function(s) { return s.label; }),
+            datasets: [
+              { label: '達成', data: monthlyStats.map(function(s) { return s.done; }), backgroundColor: '#27ae60', borderRadius: 6 },
+              { label: '未達成', data: monthlyStats.map(function(s) { return s.total - s.done; }), backgroundColor: '#e0e0e0', borderRadius: 6 }
+            ]
+          },
+          options: {
+            responsive: true,
+            scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } } },
+            plugins: { legend: { position: 'bottom', labels: { font: { size: 12 } } } }
+          }
+        });
+      }
+    }
+  };
+
+  // ============================
+  // 5) クラウドバックアップ（有料）
+  // ============================
+  window.doCloudBackup = function() {
+    if (!isPremiumUser()) { promptPremiumUpgrade(); return; }
+
+    try {
+      var backupData = {
+        backupDate: new Date().toISOString(),
+        version: 'cloud-v1',
+        activities: JSON.parse(localStorage.getItem('activities') || '[]'),
+        moneyRecords: JSON.parse(localStorage.getItem('moneyRecords') || '[]'),
+        journalEntriesV3: JSON.parse(localStorage.getItem('journalEntriesV3') || '{}'),
+        monthlyGoals: JSON.parse(localStorage.getItem('monthlyGoals') || '[]'),
+        activityCategories: JSON.parse(localStorage.getItem('activityCategories') || '[]'),
+        expenseCategories: JSON.parse(localStorage.getItem('expenseCategories') || '[]'),
+        incomeCategories: JSON.parse(localStorage.getItem('incomeCategories') || '[]'),
+        settings: JSON.parse(localStorage.getItem('lifelogSettings') || '{}')
+      };
+
+      // ローカルにバックアップ保存（クラウドサーバー連携は今後）
+      localStorage.setItem('cloudBackup', JSON.stringify(backupData));
+      localStorage.setItem('cloudBackupDate', backupData.backupDate);
+
+      var dateStr = new Date().toLocaleString('ja-JP');
+      alert('☁️ バックアップ完了\n\n' + dateStr + ' に保存しました。\n\n※ 現在はローカル保存です。\nクラウドサーバー連携は近日中に対応予定です。');
+
+    } catch(e) {
+      console.error('Backup error:', e);
+      alert('❌ バックアップに失敗しました: ' + e.message);
+    }
+  };
+
+  // ============================
+  // 初期化
+  // ============================
+  function init() {
+    bindAiConsultVoice();
+    updateAIConsultLimitBanner('aiConsultLimitBanner', 'aiConsultLimitCount');
+
+    // #aiConsult のアップグレードリンク
+    var link = document.getElementById('aiConsultUpgradeLink');
+    if (link) link.addEventListener('click', promptPremiumUpgrade);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // グローバル公開（他スクリプトから参照できるように）
+  window.canUseAIConsult = canUseAIConsult;
+  window.incrementUsage = incrementUsage;
+  window.isPremiumUser = isPremiumUser;
+
+  console.log('✅ v40.6 AI相談: 音声入力 + 回数制限 + プレミアム機能を適用');
+})();
 </script>
 
 </body>
