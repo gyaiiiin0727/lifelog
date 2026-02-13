@@ -11,11 +11,11 @@
 <meta name="theme-color" content="#111111">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ライフログ">
-<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-title" content="Daice">
+<link rel="apple-touch-icon" href="icon.jpg">
 <meta name="mobile-web-app-capable" content="yes">
 
-<title>ライフログアプリ v35.0 - 完全修正版（window公開修正）</title>
+<title>Daice - Day + Voice</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 
@@ -1157,89 +1157,6 @@ select.text-input{
 
 .feedback-content li {
     margin: 8px 0;
-}
-
-/* 目標達成トラッカー: リッチ表示 */
-.goals-progress-hero {
-    text-align: center;
-    padding: 20px 0;
-}
-
-.goals-progress-circle {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    margin: 0 auto 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: conic-gradient(
-        var(--progress-color, #4CAF50) calc(var(--progress, 0) * 1%),
-        #e8e8e8 calc(var(--progress, 0) * 1%)
-    );
-    position: relative;
-}
-
-.goals-progress-circle-inner {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    background: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.goals-progress-percent {
-    font-size: 28px;
-    font-weight: 700;
-    color: #333;
-    line-height: 1;
-}
-
-.goals-progress-label {
-    font-size: 12px;
-    color: #888;
-    margin-top: 4px;
-}
-
-.goals-progress-status {
-    font-size: 15px;
-    font-weight: 600;
-    color: #555;
-}
-
-.category-stat-rich {
-    margin: 12px 0;
-}
-
-.category-stat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-    font-size: 14px;
-}
-
-.category-stat-count {
-    color: #666;
-    font-size: 13px;
-}
-
-.category-bar-container {
-    width: 100%;
-    height: 10px;
-    background: #e8e8e8;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.category-bar {
-    height: 100%;
-    border-radius: 5px;
-    transition: width 0.5s ease;
-    min-width: 0;
 }
 
 .empty-state {
@@ -4550,8 +4467,8 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 <meta name="theme-color" content="#111111">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ライフログ">
-<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-title" content="Daice">
+<link rel="apple-touch-icon" href="icon.jpg">
 
 
 <style id="ai_consult_styles">
@@ -5189,7 +5106,7 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 </head>
 <body>
 <div class="container">
-<h1>📊 ライフログ v35.0 - 完全修正版（window公開修正）</h1>
+<h1><img src="icon.jpg" alt="Daice" style="width:32px;height:32px;vertical-align:middle;border-radius:6px;margin-right:6px;">Daice</h1>
 <div class="tab-nav">
 <button class="tab-button active" onclick="switchTab('home')">🏠 ホーム</button>
     <button class="tab-button" onclick="switchTab('activity')">⏱️ 行動</button>
@@ -5722,10 +5639,6 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <h3>📊 達成状況</h3>
 <div id="goalsProgress"></div>
 </div>
-<div class="goals-feedback-section">
-<h3>💡 フィードバック</h3>
-<div id="goalsFeedback"></div>
-</div>
 </div>
 </div>
 
@@ -5774,23 +5687,11 @@ body.qr-open .fab-container{ pointer-events:none !important; }
                 <span class="ai-topic-icon">💬</span>
                 <span class="ai-topic-name">その他</span>
             </button>
-            <button type="button" class="ai-topic-btn" data-topic="weekly" onclick="selectAIConsultTopic('weekly')">
-                <span class="ai-topic-icon">📊</span>
-                <span class="ai-topic-name">週間レビュー</span>
-            </button>
         </div>
     </div>
 
-    <!-- 週間レビュー生成ボタン（weekly選択時のみ表示） -->
-    <div class="ai-consult-weekly-area" id="aiConsultWeeklyArea" style="display:none;">
-        <p style="text-align:center; color:#666; font-size:13px; margin:0 0 12px;">過去7日間の行動・お金・ジャーナル・目標データをもとに、AIが週間レビューを生成します。</p>
-        <button type="button" class="ai-consult-send-btn" id="aiWeeklyReviewBtn" onclick="generateWeeklyReview()">
-            📊 週間レビューを生成
-        </button>
-    </div>
-
     <!-- テキスト入力 -->
-    <div class="ai-consult-input-area" id="aiConsultInputArea">
+    <div class="ai-consult-input-area">
         <textarea id="aiConsultInput" class="ai-consult-textarea" rows="3" placeholder="何でも気軽に相談してね！&#10;例：最近モチベーションが上がらない..."></textarea>
     </div>
 
@@ -9005,16 +8906,16 @@ function renderGoals() {
 function renderGoalsProgress() {
     const container = document.getElementById('goalsProgress');
     const currentGoals = monthlyGoals.filter(g => g.month === selectedGoalsMonth);
-
+    
     if (currentGoals.length === 0) {
         container.innerHTML = '<div class="empty-state">目標を設定してください</div>';
         return;
     }
-
+    
     const completed = currentGoals.filter(g => g.completed).length;
     const total = currentGoals.length;
     const percentage = Math.round((completed / total) * 100);
-
+    
     // カテゴリ別の達成状況
     const categoryStats = {};
     currentGoals.forEach(goal => {
@@ -9026,29 +8927,17 @@ function renderGoalsProgress() {
             categoryStats[goal.category].completed++;
         }
     });
-
-    // 達成率に応じた色
-    const progressColor = percentage >= 80 ? '#4CAF50' : percentage >= 50 ? '#FF9800' : percentage >= 20 ? '#2196F3' : '#9E9E9E';
-    const statusEmoji = percentage >= 80 ? '🎉' : percentage >= 50 ? '👍' : percentage >= 20 ? '💪' : '🚀';
-    const statusText = percentage >= 80 ? '素晴らしい！' : percentage >= 50 ? '良いペース！' : percentage >= 20 ? 'がんばろう！' : 'スタートしよう！';
-
-    // カテゴリ別の色
-    const catColors = {
-        '健康': '#4CAF50', '仕事': '#2196F3', '勉強': '#9C27B0',
-        '趣味': '#FF9800', '人間関係': '#E91E63', 'お金': '#FFC107', 'その他': '#607D8B'
-    };
-
+    
     let html = `
-        <div class="goals-progress-hero">
-            <div class="goals-progress-circle" style="--progress: ${percentage}; --progress-color: ${progressColor}">
-                <div class="goals-progress-circle-inner">
-                    <span class="goals-progress-percent">${percentage}%</span>
-                    <span class="goals-progress-label">${completed}/${total} 達成</span>
-                </div>
+        <div class="progress-summary">
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: ${percentage}%"></div>
             </div>
-            <div class="goals-progress-status">${statusEmoji} ${statusText}</div>
+            <div class="progress-text">
+                ${completed} / ${total} 達成 (${percentage}%)
+            </div>
         </div>
-
+        
         <div class="category-progress">
             <h4>カテゴリ別達成状況</h4>
             ${Object.entries(categoryStats).map(([category, stats]) => {
@@ -9057,25 +8946,18 @@ function renderGoalsProgress() {
                     '趣味': '🎨', '人間関係': '👥', 'お金': '💰', 'その他': '📌'
                 }[category] || '📌';
                 const catPercentage = Math.round((stats.completed / stats.total) * 100);
-                const barColor = catColors[category] || '#607D8B';
-
+                
                 return `
-                    <div class="category-stat-rich">
-                        <div class="category-stat-header">
-                            <span>${catEmoji} ${category}</span>
-                            <span class="category-stat-count">${stats.completed}/${stats.total} (${catPercentage}%)</span>
-                        </div>
-                        <div class="category-bar-container">
-                            <div class="category-bar" style="width: ${catPercentage}%; background: ${barColor};"></div>
-                        </div>
+                    <div class="category-stat">
+                        <span>${catEmoji} ${category}</span>
+                        <span>${stats.completed}/${stats.total} (${catPercentage}%)</span>
                     </div>
                 `;
             }).join('')}
         </div>
     `;
-
+    
     container.innerHTML = html;
-    generateGoalsFeedback();
 }
 
 function generateGoalsFeedback() {
@@ -16657,109 +16539,81 @@ const modal = $('qrModal');
 
         <div class="ai-section">
           <h3 class="ai-section-title">💬 AIに相談</h3>
-          <p style="text-align:center; color:#666; font-size:13px; margin:0 0 16px;">キャラクターを選んで、なんでも相談してみよう</p>
-
-          <!-- キャラクター選択 -->
-          <div class="ai-consult-chars" id="aiTabChars">
-            <button type="button" class="ai-char-btn" data-ai-tone="harsh">
-              <span class="ai-char-icon" id="aiTabCharIconHarsh"></span>
-              <span class="ai-char-name">マネージャー</span>
-              <span class="ai-char-desc">厳しい元コンサル</span>
-            </button>
-            <button type="button" class="ai-char-btn active" data-ai-tone="normal">
-              <span class="ai-char-icon" id="aiTabCharIconNormal"></span>
-              <span class="ai-char-name">タクヤ先輩</span>
-              <span class="ai-char-desc">フランクな兄貴</span>
-            </button>
-            <button type="button" class="ai-char-btn" data-ai-tone="gentle">
-              <span class="ai-char-icon" id="aiTabCharIconGentle"></span>
-              <span class="ai-char-name">ハナさん</span>
-              <span class="ai-char-desc">寄り添うカウンセラー</span>
-            </button>
-          </div>
-
-          <!-- テーマ選択 -->
-          <div class="ai-consult-topic-section">
-            <p class="ai-consult-topic-label">どのテーマについて相談する？</p>
-            <div class="ai-consult-topics" id="aiTabTopics">
-              <button type="button" class="ai-topic-btn active" data-topic="activity">
-                <span class="ai-topic-icon">⏱️</span>
-                <span class="ai-topic-name">行動</span>
-              </button>
-              <button type="button" class="ai-topic-btn" data-topic="money">
-                <span class="ai-topic-icon">💰</span>
-                <span class="ai-topic-name">お金</span>
-              </button>
-              <button type="button" class="ai-topic-btn" data-topic="goals">
-                <span class="ai-topic-icon">🎯</span>
-                <span class="ai-topic-name">目標</span>
-              </button>
-              <button type="button" class="ai-topic-btn" data-topic="other">
-                <span class="ai-topic-icon">💬</span>
-                <span class="ai-topic-name">その他</span>
-              </button>
+          <div class="ai-consult-grid">
+            <div class="ai-consult-card disabled" data-feature="activity">
+              <div class="icon">⏱️</div>
+              <div class="label">行動について</div>
+              <div class="badge">Coming Soon</div>
+            </div>
+            <div class="ai-consult-card disabled" data-feature="money">
+              <div class="icon">💰</div>
+              <div class="label">お金について</div>
+              <div class="badge">Coming Soon</div>
+            </div>
+            <div class="ai-consult-card disabled" data-feature="goals">
+              <div class="icon">🎯</div>
+              <div class="label">目標について</div>
+              <div class="badge">Coming Soon</div>
+            </div>
+            <div class="ai-consult-card disabled" data-feature="weekly">
+              <div class="icon">📊</div>
+              <div class="label">週間レビュー</div>
+              <div class="badge">Coming Soon</div>
             </div>
           </div>
 
-          <!-- テキスト入力 -->
-          <div class="ai-consult-input-area">
-            <textarea id="aiTabConsultInput" class="ai-consult-textarea" rows="3" placeholder="何でも気軽に相談してね！&#10;例：最近モチベーションが上がらない..."></textarea>
-          </div>
-
-          <!-- 送信ボタン -->
-          <button type="button" class="ai-consult-send-btn" id="aiTabConsultSendBtn">
-            💬 相談する
-          </button>
-
-          <!-- ローディング -->
-          <div class="ai-consult-loading" id="aiTabConsultLoading" style="display:none;">
-            <div class="ai-consult-loading-spinner"></div>
-            <span>考え中...</span>
-          </div>
-
-          <!-- 回答エリア -->
-          <div class="ai-consult-answer" id="aiTabConsultAnswer" style="display:none;">
-            <div class="ai-consult-answer-header">
-              <span class="ai-consult-answer-icon" id="aiTabConsultAnswerIcon"></span>
-              <span class="ai-consult-answer-name" id="aiTabConsultAnswerName"></span>
+          <div class="notify-section">
+            <p>🔔 リリース時に通知を受け取る</p>
+            <div class="notify-form">
+              <input type="email" id="aiTabNotifyEmail" placeholder="メールアドレス" />
+              <button type="button" id="aiTabNotifyBtn">登録</button>
             </div>
-            <div class="ai-consult-answer-text" id="aiTabConsultAnswerText"></div>
+            <div class="notify-status" id="aiTabNotifyStatus"></div>
           </div>
         </div>
 
         <div class="ai-section">
           <h3 class="ai-section-title">
-            📊 CSVダウンロード
-            <span class="premium-badge-inline">👑 有料会員</span>
+            📁 データ管理
+            <span class="premium-badge">👑 有料会員</span>
           </h3>
-          <p style="font-size:12px; color:#888; margin:0 0 12px;">データをCSV形式でダウンロードできます</p>
-          <div class="ai-consult-csv-btns">
-            <button type="button" class="ai-csv-btn" id="aiTabCsvActivity">
-              <div class="ai-csv-btn-left">
-                <span class="ai-csv-btn-icon">⏱️</span>
-                <span class="ai-csv-btn-text">行動データ</span>
+
+          <div class="data-section premium">
+            <div class="data-buttons">
+              <div class="data-btn locked" data-premium="csv-activity">
+                <div class="left">
+                  <span class="icon">📊</span>
+                  <span class="text">行動データをCSVでダウンロード</span>
+                </div>
+                <span class="lock">🔒</span>
               </div>
-              <span class="ai-csv-btn-arrow">↓</span>
-            </button>
-            <button type="button" class="ai-csv-btn" id="aiTabCsvMoney">
-              <div class="ai-csv-btn-left">
-                <span class="ai-csv-btn-icon">💰</span>
-                <span class="ai-csv-btn-text">お金データ</span>
+              <div class="data-btn locked" data-premium="csv-money">
+                <div class="left">
+                  <span class="icon">💰</span>
+                  <span class="text">お金データをCSVでダウンロード</span>
+                </div>
+                <span class="lock">🔒</span>
               </div>
-              <span class="ai-csv-btn-arrow">↓</span>
-            </button>
-            <button type="button" class="ai-csv-btn" id="aiTabCsvJournal">
-              <div class="ai-csv-btn-left">
-                <span class="ai-csv-btn-icon">📔</span>
-                <span class="ai-csv-btn-text">ジャーナル</span>
+              <div class="data-btn locked" data-premium="csv-journal">
+                <div class="left">
+                  <span class="icon">📔</span>
+                  <span class="text">ジャーナルをエクスポート</span>
+                </div>
+                <span class="lock">🔒</span>
               </div>
-              <span class="ai-csv-btn-arrow">↓</span>
-            </button>
+              <div class="data-btn locked" data-premium="backup">
+                <div class="left">
+                  <span class="icon">☁️</span>
+                  <span class="text">クラウドバックアップ</span>
+                </div>
+                <span class="lock">🔒</span>
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="ai-section">
-          <h3 class="ai-section-title">📁 データ管理</h3>
+          <h3 class="ai-section-title">✨ 無料でできること</h3>
           <div class="data-section">
             <div class="data-buttons">
               <div class="data-btn" id="btnExportJSON">
@@ -16796,54 +16650,26 @@ const modal = $('qrModal');
   }
 
   // ========== 3) AIタブ内のイベントをバインド ==========
-  var aiTabTone = localStorage.getItem('journalFeedbackTone') || 'normal';
-  var aiTabTopic = 'activity';
-
   function bindAITabEvents() {
-    // キャラクター選択
-    document.querySelectorAll('#ai .ai-char-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var tone = this.getAttribute('data-ai-tone');
-        aiTabTone = tone;
-        document.querySelectorAll('#ai .ai-char-btn').forEach(function(b) {
-          b.classList.toggle('active', b.getAttribute('data-ai-tone') === tone);
-        });
+    // AI相談カード
+    document.querySelectorAll('#ai .ai-consult-card').forEach(function(card) {
+      card.addEventListener('click', function() {
+        const feature = this.getAttribute('data-feature');
+        showComingSoonAlert(feature);
       });
     });
 
-    // テーマ選択
-    document.querySelectorAll('#aiTabTopics .ai-topic-btn').forEach(function(btn) {
+    // 有料機能ボタン
+    document.querySelectorAll('#ai .data-btn.locked').forEach(function(btn) {
       btn.addEventListener('click', function() {
-        var topic = this.getAttribute('data-topic');
-        aiTabTopic = topic;
-        document.querySelectorAll('#aiTabTopics .ai-topic-btn').forEach(function(b) {
-          b.classList.toggle('active', b.getAttribute('data-topic') === topic);
-        });
-        // プレースホルダー更新
-        var input = document.getElementById('aiTabConsultInput');
-        if (input) {
-          var ph = {
-            activity: '行動についての相談を入力してね！\n例：毎日の習慣が続かない...',
-            money: 'お金についての相談を入力してね！\n例：節約がなかなかできない...',
-            goals: '目標についての相談を入力してね！\n例：目標設定のコツが知りたい...',
-            other: '何でも気軽に相談してね！\n例：最近モチベーションが上がらない...'
-          };
-          input.placeholder = ph[topic] || ph['other'];
-        }
+        const feature = this.getAttribute('data-premium');
+        showPremiumAlert(feature);
       });
     });
 
-    // 送信ボタン
-    var sendBtn = document.getElementById('aiTabConsultSendBtn');
-    if (sendBtn) sendBtn.addEventListener('click', sendAITabConsult);
-
-    // CSVダウンロードボタン
-    var csvAct = document.getElementById('aiTabCsvActivity');
-    var csvMon = document.getElementById('aiTabCsvMoney');
-    var csvJnl = document.getElementById('aiTabCsvJournal');
-    if (csvAct) csvAct.addEventListener('click', function() { if (typeof handleCSVDownload === 'function') handleCSVDownload('activity'); });
-    if (csvMon) csvMon.addEventListener('click', function() { if (typeof handleCSVDownload === 'function') handleCSVDownload('money'); });
-    if (csvJnl) csvJnl.addEventListener('click', function() { if (typeof handleCSVDownload === 'function') handleCSVDownload('journal'); });
+    // 通知登録
+    const notifyBtn = document.getElementById('aiTabNotifyBtn');
+    if (notifyBtn) notifyBtn.addEventListener('click', subscribeFromAITab);
 
     // JSONエクスポート
     const exportBtn = document.getElementById('btnExportJSON');
@@ -16852,108 +16678,6 @@ const modal = $('qrModal');
     // JSONインポート
     const importBtn = document.getElementById('btnImportJSON');
     if (importBtn) importBtn.addEventListener('click', importDataJSON);
-
-    // キャラクターアイコン初期化
-    initAITabCharIcons();
-  }
-
-  // AIタブ用キャラクターアイコン初期化
-  function initAITabCharIcons() {
-    var toneMap = { harsh: 'aiTabCharIconHarsh', normal: 'aiTabCharIconNormal', gentle: 'aiTabCharIconGentle' };
-    var fallbackEmojis = { harsh: '👔', normal: '😎', gentle: '🌸' };
-    Object.keys(toneMap).forEach(function(tone) {
-      var srcBtn = document.querySelector('.feedback-tone-btn[data-tone="' + tone + '"]');
-      var srcImg = srcBtn ? srcBtn.querySelector('img') : null;
-      var target = document.getElementById(toneMap[tone]);
-      if (target) {
-        if (srcImg && srcImg.src) {
-          target.innerHTML = '<img src="' + srcImg.src + '" alt="' + tone + '">';
-        } else {
-          target.textContent = fallbackEmojis[tone];
-          target.style.fontSize = '28px';
-          target.style.background = 'none';
-        }
-      }
-    });
-  }
-
-  // AIタブ用相談送信
-  async function sendAITabConsult() {
-    var input = document.getElementById('aiTabConsultInput');
-    var text = (input ? input.value : '').trim();
-    if (!text) {
-      alert('相談内容を入力してください');
-      return;
-    }
-
-    var sendBtn = document.getElementById('aiTabConsultSendBtn');
-    var loading = document.getElementById('aiTabConsultLoading');
-    var answer = document.getElementById('aiTabConsultAnswer');
-
-    if (sendBtn) sendBtn.disabled = true;
-    if (loading) loading.style.display = 'flex';
-    if (answer) answer.style.display = 'none';
-
-    try {
-      var tone = aiTabTone || 'normal';
-      var topic = aiTabTopic || 'other';
-      var charPrompt = (typeof getCharacterPrompt === 'function') ? getCharacterPrompt(tone) : '';
-
-      var topicLabels = { activity: '行動・習慣', money: 'お金・家計', goals: '目標・計画', other: '一般的な相談' };
-      var topicContext = '【相談テーマ】' + (topicLabels[topic] || 'その他') + '\n';
-
-      var textWithChar = charPrompt
-        ? '【指示】以下のキャラクターになりきって、この口調で全文を書いてください。相談に対して200文字程度で簡潔に回答してください。\n' + charPrompt + '\n' + topicContext + '【ユーザーの相談】\n' + text
-        : topicContext + text;
-
-      var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-ai.little-limit-621c.workers.dev';
-      var endpoint = BACKEND_URL + '/api/analyze';
-
-      var res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: textWithChar, tone: tone, type: 'consult' })
-      });
-
-      if (!res.ok) throw new Error('API error: ' + res.status);
-
-      var data = await res.json();
-      var responseText = data.comment || data.feedback || data.analysis || data.result || data.response || '';
-      if (!responseText && typeof data === 'string') responseText = data;
-      if (!responseText) responseText = 'すみません、回答を取得できませんでした。';
-
-      var charMap = {
-        harsh:  { name: 'マネージャー' },
-        normal: { name: 'タクヤ先輩' },
-        gentle: { name: 'ハナさん' }
-      };
-      var charInfo = charMap[tone] || charMap['normal'];
-
-      var iconEl = document.getElementById('aiTabConsultAnswerIcon');
-      var nameEl = document.getElementById('aiTabConsultAnswerName');
-      var textEl = document.getElementById('aiTabConsultAnswerText');
-      if (iconEl) {
-        var srcBtn = document.querySelector('.feedback-tone-btn[data-tone="' + tone + '"]');
-        var srcImg = srcBtn ? srcBtn.querySelector('img') : null;
-        if (srcImg && srcImg.src) {
-          iconEl.innerHTML = '<img src="' + srcImg.src + '" alt="' + charInfo.name + '">';
-        } else {
-          var fallbackEmojis = { harsh: '👔', normal: '😎', gentle: '🌸' };
-          iconEl.textContent = fallbackEmojis[tone] || '😎';
-          iconEl.style.fontSize = '24px';
-        }
-      }
-      if (nameEl) nameEl.textContent = charInfo.name;
-      if (textEl) textEl.textContent = responseText;
-      if (answer) answer.style.display = 'block';
-
-    } catch(e) {
-      console.error('AI tab consult error:', e);
-      alert('AI相談でエラーが発生しました: ' + e.message);
-    } finally {
-      if (sendBtn) sendBtn.disabled = false;
-      if (loading) loading.style.display = 'none';
-    }
   }
 
   // ========== 4) ホームからAI相談セクションを削除（強化版） ==========
@@ -20163,32 +19887,16 @@ function selectAIConsultTopic(topic) {
       btn.classList.remove('active');
     }
   });
-
-  // 週間レビュー選択時はテキスト入力を隠して生成ボタンを表示
-  var inputArea = document.getElementById('aiConsultInputArea');
-  var sendBtn = document.getElementById('aiConsultSendBtn');
-  var weeklyArea = document.getElementById('aiConsultWeeklyArea');
-
-  if (topic === 'weekly') {
-    if (inputArea) inputArea.style.display = 'none';
-    if (sendBtn) sendBtn.style.display = 'none';
-    if (weeklyArea) weeklyArea.style.display = 'block';
-  } else {
-    if (inputArea) inputArea.style.display = '';
-    if (sendBtn) sendBtn.style.display = '';
-    if (weeklyArea) weeklyArea.style.display = 'none';
-
-    // テーマに合わせてプレースホルダーを更新
-    var input = document.getElementById('aiConsultInput');
-    if (input) {
-      var placeholders = {
-        activity: '行動についての相談を入力してね！\n例：毎日の習慣が続かない...',
-        money: 'お金についての相談を入力してね！\n例：節約がなかなかできない...',
-        goals: '目標についての相談を入力してね！\n例：目標設定のコツが知りたい...',
-        other: '何でも気軽に相談してね！\n例：最近モチベーションが上がらない...'
-      };
-      input.placeholder = placeholders[topic] || placeholders['other'];
-    }
+  // テーマに合わせてプレースホルダーを更新
+  var input = document.getElementById('aiConsultInput');
+  if (input) {
+    var placeholders = {
+      activity: '行動についての相談を入力してね！\n例：毎日の習慣が続かない...',
+      money: 'お金についての相談を入力してね！\n例：節約がなかなかできない...',
+      goals: '目標についての相談を入力してね！\n例：目標設定のコツが知りたい...',
+      other: '何でも気軽に相談してね！\n例：最近モチベーションが上がらない...'
+    };
+    input.placeholder = placeholders[topic] || placeholders['other'];
   }
 }
 window.selectAIConsultTopic = selectAIConsultTopic;
@@ -20302,137 +20010,6 @@ async function sendAIConsult() {
 }
 window.sendAIConsult = sendAIConsult;
 
-// 週間レビュー生成
-async function generateWeeklyReview() {
-  var weeklyBtn = document.getElementById('aiWeeklyReviewBtn');
-  var loading = document.getElementById('aiConsultLoading');
-  var answer = document.getElementById('aiConsultAnswer');
-
-  if (weeklyBtn) weeklyBtn.disabled = true;
-  if (loading) loading.style.display = 'flex';
-  if (answer) answer.style.display = 'none';
-
-  try {
-    var tone = aiConsultTone || 'normal';
-    var charPrompt = (typeof getCharacterPrompt === 'function') ? getCharacterPrompt(tone) : '';
-
-    // 過去7日間のデータを集約
-    var today = new Date();
-    var sevenDaysAgo = new Date(today);
-    sevenDaysAgo.setDate(today.getDate() - 7);
-
-    var recentActivities = (window.activities || []).filter(function(a) {
-      return new Date(a.timestamp) >= sevenDaysAgo;
-    });
-    var recentMoney = (window.moneyRecords || []).filter(function(m) {
-      return new Date(m.timestamp) >= sevenDaysAgo;
-    });
-    var recentJournals = (window.journals || []).filter(function(j) {
-      return new Date(j.timestamp) >= sevenDaysAgo;
-    });
-
-    // 今月の目標
-    var goalsMonth = window.goalsCurrentMonth || '';
-    var currentGoals = (window.monthlyGoals || []).filter(function(g) { return g.month === goalsMonth; });
-    var completedGoals = currentGoals.filter(function(g) { return g.completed; });
-
-    // サマリーテキスト構築
-    var summary = '【週間レビュー用データ（過去7日間）】\n';
-
-    // 行動サマリー
-    summary += '\n■ 行動記録: ' + recentActivities.length + '件\n';
-    if (recentActivities.length > 0) {
-      var actCounts = {};
-      recentActivities.forEach(function(a) {
-        var name = a.text || a.category || '不明';
-        actCounts[name] = (actCounts[name] || 0) + 1;
-      });
-      var topActs = Object.entries(actCounts).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 5);
-      topActs.forEach(function(item) { summary += '  - ' + item[0] + ': ' + item[1] + '回\n'; });
-      var totalMin = recentActivities.reduce(function(s, a) { return s + (a.durationMinutes || 0); }, 0);
-      if (totalMin > 0) {
-        summary += '  合計時間: ' + Math.floor(totalMin / 60) + '時間' + (totalMin % 60) + '分\n';
-      }
-    }
-
-    // お金サマリー
-    var income = recentMoney.filter(function(m) { return m.amount > 0; }).reduce(function(s, m) { return s + m.amount; }, 0);
-    var expense = recentMoney.filter(function(m) { return m.amount < 0; }).reduce(function(s, m) { return s + Math.abs(m.amount); }, 0);
-    summary += '\n■ お金: 収入 ' + income.toLocaleString() + '円 / 支出 ' + expense.toLocaleString() + '円\n';
-
-    // ジャーナルサマリー
-    summary += '\n■ ジャーナル: ' + recentJournals.length + '件\n';
-    if (recentJournals.length > 0) {
-      var moodMap = {};
-      recentJournals.forEach(function(j) {
-        if (j.mood) moodMap[j.mood] = (moodMap[j.mood] || 0) + 1;
-      });
-      if (Object.keys(moodMap).length > 0) {
-        summary += '  気分: ' + Object.entries(moodMap).map(function(e) { return e[0] + '(' + e[1] + '回)'; }).join(', ') + '\n';
-      }
-    }
-
-    // 目標サマリー
-    summary += '\n■ 今月の目標: ' + completedGoals.length + '/' + currentGoals.length + ' 達成\n';
-    currentGoals.forEach(function(g) {
-      summary += '  ' + (g.completed ? '✅' : '⬜') + ' ' + g.text + ' (' + g.category + ')\n';
-    });
-
-    var promptText = charPrompt
-      ? '【指示】以下のキャラクターになりきって、週間レビューを行ってください。300文字程度で、良かった点・改善点・来週のアクションを含めてください。\n' + charPrompt + '\n' + summary
-      : '【指示】以下のデータをもとに週間レビューを行ってください。300文字程度で、良かった点・改善点・来週のアクションを含めてください。\n' + summary;
-
-    var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-ai.little-limit-621c.workers.dev';
-    var endpoint = BACKEND_URL + '/api/analyze';
-
-    var res = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: promptText, tone: tone, type: 'consult' })
-    });
-
-    if (!res.ok) throw new Error('API error: ' + res.status);
-
-    var data = await res.json();
-    var responseText = data.comment || data.feedback || data.analysis || data.result || data.response || '';
-    if (!responseText && typeof data === 'string') responseText = data;
-    if (!responseText) responseText = 'すみません、レビューを生成できませんでした。';
-
-    // キャラ情報
-    var charMap = {
-      harsh:  { name: 'マネージャー' },
-      normal: { name: 'タクヤ先輩' },
-      gentle: { name: 'ハナさん' }
-    };
-    var charInfo = charMap[tone] || charMap['normal'];
-
-    var iconEl = document.getElementById('aiConsultAnswerIcon');
-    var nameEl = document.getElementById('aiConsultAnswerName');
-    var textEl = document.getElementById('aiConsultAnswerText');
-    if (iconEl) {
-      var iconSrc = (typeof getAICharIconSrc === 'function') ? getAICharIconSrc(tone) : null;
-      if (iconSrc) {
-        iconEl.innerHTML = '<img src="' + iconSrc + '" alt="' + charInfo.name + '">';
-      } else {
-        var fallbackEmojis = { harsh: '👔', normal: '😎', gentle: '🌸' };
-        iconEl.textContent = fallbackEmojis[tone] || '😎';
-        iconEl.style.fontSize = '24px';
-      }
-    }
-    if (nameEl) nameEl.textContent = charInfo.name + 'の週間レビュー';
-    if (textEl) textEl.textContent = responseText;
-    if (answer) answer.style.display = 'block';
-
-  } catch(e) {
-    console.error('Weekly review error:', e);
-    alert('週間レビューの生成でエラーが発生しました: ' + e.message);
-  } finally {
-    if (weeklyBtn) weeklyBtn.disabled = false;
-    if (loading) loading.style.display = 'none';
-  }
-}
-window.generateWeeklyReview = generateWeeklyReview;
-
 // CSVダウンロードハンドラー（有料会員チェック付き）
 function handleCSVDownload(type) {
   // 有料判定
@@ -20443,16 +20020,12 @@ function handleCSVDownload(type) {
     } catch(e) { return false; }
   }
 
-  // 有料会員でない場合は購入案内を表示
   if (!isPremiumUser()) {
-    var msg = '👑 有料会員限定機能\n\nCSVダウンロードは有料会員向け機能です。\n\n有料会員になると:\n• 全データをCSVでダウンロード\n• クラウドバックアップ\n• AI相談機能\n\n有料会員になりますか？';
-    if (!confirm(msg)) return;
-    // 購入処理（ここでは仮にフラグを立てる）
-    try { localStorage.setItem('isPremium', 'true'); } catch(e) {}
-    alert('✅ 有料会員になりました！\nCSVダウンロードが利用できます。');
+    alert('🔒 有料会員限定\n\nCSVダウンロードは有料会員向け機能です。\n\n有料会員になると:\n• 全データをCSVでダウンロード\n• クラウドバックアップ\n\n※ 現在準備中です');
+    return;
   }
 
-  // CSVダウンロード実行
+  // 有料会員の場合はCSVダウンロード
   if (typeof pickRangeV2 === 'function') {
     pickRangeV2().then(function(rangeObj) {
       if (!rangeObj) return;
@@ -20641,6 +20214,8 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+<script src="goal-ai-breakdown.js"></script>
+<script src="voice-input-extra.js"></script>
 
 </body>
 </html>
