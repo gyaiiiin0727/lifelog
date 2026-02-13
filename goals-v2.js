@@ -24,11 +24,11 @@
     '.gv2-summary-cats { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }',
     '.gv2-summary-cat { background: #f3f4f6; padding: 2px 10px; border-radius: 12px; font-size: 11px; color: #555; }',
 
-    /* 今週やること */
-    '.gv2-weekly { margin-bottom: 14px; }',
+    /* 今週やること（一番下なのでFAB用の余白） */
+    '.gv2-weekly { margin-bottom: 80px; }',
 
     /* 今月の目標セクション */
-    '.gv2-monthly { background: #fff; border-radius: 16px; padding: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 80px; }',
+    '.gv2-monthly { background: #fff; border-radius: 16px; padding: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 14px; }',
     '.gv2-monthly-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }',
     '.gv2-monthly-head h3 { margin: 0; font-size: 16px; color: #333; }',
     '.gv2-add-btn-sm {',
@@ -140,10 +140,10 @@
     var container = document.createElement('div');
     container.id = 'goalsV2Container';
 
-    // サマリーカード
+    // サマリー → 今月の目標 → 今週やること（FABボタンとの干渉回避）
     container.innerHTML = '<div id="gv2Summary"></div>' +
-      '<div id="gv2Weekly"></div>' +
-      '<div id="gv2Monthly"></div>';
+      '<div id="gv2Monthly"></div>' +
+      '<div id="gv2Weekly"></div>';
 
     // monthSelectorの後に挿入
     if (monthSelector && monthSelector.nextSibling) {
