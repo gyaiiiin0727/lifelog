@@ -166,21 +166,13 @@
       btn.textContent = '🎤 音声入力';
     }
 
-    // 最終テキストをターゲットに確定
-    var target = document.getElementById(this.targetId);
-    if (target && this.finalText) {
-      var existing = this.getExistingText(target);
-      // interim を除いた最終結果を設定
-      var finalDisplay = existing;
-      if (this.finalText) {
-        finalDisplay += (existing ? '\n' : '') + this.finalText;
-      }
-      this.setValue(target, finalDisplay);
-    }
+    // 最終テキストをターゲットに確定（onresultで既にセット済みなので再セットしない）
+    var hadText = !!this.finalText;
 
-    this.setStatus(this.finalText ? '✅ 入力完了' : '');
+    this.setStatus(hadText ? '✅ 入力完了' : '');
     this.recognition = null;
     this.finalText = '';
+    this._originalText = undefined;
   };
 
   VoiceInput.prototype.getExistingText = function(target) {

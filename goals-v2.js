@@ -11,18 +11,18 @@
   style.textContent = [
     /* 進捗サマリーカード */
     '.gv2-summary {',
-    '  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);',
-    '  border-radius: 16px; padding: 18px 20px; margin-bottom: 14px;',
-    '  color: #fff; box-shadow: 0 4px 15px rgba(102,126,234,0.3);',
+    '  background: #fff;',
+    '  border: 1.5px solid #e5e7eb; border-radius: 16px; padding: 18px 20px; margin-bottom: 14px;',
+    '  color: #333; box-shadow: 0 2px 8px rgba(0,0,0,0.06);',
     '}',
     '.gv2-summary-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }',
-    '.gv2-summary-title { font-size: 14px; font-weight: 600; opacity: 0.9; }',
-    '.gv2-summary-num { font-size: 26px; font-weight: 800; }',
-    '.gv2-summary-num small { font-size: 13px; font-weight: 500; opacity: 0.8; }',
-    '.gv2-summary-bar { width: 100%; height: 7px; background: rgba(255,255,255,0.3); border-radius: 4px; overflow: hidden; }',
-    '.gv2-summary-fill { height: 100%; background: #fff; border-radius: 4px; transition: width 0.4s ease; }',
+    '.gv2-summary-title { font-size: 14px; font-weight: 600; color: #555; }',
+    '.gv2-summary-num { font-size: 26px; font-weight: 800; color: #333; }',
+    '.gv2-summary-num small { font-size: 13px; font-weight: 500; color: #888; }',
+    '.gv2-summary-bar { width: 100%; height: 7px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }',
+    '.gv2-summary-fill { height: 100%; background: #333; border-radius: 4px; transition: width 0.4s ease; }',
     '.gv2-summary-cats { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }',
-    '.gv2-summary-cat { background: rgba(255,255,255,0.2); padding: 2px 10px; border-radius: 12px; font-size: 11px; }',
+    '.gv2-summary-cat { background: #f3f4f6; padding: 2px 10px; border-radius: 12px; font-size: 11px; color: #555; }',
 
     /* 今週やること */
     '.gv2-weekly { margin-bottom: 14px; }',
