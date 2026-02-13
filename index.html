@@ -1135,6 +1135,205 @@ select.text-input{
     border-left: 4px solid #4CAF50;
 }
 
+/* ===== 目標ページ リニューアル ===== */
+
+/* 進捗サマリーカード */
+.goals-summary-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+}
+.goals-summary-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.goals-summary-title {
+    font-size: 15px;
+    font-weight: 600;
+    opacity: 0.9;
+}
+.goals-summary-count {
+    font-size: 28px;
+    font-weight: 800;
+}
+.goals-summary-count small {
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0.8;
+}
+.goals-summary-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.goals-summary-bar-fill {
+    height: 100%;
+    background: #fff;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+}
+.goals-summary-cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+.goals-summary-cat-tag {
+    background: rgba(255,255,255,0.2);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* 今週やることセクション */
+.goals-weekly-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.goals-weekly-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.goals-weekly-header h3 {
+    margin: 0;
+    font-size: 17px;
+    color: #333;
+}
+.goals-weekly-content {
+    background: white;
+    border-radius: 12px;
+    padding: 10px;
+}
+.goals-weekly-empty {
+    text-align: center;
+    color: #999;
+    padding: 20px;
+    font-size: 14px;
+}
+
+/* 今月の目標セクション */
+.goals-monthly-section {
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+}
+.goals-monthly-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.goals-monthly-header h3 {
+    margin: 0;
+    font-size: 17px;
+    color: #333;
+}
+.goal-add-button-small {
+    padding: 6px 14px;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.goal-add-button-small:hover {
+    background: #e0e0e0;
+    color: #333;
+}
+
+/* 目標カード（リニューアル） */
+.goal-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    transition: all 0.2s;
+}
+.goal-card:hover {
+    background: #f0f0f0;
+}
+.goal-card.completed {
+    opacity: 0.6;
+}
+.goal-card.completed .goal-card-text {
+    text-decoration: line-through;
+    color: #999;
+}
+.goal-card-checkbox {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    cursor: pointer;
+    accent-color: #667eea;
+}
+.goal-card-body {
+    flex: 1;
+    min-width: 0;
+}
+.goal-card-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    line-height: 1.3;
+}
+.goal-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+.goal-card-category {
+    font-size: 11px;
+    padding: 2px 8px;
+    background: #e8e8e8;
+    border-radius: 4px;
+    color: #666;
+}
+.goal-card-weekly-count {
+    font-size: 11px;
+    color: #667eea;
+    font-weight: 500;
+}
+.goal-card-delete {
+    background: none;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    opacity: 0.3;
+    padding: 4px;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+}
+.goal-card:hover .goal-card-delete {
+    opacity: 0.7;
+}
+.goal-card-delete:hover {
+    opacity: 1 !important;
+}
+
+/* ===== 目標ページ リニューアル END ===== */
+
 .goals-feedback-section {
     margin: 20px 0;
 }
@@ -5627,18 +5826,24 @@ body.qr-open .fab-container{ pointer-events:none !important; }
               <div class="simple-month-display" id="currentGoalsMonth">2026年1月</div>
               <button class="simple-nav-btn" type="button" onclick="changeGoalsMonth(1)">次月 ▶</button>
             </div>
-<div class="goals-section">
-<button class="category-edit-button goal-add-button" onclick="openGoalAddModal()">➕ 新しい目標を追加</button>
+<!-- 進捗サマリーカード -->
+<div class="goals-summary-card" id="goalsSummaryCard"></div>
+
+<!-- 今週やること -->
+<div class="goals-weekly-section" id="goalsWeeklySection"></div>
+
+<!-- 今月の目標一覧 -->
+<div class="goals-monthly-section">
+<div class="goals-monthly-header">
+  <h3 id="goalsListTitle">🎯 今月の目標</h3>
+  <button class="goal-add-button-small" onclick="openGoalAddModal()">➕ 追加</button>
+</div>
+<div id="goalsList"></div>
 <div class="status-message" id="goalStatus"></div>
 </div>
-<div class="goals-list-section">
-<h3 id="goalsListTitle">今月の目標リスト</h3>
-<div id="goalsList"></div>
-</div>
-<div class="goals-progress-section">
-<h3>📊 達成状況</h3>
-<div id="goalsProgress"></div>
-</div>
+
+<!-- 旧: 達成状況（renderGoalsSummaryに統合） -->
+<div id="goalsProgress" style="display:none;"></div>
 </div>
 </div>
 
@@ -8793,57 +8998,82 @@ let monthlyGoals = (() => { try { const v = JSON.parse(localStorage.getItem('mon
 const goalsCurrentMonth = monthKeyFromDate(new Date()); // YYYY-MM
 var selectedGoalsMonth = goalsCurrentMonth;
 
+// ===== 週キーの計算 =====
+function getWeekKey(date) {
+    const d = new Date(date);
+    d.setHours(0,0,0,0);
+    d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+    const week1 = new Date(d.getFullYear(), 0, 4);
+    const weekNum = 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+    return `${d.getFullYear()}-W${String(weekNum).padStart(2,'0')}`;
+}
+var currentWeekKey = getWeekKey(new Date());
+
 function changeGoalsMonth(offset) {
     const [year, month] = selectedGoalsMonth.split('-').map(Number);
     const date = new Date(year, month - 1 + offset, 1);
     selectedGoalsMonth = monthKeyFromDate(date);
-    
+
     updateGoalsMonthDisplay();
-    renderGoals();
-    renderGoalsProgress();
+    renderGoalsAll();
 }
 
 function updateGoalsMonthDisplay() {
     const [year, month] = selectedGoalsMonth.split('-').map(Number);
-    const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', 
+    const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月',
                         '7月', '8月', '9月', '10月', '11月', '12月'];
-    
+
     const display = document.getElementById('currentGoalsMonth');
-    display.textContent = `${year}年${monthNames[month - 1]}`;
-    
-    // Month filtering now uses selectedGoalsMonth
+    if (display) display.textContent = `${year}年${monthNames[month - 1]}`;
+
     const title = document.getElementById('goalsListTitle');
-    if (selectedGoalsMonth === goalsCurrentMonth) {
-        title.textContent = '今月の目標リスト';
-    } else {
-        title.textContent = `${year}年${monthNames[month - 1]}の目標リスト`;
+    if (title) {
+        if (selectedGoalsMonth === goalsCurrentMonth) {
+            title.textContent = '🎯 今月の目標';
+        } else {
+            title.textContent = `🎯 ${year}年${monthNames[month - 1]}の目標`;
+        }
     }
+}
+
+// ===== 全体レンダリング =====
+function renderGoalsAll() {
+    renderGoalsSummary();
+    renderWeeklyTasks();
+    renderGoals();
+}
+
+// ===== カテゴリ絵文字ヘルパー =====
+function goalCategoryEmoji(cat) {
+    return {'健康':'💪','仕事':'💼','勉強':'📚','学習':'📚',
+            '趣味':'🎨','人間関係':'👥','お金':'💰','家族':'👨‍👩‍👧‍👦','その他':'📌'}[cat] || '📌';
 }
 function addGoal() {
     const input = document.getElementById('goalInput');
     const categorySelect = document.getElementById('goalCategory');
     const text = input.value.trim();
     const category = categorySelect.value;
-    
+
     if (!text) {
         showStatus('goalStatus', '❌ 目標を入力してください');
         return;
     }
-    
+
     const goal = {
         id: Date.now(),
         text: text || '',
         category: category,
         createdAt: new Date().toISOString(),
-        month: (selectedGoalsMonth || goalsCurrentMonth), // YYYY-MM（表示中の月に追加）
-        completed: false
+        month: (selectedGoalsMonth || goalsCurrentMonth),
+        completed: false,
+        weeklyTasks: []
     };
-    
+
     monthlyGoals.unshift(goal);
     Storage.set(Storage.keys.MONTHLY_GOALS, monthlyGoals);
-    
+
     input.value = '';
-    renderGoals();
+    renderGoalsAll();
     showStatus('goalStatus', '✓ 目標を追加しました');
 }
 
@@ -8852,207 +9082,270 @@ function toggleGoalComplete(id) {
     if (goal) {
         goal.completed = !goal.completed;
         Storage.set(Storage.keys.MONTHLY_GOALS, monthlyGoals);
-        renderGoals();
-        generateGoalsFeedback();
+        renderGoalsAll();
     }
 }
 
 function deleteGoal(id) {
     if (!confirm('この目標を削除しますか？')) return;
-    
+
     monthlyGoals = monthlyGoals.filter(g => g.id !== id);
     Storage.set(Storage.keys.MONTHLY_GOALS, monthlyGoals);
-    renderGoals();
+    renderGoalsAll();
     showStatus('goalStatus', '✓ 目標を削除しました');
 }
 
-function renderGoals() {
-    const container = document.getElementById('goalsList');
+// ===== 進捗サマリーカード =====
+function renderGoalsSummary() {
+    const container = document.getElementById('goalsSummaryCard');
+    if (!container) return;
     const currentGoals = monthlyGoals.filter(g => g.month === selectedGoalsMonth);
-    
-    if (currentGoals.length === 0) {
-        const isCurrentMonth = selectedGoalsMonth === goalsCurrentMonth;
-        container.innerHTML = `<div class="empty-state">${isCurrentMonth ? '今月' : '選択した月'}の目標がありません</div>`;
-        renderGoalsProgress();
-        return;
-    }
-    
-    container.innerHTML = currentGoals.map(goal => {
-        const categoryEmoji = {
-            '健康': '💪', '仕事': '💼', '勉強': '📚',
-            '趣味': '🎨', '人間関係': '👥', 'お金': '💰', 'その他': '📌'
-        }[goal.category] || '📌';
-        
-        return `
-            <div class="goal-item ${goal.completed ? 'completed' : ''}">
-                <div class="goal-header">
-                    <input type="checkbox" 
-                           ${goal.completed ? 'checked' : ''} 
-                           onchange="toggleGoalComplete(${goal.id})"
-                           class="goal-checkbox" />
-                    <span class="goal-text">${goal.text}</span>
-                </div>
-                <div class="goal-meta">
-                    <span class="goal-category">${categoryEmoji} ${goal.category}</span>
-                    <button class="btn-icon" onclick="deleteGoal(${goal.id})" title="削除">🗑️</button>
-                </div>
-            </div>
-        `;
-    }).join('');
-    
-    renderGoalsProgress();
-}
 
-function renderGoalsProgress() {
-    const container = document.getElementById('goalsProgress');
-    const currentGoals = monthlyGoals.filter(g => g.month === selectedGoalsMonth);
-    
     if (currentGoals.length === 0) {
-        container.innerHTML = '<div class="empty-state">目標を設定してください</div>';
+        container.innerHTML = '';
+        container.style.display = 'none';
         return;
     }
-    
+    container.style.display = '';
+
     const completed = currentGoals.filter(g => g.completed).length;
     const total = currentGoals.length;
-    const percentage = Math.round((completed / total) * 100);
-    
-    // カテゴリ別の達成状況
-    const categoryStats = {};
-    currentGoals.forEach(goal => {
-        if (!categoryStats[goal.category]) {
-            categoryStats[goal.category] = { total: 0, completed: 0 };
-        }
-        categoryStats[goal.category].total++;
-        if (goal.completed) {
-            categoryStats[goal.category].completed++;
-        }
-    });
-    
-    let html = `
-        <div class="progress-summary">
-            <div class="progress-bar-container">
-                <div class="progress-bar" style="width: ${percentage}%"></div>
-            </div>
-            <div class="progress-text">
-                ${completed} / ${total} 達成 (${percentage}%)
+    const pct = Math.round((completed / total) * 100);
+
+    // カテゴリタグ
+    const cats = {};
+    currentGoals.forEach(g => { cats[g.category] = (cats[g.category]||0) + 1; });
+    const catTags = Object.entries(cats).map(([c,n]) =>
+        `<span class="goals-summary-cat-tag">${goalCategoryEmoji(c)} ${c} ${n}</span>`
+    ).join('');
+
+    container.innerHTML = `
+        <div class="goals-summary-inner">
+            <div>
+                <div class="goals-summary-title">📊 今月の進捗</div>
+                <div class="goals-summary-count">${pct}% <small>${completed}/${total} 達成</small></div>
             </div>
         </div>
-        
-        <div class="category-progress">
-            <h4>カテゴリ別達成状況</h4>
-            ${Object.entries(categoryStats).map(([category, stats]) => {
-                const catEmoji = {
-                    '健康': '💪', '仕事': '💼', '勉強': '📚',
-                    '趣味': '🎨', '人間関係': '👥', 'お金': '💰', 'その他': '📌'
-                }[category] || '📌';
-                const catPercentage = Math.round((stats.completed / stats.total) * 100);
-                
-                return `
-                    <div class="category-stat">
-                        <span>${catEmoji} ${category}</span>
-                        <span>${stats.completed}/${stats.total} (${catPercentage}%)</span>
+        <div class="goals-summary-bar">
+            <div class="goals-summary-bar-fill" style="width:${pct}%"></div>
+        </div>
+        <div class="goals-summary-cats">${catTags}</div>
+    `;
+}
+
+// ===== 今週やること =====
+function renderWeeklyTasks() {
+    const container = document.getElementById('goalsWeeklySection');
+    if (!container) return;
+    const currentGoals = monthlyGoals.filter(g => g.month === selectedGoalsMonth);
+
+    // 今週のタスクがある目標だけ表示（＋完了していない目標）
+    const goalsWithWeekly = currentGoals.filter(g => {
+        const tasks = (g.weeklyTasks || []).filter(t => t.week === currentWeekKey);
+        return tasks.length > 0 || !g.completed;
+    });
+
+    if (currentGoals.length === 0) {
+        container.innerHTML = '';
+        container.style.display = 'none';
+        return;
+    }
+    container.style.display = '';
+
+    let html = `
+        <div class="goals-weekly-header">
+            <h3>📋 今週やること</h3>
+        </div>
+        <div class="goals-weekly-content">
+    `;
+
+    let hasAnyTask = false;
+
+    currentGoals.forEach(goal => {
+        if (goal.completed) return;
+        const tasks = (goal.weeklyTasks || []).filter(t => t.week === currentWeekKey);
+        const emoji = goalCategoryEmoji(goal.category);
+
+        html += `<div class="task-group">`;
+        html += `<div class="task-group-title">${emoji} ${goal.text}</div>`;
+
+        if (tasks.length > 0) {
+            hasAnyTask = true;
+            tasks.forEach(task => {
+                html += `
+                    <div class="task-item" id="wt_${goal.id}_${task.id}">
+                        <input type="checkbox" class="task-checkbox"
+                               ${task.done ? 'checked' : ''}
+                               onchange="toggleWeeklyTask(${goal.id},${task.id})" />
+                        <label class="task-label" ${task.done ? 'style="text-decoration:line-through;color:#999;"' : ''}>${escapeHtml(task.text)}</label>
+                        <button type="button" class="task-edit-btn" onclick="editWeeklyTask(${goal.id},${task.id})" title="編集">✏️</button>
                     </div>
                 `;
-            }).join('')}
-        </div>
-    `;
-    
+            });
+        }
+
+        html += `<button type="button" class="task-add-btn" onclick="addWeeklyTask(${goal.id})">＋ 追加</button>`;
+        html += `</div>`;
+    });
+
+    if (!hasAnyTask && currentGoals.filter(g => !g.completed).length === 0) {
+        html += `<div class="goals-weekly-empty">目標を追加すると、ここに今週のタスクが表示されます</div>`;
+    }
+
+    html += `</div>`;
     container.innerHTML = html;
 }
 
-function generateGoalsFeedback() {
-    // Month filtering now uses selectedGoalsMonth
+// ===== 週タスクCRUD =====
+function addWeeklyTask(goalId) {
+    const goal = monthlyGoals.find(g => g.id === goalId);
+    if (!goal) return;
+    if (!goal.weeklyTasks) goal.weeklyTasks = [];
+
+    const newTask = { id: Date.now(), text: '新しいタスク', week: currentWeekKey, done: false };
+    goal.weeklyTasks.push(newTask);
+    Storage.set(Storage.keys.MONTHLY_GOALS, monthlyGoals);
+    renderWeeklyTasks();
+
+    // 即座に編集モードに
+    setTimeout(() => editWeeklyTask(goalId, newTask.id), 100);
+}
+
+function toggleWeeklyTask(goalId, taskId) {
+    const goal = monthlyGoals.find(g => g.id === goalId);
+    if (!goal || !goal.weeklyTasks) return;
+    const task = goal.weeklyTasks.find(t => t.id === taskId);
+    if (!task) return;
+    task.done = !task.done;
+    Storage.set(Storage.keys.MONTHLY_GOALS, monthlyGoals);
+    renderWeeklyTasks();
+}
+
+function editWeeklyTask(goalId, taskId) {
+    const item = document.getElementById(`wt_${goalId}_${taskId}`);
+    if (!item) return;
+    const goal = monthlyGoals.find(g => g.id === goalId);
+    if (!goal || !goal.weeklyTasks) return;
+    const task = goal.weeklyTasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    const origHTML = item.innerHTML;
+
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;gap:6px;align-items:center;flex:1;';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = task.text;
+    input.style.cssText = 'flex:1;padding:6px 10px;border:2px solid #667eea;border-radius:8px;font-size:14px;outline:none;';
+    const saveBtn = document.createElement('button');
+    saveBtn.type = 'button';
+    saveBtn.textContent = '✓';
+    saveBtn.style.cssText = 'background:#16a34a;color:#fff;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:14px;';
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.textContent = '🗑️';
+    delBtn.style.cssText = 'background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:14px;';
+    const cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.textContent = '✕';
+    cancelBtn.style.cssText = 'background:#999;color:#fff;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:14px;';
+
+    wrap.appendChild(input);
+    wrap.appendChild(saveBtn);
+    wrap.appendChild(delBtn);
+    wrap.appendChild(cancelBtn);
+
+    item.innerHTML = '';
+    item.appendChild(wrap);
+    input.focus();
+    input.select();
+
+    function save() {
+        const val = input.value.trim();
+        if (!val) { del(); return; }
+        task.text = val;
+        Storage.set(Storage.keys.MONTHLY_GOALS, monthlyGoals);
+        renderWeeklyTasks();
+    }
+    function del() {
+        goal.weeklyTasks = goal.weeklyTasks.filter(t => t.id !== taskId);
+        Storage.set(Storage.keys.MONTHLY_GOALS, monthlyGoals);
+        renderWeeklyTasks();
+    }
+    function cancel() {
+        item.innerHTML = origHTML;
+    }
+
+    saveBtn.addEventListener('click', save);
+    delBtn.addEventListener('click', del);
+    cancelBtn.addEventListener('click', cancel);
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') save();
+        if (e.key === 'Escape') cancel();
+    });
+}
+
+// ===== 目標一覧（カード化） =====
+function renderGoals() {
+    const container = document.getElementById('goalsList');
+    if (!container) return;
     const currentGoals = monthlyGoals.filter(g => g.month === selectedGoalsMonth);
-    
+
     if (currentGoals.length === 0) {
-        document.getElementById('goalsFeedback').innerHTML = 
-            '<p>目標を設定すると、AIがフィードバックを提供します。</p>';
+        const isCurrentMonth = selectedGoalsMonth === goalsCurrentMonth;
+        container.innerHTML = `<div class="empty-state" style="padding:20px;">${isCurrentMonth ? '目標を追加して、今月のチャレンジを始めよう！' : '選択した月の目標がありません'}</div>`;
         return;
     }
-    
-    // 今月の行動記録を取得
-    const [year, month] = currentMonth.split('-');
-    const startDate = new Date(year, month - 1, 1);
-    const endDate = new Date(year, month, 0, 23, 59, 59);
-    
-    const monthActivities = activities.filter(a => {
-        const actDate = new Date(a.timestamp);
-        return actDate >= startDate && actDate <= endDate;
-    });
-    
-    // 今月のジャーナルを取得
-    const monthJournals = journals.filter(j => {
-        const jDate = new Date(j.timestamp);
-        return jDate >= startDate && jDate <= endDate;
-    });
-    
-    // フィードバック生成
-    let feedback = '<div class="feedback-content">';
-    
-    // 全体的な達成度
+
+    container.innerHTML = currentGoals.map(goal => {
+        const emoji = goalCategoryEmoji(goal.category);
+        const wt = (goal.weeklyTasks || []).filter(t => t.week === currentWeekKey);
+        const wtDone = wt.filter(t => t.done).length;
+        const wtInfo = wt.length > 0 ? `📋 今週 ${wtDone}/${wt.length}` : '';
+
+        return `
+            <div class="goal-card ${goal.completed ? 'completed' : ''}">
+                <input type="checkbox"
+                       ${goal.completed ? 'checked' : ''}
+                       onchange="toggleGoalComplete(${goal.id})"
+                       class="goal-card-checkbox" />
+                <div class="goal-card-body">
+                    <div class="goal-card-text">${escapeHtml(goal.text)}</div>
+                    <div class="goal-card-meta">
+                        <span class="goal-card-category">${emoji} ${goal.category}</span>
+                        ${wtInfo ? `<span class="goal-card-weekly-count">${wtInfo}</span>` : ''}
+                    </div>
+                </div>
+                <button class="goal-card-delete" onclick="deleteGoal(${goal.id})" title="削除">🗑️</button>
+            </div>
+        `;
+    }).join('');
+}
+
+// ===== renderGoalsProgress (後方互換) =====
+function renderGoalsProgress() {
+    renderGoalsSummary();
+}
+
+// ===== generateGoalsFeedback (後方互換・簡略化) =====
+function generateGoalsFeedback() {
+    // フィードバック要素が存在する場合のみ
+    const el = document.getElementById('goalsFeedback');
+    if (!el) return;
+    const currentGoals = monthlyGoals.filter(g => g.month === selectedGoalsMonth);
+    if (currentGoals.length === 0) {
+        el.innerHTML = '<p>目標を設定すると、フィードバックが表示されます。</p>';
+        return;
+    }
     const completed = currentGoals.filter(g => g.completed).length;
     const total = currentGoals.length;
-    const percentage = Math.round((completed / total) * 100);
-    
-    if (percentage >= 80) {
-        feedback += `<p>🎉 <strong>素晴らしい！</strong> ${percentage}%の目標を達成しています。この調子で頑張りましょう！</p>`;
-    } else if (percentage >= 50) {
-        feedback += `<p>👍 <strong>良いペースです！</strong> ${percentage}%の目標を達成済み。残りの目標も達成できるよう頑張りましょう。</p>`;
-    } else if (percentage >= 20) {
-        feedback += `<p>💪 <strong>まだ時間があります！</strong> ${percentage}%の達成率。残りの日数で目標達成を目指しましょう。</p>`;
-    } else {
-        feedback += `<p>⚠️ <strong>ペースアップが必要です</strong> 現在の達成率は${percentage}%です。目標を見直すか、行動を増やしましょう。</p>`;
-    }
-    
-    // カテゴリ別の分析
-    currentGoals.forEach(goal => {
-        if (goal.completed) return;
-        
-        const relatedActivities = monthActivities.filter(a => 
-            a.category === goal.category || 
-            a.text.toLowerCase().includes(goal.text.toLowerCase().split(' ')[0])
-        );
-        
-        const relatedJournals = monthJournals.filter(j =>
-            j.text.toLowerCase().includes(goal.text.toLowerCase().split(' ')[0]) ||
-            j.text.toLowerCase().includes(goal.category.toLowerCase())
-        );
-        
-        if (relatedActivities.length > 0) {
-            feedback += `<p>📊 <strong>${goal.category}の目標「${goal.text}」</strong><br>`;
-            feedback += `今月${relatedActivities.length}回の関連する行動を記録しました。継続して取り組んでいますね！</p>`;
-        } else if (relatedJournals.length > 0) {
-            feedback += `<p>📝 <strong>${goal.category}の目標「${goal.text}」</strong><br>`;
-            feedback += `ジャーナルに${relatedJournals.length}回言及されています。実際の行動に移せるとさらに良いでしょう。</p>`;
-        } else {
-            feedback += `<p>💡 <strong>${goal.category}の目標「${goal.text}」</strong><br>`;
-            feedback += `まだ関連する行動やジャーナルの記録がありません。今日から始めてみましょう！</p>`;
-        }
-    });
-    
-    // ポジティブなジャーナル分析
-    const positiveJournals = monthJournals.filter(j => 
-        j.mood && ['最高', '良い'].includes(j.mood)
-    );
-    
-    if (positiveJournals.length > 0) {
-        feedback += `<p>😊 <strong>メンタル面</strong><br>`;
-        feedback += `今月${positiveJournals.length}日、良い気分の日がありました。ポジティブな状態を保てていますね！</p>`;
-    }
-    
-    // 改善提案
-    const incompleteGoals = currentGoals.filter(g => !g.completed);
-    if (incompleteGoals.length > 0) {
-        feedback += `<p>💪 <strong>今後のアクション提案</strong><br><ul style="margin-top: 10px;">`;
-        incompleteGoals.slice(0, 3).forEach(goal => {
-            feedback += `<li>「${goal.text}」のために、今日から具体的な行動を1つ始めましょう</li>`;
-        });
-        feedback += `</ul></p>`;
-    }
-    
-    feedback += '</div>';
-    
-    document.getElementById('goalsFeedback').innerHTML = feedback;
+    const pct = Math.round((completed / total) * 100);
+    let msg = '';
+    if (pct >= 80) msg = '🎉 素晴らしい！この調子で頑張りましょう！';
+    else if (pct >= 50) msg = '👍 良いペースです！残りも頑張りましょう。';
+    else if (pct >= 20) msg = '💪 まだ時間があります！';
+    else msg = '⚠️ ペースアップしていきましょう。';
+    el.innerHTML = `<p>${msg} (${pct}%達成)</p>`;
 }
 function generateMoneyReport() {
     const month = moneyReportMonth;
@@ -11052,7 +11345,7 @@ function setupMoneyVoice(){
             renderActivityQuickButtons();
             renderActivityLogs();
 updateGoalsMonthDisplay();
-            renderGoals();
+            renderGoalsAll();
             // レポート月の初期化 → 表示更新 → 描画 の順にする（表示ズレ防止）
             initializeReportMonths();
             updateReportMonthDisplay('activity');
@@ -11437,11 +11730,12 @@ try{
 
 </script>
 <script>
-/* ===== Goals module override (v35.5) : keep current UI, fix TDZ, keep logs ===== */
+/* ===== Goals module override (v35.5) : DISABLED — replaced by inline goals v2 ===== */
+/* 新しい目標UIは9000行台のrenderGoalsAll()系に移行済み */
 (function(){
   'use strict';
-
-  const STORAGE_KEY = 'monthlyGoals';
+  // このモジュールは無効化。新しい目標UIを壊さないよう何もしない。
+  return;
 
   // Always safe month (YYYY-MM)
   function nowMonth(){
