@@ -129,7 +129,8 @@
     '}',
     '.gai-input {',
     '  flex:1; padding:10px 12px; border:1.5px solid #d1d5db; border-radius:10px;',
-    '  font-size:14px; outline:none; resize:none; min-height:40px; max-height:80px;',
+    '  font-size:16px; outline:none; resize:none; min-height:48px; max-height:120px;',
+    '  line-height:1.4; font-family:inherit; overflow-y:auto;',
     '}',
     '.gai-input:focus { border-color:#7c3aed; }',
     '.gai-voice {',
@@ -168,7 +169,7 @@
     '  <div class="gai-messages" id="gaiMessages"></div>',
     '  <div class="gai-tasks" id="gaiTasks" style="display:none;"></div>',
     '  <div class="gai-input-area gai-safe-bottom" id="gaiInputArea">',
-    '    <input class="gai-input" id="gaiInput" type="text" placeholder="回答を入力..." />',
+    '    <textarea class="gai-input" id="gaiInput" rows="2" placeholder="回答を入力..."></textarea>',
     '    <button class="gai-voice" id="gaiVoice" type="button" title="音声入力">🎤</button>',
     '    <button class="gai-send" id="gaiSend" onclick="window._gaiSendMessage()">送信</button>',
     '  </div>',
@@ -180,7 +181,7 @@
     if (e.target === chatModal) closeChat();
   });
 
-  // Enterキーで送信
+  // Enterキーで送信 + テキストエリア自動リサイズ
   setTimeout(function() {
     var input = document.getElementById('gaiInput');
     if (input) {
@@ -189,6 +190,11 @@
           e.preventDefault();
           window._gaiSendMessage();
         }
+      });
+      // テキストエリア自動リサイズ
+      input.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
       });
     }
   }, 200);
@@ -455,7 +461,7 @@
     var text = input ? input.value.trim() : '';
     if (!text) return;
 
-    if (input) input.value = '';
+    if (input) { input.value = ''; input.style.height = 'auto'; }
 
     addMessage('user', text);
     _state.chatHistory.push({ role: 'user', text: text });
