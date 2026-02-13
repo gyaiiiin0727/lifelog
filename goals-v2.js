@@ -28,7 +28,7 @@
     '.gv2-weekly { margin-bottom: 14px; }',
 
     /* 今月の目標セクション */
-    '.gv2-monthly { background: #fff; border-radius: 16px; padding: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 14px; }',
+    '.gv2-monthly { background: #fff; border-radius: 16px; padding: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 80px; }',
     '.gv2-monthly-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }',
     '.gv2-monthly-head h3 { margin: 0; font-size: 16px; color: #333; }',
     '.gv2-add-btn-sm {',
