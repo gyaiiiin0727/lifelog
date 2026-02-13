@@ -30,6 +30,28 @@
     '.gai-header h2 { font-size: 17px; margin: 0; }',
     '.gai-close { font-size: 22px; cursor: pointer; color: #666; background: none; border: none; padding: 4px 8px; }',
 
+    /* キャラクター選択 */
+    '.gai-char-selector { display: flex; gap: 6px; margin-bottom: 12px; }',
+    '.gai-char-btn {',
+    '  flex: 1; padding: 8px 4px; border: 2px solid #e5e7eb; border-radius: 10px;',
+    '  background: #fff; font-size: 12px; cursor: pointer; text-align: center;',
+    '  transition: all .2s; line-height: 1.3;',
+    '}',
+    '.gai-char-btn:hover { border-color: #c4b5fd; background: #faf5ff; }',
+    '.gai-char-btn.active { border-color: #7c3aed; background: #f5f0ff; box-shadow: 0 0 0 1px #7c3aed; }',
+    '.gai-char-btn .char-emoji { font-size: 20px; display: block; margin-bottom: 2px; }',
+    '.gai-char-btn .char-name { font-weight: 600; color: #333; }',
+    '.gai-char-btn .char-desc { font-size: 10px; color: #888; }',
+
+    /* 「もっと話す」ボタン */
+    '.gai-more-btn {',
+    '  display: block; width: 100%; margin-top: 8px; padding: 10px;',
+    '  border: 1.5px dashed #7c3aed; border-radius: 10px; background: #faf5ff;',
+    '  color: #7c3aed; font-size: 13px; font-weight: 600; cursor: pointer;',
+    '  transition: background .2s;',
+    '}',
+    '.gai-more-btn:hover { background: #f3e8ff; }',
+
     /* チャットエリア */
     '.gai-messages {',
     '  flex: 1; overflow-y: auto; padding: 8px 0; min-height: 120px; max-height: 45vh;',
@@ -95,6 +117,23 @@
     '    <h2>🤖 AIと目標設定</h2>',
     '    <button class="gai-close" onclick="window._closeGoalAIChat()">&times;</button>',
     '  </div>',
+    '  <div class="gai-char-selector" id="gaiCharSelector">',
+    '    <button class="gai-char-btn" data-tone="harsh" onclick="window._gaiSelectChar(\'harsh\')">',
+    '      <span class="char-emoji">👔</span>',
+    '      <span class="char-name">マネージャー</span>',
+    '      <span class="char-desc">厳しめ</span>',
+    '    </button>',
+    '    <button class="gai-char-btn active" data-tone="normal" onclick="window._gaiSelectChar(\'normal\')">',
+    '      <span class="char-emoji">😎</span>',
+    '      <span class="char-name">タクヤ先輩</span>',
+    '      <span class="char-desc">フランク</span>',
+    '    </button>',
+    '    <button class="gai-char-btn" data-tone="gentle" onclick="window._gaiSelectChar(\'gentle\')">',
+    '      <span class="char-emoji">🌸</span>',
+    '      <span class="char-name">ハナさん</span>',
+    '      <span class="char-desc">やさしい</span>',
+    '    </button>',
+    '  </div>',
     '  <div class="gai-messages" id="gaiMessages"></div>',
     '  <div class="gai-tasks" id="gaiTasks" style="display:none;"></div>',
     '  <div class="gai-input-area" id="gaiInputArea">',
@@ -130,9 +169,20 @@
     goalId: null,     // 紐づく目標ID
     chatHistory: [],  // [{role:'user'|'ai', text:'...'}]
     turnCount: 0,     // AIの返答回数
-    maxTurns: 3,
+    maxTurns: 5,
+    tone: 'normal',   // キャラクター選択 (harsh/normal/gentle)
     isWaiting: false
   };
+
+  // ========== キャラクター選択 ==========
+  function selectChar(tone) {
+    _state.tone = tone;
+    // ボタンのアクティブ状態を更新
+    var btns = document.querySelectorAll('.gai-char-btn');
+    btns.forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-tone') === tone);
+    });
+  }
 
   // ========== 目標追加モーダルにボタン注入 ==========
   function injectAIButton() {
@@ -175,13 +225,16 @@
       return;
     }
 
-    // 状態リセット
+    // 状態リセット（toneは選択中のキャラを維持）
     _state.goalText = text;
     _state.category = category;
     _state.goalId = null;
     _state.chatHistory = [];
     _state.turnCount = 0;
     _state.isWaiting = false;
+    // キャラクター選択UIの状態を反映
+    var activeCharBtn = document.querySelector('.gai-char-btn.active');
+    if (activeCharBtn) _state.tone = activeCharBtn.getAttribute('data-tone') || 'normal';
 
     // 目標を先に追加（weeklyTasksにタスクを入れるため）
     var goalId = Date.now();
@@ -212,9 +265,12 @@
     var tasksEl = document.getElementById('gaiTasks');
     var inputArea = document.getElementById('gaiInputArea');
 
+    var charSelector = document.getElementById('gaiCharSelector');
+
     if (messagesEl) messagesEl.innerHTML = '';
     if (tasksEl) { tasksEl.innerHTML = ''; tasksEl.style.display = 'none'; }
     if (inputArea) inputArea.style.display = 'flex';
+    if (charSelector) charSelector.style.display = 'flex';
     if (modal) modal.style.display = 'block';
 
     // ユーザーの目標を表示
@@ -276,10 +332,14 @@
     var sendBtn = document.getElementById('gaiSend');
     if (sendBtn) sendBtn.disabled = true;
 
+    // 会話が始まったらキャラ選択を隠す
+    var charSelector = document.getElementById('gaiCharSelector');
+    if (charSelector) charSelector.style.display = 'none';
+
     addLoadingMessage();
 
     try {
-      var tone = window.aiConsultTone || localStorage.getItem('journalFeedbackTone') || 'normal';
+      var tone = _state.tone || 'normal';
       var charPrompt = (typeof window.getCharacterPrompt === 'function') ? window.getCharacterPrompt(tone) : '';
 
       var prompt = buildPrompt(charPrompt);
@@ -343,7 +403,7 @@
     addLoadingMessage();
 
     try {
-      var tone = window.aiConsultTone || localStorage.getItem('journalFeedbackTone') || 'normal';
+      var tone = _state.tone || 'normal';
 
       var historyText = _state.chatHistory.map(function(m) {
         return (m.role === 'user' ? 'ユーザー' : 'AI') + ': ' + m.text;
@@ -452,6 +512,8 @@
 
     if (inputArea) inputArea.style.display = 'none';
 
+    var canContinue = _state.turnCount < _state.maxTurns;
+
     tasksEl.innerHTML = tasks.map(function(task, i) {
       return '<label class="gai-task-item">' +
         '<input type="checkbox" checked data-task-index="' + i + '" />' +
@@ -461,7 +523,8 @@
     '<div class="gai-task-actions">' +
     '  <button class="gai-add-btn" onclick="window._gaiAddTasks()">✅ 選択したタスクを追加</button>' +
     '  <button class="gai-cancel-btn" onclick="window._closeGoalAIChat()">キャンセル</button>' +
-    '</div>';
+    '</div>' +
+    (canContinue ? '<button class="gai-more-btn" onclick="window._gaiContinueChat()">💬 もっと話してから決める</button>' : '');
 
     tasksEl.style.display = 'block';
   }
@@ -670,10 +733,24 @@
   };
   window._closeGoalAIChat = closeChat;
 
+  // ========== 「もっと話す」で会話を続ける ==========
+  function continueChat() {
+    var tasksEl = document.getElementById('gaiTasks');
+    var inputArea = document.getElementById('gaiInputArea');
+    if (tasksEl) { tasksEl.innerHTML = ''; tasksEl.style.display = 'none'; }
+    if (inputArea) inputArea.style.display = 'flex';
+    var input = document.getElementById('gaiInput');
+    if (input) input.focus();
+    // 「もっと詳しく聞きたい」というメッセージを表示
+    addMessage('ai', '了解！もう少し詳しく教えてください。何でも聞いてくださいね 😊');
+  }
+
   // ========== グローバル公開 ==========
   window._closeGoalAIChat = closeChat;
   window._gaiSendMessage = gaiSendMessage;
   window._gaiAddTasks = addSelectedTasks;
+  window._gaiSelectChar = selectChar;
+  window._gaiContinueChat = continueChat;
 
   // ========== 初期化 ==========
   function init() {
