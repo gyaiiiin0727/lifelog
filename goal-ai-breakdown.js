@@ -629,6 +629,12 @@
     var noAnalysis = '※絶対に【よかったこと】【改善したいこと】【気づいたこと】【もやっとしたこと】【明日のMUST】などの分析フォーマットは使わないでください。普通の会話として返答してください。\n\n';
     var charHeader = noAnalysis + (charPrompt ? '【キャラクター設定（この口調で話してください）】\n' + charPrompt + '\n\n' : '');
 
+    // 過去データのコンテキスト（初回のみ、トークン節約）
+    var userContext = '';
+    if (_state.turnCount === 0 && typeof window.buildContextSummary === 'function') {
+      userContext = window.buildContextSummary('goals', { goalCategory: _state.category });
+    }
+
     var weeklyPlanRule =
       '【タスク提案のルール】\n' +
       '- 4週間分の段階的な計画を提案してください\n' +
@@ -651,10 +657,11 @@
 
     // 初回: ヒアリング質問
     if (_state.turnCount === 0) {
-      return charHeader +
+      return charHeader + userContext +
         '【指示】あなたは目標設定のコーチです。\n' +
         'ユーザーが「' + _state.goalText + '」（カテゴリ: ' + _state.category + '）という目標を立てようとしています。\n' +
         'この目標を4週間の計画に落とし込むために、1つだけ短い質問をしてください。\n' +
+        '- ユーザーの過去データがあれば、それを踏まえた質問をしてください\n' +
         '- 具体的な数値、頻度（週何回？毎日？）、4週間後にどうなりたいかを聞く質問が望ましい\n' +
         '- 質問は1〜2文で簡潔に\n' +
         '- キャラクター設定の口調に従って会話してください\n' +

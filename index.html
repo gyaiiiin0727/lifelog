@@ -19933,6 +19933,176 @@ function getAICharIconSrc(tone) {
   return srcImg ? srcImg.src : '';
 }
 
+// ========== 過去データコンテキスト生成 ==========
+function summarizeActivities() {
+  var activities;
+  try { activities = JSON.parse(localStorage.getItem('activities') || '[]'); } catch(e) { return ''; }
+  if (!Array.isArray(activities) || activities.length === 0) return '';
+
+  var now = new Date();
+  var weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  var recent = activities.filter(function(a) {
+    return new Date(a.startTime || a.timestamp) >= weekAgo;
+  });
+  if (recent.length === 0) return '';
+
+  var cats = {};
+  var totalMin = 0;
+  recent.forEach(function(a) {
+    var cat = a.category || 'その他';
+    if (!cats[cat]) cats[cat] = { count: 0, minutes: 0 };
+    cats[cat].count++;
+    var dur = a.durationMinutes || 0;
+    cats[cat].minutes += dur;
+    totalMin += dur;
+  });
+
+  var h = Math.floor(totalMin / 60);
+  var m = totalMin % 60;
+  var lines = ['[今週の行動] ' + recent.length + '件 / 合計' + h + '時間' + m + '分'];
+  Object.keys(cats)
+    .sort(function(a, b) { return cats[b].minutes - cats[a].minutes; })
+    .slice(0, 5)
+    .forEach(function(cat) {
+      var c = cats[cat];
+      lines.push('  ' + cat + ': ' + c.count + '件 ' + Math.floor(c.minutes / 60) + 'h' + (c.minutes % 60) + 'm');
+    });
+  return lines.join('\n');
+}
+
+function summarizeMoney() {
+  var records;
+  try { records = JSON.parse(localStorage.getItem('moneyRecords') || '[]'); } catch(e) { return ''; }
+  if (!Array.isArray(records) || records.length === 0) return '';
+
+  var now = new Date();
+  var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  var monthly = records.filter(function(r) { return new Date(r.timestamp) >= monthStart; });
+  if (monthly.length === 0) return '';
+
+  var totalExpense = 0, totalIncome = 0;
+  var expCats = {};
+  monthly.forEach(function(r) {
+    var amt = Number(r.amount || 0);
+    if (amt < 0 || r.type === 'expense') {
+      var absAmt = Math.abs(amt);
+      totalExpense += absAmt;
+      var cat = r.category || 'その他';
+      expCats[cat] = (expCats[cat] || 0) + absAmt;
+    } else {
+      totalIncome += amt;
+    }
+  });
+
+  var lines = ['[今月のお金] 支出: ¥' + totalExpense.toLocaleString() + ' / 収入: ¥' + totalIncome.toLocaleString()];
+  Object.keys(expCats)
+    .sort(function(a, b) { return expCats[b] - expCats[a]; })
+    .slice(0, 5)
+    .forEach(function(cat) {
+      lines.push('  ' + cat + ': ¥' + expCats[cat].toLocaleString());
+    });
+  return lines.join('\n');
+}
+
+function summarizeGoals(filterCategory) {
+  var goals;
+  try { goals = JSON.parse(localStorage.getItem('monthlyGoals') || '[]'); } catch(e) { return ''; }
+  if (!Array.isArray(goals) || goals.length === 0) return '';
+
+  var now = new Date();
+  var monthKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+  var current = goals.filter(function(g) { return g && g.month === monthKey; });
+  if (filterCategory) {
+    current = current.filter(function(g) { return g.category === filterCategory; });
+  }
+  if (current.length === 0) return '';
+
+  var completed = current.filter(function(g) { return g.completed; }).length;
+  var lines = ['[今月の目標] ' + completed + '/' + current.length + ' 達成'];
+  current.slice(0, 5).forEach(function(g) {
+    var status = g.completed ? '✅' : '⬜';
+    var taskInfo = '';
+    if (g.weeklyTasks && g.weeklyTasks.length > 0) {
+      var done = g.weeklyTasks.filter(function(t) { return t.done; }).length;
+      taskInfo = ' (タスク: ' + done + '/' + g.weeklyTasks.length + ')';
+    }
+    lines.push('  ' + status + ' ' + g.text + taskInfo);
+  });
+  return lines.join('\n');
+}
+
+function summarizeJournal() {
+  var entries;
+  try { entries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}'); } catch(e) { return ''; }
+
+  var now = new Date();
+  var recentDates = [];
+  for (var i = 0; i < 7; i++) {
+    var d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+    var key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    if (entries[key]) recentDates.push({ date: key, entry: entries[key] });
+  }
+  if (recentDates.length === 0) return '';
+
+  var moods = recentDates.filter(function(d) { return d.entry.mood; }).map(function(d) { return d.entry.mood; });
+  var lines = ['[最近の振り返り] ' + recentDates.length + '日分'];
+  if (moods.length > 0) lines.push('  気分: ' + moods.join(' → '));
+
+  var worries = [];
+  recentDates.slice(0, 3).forEach(function(d) {
+    var s = d.entry.summary;
+    if (s && s.worry && Array.isArray(s.worry)) worries = worries.concat(s.worry.slice(0, 1));
+  });
+  if (worries.length > 0) lines.push('  最近の悩み: ' + worries.slice(0, 2).join('、'));
+
+  return lines.join('\n');
+}
+
+function summarizeWeight() {
+  var records;
+  try { records = JSON.parse(localStorage.getItem('weightRecords') || '[]'); } catch(e) { return ''; }
+  if (!Array.isArray(records) || records.length === 0) return '';
+
+  records.sort(function(a, b) { return new Date(b.timestamp) - new Date(a.timestamp); });
+  var latest = records[0];
+  var line = '[体重] 最新: ' + latest.weight + 'kg';
+  if (records.length >= 2) {
+    var older = records[Math.min(records.length - 1, 6)];
+    var diff = (latest.weight - older.weight).toFixed(1);
+    var sign = diff >= 0 ? '+' : '';
+    line += ' (変動: ' + sign + diff + 'kg)';
+  }
+  return line;
+}
+
+function buildContextSummary(topic, opts) {
+  opts = opts || {};
+  var parts = [];
+
+  if (topic === 'activity' || topic === 'goals' || topic === 'other') {
+    var actS = summarizeActivities();
+    if (actS) parts.push(actS);
+  }
+  if (topic === 'money' || topic === 'other') {
+    var monS = summarizeMoney();
+    if (monS) parts.push(monS);
+  }
+  if (topic === 'goals' || topic === 'other') {
+    var goalS = summarizeGoals(opts.goalCategory);
+    if (goalS) parts.push(goalS);
+  }
+  if (topic === 'other') {
+    var jourS = summarizeJournal();
+    if (jourS) parts.push(jourS);
+    var weiS = summarizeWeight();
+    if (weiS) parts.push(weiS);
+  }
+
+  if (parts.length === 0) return '';
+  return '【ユーザーの過去データ（参考情報。これを踏まえてアドバイスしてください）】\n' + parts.join('\n') + '\n\n';
+}
+window.buildContextSummary = buildContextSummary;
+
 async function sendAIConsult() {
   var input = document.getElementById('aiConsultInput');
   var text = (input ? input.value : '').trim();
@@ -19959,9 +20129,12 @@ async function sendAIConsult() {
     var topicLabels = { activity: '行動・習慣', money: 'お金・家計', goals: '目標・計画', other: '一般的な相談' };
     var topicContext = '【相談テーマ】' + (topicLabels[topic] || 'その他') + '\n';
 
+    // 過去データのコンテキストを生成
+    var dataContext = buildContextSummary(topic);
+
     var textWithChar = charPrompt
-      ? '【指示】以下のキャラクターになりきって、この口調で全文を書いてください。相談に対して200文字程度で簡潔に回答してください。\n' + charPrompt + '\n' + topicContext + '【ユーザーの相談】\n' + text
-      : topicContext + text;
+      ? '【指示】以下のキャラクターになりきって、この口調で全文を書いてください。相談に対して200文字程度で簡潔に回答してください。\n' + charPrompt + '\n' + topicContext + dataContext + '【ユーザーの相談】\n' + text
+      : topicContext + dataContext + text;
 
     var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-ai.little-limit-621c.workers.dev';
     var endpoint = BACKEND_URL + '/api/analyze';
