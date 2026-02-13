@@ -331,22 +331,22 @@
 
     // 目標を先に追加（weeklyTasksにタスクを入れるため）
     var goalId = Date.now();
-    var month = window.selectedGoalsMonth || window.goalsCurrentMonth || '';
+    var now = new Date();
+    var month = window.selectedGoalsMonth || window.goalsCurrentMonth ||
+      (now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0'));
     var newGoal = {
       id: goalId,
       text: text,
       category: category,
-      createdAt: new Date().toISOString(),
+      createdAt: now.toISOString(),
       month: month,
       completed: false,
       weeklyTasks: []
     };
-    if (window.monthlyGoals && Array.isArray(window.monthlyGoals)) {
-      window.monthlyGoals.unshift(newGoal);
-      if (window.Storage && window.Storage.set && window.Storage.keys) {
-        window.Storage.set(window.Storage.keys.MONTHLY_GOALS, window.monthlyGoals);
-      }
-    }
+    // ★ localStorageから最新を読み直して保存（安全方式）
+    var existingGoals = _loadGoalsFromStorage();
+    existingGoals.unshift(newGoal);
+    _saveGoalsToStorage(existingGoals);
     _state.goalId = goalId;
 
     // 目標追加モーダルを閉じる
@@ -550,8 +550,11 @@
         return (m.role === 'user' ? 'ユーザー' : 'AI') + ': ' + m.text;
       }).join('\n');
 
-      var prompt = '【指示】以下の会話を踏まえて、3〜5個の具体的で実行可能なタスクを番号付きリスト（1. 2. 3.）で提案してください。\n' +
-        '各タスクは簡潔に1文で。タスクの一覧のみ出力してください。\n\n' +
+      var prompt = '【指示】以下の会話を踏まえて、今週1週間の行動目標をタスクとして提案してください。\n' +
+        '- タスクは「今週1週間で実行する具体的な行動目標」にしてください\n' +
+        '- 「週○回〜する」「毎日〜する」「今週中に〜する」のような頻度・回数付きの行動にしてください\n' +
+        '- 準備やTips（「バッグを用意する」等）ではなく、目標達成に直結する行動そのものにしてください\n' +
+        '- 3〜5個、各タスクは簡潔に1文で、番号付きリスト（1. 2. 3.）で出力\n\n' +
         '【会話履歴】\n' + historyText;
 
       var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-ai.little-limit-621c.workers.dev';
@@ -595,13 +598,23 @@
     var noAnalysis = '※絶対に【よかったこと】【改善したいこと】【気づいたこと】【もやっとしたこと】【明日のMUST】などの分析フォーマットは使わないでください。普通の会話として返答してください。\n\n';
     var charHeader = noAnalysis + (charPrompt ? '【キャラクター設定（この口調で話してください）】\n' + charPrompt + '\n\n' : '');
 
+    var weeklyTaskRule =
+      '【タスク提案のルール】\n' +
+      '- タスクは「今週1週間で実行する具体的な行動目標」にしてください\n' +
+      '- 「週○回〜する」「毎日〜する」「今週中に〜する」のような頻度・回数付きの行動にしてください\n' +
+      '- 準備やTips（「バッグを用意する」「カレンダーに登録する」等）ではなく、目標達成に直結する行動そのものにしてください\n' +
+      '- 例: ダイエット目標 → 「週3回ジムに通う」「毎日30分ウォーキングする」「間食を週2回以内にする」\n' +
+      '- 例: 勉強目標 → 「毎日1時間英語の教材を進める」「週末に模試を1回解く」\n' +
+      '- 3〜5個、各タスクは簡潔に1文で\n' +
+      '- 番号付きリスト（1. 2. 3.）で出力\n';
+
     // 初回: ヒアリング質問
     if (_state.turnCount === 0) {
       return charHeader +
         '【指示】あなたは目標設定のコーチです。\n' +
         'ユーザーが「' + _state.goalText + '」（カテゴリ: ' + _state.category + '）という目標を立てようとしています。\n' +
-        'この目標を具体的なタスクに落とし込むために、1つだけ短い質問をしてください。\n' +
-        '- 具体的な数値や期限、頻度を聞く質問が望ましい\n' +
+        'この目標を「今週やること」に落とし込むために、1つだけ短い質問をしてください。\n' +
+        '- 具体的な数値、頻度（週何回？毎日？）、どんな行動をするかを聞く質問が望ましい\n' +
         '- 質問は1〜2文で簡潔に\n' +
         '- キャラクター設定の口調に従って会話してください\n' +
         '- タスクリストや分析結果は出力しないでください\n' +
@@ -613,7 +626,7 @@
       return charHeader +
         '【指示】あなたは目標設定のコーチです。\n' +
         '以下の会話を踏まえて、もう1つだけ追加の短い質問をしてください。\n' +
-        '- まだ目標の具体化に必要な情報をヒアリングしてください\n' +
+        '- 「今週どれくらいやる？」「具体的にいつやる？」など、週単位の行動に落とし込むための質問をしてください\n' +
         '- 質問は1〜2文で簡潔に\n' +
         '- キャラクター設定の口調に従ってください\n' +
         '- タスクリストはまだ出力しないでください\n\n' +
@@ -626,16 +639,16 @@
         '【指示】あなたは目標設定のコーチです。\n' +
         '以下の会話を踏まえて、次のどちらかを行ってください：\n' +
         '- まだ情報が足りなければ、1つだけ追加の短い質問をしてください\n' +
-        '- 十分な情報があれば、3〜5個の具体的タスクを番号付きリスト（1. 2. 3.）で提案してください\n' +
-        '- タスクは実行可能で簡潔に（各20文字以内が理想）\n' +
+        '- 十分な情報があれば、タスクを提案してください\n' +
+        weeklyTaskRule +
         '- キャラクター設定の口調に従ってください\n\n' +
         '【会話履歴】\n' + historyText;
     }
 
     // 最終回: 強制タスク提案
     return charHeader +
-      '【指示】以下の会話を踏まえて、3〜5個の具体的で実行可能なタスクを番号付きリスト（1. 2. 3.）で提案してください。\n' +
-      '各タスクは簡潔に1文で。タスクの一覧のみ出力してください。\n\n' +
+      '【指示】以下の会話を踏まえて、今週1週間の行動目標をタスクとして提案してください。\n' +
+      weeklyTaskRule + '\n' +
       '【会話履歴】\n' + historyText;
   }
 
@@ -707,6 +720,24 @@
     }
   }
 
+  // ========== localStorage安全読み書き ==========
+  function _loadGoalsFromStorage() {
+    try {
+      var raw = localStorage.getItem('monthlyGoals');
+      var arr = JSON.parse(raw || '[]');
+      return Array.isArray(arr) ? arr : [];
+    } catch(e) { return []; }
+  }
+  function _saveGoalsToStorage(goals) {
+    localStorage.setItem('monthlyGoals', JSON.stringify(goals));
+    window.monthlyGoals = goals;
+    try {
+      if (window.Storage && window.Storage.set && window.Storage.keys) {
+        window.Storage.set(window.Storage.keys.MONTHLY_GOALS, goals);
+      }
+    } catch(e) {}
+  }
+
   // ========== 選択したタスクを追加（weeklyTasksへ） ==========
   function addSelectedTasks() {
     var checkboxes = document.querySelectorAll('#gaiTasks input[type="checkbox"]:checked');
@@ -715,14 +746,16 @@
       return;
     }
 
+    // ★ 常にlocalStorageから最新データを読む（window.monthlyGoalsを信用しない）
+    var goals = _loadGoalsFromStorage();
+
     // 紐づく目標を見つける
     var goal = null;
-    if (_state.goalId && window.monthlyGoals) {
-      goal = window.monthlyGoals.find(function(g) { return g.id === _state.goalId; });
+    if (_state.goalId) {
+      goal = goals.find(function(g) { return g && g.id === _state.goalId; });
     }
 
     var weekKey = (typeof window.currentWeekKey !== 'undefined') ? window.currentWeekKey : '';
-    // weekKeyが取得できなければ計算
     if (!weekKey && typeof window.getWeekKey === 'function') {
       weekKey = window.getWeekKey(new Date());
     }
@@ -748,9 +781,11 @@
         added++;
       });
     } else {
-      // フォールバック: 目標が見つからない場合は従来方式
+      // フォールバック: 目標が見つからない場合は新規目標として追加
       var category = _state.category || 'その他';
-      var month = window.selectedGoalsMonth || window.goalsCurrentMonth || '';
+      var nowFb = new Date();
+      var monthFb = window.selectedGoalsMonth || window.goalsCurrentMonth ||
+        (nowFb.getFullYear() + '-' + String(nowFb.getMonth()+1).padStart(2,'0'));
 
       checkboxes.forEach(function(cb) {
         var label = cb.closest('.gai-task-item');
@@ -758,26 +793,22 @@
         var text = textEl ? textEl.textContent.trim() : '';
         if (!text) return;
 
-        var newGoal = {
+        goals.unshift({
           id: Date.now() + added,
           text: text,
           category: category,
-          createdAt: new Date().toISOString(),
-          month: month,
+          createdAt: nowFb.toISOString(),
+          month: monthFb,
           completed: false,
           weeklyTasks: []
-        };
-        if (window.monthlyGoals && Array.isArray(window.monthlyGoals)) {
-          window.monthlyGoals.unshift(newGoal);
-        }
+        });
         added++;
       });
     }
 
-    if (added > 0 && window.Storage && window.Storage.set && window.Storage.keys) {
-      window.Storage.set(window.Storage.keys.MONTHLY_GOALS, window.monthlyGoals);
-    } else if (added > 0) {
-      try { localStorage.setItem('monthlyGoals', JSON.stringify(window.monthlyGoals)); } catch(e) {}
+    // ★ localStorageに確実に保存
+    if (added > 0) {
+      _saveGoalsToStorage(goals);
     }
 
     if (typeof window.renderGoalsAll === 'function') window.renderGoalsAll();
