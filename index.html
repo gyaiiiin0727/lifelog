@@ -12118,10 +12118,9 @@ try{
   };
   App.modules.goals = {
     onShow(){
-      // goals系は存在すれば呼ぶ（版差があっても落ちないように）
       if(typeof window.updateGoalsMonthDisplay === 'function') window.updateGoalsMonthDisplay();
-      if(typeof window.renderGoals === 'function') window.renderGoals();
-      if(typeof window.renderGoalsProgress === 'function') window.renderGoalsProgress();
+      if(typeof window.renderGoalsAll === 'function') window.renderGoalsAll();
+      else if(typeof window.renderGoals === 'function') window.renderGoals();
     }
   };
   App.modules.activity = { onShow(){} };
@@ -12160,13 +12159,10 @@ try{
 
 </script>
 <script>
-/* ===== v36.1 Goals Module (Phase 1) =====
-   - 目標だけを App.modules.goals に集約（内部実装をここへ）
-   - 既存のHTML/見た目/保存キー(monthlyGoals)は維持
-   - 互換性のため、当面は window.addGoal 等のグローバルを薄いラッパーとして残す
-*/
+/* ===== v36.1 Goals Module (Phase 1) : DISABLED — replaced by goals v2 (renderGoalsAll) ===== */
 (function(){
   'use strict';
+  return; // 新しい目標UIに移行済み。上書きを防止。
 
   const App = window.App = window.App || {};
   App.core = App.core || {};
