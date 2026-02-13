@@ -22,137 +22,141 @@
     '  padding: 1px 6px; border-radius: 4px; margin-left: 6px;',
     '}',
 
-    /* チャットモーダル */
+    /* ===== オーバーレイ（背景） ===== */
     '#goalAIChatModal {',
-    '  display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;',
-    '  background: rgba(0,0,0,0.5); z-index: 1000;',
-    '  align-items: flex-end; justify-content: center;',
+    '  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45);',
+    '  z-index:9999; align-items:flex-end; justify-content:center;',
     '}',
-    '#goalAIChatModal.gai-open {',
-    '  display: flex;',
+    '#goalAIChatModal.gai-open { display:flex !important; }',
+
+    /* ===== ボトムシート本体 ===== */
+    '#goalAIChatModal .gai-sheet {',
+    '  width:100%; max-width:480px; max-height:94vh;',
+    '  background:#fff; border-radius:20px 20px 0 0;',
+    '  box-shadow:0 -4px 24px rgba(0,0,0,0.18);',
+    '  display:flex; flex-direction:column; overflow:hidden;',
+    '  padding:0;',
     '}',
-    '#goalAIChatModal .modal-content {',
-    '  max-width: 440px; width: 100%; padding: 20px 16px 16px; display: flex; flex-direction: column;',
-    '  max-height: 92vh; border-radius: 20px 20px 0 0; background: #fff;',
-    '  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);',
+
+    /* ドラッグハンドル風 */
+    '.gai-handle { width:36px; height:4px; background:#d1d5db; border-radius:2px; margin:10px auto 0; }',
+
+    /* ヘッダー */
+    '.gai-header {',
+    '  display:flex; justify-content:space-between; align-items:center;',
+    '  padding:12px 16px 8px; flex-shrink:0;',
     '}',
-    '.gai-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }',
-    '.gai-header h2 { font-size: 17px; margin: 0; font-weight: 700; }',
-    '.gai-close { font-size: 24px; cursor: pointer; color: #666; background: none; border: none; padding: 4px 8px; }',
+    '.gai-header h2 { font-size:17px; margin:0; font-weight:700; }',
+    '.gai-close {',
+    '  font-size:22px; cursor:pointer; color:#999; background:none; border:none;',
+    '  padding:4px 8px; line-height:1;',
+    '}',
 
     /* キャラクター選択 */
-    '.gai-char-selector { display: flex; gap: 6px; margin-bottom: 10px; }',
+    '.gai-char-selector { display:flex; gap:8px; padding:0 16px 10px; flex-shrink:0; }',
     '.gai-char-btn {',
-    '  flex: 1; padding: 6px 4px; border: 2px solid #e5e7eb; border-radius: 10px;',
-    '  background: #fff; font-size: 11px; cursor: pointer; text-align: center;',
-    '  transition: all .2s; line-height: 1.3;',
+    '  flex:1; padding:10px 4px 8px; border:2px solid #e5e7eb; border-radius:14px;',
+    '  background:#fff; font-size:11px; cursor:pointer; text-align:center;',
+    '  transition:all .2s; line-height:1.3;',
     '}',
-    '.gai-char-btn:hover { border-color: #c4b5fd; background: #faf5ff; }',
-    '.gai-char-btn.active { border-color: #7c3aed; background: #f5f0ff; box-shadow: 0 0 0 1px #7c3aed; }',
-    '.gai-char-btn .char-emoji { font-size: 18px; display: block; margin-bottom: 1px; }',
-    '.gai-char-btn .char-name { font-weight: 600; color: #333; font-size: 11px; }',
+    '.gai-char-btn:hover { border-color:#c4b5fd; background:#faf5ff; }',
+    '.gai-char-btn.active { border-color:#7c3aed; background:#f5f0ff; box-shadow:0 0 0 2px #7c3aed; }',
+    '.gai-char-btn .char-img { width:56px; height:56px; border-radius:50%; object-fit:cover; display:block; margin:0 auto 4px; }',
+    '.gai-char-btn .char-name { font-weight:600; color:#333; font-size:11px; display:block; }',
+    '.gai-char-btn .char-desc { font-size:10px; color:#888; display:block; margin-top:1px; }',
 
-    /* 「もっと話す」ボタン */
-    '.gai-more-btn {',
-    '  display: block; width: 100%; margin-top: 8px; padding: 10px;',
-    '  border: 1.5px dashed #7c3aed; border-radius: 10px; background: #faf5ff;',
-    '  color: #7c3aed; font-size: 13px; font-weight: 600; cursor: pointer;',
-    '  transition: background .2s;',
+    /* ===== チャットエリア（スクロール） ===== */
+    '.gai-messages {',
+    '  flex:1; overflow-y:auto; padding:8px 16px; min-height:0;',
+    '  -webkit-overflow-scrolling:touch;',
     '}',
-    '.gai-more-btn:hover { background: #f3e8ff; }',
+    '.gai-msg {',
+    '  margin:8px 0; padding:12px 14px; border-radius:16px;',
+    '  font-size:14px; line-height:1.6; max-width:88%; word-break:break-word;',
+    '}',
+    '.gai-msg-ai { background:#f3f4f6; color:#333; border-bottom-left-radius:4px; margin-right:auto; }',
+    '.gai-msg-user { background:#7c3aed; color:#fff; border-bottom-right-radius:4px; margin-left:auto; }',
+    '.gai-msg-loading { background:#f3f4f6; color:#999; margin-right:auto; border-bottom-left-radius:4px; }',
 
     /* システムメッセージ */
     '.gai-msg-system {',
-    '  background: #f0ebff; color: #6d28d9; font-size: 13px; text-align: center;',
-    '  padding: 8px 12px; margin: 8px auto; max-width: 100%; border-radius: 20px;',
-    '  font-weight: 600;',
+    '  background:#f0ebff; color:#6d28d9; font-size:13px; text-align:center;',
+    '  padding:8px 14px; margin:8px auto; max-width:100%; border-radius:20px;',
+    '  font-weight:600;',
     '}',
 
-    /* チャットエリア */
-    '.gai-messages {',
-    '  flex: 1; overflow-y: auto; padding: 8px 0; min-height: 100px; max-height: 55vh;',
-    '}',
-    '.gai-msg { margin: 8px 0; padding: 12px 14px; border-radius: 14px; font-size: 14px; line-height: 1.6; max-width: 85%; word-break: break-word; }',
-    '.gai-msg-ai { background: #f3f4f6; color: #333; border-bottom-left-radius: 4px; margin-right: auto; }',
-    '.gai-msg-user { background: #7c3aed; color: #fff; border-bottom-right-radius: 4px; margin-left: auto; }',
-    '.gai-msg-loading { background: #f3f4f6; color: #999; margin-right: auto; border-bottom-left-radius: 4px; }',
-
-    /* 入力エリア */
-    '.gai-input-area { display: flex; gap: 8px; margin-top: 12px; align-items: flex-end; }',
-    '.gai-input {',
-    '  flex: 1; padding: 10px 12px; border: 1.5px solid #d1d5db; border-radius: 10px;',
-    '  font-size: 14px; outline: none; resize: none; min-height: 40px; max-height: 80px;',
-    '}',
-    '.gai-input:focus { border-color: #7c3aed; }',
-    '.gai-voice {',
-    '  padding: 10px; background: #fff; border: 1.5px solid #d1d5db; border-radius: 10px;',
-    '  font-size: 18px; cursor: pointer; transition: all .2s; line-height: 1; flex-shrink: 0;',
-    '}',
-    '.gai-voice:hover { background: #f5f5f5; border-color: #7c3aed; }',
-    '.gai-voice.listening {',
-    '  background: #ef4444; border-color: #ef4444; animation: gaiVoicePulse 1.5s infinite;',
-    '}',
-    '@keyframes gaiVoicePulse { 0%,100% { opacity:1; } 50% { opacity:.7; } }',
-    '.gai-send {',
-    '  padding: 10px 16px; background: #7c3aed; color: #fff; border: none;',
-    '  border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap;',
-    '}',
-    '.gai-send:hover { background: #6d28d9; }',
-    '.gai-send:disabled { opacity: .5; cursor: not-allowed; }',
-
-    /* タスク選択エリア */
-    '.gai-tasks { margin-top: 12px; }',
+    /* ===== タスク選択エリア（スクロール） ===== */
+    '.gai-tasks { flex:1; overflow-y:auto; padding:4px 16px 8px; min-height:0; -webkit-overflow-scrolling:touch; }',
     '.gai-task-item {',
-    '  display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px;',
-    '  margin: 6px 0; background: #fff; border: 1.5px solid #e5e7eb;',
-    '  border-radius: 12px; cursor: pointer; transition: border-color .2s, background .2s;',
+    '  display:flex; align-items:flex-start; gap:10px; padding:12px 14px;',
+    '  margin:6px 0; background:#fff; border:1.5px solid #e5e7eb;',
+    '  border-radius:12px; cursor:pointer; transition:border-color .2s, background .2s;',
     '}',
-    '.gai-task-item:hover { border-color: #7c3aed; background: #faf5ff; }',
-    '.gai-task-item input[type="checkbox"] { margin-top: 3px; width: 20px; height: 20px; accent-color: #7c3aed; flex-shrink: 0; }',
-    '.gai-task-text { font-size: 14px; line-height: 1.5; color: #333; }',
-    '.gai-task-actions { display: flex; gap: 8px; margin-top: 12px; }',
-    '.gai-task-actions button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }',
-    '.gai-add-btn { background: #7c3aed; color: #fff; }',
-    '.gai-add-btn:hover { background: #6d28d9; }',
-    '.gai-cancel-btn { background: #f0f0f0; color: #666; }',
-    '.gai-cancel-btn:hover { background: #e0e0e0; }',
+    '.gai-task-item:hover { border-color:#7c3aed; background:#faf5ff; }',
+    '.gai-task-item input[type="checkbox"] { margin-top:3px; width:20px; height:20px; accent-color:#7c3aed; flex-shrink:0; }',
+    '.gai-task-text { font-size:14px; line-height:1.5; color:#333; }',
+    '.gai-task-actions { display:flex; gap:8px; padding:8px 16px 6px; flex-shrink:0; }',
+    '.gai-task-actions button { flex:1; padding:12px; border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; }',
+    '.gai-add-btn { background:#7c3aed; color:#fff; }',
+    '.gai-add-btn:hover { background:#6d28d9; }',
+    '.gai-cancel-btn { background:#f0f0f0; color:#666; }',
+    '.gai-cancel-btn:hover { background:#e0e0e0; }',
+
+    /* 「もっと話す」ボタン */
+    '.gai-more-btn {',
+    '  display:block; width:calc(100% - 32px); margin:4px 16px 8px; padding:10px;',
+    '  border:1.5px dashed #7c3aed; border-radius:10px; background:#faf5ff;',
+    '  color:#7c3aed; font-size:13px; font-weight:600; cursor:pointer;',
+    '  transition:background .2s; flex-shrink:0;',
+    '}',
+    '.gai-more-btn:hover { background:#f3e8ff; }',
+
+    /* ===== 入力エリア ===== */
+    '.gai-input-area {',
+    '  display:flex; gap:8px; padding:10px 16px; align-items:flex-end;',
+    '  flex-shrink:0; border-top:1px solid #f0f0f0; background:#fff;',
+    '}',
+    '.gai-input {',
+    '  flex:1; padding:10px 12px; border:1.5px solid #d1d5db; border-radius:10px;',
+    '  font-size:14px; outline:none; resize:none; min-height:40px; max-height:80px;',
+    '}',
+    '.gai-input:focus { border-color:#7c3aed; }',
+    '.gai-voice {',
+    '  padding:10px; background:#fff; border:1.5px solid #d1d5db; border-radius:10px;',
+    '  font-size:18px; cursor:pointer; transition:all .2s; line-height:1; flex-shrink:0;',
+    '}',
+    '.gai-voice:hover { background:#f5f5f5; border-color:#7c3aed; }',
+    '.gai-voice.listening { background:#ef4444; border-color:#ef4444; animation:gaiVoicePulse 1.5s infinite; }',
+    '@keyframes gaiVoicePulse { 0%,100%{opacity:1;} 50%{opacity:.7;} }',
+    '.gai-send {',
+    '  padding:10px 16px; background:#7c3aed; color:#fff; border:none;',
+    '  border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap;',
+    '}',
+    '.gai-send:hover { background:#6d28d9; }',
+    '.gai-send:disabled { opacity:.5; cursor:not-allowed; }',
 
     /* スピナー */
-    '.gai-dots::after { content: ""; animation: gaiDots 1.2s steps(4,end) infinite; }',
-    '@keyframes gaiDots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }'
+    '.gai-dots::after { content:""; animation:gaiDots 1.2s steps(4,end) infinite; }',
+    '@keyframes gaiDots { 0%{content:"";} 25%{content:".";} 50%{content:"..";} 75%{content:"...";} }',
+
+    /* safe-area対応 */
+    '.gai-safe-bottom { padding-bottom:env(safe-area-inset-bottom, 8px); }'
   ].join('\n');
   document.head.appendChild(style);
 
   // ========== チャットモーダル HTML注入 ==========
   var chatModal = document.createElement('div');
-  chatModal.className = 'modal';
   chatModal.id = 'goalAIChatModal';
   chatModal.innerHTML = [
-    '<div class="modal-content">',
+    '<div class="gai-sheet">',
+    '  <div class="gai-handle"></div>',
     '  <div class="gai-header">',
     '    <h2>🤖 AIと目標設定</h2>',
     '    <button class="gai-close" onclick="window._closeGoalAIChat()">&times;</button>',
     '  </div>',
-    '  <div class="gai-char-selector" id="gaiCharSelector">',
-    '    <button class="gai-char-btn" data-tone="harsh" onclick="window._gaiSelectChar(\'harsh\')">',
-    '      <span class="char-emoji">👔</span>',
-    '      <span class="char-name">マネージャー</span>',
-    '      <span class="char-desc">厳しめ</span>',
-    '    </button>',
-    '    <button class="gai-char-btn active" data-tone="normal" onclick="window._gaiSelectChar(\'normal\')">',
-    '      <span class="char-emoji">😎</span>',
-    '      <span class="char-name">タクヤ先輩</span>',
-    '      <span class="char-desc">フランク</span>',
-    '    </button>',
-    '    <button class="gai-char-btn" data-tone="gentle" onclick="window._gaiSelectChar(\'gentle\')">',
-    '      <span class="char-emoji">🌸</span>',
-    '      <span class="char-name">ハナさん</span>',
-    '      <span class="char-desc">やさしい</span>',
-    '    </button>',
-    '  </div>',
     '  <div class="gai-messages" id="gaiMessages"></div>',
     '  <div class="gai-tasks" id="gaiTasks" style="display:none;"></div>',
-    '  <div class="gai-input-area" id="gaiInputArea">',
+    '  <div class="gai-input-area gai-safe-bottom" id="gaiInputArea">',
     '    <input class="gai-input" id="gaiInput" type="text" placeholder="回答を入力..." />',
     '    <button class="gai-voice" id="gaiVoice" type="button" title="音声入力">🎤</button>',
     '    <button class="gai-send" id="gaiSend" onclick="window._gaiSendMessage()">送信</button>',
@@ -200,20 +204,69 @@
     });
   }
 
-  // ========== 目標追加モーダルにボタン注入 ==========
+  // ========== 目標追加モーダルにボタン＋キャラ選択を注入 ==========
   function injectAIButton() {
     var addBtn = document.querySelector('#goalAddModal .add-button');
     if (!addBtn) return;
     if (document.getElementById('goalAIBreakdownBtn')) return;
 
+    // キャラクター選択UI（目標追加モーダル内）
+    var charWrap = document.createElement('div');
+    charWrap.id = 'goalAddCharSelector';
+    charWrap.className = 'gai-char-selector';
+    charWrap.style.display = 'none';
+    charWrap.style.padding = '8px 0 4px';
+    charWrap.innerHTML = [
+      '<button class="gai-char-btn" data-tone="harsh" type="button">',
+      '  <img class="char-img" src="drill_instructor.png" alt="マネージャー" />',
+      '  <span class="char-name">マネージャー</span>',
+      '  <span class="char-desc">厳しめ</span>',
+      '</button>',
+      '<button class="gai-char-btn active" data-tone="normal" type="button">',
+      '  <img class="char-img" src="takumi_senpai.png" alt="タクヤ先輩" />',
+      '  <span class="char-name">タクヤ先輩</span>',
+      '  <span class="char-desc">フランク</span>',
+      '</button>',
+      '<button class="gai-char-btn" data-tone="gentle" type="button">',
+      '  <img class="char-img" src="hana_san.png" alt="ハナさん" />',
+      '  <span class="char-name">ハナさん</span>',
+      '  <span class="char-desc">やさしい</span>',
+      '</button>'
+    ].join('');
+
+    // キャラボタンのクリックイベント
+    charWrap.querySelectorAll('.gai-char-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var tone = btn.getAttribute('data-tone');
+        _state.tone = tone;
+        charWrap.querySelectorAll('.gai-char-btn').forEach(function(b) {
+          b.classList.toggle('active', b.getAttribute('data-tone') === tone);
+        });
+      });
+    });
+
+    // AIと目標設定ボタン
     var aiBtn = document.createElement('button');
     aiBtn.type = 'button';
     aiBtn.id = 'goalAIBreakdownBtn';
     aiBtn.className = 'goal-ai-btn';
     aiBtn.innerHTML = '🤖 AIと目標設定 <span class="premium-tag">👑 有料</span>';
-    aiBtn.onclick = startGoalAIChat;
+    aiBtn.onclick = function() {
+      if (!isPremium()) {
+        alert('🔒 有料会員限定\n\n「AIと目標設定」は有料会員向けの機能です。\n\n有料会員になると:\n• AIが対話で目標を具体化\n• CSV データダウンロード\n• その他プレミアム機能');
+        return;
+      }
+      // 1回目: キャラ選択を表示、2回目: チャット開始
+      if (charWrap.style.display === 'none') {
+        charWrap.style.display = 'flex';
+        aiBtn.innerHTML = '🚀 この相手でチャット開始';
+      } else {
+        startGoalAIChat();
+      }
+    };
 
     addBtn.parentNode.insertBefore(aiBtn, addBtn.nextSibling);
+    aiBtn.parentNode.insertBefore(charWrap, aiBtn.nextSibling);
   }
 
   // ========== 有料チェック ==========
@@ -236,12 +289,7 @@
       return;
     }
 
-    if (!isPremium()) {
-      alert('🔒 有料会員限定\n\n「AIと目標設定」は有料会員向けの機能です。\n\n有料会員になると:\n• AIが対話で目標を具体化\n• CSV データダウンロード\n• その他プレミアム機能');
-      return;
-    }
-
-    // 状態リセット（toneは選択中のキャラを維持）
+    // 状態リセット（toneは目標追加モーダルで選択済み）
     _state.goalText = text;
     _state.category = category;
     _state.goalId = null;
@@ -281,12 +329,9 @@
     var tasksEl = document.getElementById('gaiTasks');
     var inputArea = document.getElementById('gaiInputArea');
 
-    var charSelector = document.getElementById('gaiCharSelector');
-
     if (messagesEl) messagesEl.innerHTML = '';
     if (tasksEl) { tasksEl.innerHTML = ''; tasksEl.style.display = 'none'; }
     if (inputArea) inputArea.style.display = 'flex';
-    if (charSelector) charSelector.style.display = 'flex';
     if (modal) { modal.style.display = ''; modal.classList.add('gai-open'); }
 
     // キャラクター名を取得
@@ -342,10 +387,6 @@
     if (!text) return;
 
     if (input) input.value = '';
-
-    // ユーザーが応答を送ったら、キャラ選択を隠す（もう変更不可）
-    var charSelector = document.getElementById('gaiCharSelector');
-    if (charSelector) charSelector.style.display = 'none';
 
     addMessage('user', text);
     _state.chatHistory.push({ role: 'user', text: text });
@@ -554,19 +595,39 @@
 
     var canContinue = _state.turnCount < _state.maxTurns;
 
+    // タスクリスト（スクロール領域）
     tasksEl.innerHTML = tasks.map(function(task, i) {
       return '<label class="gai-task-item">' +
         '<input type="checkbox" checked data-task-index="' + i + '" />' +
         '<span class="gai-task-text">' + escapeHTML(task) + '</span>' +
         '</label>';
-    }).join('') +
-    '<div class="gai-task-actions">' +
-    '  <button class="gai-add-btn" onclick="window._gaiAddTasks()">✅ 選択したタスクを追加</button>' +
-    '  <button class="gai-cancel-btn" onclick="window._closeGoalAIChat()">キャンセル</button>' +
-    '</div>' +
-    (canContinue ? '<button class="gai-more-btn" onclick="window._gaiContinueChat()">💬 もっと話してから決める</button>' : '');
-
+    }).join('');
     tasksEl.style.display = 'block';
+
+    // アクションボタンを gai-sheet 直下に追加（タスクリストの外 → 固定）
+    var sheet = tasksEl.closest('.gai-sheet');
+    if (sheet) {
+      // 既存のアクションを削除
+      var oldActions = sheet.querySelector('.gai-task-actions');
+      if (oldActions) oldActions.remove();
+      var oldMore = sheet.querySelector('.gai-more-btn');
+      if (oldMore) oldMore.remove();
+
+      var actionsDiv = document.createElement('div');
+      actionsDiv.className = 'gai-task-actions';
+      actionsDiv.innerHTML =
+        '<button class="gai-add-btn" onclick="window._gaiAddTasks()">✅ 選択したタスクを追加</button>' +
+        '<button class="gai-cancel-btn" onclick="window._closeGoalAIChat()">キャンセル</button>';
+      sheet.appendChild(actionsDiv);
+
+      if (canContinue) {
+        var moreBtn = document.createElement('button');
+        moreBtn.className = 'gai-more-btn';
+        moreBtn.onclick = function() { window._gaiContinueChat(); };
+        moreBtn.textContent = '💬 もっと話してから決める';
+        sheet.appendChild(moreBtn);
+      }
+    }
   }
 
   // ========== 選択したタスクを追加（weeklyTasksへ） ==========
@@ -655,7 +716,17 @@
   // ========== モーダル操作 ==========
   function closeChat() {
     var modal = document.getElementById('goalAIChatModal');
-    if (modal) { modal.classList.remove('gai-open'); }
+    if (modal) {
+      modal.classList.remove('gai-open');
+      // タスク選択のアクションボタンをクリーンアップ
+      var sheet = modal.querySelector('.gai-sheet');
+      if (sheet) {
+        var actions = sheet.querySelector('.gai-task-actions');
+        if (actions) actions.remove();
+        var more = sheet.querySelector('.gai-more-btn');
+        if (more) more.remove();
+      }
+    }
   }
 
   // ========== ユーティリティ ==========
