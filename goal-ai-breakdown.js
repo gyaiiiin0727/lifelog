@@ -61,7 +61,7 @@
     '}',
     '.gai-char-btn:hover { border-color:#c4b5fd; background:#faf5ff; }',
     '.gai-char-btn.active { border-color:#7c3aed; background:#f5f0ff; box-shadow:0 0 0 2px #7c3aed; }',
-    '.gai-char-btn .char-img { width:52px; height:52px; border-radius:50%; object-fit:cover; display:block; margin:0 auto 6px; }',
+    '.gai-char-btn .char-img { width:48px; height:48px; border-radius:50%; object-fit:cover; display:block; margin:0 auto 6px; }',
     '.gai-char-btn .char-name { font-weight:600; color:#333; font-size:11px; display:block; margin-bottom:2px; }',
     '.gai-char-btn .char-desc { font-size:10px; color:#888; display:block; }',
 
@@ -226,7 +226,7 @@
     charWrap.id = 'goalAddCharSelector';
     charWrap.className = 'gai-char-selector';
     charWrap.style.display = 'none';
-    charWrap.style.padding = '8px 0 4px';
+    charWrap.style.padding = '10px 0 8px';
     charWrap.innerHTML = [
       '<button class="gai-char-btn" data-tone="harsh" type="button">',
       '  <img class="char-img" src="drill_instructor.png" alt="マネージャー" />',
