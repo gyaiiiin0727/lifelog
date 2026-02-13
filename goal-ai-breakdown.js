@@ -256,6 +256,20 @@
       });
     });
 
+    // チャット開始ボタン（キャラ選択の下に表示）
+    var startBtn = document.createElement('button');
+    startBtn.type = 'button';
+    startBtn.id = 'goalAIStartBtn';
+    startBtn.className = 'goal-ai-btn';
+    startBtn.style.display = 'none';
+    startBtn.style.borderStyle = 'solid';
+    startBtn.style.background = '#7c3aed';
+    startBtn.style.color = '#fff';
+    startBtn.textContent = '🚀 この相手でチャット開始';
+    startBtn.onclick = function() {
+      startGoalAIChat();
+    };
+
     // AIと目標設定ボタン
     var aiBtn = document.createElement('button');
     aiBtn.type = 'button';
@@ -267,17 +281,15 @@
         alert('🔒 有料会員限定\n\n「AIと目標設定」は有料会員向けの機能です。\n\n有料会員になると:\n• AIが対話で目標を具体化\n• CSV データダウンロード\n• その他プレミアム機能');
         return;
       }
-      // 1回目: キャラ選択を表示、2回目: チャット開始
-      if (charWrap.style.display === 'none') {
-        charWrap.style.display = 'flex';
-        aiBtn.innerHTML = '🚀 この相手でチャット開始';
-      } else {
-        startGoalAIChat();
-      }
+      // キャラ選択 + 開始ボタンを表示
+      charWrap.style.display = 'flex';
+      startBtn.style.display = 'block';
+      aiBtn.style.display = 'none';
     };
 
     addBtn.parentNode.insertBefore(aiBtn, addBtn.nextSibling);
     aiBtn.parentNode.insertBefore(charWrap, aiBtn.nextSibling);
+    charWrap.parentNode.insertBefore(startBtn, charWrap.nextSibling);
   }
 
   // ========== 有料チェック ==========

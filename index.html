@@ -25,7 +25,7 @@
 // ===== 目標追加モーダル =====
 function openGoalAddModal(){
   const modal = document.getElementById('goalAddModal');
-  if(modal) modal.style.display = 'block';
+  if(modal) modal.style.display = 'flex';
   const input = document.getElementById('goalInput');
   if(input) { input.value = ''; setTimeout(()=>input.focus(), 50); }
 }
@@ -410,14 +410,16 @@ select.text-input{
             background: rgba(0,0,0,0.5);
             z-index: 1000;
             overflow-y: auto;
+            align-items: flex-end;
+            justify-content: center;
         }
-        
+
         .modal.active {
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        
+
         .modal-content {
             background: #fff;
             border-radius: 12px;
@@ -426,6 +428,20 @@ select.text-input{
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
+        }
+
+        /* 目標追加モーダル: ボトムシート風 */
+        #goalAddModal {
+            align-items: flex-end;
+            justify-content: center;
+        }
+        #goalAddModal .modal-content {
+            width: 100%;
+            max-width: 480px;
+            max-height: 92vh;
+            border-radius: 20px 20px 0 0;
+            padding: 24px 20px 20px;
+            box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
         }
         
         .modal-title {
@@ -4579,7 +4595,7 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 .ai-consult-tab-container{
   max-width: 500px;
   margin: 0 auto;
-  padding: 10px 0;
+  padding: 20px 0;
 }
 .ai-consult-chars{
   display: flex;
@@ -4591,14 +4607,14 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px 8px;
+  padding: 12px 8px;
   background: #fff;
   border: 2px solid #e0e0e0;
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
   flex: 1;
-  max-width: 110px;
+  max-width: 120px;
 }
 .ai-char-btn.active{
   background: #f0f0ff;
