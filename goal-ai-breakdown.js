@@ -152,7 +152,14 @@
     '@keyframes gaiDots { 0%{content:"";} 25%{content:".";} 50%{content:"..";} 75%{content:"...";} }',
 
     /* safe-area対応 */
-    '.gai-safe-bottom { padding-bottom:env(safe-area-inset-bottom, 8px); }'
+    '.gai-safe-bottom { padding-bottom:env(safe-area-inset-bottom, 8px); }',
+
+    /* 週別計画UI */
+    '.gai-week-header {',
+    '  font-size:13px; font-weight:700; color:#7c3aed; padding:10px 0 4px;',
+    '  margin-top:10px; border-bottom:1.5px solid #e5e7eb;',
+    '}',
+    '.gai-week-header:first-child { margin-top:0; }'
   ].join('\n');
   document.head.appendChild(style);
 
@@ -505,24 +512,37 @@
       _state.chatHistory.push({ role: 'ai', text: responseText });
 
       // タスク提案が含まれているかチェック（最低2回は会話してから提案を判定）
-      var tasks = (_state.turnCount >= 2) ? parseTasks(responseText) : [];
+      if (_state.turnCount >= 2) {
+        // まず4週間計画パーサーを試す
+        var weeklyPlan = parseWeeklyPlan(responseText);
+        var weeklyPlanTotal = Object.keys(weeklyPlan).reduce(function(sum, k) {
+          return sum + weeklyPlan[k].length;
+        }, 0);
 
-      if (tasks.length >= 3) {
-        // タスク提案あり → チャットに表示 + タスク選択UI
-        addMessage('ai', responseText);
-        showTaskSelection(tasks);
-      } else {
-        // まだ質問フェーズ
-        addMessage('ai', responseText);
-
-        // 最大往復に達したら次は強制タスク提案
-        if (_state.turnCount >= _state.maxTurns) {
-          // 入力を無効にして自動で最終提案を取得
-          var inputArea = document.getElementById('gaiInputArea');
-          if (inputArea) inputArea.style.display = 'none';
-          addMessage('ai', 'それでは、タスクを提案しますね...');
-          await sendFinalProposal();
+        if (weeklyPlanTotal >= 3) {
+          // 4週間計画あり → チャットに表示 + 週別タスク選択UI
+          addMessage('ai', responseText);
+          showWeeklyPlanSelection(weeklyPlan);
+        } else {
+          // フォールバック: 従来の単一リストパーサー
+          var tasks = parseTasks(responseText);
+          if (tasks.length >= 3) {
+            addMessage('ai', responseText);
+            showTaskSelection(tasks);
+          } else {
+            // まだ質問フェーズ
+            addMessage('ai', responseText);
+            if (_state.turnCount >= _state.maxTurns) {
+              var inputArea = document.getElementById('gaiInputArea');
+              if (inputArea) inputArea.style.display = 'none';
+              addMessage('ai', 'それでは、4週間の計画を提案しますね...');
+              await sendFinalProposal();
+            }
+          }
         }
+      } else {
+        // まだ質問フェーズ（2回未満）
+        addMessage('ai', responseText);
       }
 
     } catch(e) {
@@ -550,11 +570,13 @@
         return (m.role === 'user' ? 'ユーザー' : 'AI') + ': ' + m.text;
       }).join('\n');
 
-      var prompt = '【指示】以下の会話を踏まえて、今週1週間の行動目標をタスクとして提案してください。\n' +
-        '- タスクは「今週1週間で実行する具体的な行動目標」にしてください\n' +
-        '- 「週○回〜する」「毎日〜する」「今週中に〜する」のような頻度・回数付きの行動にしてください\n' +
-        '- 準備やTips（「バッグを用意する」等）ではなく、目標達成に直結する行動そのものにしてください\n' +
-        '- 3〜5個、各タスクは簡潔に1文で、番号付きリスト（1. 2. 3.）で出力\n\n' +
+      var prompt = '【指示】以下の会話を踏まえて、4週間分の行動計画を提案してください。\n' +
+        '必ず以下のフォーマットで出力してください：\n' +
+        '【1週目】\n1. タスク\n【2週目】\n1. タスク\n【3週目】\n1. タスク\n【4週目】\n1. タスク\n' +
+        '- 各週2〜3個、全体で8〜12個\n' +
+        '- 1週目は取り組みやすく、後半はステップアップ\n' +
+        '- 「週○回〜する」「毎日〜する」のような頻度付き行動\n' +
+        '- 準備やTipsではなく行動そのもの\n\n' +
         '【会話履歴】\n' + historyText;
 
       var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-ai.little-limit-621c.workers.dev';
@@ -575,9 +597,18 @@
       if (responseText) {
         _state.chatHistory.push({ role: 'ai', text: responseText });
         addMessage('ai', responseText);
-        var tasks = parseTasks(responseText);
-        if (tasks.length > 0) {
-          showTaskSelection(tasks);
+        // まず4週間計画パーサーを試す
+        var weeklyPlan = parseWeeklyPlan(responseText);
+        var planTotal = Object.keys(weeklyPlan).reduce(function(sum, k) {
+          return sum + weeklyPlan[k].length;
+        }, 0);
+        if (planTotal >= 3) {
+          showWeeklyPlanSelection(weeklyPlan);
+        } else {
+          var tasks = parseTasks(responseText);
+          if (tasks.length > 0) {
+            showTaskSelection(tasks);
+          }
         }
       }
     } catch(e) {
@@ -598,23 +629,33 @@
     var noAnalysis = '※絶対に【よかったこと】【改善したいこと】【気づいたこと】【もやっとしたこと】【明日のMUST】などの分析フォーマットは使わないでください。普通の会話として返答してください。\n\n';
     var charHeader = noAnalysis + (charPrompt ? '【キャラクター設定（この口調で話してください）】\n' + charPrompt + '\n\n' : '');
 
-    var weeklyTaskRule =
+    var weeklyPlanRule =
       '【タスク提案のルール】\n' +
-      '- タスクは「今週1週間で実行する具体的な行動目標」にしてください\n' +
-      '- 「週○回〜する」「毎日〜する」「今週中に〜する」のような頻度・回数付きの行動にしてください\n' +
-      '- 準備やTips（「バッグを用意する」「カレンダーに登録する」等）ではなく、目標達成に直結する行動そのものにしてください\n' +
-      '- 例: ダイエット目標 → 「週3回ジムに通う」「毎日30分ウォーキングする」「間食を週2回以内にする」\n' +
-      '- 例: 勉強目標 → 「毎日1時間英語の教材を進める」「週末に模試を1回解く」\n' +
-      '- 3〜5個、各タスクは簡潔に1文で\n' +
-      '- 番号付きリスト（1. 2. 3.）で出力\n';
+      '- 4週間分の段階的な計画を提案してください\n' +
+      '- 必ず以下のフォーマットで出力してください：\n' +
+      '【1週目】\n' +
+      '1. タスクA\n' +
+      '2. タスクB\n' +
+      '【2週目】\n' +
+      '1. タスクC\n' +
+      '2. タスクD\n' +
+      '【3週目】\n' +
+      '1. タスクE\n' +
+      '【4週目】\n' +
+      '1. タスクF\n' +
+      '- 各週2〜3個、全体で8〜12個のタスクにしてください\n' +
+      '- 1週目は取り組みやすいタスク、後半の週はステップアップした内容にしてください\n' +
+      '- 「週○回〜する」「毎日〜する」のような頻度・回数付きの行動にしてください\n' +
+      '- 準備やTips（「バッグを用意する」等）ではなく、目標達成に直結する行動そのものにしてください\n' +
+      '- 例: ダイエット → 1週目「週2回ジムに行く」→ 2週目「週3回ジムに行く」→ 3週目「週3回ジム+自宅筋トレ1回」→ 4週目「振り返り+新たな目標設定」\n';
 
     // 初回: ヒアリング質問
     if (_state.turnCount === 0) {
       return charHeader +
         '【指示】あなたは目標設定のコーチです。\n' +
         'ユーザーが「' + _state.goalText + '」（カテゴリ: ' + _state.category + '）という目標を立てようとしています。\n' +
-        'この目標を「今週やること」に落とし込むために、1つだけ短い質問をしてください。\n' +
-        '- 具体的な数値、頻度（週何回？毎日？）、どんな行動をするかを聞く質問が望ましい\n' +
+        'この目標を4週間の計画に落とし込むために、1つだけ短い質問をしてください。\n' +
+        '- 具体的な数値、頻度（週何回？毎日？）、4週間後にどうなりたいかを聞く質問が望ましい\n' +
         '- 質問は1〜2文で簡潔に\n' +
         '- キャラクター設定の口調に従って会話してください\n' +
         '- タスクリストや分析結果は出力しないでください\n' +
@@ -626,7 +667,7 @@
       return charHeader +
         '【指示】あなたは目標設定のコーチです。\n' +
         '以下の会話を踏まえて、もう1つだけ追加の短い質問をしてください。\n' +
-        '- 「今週どれくらいやる？」「具体的にいつやる？」など、週単位の行動に落とし込むための質問をしてください\n' +
+        '- 「最初の1週間はどれくらいやれそう？」「4週間後にはどうなっていたい？」など、4週間の計画を作るための質問をしてください\n' +
         '- 質問は1〜2文で簡潔に\n' +
         '- キャラクター設定の口調に従ってください\n' +
         '- タスクリストはまだ出力しないでください\n\n' +
@@ -639,16 +680,16 @@
         '【指示】あなたは目標設定のコーチです。\n' +
         '以下の会話を踏まえて、次のどちらかを行ってください：\n' +
         '- まだ情報が足りなければ、1つだけ追加の短い質問をしてください\n' +
-        '- 十分な情報があれば、タスクを提案してください\n' +
-        weeklyTaskRule +
+        '- 十分な情報があれば、4週間分の計画を提案してください\n' +
+        weeklyPlanRule +
         '- キャラクター設定の口調に従ってください\n\n' +
         '【会話履歴】\n' + historyText;
     }
 
     // 最終回: 強制タスク提案
     return charHeader +
-      '【指示】以下の会話を踏まえて、今週1週間の行動目標をタスクとして提案してください。\n' +
-      weeklyTaskRule + '\n' +
+      '【指示】以下の会話を踏まえて、4週間分の行動計画を提案してください。\n' +
+      weeklyPlanRule + '\n' +
       '【会話履歴】\n' + historyText;
   }
 
@@ -673,6 +714,66 @@
       }
     }
     return tasks.slice(0, 8);
+  }
+
+  // ========== 4週間計画パーサー ==========
+  function parseWeeklyPlan(text) {
+    // 戻り値: { 1: ['task1', 'task2'], 2: ['task3'], 3: [...], 4: [...] }
+    var result = {};
+    var currentWeek = 0;
+    var lines = text.split('\n');
+
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i].trim();
+
+      // 週ヘッダー検出: 【1週目】, [1週目], 1週目:, 第1週, Week 1 など
+      var weekMatch = line.match(/[【\[]*\s*第?\s*(\d)\s*週目?\s*[】\]:]*/);
+      if (weekMatch) {
+        currentWeek = parseInt(weekMatch[1]);
+        if (!result[currentWeek]) result[currentWeek] = [];
+        continue;
+      }
+
+      if (currentWeek === 0) continue;
+
+      // 番号付き・箇条書きリストをタスクとして認識
+      var isNumbered = /^[\d①②③④⑤⑥⑦⑧⑨⑩]+[\.\)）]/.test(line);
+      var isBulleted = /^[-・●▪▸]\s/.test(line);
+      if (!isNumbered && !isBulleted) continue;
+
+      var cleaned = line
+        .replace(/^[\d①②③④⑤⑥⑦⑧⑨⑩]+[\.\)）]\s*/, '')
+        .replace(/^[-・●▪▸]\s*/, '')
+        .trim();
+      if (cleaned.length > 2 && cleaned.length < 100) {
+        result[currentWeek].push(cleaned);
+      }
+    }
+    return result;
+  }
+
+  // ========== 週キーのオフセット計算 ==========
+  function getWeekKeyOffset(baseWeekKey, offset) {
+    if (offset === 0) return baseWeekKey;
+    var parts = baseWeekKey.match(/(\d{4})-W(\d{2})/);
+    if (!parts) return baseWeekKey;
+    var year = parseInt(parts[1]);
+    var week = parseInt(parts[2]);
+
+    // 基準週の月曜日を計算
+    var jan4 = new Date(year, 0, 4);
+    var jan4Day = (jan4.getDay() + 6) % 7; // Monday=0
+    var weekStart = new Date(jan4.getTime());
+    weekStart.setDate(jan4.getDate() - jan4Day + (week - 1) * 7);
+
+    // オフセット週を足す
+    weekStart.setDate(weekStart.getDate() + offset * 7);
+
+    // getWeekKeyで正しいキーを取得
+    if (typeof window.getWeekKey === 'function') {
+      return window.getWeekKey(weekStart);
+    }
+    return baseWeekKey;
   }
 
   // ========== タスク選択UI表示 ==========
@@ -707,6 +808,57 @@
       actionsDiv.className = 'gai-task-actions';
       actionsDiv.innerHTML =
         '<button class="gai-add-btn" onclick="window._gaiAddTasks()">✅ 選択したタスクを追加</button>' +
+        '<button class="gai-cancel-btn" onclick="window._closeGoalAIChat()">キャンセル</button>';
+      sheet.appendChild(actionsDiv);
+
+      if (canContinue) {
+        var moreBtn = document.createElement('button');
+        moreBtn.className = 'gai-more-btn';
+        moreBtn.onclick = function() { window._gaiContinueChat(); };
+        moreBtn.textContent = '💬 もっと話してから決める';
+        sheet.appendChild(moreBtn);
+      }
+    }
+  }
+
+  // ========== 4週間計画 選択UI表示 ==========
+  function showWeeklyPlanSelection(weeklyPlan) {
+    var tasksEl = document.getElementById('gaiTasks');
+    var inputArea = document.getElementById('gaiInputArea');
+    if (!tasksEl) return;
+    if (inputArea) inputArea.style.display = 'none';
+
+    var canContinue = _state.turnCount < _state.maxTurns;
+    var weekLabels = { 1: '1週目（今週）', 2: '2週目', 3: '3週目', 4: '4週目' };
+    var html = '';
+
+    for (var week = 1; week <= 4; week++) {
+      var tasks = weeklyPlan[week];
+      if (!tasks || tasks.length === 0) continue;
+
+      html += '<div class="gai-week-header">📅 ' + weekLabels[week] + '</div>';
+      tasks.forEach(function(task, i) {
+        html += '<label class="gai-task-item">' +
+          '<input type="checkbox" checked data-week="' + week + '" data-task-index="' + i + '" />' +
+          '<span class="gai-task-text">' + escapeHTML(task) + '</span>' +
+          '</label>';
+      });
+    }
+
+    tasksEl.innerHTML = html;
+    tasksEl.style.display = 'block';
+
+    var sheet = tasksEl.closest('.gai-sheet');
+    if (sheet) {
+      var oldActions = sheet.querySelector('.gai-task-actions');
+      if (oldActions) oldActions.remove();
+      var oldMore = sheet.querySelector('.gai-more-btn');
+      if (oldMore) oldMore.remove();
+
+      var actionsDiv = document.createElement('div');
+      actionsDiv.className = 'gai-task-actions';
+      actionsDiv.innerHTML =
+        '<button class="gai-add-btn" onclick="window._gaiAddTasks()">✅ 4週間の計画を追加</button>' +
         '<button class="gai-cancel-btn" onclick="window._closeGoalAIChat()">キャンセル</button>';
       sheet.appendChild(actionsDiv);
 
@@ -772,10 +924,15 @@
         var text = textEl ? textEl.textContent.trim() : '';
         if (!text) return;
 
+        // data-week属性で週キーを計算（1=今週, 2=来週, 3=再来週, 4=3週後）
+        var weekAttr = cb.getAttribute('data-week');
+        var weekOffset = weekAttr ? (parseInt(weekAttr) - 1) : 0;
+        var taskWeekKey = weekOffset > 0 ? getWeekKeyOffset(weekKey, weekOffset) : weekKey;
+
         goal.weeklyTasks.push({
           id: Date.now() + added,
           text: text,
-          week: weekKey,
+          week: taskWeekKey,
           done: false
         });
         added++;
@@ -814,8 +971,17 @@
     if (typeof window.renderGoalsAll === 'function') window.renderGoalsAll();
     else if (typeof window.renderGoals === 'function') window.renderGoals();
 
+    // 4週間計画かどうかで表示メッセージを変える
+    var hasMultiWeek = false;
+    checkboxes.forEach(function(cb) {
+      var w = cb.getAttribute('data-week');
+      if (w && parseInt(w) > 1) hasMultiWeek = true;
+    });
     if (typeof window.showStatus === 'function') {
-      window.showStatus('goalStatus', '✅ ' + added + '個のタスクを今週のやることに追加しました');
+      var msg = hasMultiWeek
+        ? '✅ ' + added + '個のタスクを4週間の計画に追加しました'
+        : '✅ ' + added + '個のタスクを今週のやることに追加しました';
+      window.showStatus('goalStatus', msg);
     }
 
     closeChat();

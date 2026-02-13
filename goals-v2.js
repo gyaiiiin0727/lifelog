@@ -51,7 +51,20 @@
     '.gv2-goal-del { background: none; border: none; font-size: 14px; cursor: pointer; opacity: 0.25; padding: 4px; transition: opacity .2s; flex-shrink: 0; }',
     '.gv2-goal:hover .gv2-goal-del { opacity: 0.6; }',
     '.gv2-goal-del:hover { opacity: 1 !important; }',
-    '.gv2-empty { text-align: center; color: #999; padding: 20px; font-size: 14px; }'
+    '.gv2-empty { text-align: center; color: #999; padding: 20px; font-size: 14px; }',
+
+    /* 週ナビゲーション */
+    '.gv2-week-nav { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; }',
+    '.gv2-week-nav-btn {',
+    '  padding:6px 12px; background:#000; color:#fff; border:none;',
+    '  border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; transition:all .2s;',
+    '}',
+    '.gv2-week-nav-btn:hover { background:#333; }',
+    '.gv2-week-display { flex:1; text-align:center; font-size:14px; font-weight:600; color:#333; }',
+    '.gv2-week-today-btn {',
+    '  font-size:11px; color:#7c3aed; background:none; border:1px solid #7c3aed;',
+    '  border-radius:6px; padding:2px 8px; cursor:pointer; margin-left:6px;',
+    '}'
   ].join('\n');
   document.head.appendChild(style);
 
@@ -76,8 +89,10 @@
     return d.getFullYear() + '-W' + String(weekNum).padStart(2,'0');
   }
   var currentWeekKey = getWeekKey(new Date());
+  var viewingWeekKey = currentWeekKey;
   window.getWeekKey = getWeekKey;
   window.currentWeekKey = currentWeekKey;
+  window.viewingWeekKey = viewingWeekKey;
 
   // ========== データアクセス ==========
   function getGoals() {
@@ -182,7 +197,6 @@
     var el = document.getElementById('gv2Weekly');
     if (!el) return;
 
-    // 完了していない目標の今週タスクを表示
     var activeGoals = current.filter(function(g) { return !g.completed; });
 
     if (activeGoals.length === 0) {
@@ -190,12 +204,28 @@
       return;
     }
 
-    var html = '<div class="today-tasks-section gv2-weekly">' +
-      '<div class="today-tasks-header"><h3>📋 今週やること</h3></div>' +
-      '<div class="today-tasks-content">';
+    // 週ラベルを計算
+    var isCurrentWeek = (viewingWeekKey === currentWeekKey);
+    var weekLabel = formatWeekLabel(viewingWeekKey);
 
+    var html = '<div class="today-tasks-section gv2-weekly">';
+
+    // 週ナビゲーション
+    html += '<div class="gv2-week-nav">' +
+      '<button class="gv2-week-nav-btn" onclick="window._gv2ChangeWeek(-1)">◀ 前週</button>' +
+      '<div class="gv2-week-display">📋 ' + weekLabel +
+      (!isCurrentWeek ? ' <button class="gv2-week-today-btn" onclick="window._gv2GoToCurrentWeek()">今週へ</button>' : '') +
+      '</div>' +
+      '<button class="gv2-week-nav-btn" onclick="window._gv2ChangeWeek(1)">次週 ▶</button>' +
+    '</div>';
+
+    html += '<div class="today-tasks-content">';
+
+    var hasAnyTask = false;
     activeGoals.forEach(function(goal) {
-      var tasks = (goal.weeklyTasks || []).filter(function(t) { return t.week === currentWeekKey; });
+      var tasks = (goal.weeklyTasks || []).filter(function(t) { return t.week === viewingWeekKey; });
+      if (tasks.length === 0) return;
+      hasAnyTask = true;
       var emoji = catEmoji(goal.category);
 
       html += '<div class="task-group">';
@@ -215,6 +245,10 @@
       html += '<button type="button" class="task-add-btn" onclick="window._gv2AddWT(' + goal.id + ')">＋ 追加</button>';
       html += '</div>';
     });
+
+    if (!hasAnyTask) {
+      html += '<div style="text-align:center;color:#999;padding:16px;font-size:13px;">この週のタスクはまだありません</div>';
+    }
 
     html += '</div></div>';
     el.innerHTML = html;
@@ -238,9 +272,10 @@
       html += '<div class="gv2-empty">目標を追加して、チャレンジを始めよう！</div>';
     } else {
       current.forEach(function(goal) {
-        var wt = (goal.weeklyTasks || []).filter(function(t) { return t.week === currentWeekKey; });
-        var wtDone = wt.filter(function(t) { return t.done; }).length;
-        var wtInfo = wt.length > 0 ? ('📋 今週 ' + wtDone + '/' + wt.length) : '';
+        var allWt = goal.weeklyTasks || [];
+        var wtThisWeek = allWt.filter(function(t) { return t.week === currentWeekKey; });
+        var wtDone = wtThisWeek.filter(function(t) { return t.done; }).length;
+        var wtInfo = allWt.length > 0 ? ('📋 今週 ' + wtDone + '/' + wtThisWeek.length + (allWt.length > wtThisWeek.length ? ' (全' + allWt.length + ')' : '')) : '';
 
         html += '<div class="gv2-goal ' + (goal.completed ? 'done' : '') + '">' +
           '<input type="checkbox" class="gv2-goal-cb" ' + (goal.completed ? 'checked' : '') +
@@ -316,7 +351,7 @@
     if (!g) return;
     if (!g.weeklyTasks) g.weeklyTasks = [];
 
-    var newTask = { id: Date.now(), text: '新しいタスク', week: currentWeekKey, done: false };
+    var newTask = { id: Date.now(), text: '新しいタスク', week: viewingWeekKey || currentWeekKey, done: false };
     g.weeklyTasks.push(newTask);
     saveGoals(goals);
     renderAll();
@@ -426,12 +461,62 @@
     renderAll();
   }
 
+  // ========== 週ナビゲーション ==========
+  function changeViewingWeek(offset) {
+    var parts = viewingWeekKey.match(/(\d{4})-W(\d{2})/);
+    if (!parts) return;
+    var year = parseInt(parts[1]);
+    var week = parseInt(parts[2]);
+
+    // 基準週の月曜日を計算してオフセット
+    var jan4 = new Date(year, 0, 4);
+    var jan4Day = (jan4.getDay() + 6) % 7;
+    var weekStart = new Date(jan4.getTime());
+    weekStart.setDate(jan4.getDate() - jan4Day + (week - 1) * 7);
+    weekStart.setDate(weekStart.getDate() + offset * 7);
+
+    viewingWeekKey = getWeekKey(weekStart);
+    window.viewingWeekKey = viewingWeekKey;
+    renderAll();
+  }
+
+  function goToCurrentWeek() {
+    viewingWeekKey = currentWeekKey;
+    window.viewingWeekKey = viewingWeekKey;
+    renderAll();
+  }
+
+  function parseWeekKeyToDate(weekKey) {
+    var parts = weekKey.match(/(\d{4})-W(\d{2})/);
+    if (!parts) return new Date();
+    var year = parseInt(parts[1]);
+    var week = parseInt(parts[2]);
+    var jan4 = new Date(year, 0, 4);
+    var jan4Day = (jan4.getDay() + 6) % 7;
+    var d = new Date(jan4.getTime());
+    d.setDate(jan4.getDate() - jan4Day + (week - 1) * 7);
+    return d;
+  }
+
+  function formatWeekLabel(weekKey) {
+    var current = parseWeekKeyToDate(currentWeekKey);
+    var viewing = parseWeekKeyToDate(weekKey);
+    var diffWeeks = Math.round((viewing - current) / (7 * 86400000));
+    if (diffWeeks === 0) return '今週やること';
+    if (diffWeeks === 1) return '来週やること';
+    if (diffWeeks === -1) return '先週のタスク';
+    if (diffWeeks > 0) return diffWeeks + '週後のタスク';
+    return Math.abs(diffWeeks) + '週前のタスク';
+  }
+
   // ========== グローバル公開（既存の関数を上書き） ==========
   window._gv2ToggleGoal = toggleGoalV2;
   window._gv2DeleteGoal = deleteGoalV2;
   window._gv2AddWT = addWeeklyTask;
   window._gv2ToggleWT = toggleWeeklyTask;
   window._gv2EditWT = editWeeklyTask;
+  window._gv2ChangeWeek = changeViewingWeek;
+  window._gv2GoToCurrentWeek = goToCurrentWeek;
 
   // 既存の window.* を上書きして全体の整合性を保つ
   window.addGoal = addGoalV2;
