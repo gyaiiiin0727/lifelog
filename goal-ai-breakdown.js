@@ -320,6 +320,10 @@
 
     if (input) input.value = '';
 
+    // ユーザーが応答を送ったら、キャラ選択を隠す（もう変更不可）
+    var charSelector = document.getElementById('gaiCharSelector');
+    if (charSelector) charSelector.style.display = 'none';
+
     addMessage('user', text);
     _state.chatHistory.push({ role: 'user', text: text });
 
@@ -332,9 +336,7 @@
     var sendBtn = document.getElementById('gaiSend');
     if (sendBtn) sendBtn.disabled = true;
 
-    // 会話が始まったらキャラ選択を隠す
-    var charSelector = document.getElementById('gaiCharSelector');
-    if (charSelector) charSelector.style.display = 'none';
+    // キャラ選択はgaiSendMessage側で隠す（ここでは何もしない）
 
     addLoadingMessage();
 
@@ -363,10 +365,10 @@
       _state.turnCount++;
       _state.chatHistory.push({ role: 'ai', text: responseText });
 
-      // タスク提案が含まれているかチェック
-      var tasks = parseTasks(responseText);
+      // タスク提案が含まれているかチェック（最低2回は会話してから提案を判定）
+      var tasks = (_state.turnCount >= 2) ? parseTasks(responseText) : [];
 
-      if (tasks.length >= 2) {
+      if (tasks.length >= 3) {
         // タスク提案あり → チャットに表示 + タスク選択UI
         addMessage('ai', responseText);
         showTaskSelection(tasks);
@@ -450,56 +452,71 @@
       return (m.role === 'user' ? 'ユーザー' : 'AI') + ': ' + m.text;
     }).join('\n');
 
+    // キャラクター設定を先頭に配置（全フェーズ共通）
+    var charHeader = charPrompt ? '【キャラクター設定（この口調で話してください）】\n' + charPrompt + '\n\n' : '';
+
     // 初回: ヒアリング質問
     if (_state.turnCount === 0) {
-      var p = '【指示】あなたは目標設定のコーチです。\n' +
+      return charHeader +
+        '【指示】あなたは目標設定のコーチです。\n' +
         'ユーザーが「' + _state.goalText + '」（カテゴリ: ' + _state.category + '）という目標を立てようとしています。\n' +
         'この目標を具体的なタスクに落とし込むために、1つだけ短い質問をしてください。\n' +
         '- 具体的な数値や期限、頻度を聞く質問が望ましい\n' +
         '- 質問は1〜2文で簡潔に\n' +
-        '- 質問のみ出力。挨拶や説明は不要\n';
-      if (charPrompt) p += '\n【キャラクター】\n' + charPrompt + '\n';
-      return p;
+        '- キャラクター設定の口調に従って質問してください\n' +
+        '- タスクリストはまだ出力しないでください\n';
     }
 
-    // 2往復目: 質問 or タスク提案
+    // 2-3往復目: 質問を続ける（最低2回は質問する）
+    if (_state.turnCount < 2) {
+      return charHeader +
+        '【指示】あなたは目標設定のコーチです。\n' +
+        '以下の会話を踏まえて、もう1つだけ追加の短い質問をしてください。\n' +
+        '- まだ目標の具体化に必要な情報をヒアリングしてください\n' +
+        '- 質問は1〜2文で簡潔に\n' +
+        '- キャラクター設定の口調に従ってください\n' +
+        '- タスクリストはまだ出力しないでください\n\n' +
+        '【会話履歴】\n' + historyText;
+    }
+
+    // それ以降: 質問 or タスク提案
     if (_state.turnCount < _state.maxTurns - 1) {
-      var p2 = '【指示】あなたは目標設定のコーチです。\n' +
+      return charHeader +
+        '【指示】あなたは目標設定のコーチです。\n' +
         '以下の会話を踏まえて、次のどちらかを行ってください：\n' +
         '- まだ情報が足りなければ、1つだけ追加の短い質問をしてください\n' +
         '- 十分な情報があれば、3〜5個の具体的タスクを番号付きリスト（1. 2. 3.）で提案してください\n' +
         '- タスクは実行可能で簡潔に（各20文字以内が理想）\n' +
-        '- 簡潔に回答してください\n\n' +
+        '- キャラクター設定の口調に従ってください\n\n' +
         '【会話履歴】\n' + historyText;
-      if (charPrompt) p2 = '【キャラクター】\n' + charPrompt + '\n' + p2;
-      return p2;
     }
 
     // 最終回: 強制タスク提案
-    var p3 = '【指示】以下の会話を踏まえて、3〜5個の具体的で実行可能なタスクを番号付きリスト（1. 2. 3.）で提案してください。\n' +
+    return charHeader +
+      '【指示】以下の会話を踏まえて、3〜5個の具体的で実行可能なタスクを番号付きリスト（1. 2. 3.）で提案してください。\n' +
       '各タスクは簡潔に1文で。タスクの一覧のみ出力してください。\n\n' +
       '【会話履歴】\n' + historyText;
-    return p3;
   }
 
   // ========== タスクのパース ==========
   function parseTasks(text) {
     var lines = text.split('\n');
     var tasks = [];
+    // 番号付きリスト（1. 2. ①②など）のみをタスクとして認識
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i].trim();
+      // 番号付きリストにマッチするか判定
+      var isNumbered = /^[\d①②③④⑤⑥⑦⑧⑨⑩]+[\.\)）]/.test(line);
+      var isBulleted = /^[-・●▪▸]\s/.test(line);
+      if (!isNumbered && !isBulleted) continue;
+
       var cleaned = line
         .replace(/^[\d①②③④⑤⑥⑦⑧⑨⑩]+[\.\)）]\s*/, '')
         .replace(/^[-・●▪▸]\s*/, '')
         .trim();
-      if (cleaned.length > 0 && cleaned.length < 100 && cleaned !== line.trim().charAt(0)) {
+      if (cleaned.length > 2 && cleaned.length < 100) {
         tasks.push(cleaned);
       }
-    }
-    if (tasks.length === 0) {
-      tasks = lines
-        .map(function(l) { return l.trim(); })
-        .filter(function(l) { return l.length > 2 && l.length < 100; });
     }
     return tasks.slice(0, 8);
   }
