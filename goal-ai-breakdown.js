@@ -61,27 +61,38 @@
     '}',
     '.gai-char-btn:hover { border-color:#c4b5fd; background:#faf5ff; }',
     '.gai-char-btn.active { border-color:#7c3aed; background:#f5f0ff; box-shadow:0 0 0 2px #7c3aed; }',
-    '.gai-char-btn .char-img { width:56px; height:56px; border-radius:50%; object-fit:cover; display:block; margin:0 auto 4px; }',
-    '.gai-char-btn .char-name { font-weight:600; color:#333; font-size:11px; display:block; }',
-    '.gai-char-btn .char-desc { font-size:10px; color:#888; display:block; margin-top:1px; }',
+    '.gai-char-btn .char-img { width:52px; height:52px; border-radius:50%; object-fit:cover; display:block; margin:0 auto 6px; }',
+    '.gai-char-btn .char-name { font-weight:600; color:#333; font-size:11px; display:block; margin-bottom:2px; }',
+    '.gai-char-btn .char-desc { font-size:10px; color:#888; display:block; }',
 
     /* ===== チャットエリア（スクロール） ===== */
     '.gai-messages {',
-    '  flex:1; overflow-y:auto; padding:8px 16px; min-height:0;',
+    '  flex:1; overflow-y:auto; padding:12px 16px; min-height:0;',
     '  -webkit-overflow-scrolling:touch;',
     '}',
-    '.gai-msg {',
-    '  margin:8px 0; padding:12px 14px; border-radius:16px;',
-    '  font-size:14px; line-height:1.6; max-width:88%; word-break:break-word;',
+
+    /* AIメッセージ行（アイコン＋吹き出し） */
+    '.gai-msg-row {',
+    '  display:flex; align-items:flex-start; gap:8px; margin:10px 0;',
     '}',
-    '.gai-msg-ai { background:#f3f4f6; color:#333; border-bottom-left-radius:4px; margin-right:auto; }',
-    '.gai-msg-user { background:#7c3aed; color:#fff; border-bottom-right-radius:4px; margin-left:auto; }',
-    '.gai-msg-loading { background:#f3f4f6; color:#999; margin-right:auto; border-bottom-left-radius:4px; }',
+    '.gai-msg-row.row-user { justify-content:flex-end; }',
+    '.gai-msg-avatar {',
+    '  width:32px; height:32px; border-radius:50%; object-fit:cover;',
+    '  flex-shrink:0; margin-top:2px;',
+    '}',
+
+    '.gai-msg {',
+    '  padding:12px 14px; border-radius:16px;',
+    '  font-size:14px; line-height:1.6; max-width:82%; word-break:break-word;',
+    '}',
+    '.gai-msg-ai { background:#f3f4f6; color:#333; border-bottom-left-radius:4px; }',
+    '.gai-msg-user { background:#7c3aed; color:#fff; border-bottom-right-radius:4px; }',
+    '.gai-msg-loading { background:#f3f4f6; color:#999; border-bottom-left-radius:4px; }',
 
     /* システムメッセージ */
     '.gai-msg-system {',
     '  background:#f0ebff; color:#6d28d9; font-size:13px; text-align:center;',
-    '  padding:8px 14px; margin:8px auto; max-width:100%; border-radius:20px;',
+    '  padding:8px 14px; margin:10px auto; max-width:100%; border-radius:20px;',
     '  font-weight:600;',
     '}',
 
@@ -349,15 +360,53 @@
     await sendToAI();
   }
 
+  // ========== キャラ画像マッピング ==========
+  var _charImages = {
+    harsh: 'drill_instructor.png',
+    normal: 'takumi_senpai.png',
+    gentle: 'hana_san.png'
+  };
+
+  function _getCharImg() {
+    return _charImages[_state.tone] || _charImages.normal;
+  }
+
   // ========== メッセージ追加 ==========
   function addMessage(role, text) {
     var messagesEl = document.getElementById('gaiMessages');
     if (!messagesEl) return;
 
-    var div = document.createElement('div');
-    div.className = 'gai-msg gai-msg-' + role;
-    div.textContent = text;
-    messagesEl.appendChild(div);
+    if (role === 'system') {
+      // システムメッセージ（アイコンなし、中央表示）
+      var sysDiv = document.createElement('div');
+      sysDiv.className = 'gai-msg gai-msg-system';
+      sysDiv.textContent = text;
+      messagesEl.appendChild(sysDiv);
+    } else if (role === 'ai') {
+      // AIメッセージ（アイコン＋吹き出し）
+      var row = document.createElement('div');
+      row.className = 'gai-msg-row';
+      var img = document.createElement('img');
+      img.className = 'gai-msg-avatar';
+      img.src = _getCharImg();
+      img.alt = '';
+      var bubble = document.createElement('div');
+      bubble.className = 'gai-msg gai-msg-ai';
+      bubble.textContent = text;
+      row.appendChild(img);
+      row.appendChild(bubble);
+      messagesEl.appendChild(row);
+    } else {
+      // ユーザーメッセージ（右寄せ）
+      var uRow = document.createElement('div');
+      uRow.className = 'gai-msg-row row-user';
+      var uBubble = document.createElement('div');
+      uBubble.className = 'gai-msg gai-msg-user';
+      uBubble.textContent = text;
+      uRow.appendChild(uBubble);
+      messagesEl.appendChild(uRow);
+    }
+
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
 
@@ -365,11 +414,19 @@
     var messagesEl = document.getElementById('gaiMessages');
     if (!messagesEl) return;
 
-    var div = document.createElement('div');
-    div.className = 'gai-msg gai-msg-loading';
-    div.id = 'gaiLoadingMsg';
-    div.innerHTML = '考え中<span class="gai-dots"></span>';
-    messagesEl.appendChild(div);
+    var row = document.createElement('div');
+    row.className = 'gai-msg-row';
+    row.id = 'gaiLoadingMsg';
+    var img = document.createElement('img');
+    img.className = 'gai-msg-avatar';
+    img.src = _getCharImg();
+    img.alt = '';
+    var bubble = document.createElement('div');
+    bubble.className = 'gai-msg gai-msg-loading';
+    bubble.innerHTML = '考え中<span class="gai-dots"></span>';
+    row.appendChild(img);
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
 
