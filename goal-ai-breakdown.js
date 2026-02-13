@@ -23,25 +23,34 @@
     '}',
 
     /* チャットモーダル */
+    '#goalAIChatModal {',
+    '  display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;',
+    '  background: rgba(0,0,0,0.5); z-index: 1000;',
+    '  align-items: flex-end; justify-content: center;',
+    '}',
+    '#goalAIChatModal.gai-open {',
+    '  display: flex;',
+    '}',
     '#goalAIChatModal .modal-content {',
-    '  max-width: 440px; padding: 20px; display: flex; flex-direction: column; max-height: 85vh;',
+    '  max-width: 440px; width: 100%; padding: 20px 16px 16px; display: flex; flex-direction: column;',
+    '  max-height: 92vh; border-radius: 20px 20px 0 0; background: #fff;',
+    '  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);',
     '}',
     '.gai-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }',
-    '.gai-header h2 { font-size: 17px; margin: 0; }',
-    '.gai-close { font-size: 22px; cursor: pointer; color: #666; background: none; border: none; padding: 4px 8px; }',
+    '.gai-header h2 { font-size: 17px; margin: 0; font-weight: 700; }',
+    '.gai-close { font-size: 24px; cursor: pointer; color: #666; background: none; border: none; padding: 4px 8px; }',
 
     /* キャラクター選択 */
-    '.gai-char-selector { display: flex; gap: 6px; margin-bottom: 12px; }',
+    '.gai-char-selector { display: flex; gap: 6px; margin-bottom: 10px; }',
     '.gai-char-btn {',
-    '  flex: 1; padding: 8px 4px; border: 2px solid #e5e7eb; border-radius: 10px;',
-    '  background: #fff; font-size: 12px; cursor: pointer; text-align: center;',
+    '  flex: 1; padding: 6px 4px; border: 2px solid #e5e7eb; border-radius: 10px;',
+    '  background: #fff; font-size: 11px; cursor: pointer; text-align: center;',
     '  transition: all .2s; line-height: 1.3;',
     '}',
     '.gai-char-btn:hover { border-color: #c4b5fd; background: #faf5ff; }',
     '.gai-char-btn.active { border-color: #7c3aed; background: #f5f0ff; box-shadow: 0 0 0 1px #7c3aed; }',
-    '.gai-char-btn .char-emoji { font-size: 20px; display: block; margin-bottom: 2px; }',
-    '.gai-char-btn .char-name { font-weight: 600; color: #333; }',
-    '.gai-char-btn .char-desc { font-size: 10px; color: #888; }',
+    '.gai-char-btn .char-emoji { font-size: 18px; display: block; margin-bottom: 1px; }',
+    '.gai-char-btn .char-name { font-weight: 600; color: #333; font-size: 11px; }',
 
     /* 「もっと話す」ボタン */
     '.gai-more-btn {',
@@ -52,11 +61,18 @@
     '}',
     '.gai-more-btn:hover { background: #f3e8ff; }',
 
+    /* システムメッセージ */
+    '.gai-msg-system {',
+    '  background: #f0ebff; color: #6d28d9; font-size: 13px; text-align: center;',
+    '  padding: 8px 12px; margin: 8px auto; max-width: 100%; border-radius: 20px;',
+    '  font-weight: 600;',
+    '}',
+
     /* チャットエリア */
     '.gai-messages {',
-    '  flex: 1; overflow-y: auto; padding: 8px 0; min-height: 120px; max-height: 45vh;',
+    '  flex: 1; overflow-y: auto; padding: 8px 0; min-height: 100px; max-height: 55vh;',
     '}',
-    '.gai-msg { margin: 8px 0; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.6; max-width: 85%; word-break: break-word; }',
+    '.gai-msg { margin: 8px 0; padding: 12px 14px; border-radius: 14px; font-size: 14px; line-height: 1.6; max-width: 85%; word-break: break-word; }',
     '.gai-msg-ai { background: #f3f4f6; color: #333; border-bottom-left-radius: 4px; margin-right: auto; }',
     '.gai-msg-user { background: #7c3aed; color: #fff; border-bottom-right-radius: 4px; margin-left: auto; }',
     '.gai-msg-loading { background: #f3f4f6; color: #999; margin-right: auto; border-bottom-left-radius: 4px; }',
@@ -87,12 +103,12 @@
     /* タスク選択エリア */
     '.gai-tasks { margin-top: 12px; }',
     '.gai-task-item {',
-    '  display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px;',
-    '  margin: 6px 0; background: #fff; border: 1px solid #e0e0e0;',
-    '  border-radius: 8px; cursor: pointer; transition: border-color .2s, background .2s;',
+    '  display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px;',
+    '  margin: 6px 0; background: #fff; border: 1.5px solid #e5e7eb;',
+    '  border-radius: 12px; cursor: pointer; transition: border-color .2s, background .2s;',
     '}',
     '.gai-task-item:hover { border-color: #7c3aed; background: #faf5ff; }',
-    '.gai-task-item input[type="checkbox"] { margin-top: 2px; width: 18px; height: 18px; accent-color: #7c3aed; flex-shrink: 0; }',
+    '.gai-task-item input[type="checkbox"] { margin-top: 3px; width: 20px; height: 20px; accent-color: #7c3aed; flex-shrink: 0; }',
     '.gai-task-text { font-size: 14px; line-height: 1.5; color: #333; }',
     '.gai-task-actions { display: flex; gap: 8px; margin-top: 12px; }',
     '.gai-task-actions button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }',
@@ -271,7 +287,14 @@
     if (tasksEl) { tasksEl.innerHTML = ''; tasksEl.style.display = 'none'; }
     if (inputArea) inputArea.style.display = 'flex';
     if (charSelector) charSelector.style.display = 'flex';
-    if (modal) modal.style.display = 'block';
+    if (modal) { modal.style.display = ''; modal.classList.add('gai-open'); }
+
+    // キャラクター名を取得
+    var charNames = { harsh: 'マネージャー', normal: 'タクヤ先輩', gentle: 'ハナさん' };
+    var charName = charNames[_state.tone] || 'タクヤ先輩';
+
+    // 最初のシステムメッセージ: 「〇〇さんに目標設定の相談をする」
+    addMessage('system', charName + 'に目標設定の相談をする');
 
     // ユーザーの目標を表示
     addMessage('user', '「' + text + '」を達成したい（' + category + '）');
@@ -632,7 +655,7 @@
   // ========== モーダル操作 ==========
   function closeChat() {
     var modal = document.getElementById('goalAIChatModal');
-    if (modal) modal.style.display = 'none';
+    if (modal) { modal.classList.remove('gai-open'); }
   }
 
   // ========== ユーティリティ ==========
