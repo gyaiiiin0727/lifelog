@@ -10894,7 +10894,7 @@ function setupMoneyVoice(){
         // AI Backend Integration
         // ================================
         
-        var BACKEND_URL = (window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-backend.vercel.app');
+        var BACKEND_URL = (window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-ai.little-limit-621c.workers.dev');
         
         // バックエンドAPI接続テスト
         async function testBackendAPI() {
@@ -10957,18 +10957,16 @@ function setupMoneyVoice(){
                 const aiResult = await analyzeWithAI(text, category, 'journal');
                 
                 // ジャーナルデータを作成
-                const journal = {
-                    id: Date.now(),
-                    timestamp: new Date().toISOString(),
-                    category: category,
-                    text: text || '',
-                    aiAnalysis: aiResult ? aiResult.analysis : null
-                };
-                
-                // LocalStorageに保存
-                const journals = JSON.parse(localStorage.getItem('journals') || '[]');
-                journals.push(journal);
-                localStorage.setItem('journals', JSON.stringify(journals));
+                // V3形式でjournalEntriesV3に保存（日付キーのオブジェクト）
+                const now = new Date();
+                const dateKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+                const allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+                const existing = allEntries[dateKey] || { date: dateKey };
+                existing.text = (existing.text ? existing.text + '\n' : '') + (text || '');
+                existing.category = category;
+                if (aiResult && aiResult.analysis) existing.aiAnalysis = aiResult.analysis;
+                allEntries[dateKey] = existing;
+                localStorage.setItem('journalEntriesV3', JSON.stringify(allEntries));
                 
                 // 入力欄をクリア
                 document.getElementById('journalInput').value = '';
@@ -20155,8 +20153,12 @@ async function sendAIConsult() {
     if (!res.ok) throw new Error('API error: ' + res.status);
 
     var data = await res.json();
-    var responseText = data.comment || data.feedback || data.analysis || data.result || data.response || '';
-    if (!responseText && typeof data === 'string') responseText = data;
+    var responseText = '';
+    if (typeof data === 'string') {
+      responseText = data;
+    } else if (data && typeof data === 'object') {
+      responseText = data.comment || data.feedback || data.analysis || data.result || data.response || '';
+    }
     if (!responseText) responseText = 'すみません、回答を取得できませんでした。';
 
     // キャラ情報

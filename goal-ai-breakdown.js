@@ -325,12 +325,14 @@
       return;
     }
 
-    // 状態リセット（toneは目標追加モーダルで選択済み）
+    // 状態を完全リセット
     _state.goalText = text;
     _state.category = category;
     _state.goalId = null;
     _state.chatHistory = [];
     _state.turnCount = 0;
+    _state.maxTurns = 5;
+    _state.tone = 'normal';
     _state.isWaiting = false;
     // キャラクター選択UIの状態を反映
     var activeCharBtn = document.querySelector('.gai-char-btn.active');
@@ -502,8 +504,12 @@
       if (!res.ok) throw new Error('API error: ' + res.status);
 
       var data = await res.json();
-      var responseText = data.comment || data.feedback || data.analysis || data.result || data.response || '';
-      if (!responseText && typeof data === 'string') responseText = data;
+      var responseText = '';
+      if (typeof data === 'string') {
+        responseText = data;
+      } else if (data && typeof data === 'object') {
+        responseText = data.comment || data.feedback || data.analysis || data.result || data.response || '';
+      }
       if (!responseText) throw new Error('レスポンスが空でした');
 
       removeLoadingMessage();
@@ -888,7 +894,13 @@
     } catch(e) { return []; }
   }
   function _saveGoalsToStorage(goals) {
-    localStorage.setItem('monthlyGoals', JSON.stringify(goals));
+    try {
+      localStorage.setItem('monthlyGoals', JSON.stringify(goals));
+    } catch(e) {
+      console.error('monthlyGoals保存エラー:', e);
+      alert('データの保存に失敗しました。ストレージ容量を確認してください。');
+      return;
+    }
     window.monthlyGoals = goals;
     try {
       if (window.Storage && window.Storage.set && window.Storage.keys) {
