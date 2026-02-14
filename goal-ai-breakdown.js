@@ -11,14 +11,14 @@
     /* ボタン（目標追加モーダル内） */
     '.goal-ai-btn {',
     '  display: block; width: 100%; margin-top: 8px; padding: 12px;',
-    '  border: 2px dashed #7c3aed; border-radius: 8px; background: #faf5ff;',
-    '  color: #7c3aed; font-size: 14px; font-weight: 600; cursor: pointer;',
+    '  border: 2px dashed #2196F3; border-radius: 8px; background: #e8f4fd;',
+    '  color: #2196F3; font-size: 14px; font-weight: 600; cursor: pointer;',
     '  transition: background .2s, border-color .2s;',
     '}',
-    '.goal-ai-btn:hover { background: #f3e8ff; border-color: #6d28d9; }',
+    '.goal-ai-btn:hover { background: #e3f2fd; border-color: #1976D2; }',
     '.goal-ai-btn:disabled { opacity: .5; cursor: not-allowed; }',
     '.goal-ai-btn .premium-tag {',
-    '  font-size: 11px; background: #7c3aed; color: #fff;',
+    '  font-size: 11px; background: #2196F3; color: #fff;',
     '  padding: 1px 6px; border-radius: 4px; margin-left: 6px;',
     '}',
 
@@ -59,8 +59,8 @@
     '  background:#fff; font-size:11px; cursor:pointer; text-align:center;',
     '  transition:all .2s; line-height:1.3;',
     '}',
-    '.gai-char-btn:hover { border-color:#c4b5fd; background:#faf5ff; }',
-    '.gai-char-btn.active { border-color:#7c3aed; background:#f5f0ff; box-shadow:0 0 0 2px #7c3aed; }',
+    '.gai-char-btn:hover { border-color:#90caf9; background:#e8f4fd; }',
+    '.gai-char-btn.active { border-color:#2196F3; background:#e8f4fd; box-shadow:0 0 0 2px #2196F3; }',
     '.gai-char-btn .char-img { width:48px; height:48px; border-radius:50%; object-fit:cover; display:block; margin:0 auto 6px; }',
     '.gai-char-btn .char-name { font-weight:600; color:#333; font-size:11px; display:block; margin-bottom:2px; }',
     '.gai-char-btn .char-desc { font-size:10px; color:#888; display:block; }',
@@ -86,12 +86,12 @@
     '  font-size:14px; line-height:1.6; max-width:82%; word-break:break-word;',
     '}',
     '.gai-msg-ai { background:#f3f4f6; color:#333; border-bottom-left-radius:4px; }',
-    '.gai-msg-user { background:#7c3aed; color:#fff; border-bottom-right-radius:4px; }',
+    '.gai-msg-user { background:#2196F3; color:#fff; border-bottom-right-radius:4px; }',
     '.gai-msg-loading { background:#f3f4f6; color:#999; border-bottom-left-radius:4px; }',
 
     /* システムメッセージ */
     '.gai-msg-system {',
-    '  background:#f0ebff; color:#6d28d9; font-size:13px; text-align:center;',
+    '  background:#e3f2fd; color:#1976D2; font-size:13px; text-align:center;',
     '  padding:8px 14px; margin:10px auto; max-width:100%; border-radius:20px;',
     '  font-weight:600;',
     '}',
@@ -103,24 +103,24 @@
     '  margin:6px 0; background:#fff; border:1.5px solid #e5e7eb;',
     '  border-radius:12px; cursor:pointer; transition:border-color .2s, background .2s;',
     '}',
-    '.gai-task-item:hover { border-color:#7c3aed; background:#faf5ff; }',
-    '.gai-task-item input[type="checkbox"] { margin-top:3px; width:20px; height:20px; accent-color:#7c3aed; flex-shrink:0; }',
+    '.gai-task-item:hover { border-color:#2196F3; background:#e8f4fd; }',
+    '.gai-task-item input[type="checkbox"] { margin-top:3px; width:20px; height:20px; accent-color:#2196F3; flex-shrink:0; }',
     '.gai-task-text { font-size:14px; line-height:1.5; color:#333; }',
     '.gai-task-actions { display:flex; gap:8px; padding:8px 16px 6px; flex-shrink:0; }',
     '.gai-task-actions button { flex:1; padding:12px; border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; }',
-    '.gai-add-btn { background:#7c3aed; color:#fff; }',
-    '.gai-add-btn:hover { background:#6d28d9; }',
+    '.gai-add-btn { background:#2196F3; color:#fff; }',
+    '.gai-add-btn:hover { background:#1976D2; }',
     '.gai-cancel-btn { background:#f0f0f0; color:#666; }',
     '.gai-cancel-btn:hover { background:#e0e0e0; }',
 
     /* 「もっと話す」ボタン */
     '.gai-more-btn {',
     '  display:block; width:calc(100% - 32px); margin:4px 16px 8px; padding:10px;',
-    '  border:1.5px dashed #7c3aed; border-radius:10px; background:#faf5ff;',
-    '  color:#7c3aed; font-size:13px; font-weight:600; cursor:pointer;',
+    '  border:1.5px dashed #2196F3; border-radius:10px; background:#e8f4fd;',
+    '  color:#2196F3; font-size:13px; font-weight:600; cursor:pointer;',
     '  transition:background .2s; flex-shrink:0;',
     '}',
-    '.gai-more-btn:hover { background:#f3e8ff; }',
+    '.gai-more-btn:hover { background:#e3f2fd; }',
 
     /* ===== 入力エリア ===== */
     '.gai-input-area {',
@@ -132,19 +132,19 @@
     '  font-size:16px; outline:none; resize:none; min-height:48px; max-height:120px;',
     '  line-height:1.4; font-family:inherit; overflow-y:auto;',
     '}',
-    '.gai-input:focus { border-color:#7c3aed; }',
+    '.gai-input:focus { border-color:#2196F3; }',
     '.gai-voice {',
     '  padding:10px; background:#fff; border:1.5px solid #d1d5db; border-radius:10px;',
     '  font-size:18px; cursor:pointer; transition:all .2s; line-height:1; flex-shrink:0;',
     '}',
-    '.gai-voice:hover { background:#f5f5f5; border-color:#7c3aed; }',
+    '.gai-voice:hover { background:#f5f5f5; border-color:#2196F3; }',
     '.gai-voice.listening { background:#ef4444; border-color:#ef4444; animation:gaiVoicePulse 1.5s infinite; }',
     '@keyframes gaiVoicePulse { 0%,100%{opacity:1;} 50%{opacity:.7;} }',
     '.gai-send {',
-    '  padding:10px 16px; background:#7c3aed; color:#fff; border:none;',
+    '  padding:10px 16px; background:#2196F3; color:#fff; border:none;',
     '  border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap;',
     '}',
-    '.gai-send:hover { background:#6d28d9; }',
+    '.gai-send:hover { background:#1976D2; }',
     '.gai-send:disabled { opacity:.5; cursor:not-allowed; }',
 
     /* スピナー */
@@ -156,7 +156,7 @@
 
     /* 週別計画UI */
     '.gai-week-header {',
-    '  font-size:13px; font-weight:700; color:#7c3aed; padding:10px 0 4px;',
+    '  font-size:13px; font-weight:700; color:#2196F3; padding:10px 0 4px;',
     '  margin-top:10px; border-bottom:1.5px solid #e5e7eb;',
     '}',
     '.gai-week-header:first-child { margin-top:0; }'
@@ -276,7 +276,7 @@
     startBtn.className = 'goal-ai-btn';
     startBtn.style.display = 'none';
     startBtn.style.borderStyle = 'solid';
-    startBtn.style.background = '#7c3aed';
+    startBtn.style.background = '#2196F3';
     startBtn.style.color = '#fff';
     startBtn.textContent = '🚀 この相手でチャット開始';
     startBtn.onclick = function() {

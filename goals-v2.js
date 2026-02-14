@@ -42,12 +42,12 @@
     '.gv2-goal:hover { background: #f0f0f0; }',
     '.gv2-goal.done { opacity: 0.55; }',
     '.gv2-goal.done .gv2-goal-text { text-decoration: line-through; color: #999; }',
-    '.gv2-goal-cb { width: 20px; height: 20px; min-width: 20px; cursor: pointer; accent-color: #667eea; }',
+    '.gv2-goal-cb { width: 20px; height: 20px; min-width: 20px; cursor: pointer; accent-color: #2196F3; }',
     '.gv2-goal-body { flex: 1; min-width: 0; }',
     '.gv2-goal-text { font-size: 14px; font-weight: 500; color: #333; line-height: 1.3; }',
     '.gv2-goal-meta { display: flex; align-items: center; gap: 8px; margin-top: 3px; }',
     '.gv2-goal-cat { font-size: 11px; padding: 2px 8px; background: #e8e8e8; border-radius: 4px; color: #666; }',
-    '.gv2-goal-wk { font-size: 11px; color: #667eea; font-weight: 500; }',
+    '.gv2-goal-wk { font-size: 11px; color: #2196F3; font-weight: 500; }',
     '.gv2-goal-del { background: none; border: none; font-size: 14px; cursor: pointer; opacity: 0.25; padding: 4px; transition: opacity .2s; flex-shrink: 0; }',
     '.gv2-goal:hover .gv2-goal-del { opacity: 0.6; }',
     '.gv2-goal-del:hover { opacity: 1 !important; }',
@@ -62,7 +62,7 @@
     '.gv2-week-nav-btn:hover { background:#333; }',
     '.gv2-week-display { flex:1; text-align:center; font-size:14px; font-weight:600; color:#333; }',
     '.gv2-week-today-btn {',
-    '  font-size:11px; color:#7c3aed; background:none; border:1px solid #7c3aed;',
+    '  font-size:11px; color:#2196F3; background:none; border:1px solid #2196F3;',
     '  border-radius:6px; padding:2px 8px; cursor:pointer; margin-left:6px;',
     '}'
   ].join('\n');
@@ -387,7 +387,7 @@
     var inp = document.createElement('input');
     inp.type = 'text';
     inp.value = task.text;
-    inp.style.cssText = 'flex:1;padding:6px 10px;border:2px solid #667eea;border-radius:8px;font-size:14px;outline:none;';
+    inp.style.cssText = 'flex:1;padding:6px 10px;border:2px solid #2196F3;border-radius:8px;font-size:14px;outline:none;';
     var saveBtn = document.createElement('button');
     saveBtn.type = 'button';
     saveBtn.textContent = '✓';
