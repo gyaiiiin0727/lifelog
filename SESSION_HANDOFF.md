@@ -82,7 +82,26 @@
 ### 10. AI分析中テキスト変更
 - `index.html`: 「🤖 AI分析中...」→「今日もお疲れ様でした✨」（2箇所）
 
-### 11. その他（前セッション）
+### 11. 音声入力ジャーナル2パターン（新機能）
+- `index.html`: モード切替タブ（フリートーク / ステップ入力）
+  - フリートーク: 従来の自由入力 → AIで整える
+  - ステップ入力: 6カテゴリ別に1つずつガイド付き音声入力
+    - よかったこと → 改善したいこと → 気づいたこと → もやっとしたこと → MUST → WANT
+    - プログレスドット表示、戻る/スキップ/次へナビゲーション
+    - 完了時にjournalEntriesV3のsummaryに直接保存（AI不要）
+    - rawフィールドにも統合テキスト保存（フリートーク互換）
+  - HTML: `#journalModeTabs`, `#journalStepInput`, `#journalFreetalkSection`
+  - CSS: `.journal-mode-tabs`, `.step-card`, `.step-dot`, `.step-nav` 等
+  - JS: `switchJournalMode()`, `journalStepNext/Prev/Skip/Restart()`, ステップ用SpeechRecognition
+
+### 12. バグ修正バッチ
+- localStorage不整合修正: `saveJournalWithAI()` が `'journals'` に保存していたのを `'journalEntriesV3'` (V3形式)に修正
+- BACKEND_URL統一: 古い `lifelog-backend.vercel.app` を正しい Workers URLに修正
+- `_saveGoalsToStorage` エラーハンドリング: localStorage容量超え時にアラート表示
+- AIレスポンスnullチェック強化: 型チェックを先にする安全なパターンに変更
+- チャット `_state` リセット完全化: `maxTurns`, `tone` もリセット対象に
+
+### 13. その他（前セッション）
 - `goals-v2.js`: 進捗カード紫→白に変更済み
 - `voice-input-extra.js`: 音声入力テキスト重複バグ修正済み
 - `manifest.json`: 新規作成（PWAアイコン設定）
@@ -91,7 +110,6 @@
 ## 未解決・今後の課題
 
 ### 優先度高
-- **音声入力ジャーナルの2パターン**: 自由入力（今のまま）とカテゴリ別入力（よかったこと/改善したいこと/気づいたこと等を1つずつ聞く形式）の切り替え機能。UI設計が必要。
 - **カテゴリと目標の連動**: 行動カテゴリ（運動/仕事等）と目標をリンクさせ、AIフィードバックで目標進捗を反映する。`buildContextSummary('goals', { goalCategory })` は実装済みだが、行動記録→目標の自動マッチングはまだ。
 
 ### 優先度中
