@@ -13469,7 +13469,7 @@ try{
         stepRecognition = new SpeechRec();
         stepRecognition.lang = 'ja-JP';
         stepRecognition.interimResults = true;
-        stepRecognition.continuous = true;
+        stepRecognition.continuous = false;
 
         var baseText = textareaEl.value;
         var finalAccum = '';
@@ -13492,7 +13492,9 @@ try{
 
         stepRecognition.onend = function(){
           if(stepIsListening){
-            // 自動リスタート（モバイルでタイムアウトする場合）
+            // リスタート前にbaseTextを現在値にリセットして重複を防ぐ
+            baseText = textareaEl.value;
+            finalAccum = '';
             try { stepRecognition.start(); } catch(e){ stopStepVoice(); }
           }
         };
