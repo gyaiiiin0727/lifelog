@@ -2895,14 +2895,14 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 
 /* ===== ジャーナルモード切替タブ ===== */
 #journal .journal-mode-tabs{
-  display:flex; gap:6px; margin:16px 0 12px; padding:6px; border-radius:16px; background:#e3f2fd;
+  display:flex; gap:4px; margin:16px 0 12px; padding:4px; border-radius:14px; background:#e3f2fd;
 }
 #journal .journal-mode-tab{
-  flex:1; padding:14px 10px; font-size:16px; font-weight:800; border:none; cursor:pointer;
-  background:transparent; color:#78a8d8; transition:all 0.25s; border-radius:12px; letter-spacing:0.5px;
+  flex:1; padding:12px 10px; font-size:16px; font-weight:800; border:none; cursor:pointer;
+  background:transparent; color:#78a8d8; transition:all 0.25s; border-radius:10px; letter-spacing:0.5px;
 }
 #journal .journal-mode-tab.active{
-  background:#2196F3; color:#fff; box-shadow:0 2px 10px rgba(33,150,243,0.3);
+  background:#2196F3; color:#fff; box-shadow:0 2px 10px rgba(33,150,243,0.3); border-radius:10px;
 }
 #journal .journal-mode-tab:not(.active):active{
   background:#bbdefb;
@@ -5631,7 +5631,7 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <div id="journalAiFeedbackBox" class="journal-ai-result" style="display:none; margin-top:10px; padding:12px; border:1px solid #e5e5e5; border-radius:12px; background:#fff; white-space:pre-wrap; font-size:14px; line-height:1.6;"></div>
 </div>
 <div class="journal-simple-row">
-<button class="btn-secondary" id="journalV3ClearBtn">この日の内容をクリア</button>
+<button class="btn-secondary" id="journalV3ClearBtn" style="color:#ef4444; border-color:#ef4444;">🗑️ この日のジャーナルを削除</button>
 <div class="spacer"></div>
 <div class="small"></div>
 </div>
@@ -13025,14 +13025,14 @@ try{
     else if (typeof window.renderJournalLogs === 'function') window.renderJournalLogs();
   }
   function clearDay(){
-    if(!confirm('この日の内容をクリアしますか？')) return;
+    const d = getDateKey();
+    if(!confirm(d + ' のジャーナルを削除しますか？\n（この操作は元に戻せません）')) return;
     setRaw('');
     setMood('');
-    const d = getDateKey();
     const obj = entries();
-    obj[d] = { date:d, raw:'', updatedAt:new Date().toISOString() };
+    delete obj[d];
     saveEntries(obj);
-    setStatus('✓ クリアしました', false);
+    setStatus('✓ ' + d + ' のジャーナルを削除しました', false);
     renderTodaySummary();
     renderLog();
     // カレンダーとジャーナル履歴も更新
