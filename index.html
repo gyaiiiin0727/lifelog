@@ -2895,17 +2895,18 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 
 /* ===== ジャーナルモード切替タブ ===== */
 #journal .journal-mode-tabs{
-  display:flex; gap:4px; margin:16px 0 12px; padding:4px; border-radius:14px; background:#e3f2fd;
+  display:flex; gap:6px; margin:16px 0 12px; padding:4px 0; border-radius:0; background:transparent;
+  border-bottom:1px solid #e0e0e0;
 }
 #journal .journal-mode-tab{
-  flex:1; padding:12px 10px; font-size:16px; font-weight:800; border:none; cursor:pointer;
-  background:transparent; color:#78a8d8; transition:all 0.25s; border-radius:10px; letter-spacing:0.5px;
+  padding:6px 14px; font-size:14px; font-weight:700; border:none; cursor:pointer;
+  background:transparent; color:#90a4ae; transition:all 0.2s; border-radius:6px; letter-spacing:0.3px;
 }
 #journal .journal-mode-tab.active{
-  background:#2196F3; color:#fff; box-shadow:0 2px 10px rgba(33,150,243,0.3); border-radius:10px;
+  background:#2196F3; color:#fff; box-shadow:0 1px 6px rgba(33,150,243,0.25); border-radius:6px;
 }
 #journal .journal-mode-tab:not(.active):active{
-  background:#bbdefb;
+  background:#e3f2fd;
 }
 
 /* ===== ステップ入力UI ===== */
