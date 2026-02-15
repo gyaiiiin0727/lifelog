@@ -454,9 +454,20 @@
     var newMonth = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
     window.selectedGoalsMonth = newMonth;
 
+    // App.state.goals も同期（GoalsModule互換）
+    if (window.App && window.App.state && window.App.state.goals) {
+      window.App.state.goals.selectedMonth = newMonth;
+    }
+
     // 月表示を更新
     if (typeof window.updateGoalsMonthDisplay === 'function') {
       window.updateGoalsMonthDisplay();
+    }
+    // 表示が更新されない場合の直接更新（保険）
+    var display = document.getElementById('currentGoalsMonth');
+    if (display) {
+      var py = d.getFullYear(), pm = d.getMonth() + 1;
+      display.textContent = py + '年' + pm + '月';
     }
     renderAll();
   }
