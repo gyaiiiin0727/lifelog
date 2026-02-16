@@ -606,7 +606,7 @@
     addWeeklyTask(active[0].id, dateStr);
   }
 
-  // ===== 今日にコピー =====
+  // ===== 今日にコピー（目標タスク → 今日の weeklyTask + ホームMUSTに追加） =====
   function copyToToday(goalId, taskId) {
     var goals = getGoals();
     var g = goals.find(function(x) { return x && x.id === goalId; });
@@ -615,11 +615,35 @@
     if (!task) return;
 
     var today = todayStr();
+
+    // 1. 目標の weeklyTasks に今日の日付でコピー
     var newTask = { id: Date.now(), text: task.text, date: today, done: false };
     g.weeklyTasks.push(newTask);
     saveGoals(goals);
+
+    // 2. ホーム画面の「今日のタスク」MUSTにも追加
+    //    （昨日のジャーナル summary.must に書き込む）
+    try {
+      var yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      var yKey = yesterday.getFullYear() + '-' + String(yesterday.getMonth()+1).padStart(2,'0') + '-' + String(yesterday.getDate()).padStart(2,'0');
+      var entries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+      var entry = entries[yKey] || { date: yKey, summary: {} };
+      if (!entry.summary) entry.summary = {};
+
+      var mustText = entry.summary.must || '';
+      var mustTasks = String(mustText).split(/[\n・]/).map(function(s) { return s.trim(); }).filter(function(s) { return s && s !== '—'; });
+      mustTasks.push(task.text);
+      entry.summary.must = mustTasks.join('\n');
+      entries[yKey] = entry;
+      localStorage.setItem('journalEntriesV3', JSON.stringify(entries));
+
+      // ホーム画面を再描画
+      if (typeof window.renderHomeTodayTasks === 'function') window.renderHomeTodayTasks();
+    } catch(e) {}
+
     renderAll();
-    if (typeof window.showStatus === 'function') window.showStatus('goalStatus', '✓ 今日にコピーしました');
+    if (typeof window.showStatus === 'function') window.showStatus('goalStatus', '✓ 今日のMUSTに追加しました');
   }
 
   // ===== 翌週に持ち越し =====
