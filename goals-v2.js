@@ -687,7 +687,24 @@
   window.toggleGoalComplete = toggleGoalV2;
   window.deleteGoal = deleteGoalV2;
 
-  // ダッシュボード用: 日付ベースで今週のタスク数を取得するヘルパー
+  // ダッシュボード用: 今日のタスク達成度を取得するヘルパー
+  window.getTodayTaskStats = function() {
+    var today = todayStr();
+    var goals = getGoals();
+    var month = monthKeyNow();
+    var monthGoals = goals.filter(function(g) { return g && g.month === month; });
+    var total = 0, done = 0;
+    monthGoals.forEach(function(g) {
+      var wt = (g.weeklyTasks || []).filter(function(t) {
+        return t.date === today;
+      });
+      total += wt.length;
+      done += wt.filter(function(t) { return t.done; }).length;
+    });
+    return { total: total, done: done };
+  };
+
+  // 後方互換: getWeeklyTaskStats も残す
   window.getWeeklyTaskStats = function() {
     var range = getWeekRange(currentWeekMonday);
     var goals = getGoals();

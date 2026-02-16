@@ -5304,7 +5304,7 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 
         <div class="dashboard-card" onclick="switchTab('goals')">
             <div class="card-icon">🎯</div>
-            <div class="card-label">今週のタスク</div>
+            <div class="card-label">今日のタスク</div>
             <div class="card-value" id="dashGoalProgress">0%</div>
             <div class="card-sub" id="dashGoalCount">タスクなし</div>
         </div>
@@ -13913,9 +13913,9 @@ textarea { width: 100%; }
     if (expenseEl) expenseEl.textContent = `¥${expense.toLocaleString()}`;
     if (incomeEl) incomeEl.textContent = `収入: ¥${income.toLocaleString()}`;
 
-    // 目標（今週のタスク達成度）— 日付ベース
-    const wtStats = (typeof window.getWeeklyTaskStats === 'function')
-      ? window.getWeeklyTaskStats()
+    // 目標（今日のタスク達成度）— 日付ベース
+    const wtStats = (typeof window.getTodayTaskStats === 'function')
+      ? window.getTodayTaskStats()
       : { total: 0, done: 0 };
     const totalTasks = wtStats.total, doneTasks = wtStats.done;
     const percent = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
@@ -16754,9 +16754,9 @@ const modal = $('qrModal');
     if (expenseEl) expenseEl.textContent = '¥' + expense.toLocaleString();
     if (incomeEl) incomeEl.textContent = '収入: ¥' + income.toLocaleString();
 
-    // ===== 目標（今週のタスク達成度）— 日付ベース =====
-    var wtStats = (typeof window.getWeeklyTaskStats === 'function')
-      ? window.getWeeklyTaskStats()
+    // ===== 目標（今日のタスク達成度）— 日付ベース =====
+    var wtStats = (typeof window.getTodayTaskStats === 'function')
+      ? window.getTodayTaskStats()
       : { total: 0, done: 0 };
     var totalTasks = wtStats.total;
     var doneTasks = wtStats.done;
