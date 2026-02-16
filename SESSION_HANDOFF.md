@@ -9,12 +9,12 @@
 ## 主要ファイル
 | ファイル | 役割 |
 |---|---|
-| `index.html` | メインHTML/CSS/JS全部入り（~21000行, 1.7MB） |
+| `index.html` | メインHTML/CSS/JS全部入り（~20000行, 1.7MB） |
 | `goal-ai-breakdown.js` | AI目標設定チャット機能 |
-| `goals-v2.js` | 目標ページUI（進捗カード、週タスク、目標リスト）**← 最終的にwindow関数を支配** |
+| `goals-v2.js` | 目標ページUI（進捗カード、日付ベースタスク、目標リスト）**← 最終的にwindow関数を支配** |
 | `manifest.json` | PWA設定 |
 | `icon.jpg` | アプリアイコン |
-| `drill_instructor.png` / `takumi_senpai.png` / `hana_san.png` | AIキャラクター画像 |
+| `*.backup` | 各ファイルのバックアップ（最新状態） |
 
 ## バックエンドAPI
 - URL: `https://lifelog-ai.little-limit-621c.workers.dev/api/analyze`
@@ -38,97 +38,91 @@
 | normal | タクヤ先輩 | #4a90e2 | `aiConsultTone` (AI相談用、独立) |
 | gentle | ハナさん | #27ae60 | |
 
-## ⚠️ 最重要: 目標コードの分散問題
+## 目標コードの現状（リファクタリング完了済み）
 
-**次回セッションの最優先タスク: 目標コードのリファクタリング→カレンダー連動**
+### 一本化完了
+以前は4箇所に分散していた目標コードを **goals-v2.js に一本化済み**。
+index.html 内の古い3ブロックは全て削除済み（コメントのみ残存）。
 
-現在、目標関連コードが **4箇所** に分散し、`window.*`を上書きし合っている：
-
-| # | 場所 | 行番号(目安) | 内容 |
-|---|---|---|---|
-| 1 | index.html | L8946付近 | 古い`changeGoalsMonth`, `updateGoalsMonthDisplay` |
-| 2 | index.html | L11601-11880付近 | GoalsModule IIFE（renderGoals, changeGoalsMonth等を再定義） |
-| 3 | index.html | L12026-12364付近 | GoalsModule v2 IIFE（App.state.goals使用、DOMContentLoadedでinit） |
-| 4 | goals-v2.js | 全体 | **最終勝者** — window.changeGoalsMonth等を全て上書き |
-
-### 上書き順序（後が勝つ）:
+### アーキテクチャ
 ```
-index.html L8946 → index.html L11867 → index.html L12354 → goals-v2.js L534-548
+読み込み順: index.html → goal-ai-breakdown.js → goals-v2.js（最終勝者）
 ```
 
-### リファクタリング計画:
-1. **ステップ1**: index.html内の古い3つの目標コード（#1, #2, #3）を削除
-2. **ステップ2**: goals-v2.jsに一本化（必要な機能をgoals-v2.jsに移植）
-3. **ステップ3**: weeklyTasksを日付ベースに変更（`week: "2026-W07"` → `date: "2026-02-16"`）
-4. **ステップ4**: カレンダーUIと連動（月の残り日数でタスクスケジュール）
+- goals-v2.js が全ての目標関連 window 関数を上書き
+- `App.modules.goals = { onShow: renderAll }` で Level 2 scaffold を上書き
+- CSS は goals-v2.js 内で `gv2-*` 名前空間で動的注入（index.html の旧 goal CSS は全削除済み）
 
-### 注意:
-- `App.state.goals.selectedMonth` と `window.selectedGoalsMonth` が競合している
-- goals-v2.jsの`renderAll()`内で`updateMonthDisplayV2()`を呼んで月表示を直接更新するようにした（今回修正）
-- `currentWeekKey`はgoals-v2.jsで定義・window公開（ISO week形式 "YYYY-W##"）
+### 日付ベース weeklyTasks（完了済み）
+- 旧: `weeklyTasks[].week` = `"2026-W07"`（週キー）
+- 新: `weeklyTasks[].date` = `"2026-02-16"`（日付ベース）
+- `migrateWeeklyTasksToDate()` で既存データの自動移行あり（初回実行時）
 
-## 今回のセッションで完了した修正
+### goals-v2.js の主要関数
+| window 関数 | 内容 |
+|---|---|
+| `changeGoalsMonth(dir)` | 月切替 |
+| `addGoal()` | 目標追加 |
+| `toggleGoalComplete(id)` | 目標の完了/未完了トグル |
+| `deleteGoal(id)` | 目標削除 |
+| `renderGoals()` | 全体レンダリング（= renderAll） |
+| `updateGoalsMonthDisplay()` | 月表示更新 |
+| `getTodayTaskStats()` | 今日のタスク達成度（ダッシュボード用） |
+| `getWeeklyTaskStats()` | 今週のタスク達成度（後方互換） |
 
-### 14. モードタブデザイン改善
-- 外側: `border-radius:0`（四角）、`background:#e3f2fd`、`padding:14px 8px`
-- 内側タブ: `flex`なし（文字幅に合わせた自動幅）、`justify-content:center`、`padding:6px 16px`
-- アクティブ: `background:#2196F3; color:#fff; border-radius:6px`
+### goal-ai-breakdown.js の変更点
+- `getWeekKeyOffset` → 削除
+- `distributeDates(taskCount, weekOffset)` 追加 — 月の残り日数でタスクを均等分散
+- タスク追加時は `.date` フィールドを使用
 
-### 15. ステップ入力の音声重複修正
-- `continuous: true` → `false` に変更
-- `onend`リスタート時に`baseText`と`finalAccum`をリセット
+## ホーム画面ダッシュボード
+- 「今日のタスク」カード: `getTodayTaskStats()` で今日の日付に割り当てられたタスクのみ集計、%表示
+- ダッシュボード更新関数が **2箇所** ある（ES6版 ~L13900, ES5版 ~L16700）。両方を更新すること
+- HTML要素: `#dashGoalProgress`（%表示）, `#dashGoalCount`（n/m 完了）
 
-### 16. ステップ入力にフィードバック担当選択+AIで整える追加
-- 完了画面にキャラクター選択UI（step-tone-btn）追加
-- `window.selectStepTone()` — フリートーク側と同期
-- `window.stepAIRefine()` — ステップ入力内容をAIに送信、フィードバック表示
-- フィードバック結果をjournalEntriesV3に保存（summary抽出含む）
+## 今回のセッション（2回分）で完了した修正
 
-### 17. ジャーナル削除ボタン移動
-- `journalV3ClearBtn`を`journalFreetalkSection`の**外**に移動
-- ステップ入力モードでも削除可能に
+### A. 目標コードリファクタリング（4ステップ全完了）
+1. index.html 内の古い目標コード3ブロック削除
+2. goals-v2.js に `App.modules.goals` 登録
+3. weeklyTasks を日付ベースに変更 + データ移行ロジック
+4. 日付ごとタスク表示UI（曜日チップ、日付ラベル）
 
-### 18. HTML構造バグ修正（div開閉タグ）
-- journalタブの`</div>`漏れ修正 → 他タブに要素が漏れていた
-- goalsタブの余分な`</div>`削除
-- L5726の余分な`</div></div>`削除（カテゴリUIがjournalタブ外に出ていた）
-- **全8タブのdivバランスを検証・確認済み**
+### B. ホーム画面改善
+- 「今週のタスク」→「今日のタスク」に変更（`getTodayTaskStats()` 新設）
 
-### 19. 目標ページ月表示修正
-- goals-v2.jsに`updateMonthDisplayV2()`追加
-- `renderAll()`の先頭で月表示を毎回更新
-- `window.updateGoalsMonthDisplay`もgoals-v2.jsで上書き
+### C. バグ修正（6件）
+1. `setupDOM` 二重実行防止（`goalsV2Container` 存在チェック）
+2. `goalStatus` ID重複解消（旧要素を `remove()`）
+3. `hasAnyTask` ロジック修正（タスク0でも `true` になっていたバグ）
+4. カテゴリ名のXSSエスケープ（`esc()` 追加）
+5. `showStatus` null crash防止（`if (!statusEl) return` 追加）
+6. `distributeDates` ゼロ除算ガード（`taskCount <= 0` 早期リターン）
 
-### 20. 今週やること: タスク未設定でも表示
-- goals-v2.jsの`renderWeekly()`: タスク0個の目標もスキップせず表示
-- 各目標に「この週のタスクはまだありません」+「＋ 追加」ボタンを常に表示
+### D. 死んだCSS削除（約400行）
+- 旧 `.goal-item`, `.goal-header`, `.progress-bar-*`, `.goals-*-section` 等の CSS を全削除
+- 他モジュールと混在していたルールから goal セレクタだけ外科的に除去
+- v36.8 journal MUST/WANT CSS は保持
 
-### 21. ホーム概要: 目標達成率→タスク達成度
-- HTMLラベル「目標」→「今週のタスク」に変更
-- 月間目標の達成率ではなく、今週のweeklyTasks完了数/総数を表示
-- 2箇所の更新関数を両方修正（L14843付近、L17684付近）
-
-### 22. 当日要約の「整える一言」→キャラクター名表示
-- `getCharacterInfo`依存を排除、直接トーン名を解決
-- `e.aiFeedbackTone`がなくてもlocalStorageからフォールバック
-- 常に「💬 キャラクター名 の一言」と表示
-
-### 23. ステップ入力のstep-card黒枠削除
-- `border:2px solid #111` → `border:none; border-radius:0; padding:20px 0`
+### E. その他
+- 空 `<script>` タグ修正（L13831、元から存在していた問題）
+- 未使用関数 `getDateOffset` 削除（goal-ai-breakdown.js）
 
 ## 未解決・今後の課題
 
 ### 最優先（次回セッション）
-- **目標コードリファクタリング**: 4箇所の分散コードを goals-v2.js に一本化
-- **カレンダー連動**: weeklyTasksを日付ベースに変更、カレンダーUIと連動
+- **カレンダー連動**: カレンダーUIにタスクを表示、カレンダーからタスク追加/管理
+- **カテゴリと目標の連動**: 行動カテゴリと目標をリンク
 
 ### 優先度中
-- **カテゴリと目標の連動**: 行動カテゴリと目標をリンク
 - **クラウド同期**: デバイス間データ同期（バックエンド変更必要、別セッション推奨）
 
-### 既知の残留
-- **旧`journals`キー（L6088, L6116, L6999）**: 古い保存機能がまだ残っている。現在のメイン機能はjournalEntriesV3なので直接影響なし
-- **ステップ入力のstep-card**: CSSで`border:none`に変更済みだがキャッシュで反映遅れる可能性あり
+### 既知の残留（低優先）
+- **旧`journals`キー（L6088, L6116, L6999）**: 古い保存機能が残存。メイン機能はjournalEntriesV3なので直接影響なし
+- **Level 2 scaffold の App.modules.goals**: index.html ~L11399 に旧定義が残るが goals-v2.js が上書きするので無害
+- **旧HTML要素**: `#goalsList`, `#goalsProgress` は orphaned だが `display:none` で非表示のため無害
+- **深夜の日跨ぎ**: `currentWeekMonday` がリロードするまで更新されない（軽微）
+- **データ移行時**: 旧データの全タスクが月曜日に集中する（新規データには影響なし）
 
 ## localStorage キー一覧
 | キー | 内容 |
@@ -136,7 +130,7 @@ index.html L8946 → index.html L11867 → index.html L12354 → goals-v2.js L53
 | `activities` | 行動ログ配列 |
 | `moneyRecords` | お金の記録配列 |
 | `journalEntriesV3` | ジャーナル（日付キーのオブジェクト） |
-| `monthlyGoals` | 月間目標配列（weeklyTasks含む） |
+| `monthlyGoals` | 月間目標配列（weeklyTasks含む、日付ベース） |
 | `weightRecords` | 体重記録配列 |
 | `activityCategories` | 行動カテゴリ |
 | `expenseCategories` | 支出カテゴリ |
@@ -147,9 +141,10 @@ index.html L8946 → index.html L11867 → index.html L12354 → goals-v2.js L53
 | `isPremium` | 有料会員フラグ |
 
 ## 技術的な注意点
-- `index.html`は約21000行, 1.7MBあり全体を一度に読めない。Grep/行番号指定で必要箇所を読むこと
+- `index.html`は約20000行, 1.7MBあり全体を一度に読めない。Grep/行番号指定で必要箇所を読むこと
 - JavaScriptモジュールはIIFE（即時実行関数）パターン。`window.xxx` でグローバル公開
-- CSSはJavaScript内で `createElement('style')` で動的注入しているものが多い
-- ISO週キー: `"YYYY-W##"` 形式（例: `"2026-W07"`）
+- goals-v2.js のCSSは `gv2-*` 名前空間で動的注入。index.html 内の旧 goal CSS は全削除済み
 - 月キー: `"YYYY-MM"` 形式（例: `"2026-02"`）
+- 日付キー: `"YYYY-MM-DD"` 形式（例: `"2026-02-16"`）
 - **goals-v2.jsが最終的にwindow関数を全て上書きする**（読み込み順: index.html → goal-ai-breakdown.js → goals-v2.js）
+- ダッシュボードの updateDashboard が **ES6版とES5版の2つ** あるので変更時は両方更新すること

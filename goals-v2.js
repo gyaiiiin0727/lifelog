@@ -25,7 +25,7 @@
     '.gv2-summary-cat { background: #f3f4f6; padding: 2px 10px; border-radius: 12px; font-size: 11px; color: #555; }',
 
     /* 今週やること（一番下なのでFAB用の余白） */
-    '.gv2-weekly { margin-bottom: 80px; }',
+    '.gv2-weekly { margin-bottom: 100px; }',
 
     /* 今月の目標セクション */
     '.gv2-monthly { background: #fff; border-radius: 16px; padding: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 14px; }',
@@ -76,7 +76,44 @@
     '.gv2-day-chip.has-tasks { font-weight:600; color:#333; }',
     '.gv2-day-chip .gv2-day-num { font-size:15px; font-weight:700; display:block; line-height:1.2; }',
     '.gv2-day-chip .gv2-day-dow { font-size:10px; display:block; }',
-    '.gv2-day-chip .gv2-day-count { font-size:9px; display:block; color:#2196F3; margin-top:1px; }'
+    '.gv2-day-chip .gv2-day-count { font-size:9px; display:block; color:#2196F3; margin-top:1px; }',
+
+    /* タスクアイテム */
+    '.task-item { display:flex; align-items:center; gap:8px; padding:10px 4px; border-bottom:1px solid #f0f0f0; min-height:44px; }',
+    '.task-checkbox { width:22px; height:22px; min-width:22px; cursor:pointer; accent-color:#2196F3; }',
+    '.task-label { flex:1; min-width:0; font-size:14px; line-height:1.4; color:#333; word-break:break-word; }',
+    '.task-edit-btn { background:none; border:none; font-size:18px; cursor:pointer; padding:8px; min-width:40px; min-height:40px; display:flex; align-items:center; justify-content:center; opacity:0.4; transition:opacity .2s; }',
+    '.task-edit-btn:hover, .task-edit-btn:active { opacity:1; }',
+
+    /* タスク追加ボタン */
+    '.task-add-btn {',
+    '  display:block; width:100%; padding:12px; margin-top:6px;',
+    '  background:#f5f5f5; border:1px dashed #ccc; border-radius:10px;',
+    '  font-size:14px; font-weight:500; color:#888; cursor:pointer;',
+    '  text-align:center; transition:all .2s;',
+    '  min-height:44px;',
+    '}',
+    '.task-add-btn:hover, .task-add-btn:active { background:#eee; color:#555; border-color:#aaa; }',
+
+    /* タスク保存・削除ボタン（インライン編集時） */
+    '.task-save-btn, .task-del-btn {',
+    '  border:none; border-radius:8px; cursor:pointer;',
+    '  min-width:40px; min-height:40px; font-size:16px;',
+    '  display:flex; align-items:center; justify-content:center;',
+    '  transition:all .2s;',
+    '}',
+    '.task-save-btn { background:#2196F3; color:#fff; }',
+    '.task-save-btn:active { background:#1976D2; }',
+    '.task-del-btn { background:#f5f5f5; color:#e53e3e; }',
+    '.task-del-btn:active { background:#fee; }',
+
+    /* タスク入力フィールド */
+    '.task-input {',
+    '  flex:1; min-width:0; padding:10px 12px; border:1.5px solid #ddd;',
+    '  border-radius:10px; font-size:14px; outline:none;',
+    '  transition:border-color .2s;',
+    '}',
+    '.task-input:focus { border-color:#2196F3; }'
   ].join('\n');
   document.head.appendChild(style);
 
@@ -577,19 +614,20 @@
     var inp = document.createElement('input');
     inp.type = 'text';
     inp.value = task.text;
-    inp.style.cssText = 'flex:1;padding:6px 10px;border:2px solid #2196F3;border-radius:8px;font-size:14px;outline:none;';
+    inp.className = 'task-input';
     var saveBtn = document.createElement('button');
     saveBtn.type = 'button';
     saveBtn.textContent = '✓';
-    saveBtn.style.cssText = 'background:#16a34a;color:#fff;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:14px;';
+    saveBtn.className = 'task-save-btn';
     var delBtn = document.createElement('button');
     delBtn.type = 'button';
     delBtn.textContent = '🗑️';
-    delBtn.style.cssText = 'background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:14px;';
+    delBtn.className = 'task-del-btn';
     var cancelBtn = document.createElement('button');
     cancelBtn.type = 'button';
     cancelBtn.textContent = '✕';
-    cancelBtn.style.cssText = 'background:#999;color:#fff;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:14px;';
+    cancelBtn.className = 'task-del-btn';
+    cancelBtn.style.color = '#999';
 
     wrap.appendChild(inp);
     wrap.appendChild(saveBtn);
@@ -600,6 +638,13 @@
     inp.focus();
     inp.select();
 
+    // 編集中はFABを隠す（タップ干渉防止）
+    var fab = document.getElementById('fabContainer');
+    if (fab) fab.style.display = 'none';
+
+    function showFab() {
+      if (fab) fab.style.display = '';
+    }
     function save() {
       var val = inp.value.trim();
       if (!val) { del(); return; }
@@ -610,6 +655,7 @@
         if (tt) tt.text = val;
       }
       saveGoals(gs);
+      showFab();
       renderAll();
     }
     function del() {
@@ -619,10 +665,12 @@
         gg.weeklyTasks = gg.weeklyTasks.filter(function(x) { return x.id !== taskId; });
       }
       saveGoals(gs);
+      showFab();
       renderAll();
     }
     function cancel() {
       item.innerHTML = origHTML;
+      showFab();
     }
 
     saveBtn.addEventListener('click', save);
@@ -726,6 +774,61 @@
       done += wt.filter(function(t) { return t.done; }).length;
     });
     return { total: total, done: done };
+  };
+
+  // ========== カレンダー連動用ヘルパー ==========
+
+  // カレンダー用: 指定日のタスク一覧を取得
+  window.getTasksForDate = function(dateStr) {
+    var goals = getGoals();
+    var result = [];
+    goals.forEach(function(g) {
+      if (!g || !g.weeklyTasks) return;
+      g.weeklyTasks.forEach(function(t) {
+        if (t.date === dateStr) {
+          result.push({
+            goalId: g.id,
+            goalText: g.text,
+            goalCategory: g.category,
+            taskId: t.id,
+            text: t.text,
+            date: t.date,
+            done: t.done
+          });
+        }
+      });
+    });
+    return result;
+  };
+
+  // カレンダー用: 指定月の全タスク日付セットを取得（高速描画用）
+  window.getTaskDatesForMonth = function(yearMonth) {
+    var goals = getGoals();
+    var dates = {};
+    goals.forEach(function(g) {
+      if (!g || !g.weeklyTasks) return;
+      g.weeklyTasks.forEach(function(t) {
+        if (t.date && t.date.substring(0, 7) === yearMonth) {
+          if (!dates[t.date]) dates[t.date] = { total: 0, done: 0 };
+          dates[t.date].total++;
+          if (t.done) dates[t.date].done++;
+        }
+      });
+    });
+    return dates;
+  };
+
+  // カレンダー用: 指定日にタスクを直接追加
+  window._gv2AddTaskDirect = function(dateStr, taskText) {
+    var goals = getGoals();
+    var month = dateStr.substring(0, 7);
+    var active = goals.filter(function(g) { return g && g.month === month && !g.completed; });
+    if (active.length === 0) return false;
+    var goal = active[0];
+    if (!goal.weeklyTasks) goal.weeklyTasks = [];
+    goal.weeklyTasks.push({ id: Date.now(), text: taskText, date: dateStr, done: false });
+    saveGoals(goals);
+    return true;
   };
 
   // ========== 初期化 ==========
