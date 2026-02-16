@@ -765,42 +765,28 @@
     return result;
   }
 
-  // ========== 日付オフセット計算（週単位） ==========
-  function getDateOffset(baseDate, weekOffset) {
-    // baseDate: "YYYY-MM-DD" or Date, weekOffset: 週数
-    var d = (typeof baseDate === 'string') ? new Date(baseDate + 'T00:00:00') : new Date(baseDate);
-    d.setDate(d.getDate() + weekOffset * 7);
-    return _toDateStr(d);
-  }
+  // ========== 週キーのオフセット計算 ==========
+  function getWeekKeyOffset(baseWeekKey, offset) {
+    if (offset === 0) return baseWeekKey;
+    var parts = baseWeekKey.match(/(\d{4})-W(\d{2})/);
+    if (!parts) return baseWeekKey;
+    var year = parseInt(parts[1]);
+    var week = parseInt(parts[2]);
 
-  function _toDateStr(d) {
-    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-  }
+    // 基準週の月曜日を計算
+    var jan4 = new Date(year, 0, 4);
+    var jan4Day = (jan4.getDay() + 6) % 7; // Monday=0
+    var weekStart = new Date(jan4.getTime());
+    weekStart.setDate(jan4.getDate() - jan4Day + (week - 1) * 7);
 
-  // 月の残り日数でタスクを均等分散する日付配列を生成
-  function distributeDates(taskCount, weekOffset) {
-    var today = new Date();
-    today.setHours(0,0,0,0);
+    // オフセット週を足す
+    weekStart.setDate(weekStart.getDate() + offset * 7);
 
-    // 基準日 = 今日 + weekOffset週
-    var baseDate = new Date(today);
-    baseDate.setDate(baseDate.getDate() + weekOffset * 7);
-
-    // その月の残り日数を計算
-    var monthEnd = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0);
-    var remainingDays = Math.max(1, Math.floor((monthEnd - baseDate) / 86400000) + 1);
-
-    // タスクを均等分散
-    var dates = [];
-    var interval = Math.max(1, Math.floor(remainingDays / taskCount));
-    for (var i = 0; i < taskCount; i++) {
-      var d = new Date(baseDate);
-      d.setDate(d.getDate() + i * interval);
-      // 月末を超えないようにクランプ
-      if (d > monthEnd) d = new Date(monthEnd);
-      dates.push(_toDateStr(d));
+    // getWeekKeyで正しいキーを取得
+    if (typeof window.getWeekKey === 'function') {
+      return window.getWeekKey(weekStart);
     }
-    return dates;
+    return baseWeekKey;
   }
 
   // ========== タスク選択UI表示 ==========
@@ -940,45 +926,35 @@
       goal = goals.find(function(g) { return g && g.id === _state.goalId; });
     }
 
-    var todayDate = _toDateStr(new Date());
+    var weekKey = (typeof window.currentWeekKey !== 'undefined') ? window.currentWeekKey : '';
+    if (!weekKey && typeof window.getWeekKey === 'function') {
+      weekKey = window.getWeekKey(new Date());
+    }
 
     var added = 0;
 
     if (goal) {
-      // weeklyTasks に追加（日付ベース）
+      // weeklyTasks に追加
       if (!goal.weeklyTasks) goal.weeklyTasks = [];
 
-      // data-week ごとにタスクをグルーピングして日付を分散
-      var tasksByWeek = {};
       checkboxes.forEach(function(cb) {
+        var label = cb.closest('.gai-task-item');
+        var textEl = label ? label.querySelector('.gai-task-text') : null;
+        var text = textEl ? textEl.textContent.trim() : '';
+        if (!text) return;
+
+        // data-week属性で週キーを計算（1=今週, 2=来週, 3=再来週, 4=3週後）
         var weekAttr = cb.getAttribute('data-week');
         var weekOffset = weekAttr ? (parseInt(weekAttr) - 1) : 0;
-        if (!tasksByWeek[weekOffset]) tasksByWeek[weekOffset] = [];
-        tasksByWeek[weekOffset].push(cb);
-      });
+        var taskWeekKey = weekOffset > 0 ? getWeekKeyOffset(weekKey, weekOffset) : weekKey;
 
-      Object.keys(tasksByWeek).forEach(function(offsetStr) {
-        var offset = parseInt(offsetStr);
-        var cbs = tasksByWeek[offset];
-        // この週のタスク群に日付を均等分散
-        var dates = distributeDates(cbs.length, offset);
-
-        cbs.forEach(function(cb, idx) {
-          var label = cb.closest('.gai-task-item');
-          var textEl = label ? label.querySelector('.gai-task-text') : null;
-          var text = textEl ? textEl.textContent.trim() : '';
-          if (!text) return;
-
-          var taskDate = dates[idx] || todayDate;
-
-          goal.weeklyTasks.push({
-            id: Date.now() + added,
-            text: text,
-            date: taskDate,
-            done: false
-          });
-          added++;
+        goal.weeklyTasks.push({
+          id: Date.now() + added,
+          text: text,
+          week: taskWeekKey,
+          done: false
         });
+        added++;
       });
     } else {
       // フォールバック: 目標が見つからない場合は新規目標として追加

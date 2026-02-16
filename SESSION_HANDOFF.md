@@ -1,7 +1,7 @@
 # Dayce PWA セッション引き継ぎ
 
 ## プロジェクト
-- **アプリ名**: Dayce (Day + Voice) - ライフログPWA （※旧名Daice、i→yに変更済み）
+- **アプリ名**: Dayce (Day + Voice) - ライフログPWA
 - **場所**: `/Users/shuhei.sugai/Downloads/lifelog_pwa_ai_button_click_fix (1)/`
 - **GitHub Pages**: gyaiiiin0727.github.io/lifelog
 - **デプロイ方法**: SSH/gh CLI なし。GitHub Web で「Add file → Upload files」で手動アップロード
@@ -9,117 +9,126 @@
 ## 主要ファイル
 | ファイル | 役割 |
 |---|---|
-| `index.html` | メインHTML/CSS/JS全部入り（~20000行） |
+| `index.html` | メインHTML/CSS/JS全部入り（~21000行, 1.7MB） |
 | `goal-ai-breakdown.js` | AI目標設定チャット機能 |
-| `goals-v2.js` | 目標ページUI（進捗カード、週タスク、目標リスト） |
-| `voice-input-extra.js` | 音声入力機能 |
+| `goals-v2.js` | 目標ページUI（進捗カード、週タスク、目標リスト）**← 最終的にwindow関数を支配** |
 | `manifest.json` | PWA設定 |
-| `icon.jpg` | アプリアイコン（1280x1280px） |
+| `icon.jpg` | アプリアイコン |
 | `drill_instructor.png` / `takumi_senpai.png` / `hana_san.png` | AIキャラクター画像 |
 
 ## バックエンドAPI
 - URL: `https://lifelog-ai.little-limit-621c.workers.dev/api/analyze`
 - Method: POST
-- Body: `{ text, tone, type:'consult' }` または `{ text, tone, type:'journal', characterPrompt }`
+- Body: `{ text, tone, type:'consult'|'journal', characterPrompt }`
 - Cloudflare Workers
 
-## 全セッションで完了した修正一覧
+## アクセントカラー
+- Primary: `#2196F3`（Material Design Blue、ロゴのマイク色と統一）
+- Dark/Hover: `#1976D2`
+- Light BG: `#e3f2fd`
+- Very Light: `#e8f4fd`
+- Pressed: `#bbdefb`
+- Medium: `#90caf9`
+- Muted text: `#78a8d8`
 
-### 1. タスク保存で目標が消えるバグ（根本修正）
-- `goal-ai-breakdown.js`: `_loadGoalsFromStorage()` / `_saveGoalsToStorage()` ヘルパー追加
-- 常にlocalStorageから読み直してから保存する方式に統一
+## AIキャラクター
+| tone | 名前 | カラー | localStorage |
+|---|---|---|---|
+| harsh | マネージャー | #e74c3c | `journalFeedbackTone` (ジャーナル用) |
+| normal | タクヤ先輩 | #4a90e2 | `aiConsultTone` (AI相談用、独立) |
+| gentle | ハナさん | #27ae60 | |
 
-### 2. チャット入力欄の拡大
-- `goal-ai-breakdown.js`: `input` → `textarea` に変更、フォントサイズ16px、自動リサイズ対応
+## ⚠️ 最重要: 目標コードの分散問題
 
-### 3. 4週間計画機能（新機能）
-- `goal-ai-breakdown.js`:
-  - AIプロンプトを4週間計画形式に変更（【1週目】【2週目】...）
-  - `parseWeeklyPlan()` 新規追加（週ヘッダーパーサー）
-  - `getWeekKeyOffset()` 新規追加（週キーオフセット計算）
-  - `showWeeklyPlanSelection()` 新規追加（週別タスク選択UI）
-  - `addSelectedTasks()` に `data-week` 属性読み取り追加
-- `goals-v2.js`:
-  - `viewingWeekKey` 状態変数追加
-  - 週ナビゲーション（◀ 前週 | 今週やること | 次週 ▶）
-  - `formatWeekLabel()` / `changeViewingWeek()` / `goToCurrentWeek()`
-  - 手動タスク追加も閲覧中の週に紐付け
+**次回セッションの最優先タスク: 目標コードのリファクタリング→カレンダー連動**
 
-### 4. レイアウト順序変更
-- `goals-v2.js`: 表示順を「進捗→今月の目標→今週やること」に変更（FABボタン干渉回避）
+現在、目標関連コードが **4箇所** に分散し、`window.*`を上書きし合っている：
 
-### 5. ロゴ変更
-- `index.html`: アイコン画像を「D」として使い「ayce」テキストを横に配置、中央寄せ、32px太字
+| # | 場所 | 行番号(目安) | 内容 |
+|---|---|---|---|
+| 1 | index.html | L8946付近 | 古い`changeGoalsMonth`, `updateGoalsMonthDisplay` |
+| 2 | index.html | L11601-11880付近 | GoalsModule IIFE（renderGoals, changeGoalsMonth等を再定義） |
+| 3 | index.html | L12026-12364付近 | GoalsModule v2 IIFE（App.state.goals使用、DOMContentLoadedでinit） |
+| 4 | goals-v2.js | 全体 | **最終勝者** — window.changeGoalsMonth等を全て上書き |
 
-### 6. AI相談に過去データ連動（新機能）
-- `index.html`:
-  - `buildContextSummary(topic)` + 5つのヘルパー関数を新規追加
-  - `summarizeActivities()` - 今週の行動データ
-  - `summarizeMoney()` - 今月の収支データ
-  - `summarizeGoals()` - 今月の目標進捗
-  - `summarizeJournal()` - 直近の振り返り・気分
-  - `summarizeWeight()` - 体重推移
-  - `sendAIConsult()` にデータコンテキスト注入
-  - ジャーナルAIフィードバック（`journalAiBigBtn`）にも過去データコンテキスト注入
-- `goal-ai-breakdown.js`:
-  - `buildPrompt()` 初回ターンに過去データ注入
+### 上書き順序（後が勝つ）:
+```
+index.html L8946 → index.html L11867 → index.html L12354 → goals-v2.js L534-548
+```
 
-### 7. AI相談フォーマットバグ修正
-- `index.html` `sendAIConsult()`: ジャーナル分析フォーマット（【よかったこと】【改善したいこと】等）を使わないよう明示的にプロンプトで禁止
-- `noAnalysisRule` 変数でルールを定義
+### リファクタリング計画:
+1. **ステップ1**: index.html内の古い3つの目標コード（#1, #2, #3）を削除
+2. **ステップ2**: goals-v2.jsに一本化（必要な機能をgoals-v2.jsに移植）
+3. **ステップ3**: weeklyTasksを日付ベースに変更（`week: "2026-W07"` → `date: "2026-02-16"`）
+4. **ステップ4**: カレンダーUIと連動（月の残り日数でタスクスケジュール）
 
-### 8. AIフィードバック品質改善（データ誤解釈防止）
-- `index.html` `sendAIConsult()`: 過去データ解釈ルール追加
-  - 通勤・移動・残業など義務的行動を褒めない
-  - 運動・自炊・勉強・趣味など自発的行動のみ前向きに評価
-  - データ不足時はデータに言及せず相談内容に集中
-- `index.html` ジャーナルAIフィードバック: 同様の `dataInterpretRule` 追加
+### 注意:
+- `App.state.goals.selectedMonth` と `window.selectedGoalsMonth` が競合している
+- goals-v2.jsの`renderAll()`内で`updateMonthDisplayV2()`を呼んで月表示を直接更新するようにした（今回修正）
+- `currentWeekKey`はgoals-v2.jsで定義・window公開（ISO week形式 "YYYY-W##"）
 
-### 9. 名前変更 Daice → Dayce
-- `index.html`: title, meta apple-mobile-web-app-title（2箇所）, ロゴテキスト（aice→ayce）
-- `manifest.json`: name, short_name
+## 今回のセッションで完了した修正
 
-### 10. AI分析中テキスト変更
-- `index.html`: 「🤖 AI分析中...」→「今日もお疲れ様でした✨」（2箇所）
+### 14. モードタブデザイン改善
+- 外側: `border-radius:0`（四角）、`background:#e3f2fd`、`padding:14px 8px`
+- 内側タブ: `flex`なし（文字幅に合わせた自動幅）、`justify-content:center`、`padding:6px 16px`
+- アクティブ: `background:#2196F3; color:#fff; border-radius:6px`
 
-### 11. 音声入力ジャーナル2パターン（新機能）
-- `index.html`: モード切替タブ（フリートーク / ステップ入力）
-  - フリートーク: 従来の自由入力 → AIで整える
-  - ステップ入力: 6カテゴリ別に1つずつガイド付き音声入力
-    - よかったこと → 改善したいこと → 気づいたこと → もやっとしたこと → MUST → WANT
-    - プログレスドット表示、戻る/スキップ/次へナビゲーション
-    - 完了時にjournalEntriesV3のsummaryに直接保存（AI不要）
-    - rawフィールドにも統合テキスト保存（フリートーク互換）
-  - HTML: `#journalModeTabs`, `#journalStepInput`, `#journalFreetalkSection`
-  - CSS: `.journal-mode-tabs`, `.step-card`, `.step-dot`, `.step-nav` 等
-  - JS: `switchJournalMode()`, `journalStepNext/Prev/Skip/Restart()`, ステップ用SpeechRecognition
+### 15. ステップ入力の音声重複修正
+- `continuous: true` → `false` に変更
+- `onend`リスタート時に`baseText`と`finalAccum`をリセット
 
-### 12. バグ修正バッチ
-- localStorage不整合修正: `saveJournalWithAI()` が `'journals'` に保存していたのを `'journalEntriesV3'` (V3形式)に修正
-- BACKEND_URL統一: 古い `lifelog-backend.vercel.app` を正しい Workers URLに修正
-- `_saveGoalsToStorage` エラーハンドリング: localStorage容量超え時にアラート表示
-- AIレスポンスnullチェック強化: 型チェックを先にする安全なパターンに変更
-- チャット `_state` リセット完全化: `maxTurns`, `tone` もリセット対象に
+### 16. ステップ入力にフィードバック担当選択+AIで整える追加
+- 完了画面にキャラクター選択UI（step-tone-btn）追加
+- `window.selectStepTone()` — フリートーク側と同期
+- `window.stepAIRefine()` — ステップ入力内容をAIに送信、フィードバック表示
+- フィードバック結果をjournalEntriesV3に保存（summary抽出含む）
 
-### 13. その他（前セッション）
-- `goals-v2.js`: 進捗カード紫→白に変更済み
-- `voice-input-extra.js`: 音声入力テキスト重複バグ修正済み
-- `manifest.json`: 新規作成（PWAアイコン設定）
-- `index.html`: `border-radius` 削除（アイコン角丸の二重化防止）
+### 17. ジャーナル削除ボタン移動
+- `journalV3ClearBtn`を`journalFreetalkSection`の**外**に移動
+- ステップ入力モードでも削除可能に
+
+### 18. HTML構造バグ修正（div開閉タグ）
+- journalタブの`</div>`漏れ修正 → 他タブに要素が漏れていた
+- goalsタブの余分な`</div>`削除
+- L5726の余分な`</div></div>`削除（カテゴリUIがjournalタブ外に出ていた）
+- **全8タブのdivバランスを検証・確認済み**
+
+### 19. 目標ページ月表示修正
+- goals-v2.jsに`updateMonthDisplayV2()`追加
+- `renderAll()`の先頭で月表示を毎回更新
+- `window.updateGoalsMonthDisplay`もgoals-v2.jsで上書き
+
+### 20. 今週やること: タスク未設定でも表示
+- goals-v2.jsの`renderWeekly()`: タスク0個の目標もスキップせず表示
+- 各目標に「この週のタスクはまだありません」+「＋ 追加」ボタンを常に表示
+
+### 21. ホーム概要: 目標達成率→タスク達成度
+- HTMLラベル「目標」→「今週のタスク」に変更
+- 月間目標の達成率ではなく、今週のweeklyTasks完了数/総数を表示
+- 2箇所の更新関数を両方修正（L14843付近、L17684付近）
+
+### 22. 当日要約の「整える一言」→キャラクター名表示
+- `getCharacterInfo`依存を排除、直接トーン名を解決
+- `e.aiFeedbackTone`がなくてもlocalStorageからフォールバック
+- 常に「💬 キャラクター名 の一言」と表示
+
+### 23. ステップ入力のstep-card黒枠削除
+- `border:2px solid #111` → `border:none; border-radius:0; padding:20px 0`
 
 ## 未解決・今後の課題
 
-### 優先度高
-- **カテゴリと目標の連動**: 行動カテゴリ（運動/仕事等）と目標をリンクさせ、AIフィードバックで目標進捗を反映する。`buildContextSummary('goals', { goalCategory })` は実装済みだが、行動記録→目標の自動マッチングはまだ。
+### 最優先（次回セッション）
+- **目標コードリファクタリング**: 4箇所の分散コードを goals-v2.js に一本化
+- **カレンダー連動**: weeklyTasksを日付ベースに変更、カレンダーUIと連動
 
 ### 優先度中
-- **クラウド同期機能**: デバイス間データ同期。Cloudflare Workers側にユーザー認証+データストレージの追加が必要。バックエンド変更が大きいため別セッション推奨。
+- **カテゴリと目標の連動**: 行動カテゴリと目標をリンク
+- **クラウド同期**: デバイス間データ同期（バックエンド変更必要、別セッション推奨）
 
-### 注意点
-- **PCでの「＋追加」ボタン**: レイアウト順序変更で改善したがPC動作は未確認
-- **GitHub Pages反映**: 変更はローカルのみ。ユーザーがGitHub Webから手動アップロードする必要あり
-- **PWAアイコン更新**: ホーム画面アイコンはキャッシュが強い。一度削除→再追加が必要
-- **過去の目標データ**: 以前のバグで消失済み。復元不可
+### 既知の残留
+- **旧`journals`キー（L6088, L6116, L6999）**: 古い保存機能がまだ残っている。現在のメイン機能はjournalEntriesV3なので直接影響なし
+- **ステップ入力のstep-card**: CSSで`border:none`に変更済みだがキャッシュで反映遅れる可能性あり
 
 ## localStorage キー一覧
 | キー | 内容 |
@@ -129,12 +138,18 @@
 | `journalEntriesV3` | ジャーナル（日付キーのオブジェクト） |
 | `monthlyGoals` | 月間目標配列（weeklyTasks含む） |
 | `weightRecords` | 体重記録配列 |
-| `isPremium` | 有料会員フラグ（'true'で有効） |
+| `activityCategories` | 行動カテゴリ |
+| `expenseCategories` | 支出カテゴリ |
+| `incomeCategories` | 収入カテゴリ |
+| `journalFeedbackTone` | ジャーナルのフィードバック担当 |
+| `aiConsultTone` | AI相談のキャラクター選択（独立） |
+| `lastActiveTab` | 最後に開いたタブ |
+| `isPremium` | 有料会員フラグ |
 
 ## 技術的な注意点
-- `index.html`は約20000行あり、全体を一度に読めない場合がある。Grep/行番号指定で必要箇所を読むこと
+- `index.html`は約21000行, 1.7MBあり全体を一度に読めない。Grep/行番号指定で必要箇所を読むこと
 - JavaScriptモジュールはIIFE（即時実行関数）パターン。`window.xxx` でグローバル公開
 - CSSはJavaScript内で `createElement('style')` で動的注入しているものが多い
 - ISO週キー: `"YYYY-W##"` 形式（例: `"2026-W07"`）
 - 月キー: `"YYYY-MM"` 形式（例: `"2026-02"`）
-- AIキャラクター3種: harsh（マネージャー）, normal（タクヤ先輩）, gentle（ハナさん）
+- **goals-v2.jsが最終的にwindow関数を全て上書きする**（読み込み順: index.html → goal-ai-breakdown.js → goals-v2.js）
