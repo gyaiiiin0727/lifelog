@@ -82,10 +82,14 @@
     '.task-item { display:flex; align-items:center; gap:8px; padding:10px 4px; border-bottom:1px solid #f0f0f0; min-height:44px; }',
     '.task-checkbox { width:22px; height:22px; min-width:22px; cursor:pointer; accent-color:#2196F3; }',
     '.task-label { flex:1; min-width:0; font-size:14px; line-height:1.4; color:#333; word-break:break-word; }',
-    '.task-edit-btn, .task-action-btn { background:none; border:none; font-size:18px; cursor:pointer; padding:8px; min-width:36px; min-height:36px; display:flex; align-items:center; justify-content:center; opacity:0.4; transition:opacity .2s; }',
-    '.task-edit-btn:hover, .task-edit-btn:active, .task-action-btn:hover, .task-action-btn:active { opacity:1; }',
-    '.task-action-btn { font-size:14px; }',
-    '.task-actions { display:flex; gap:0; flex-shrink:0; align-items:center; }',
+    '.task-edit-btn { background:none; border:none; font-size:18px; cursor:pointer; padding:8px; min-width:36px; min-height:36px; display:flex; align-items:center; justify-content:center; opacity:0.4; transition:opacity .2s; }',
+    '.task-edit-btn:hover, .task-edit-btn:active { opacity:1; }',
+    '.task-actions { display:flex; gap:4px; flex-shrink:0; align-items:center; }',
+    '.task-action-btn { border:none; border-radius:6px; cursor:pointer; padding:4px 8px; font-size:11px; font-weight:600; min-height:28px; min-width:36px; display:flex; align-items:center; justify-content:center; transition:all .2s; }',
+    '.task-copy-btn { background:#e3f2fd; color:#1976D2; }',
+    '.task-copy-btn:active { background:#bbdefb; }',
+    '.task-carry-btn { background:#f3f4f6; color:#666; }',
+    '.task-carry-btn:active { background:#e5e7eb; }',
 
     /* タスク追加ボタン */
     '.task-add-btn {',
@@ -441,21 +445,23 @@
             dateLabel = '<span style="font-size:10px;color:#999;margin-left:4px;">' +
               (td.getMonth()+1) + '/' + td.getDate() + '(' + DOW_NAMES[td.getDay()] + ')' + '</span>';
           }
-          // 今日以外の日のタスクに「今日へコピー」ボタンを表示
-          var copyBtn = (task.date !== today && !task.done)
-            ? '<button type="button" class="task-action-btn" onclick="window._gv2CopyToToday(' + goal.id + ',' + task.id + ')" title="今日にコピー">📅</button>'
-            : '';
-          // 未完了タスクに「翌週へ持ち越し」ボタンを表示
-          var carryBtn = (!task.done)
-            ? '<button type="button" class="task-action-btn" onclick="window._gv2CarryToNextWeek(' + goal.id + ',' + task.id + ')" title="翌週へ持ち越し">➡️</button>'
-            : '';
+          // 未完了タスクにアクションボタンを表示
+          var actionBtns = '';
+          if (!task.done) {
+            // 今日以外 → 「今日へ」ボタン
+            if (task.date !== today) {
+              actionBtns += '<button type="button" class="task-action-btn task-copy-btn" onclick="window._gv2CopyToToday(' + goal.id + ',' + task.id + ')" title="今日にコピー">今日</button>';
+            }
+            // 翌週へ持ち越し
+            actionBtns += '<button type="button" class="task-action-btn task-carry-btn" onclick="window._gv2CarryToNextWeek(' + goal.id + ',' + task.id + ')" title="翌週へ持ち越し">翌週</button>';
+          }
 
           html += '<div class="task-item" id="wt_' + goal.id + '_' + task.id + '">' +
             '<input type="checkbox" class="task-checkbox"' + checked +
             ' onchange="window._gv2ToggleWT(' + goal.id + ',' + task.id + ')" />' +
             '<label class="task-label"' + strike + '>' + esc(task.text) + dateLabel + '</label>' +
             '<div class="task-actions">' +
-              copyBtn + carryBtn +
+              actionBtns +
               '<button type="button" class="task-edit-btn" onclick="window._gv2EditWT(' + goal.id + ',' + task.id + ')" title="編集">✏️</button>' +
             '</div>' +
           '</div>';
