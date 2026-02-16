@@ -154,11 +154,25 @@
   }
 
   // ========== レンダリング ==========
+  function updateMonthDisplayV2() {
+    var month = getSelectedMonth();
+    var parts = month.split('-').map(Number);
+    var display = document.getElementById('currentGoalsMonth');
+    if (display) {
+      display.textContent = parts[0] + '年' + parts[1] + '月';
+    }
+    var title = document.getElementById('goalsListTitle');
+    if (title) {
+      title.textContent = (month === monthKeyNow()) ? '今月の目標リスト' : parts[0] + '年' + parts[1] + '月の目標リスト';
+    }
+  }
+
   function renderAll() {
     var goals = getGoals();
     var month = getSelectedMonth();
     var current = goals.filter(function(g) { return g && g.month === month; });
 
+    updateMonthDisplayV2();
     renderSummary(current);
     renderWeekly(current, goals);
     renderMonthlyList(current, goals);
@@ -224,30 +238,33 @@
     var hasAnyTask = false;
     activeGoals.forEach(function(goal) {
       var tasks = (goal.weeklyTasks || []).filter(function(t) { return t.week === viewingWeekKey; });
-      if (tasks.length === 0) return;
       hasAnyTask = true;
       var emoji = catEmoji(goal.category);
 
       html += '<div class="task-group">';
       html += '<div class="task-group-title">' + emoji + ' ' + esc(goal.text) + '</div>';
 
-      tasks.forEach(function(task) {
-        var checked = task.done ? ' checked' : '';
-        var strike = task.done ? ' style="text-decoration:line-through;color:#999;"' : '';
-        html += '<div class="task-item" id="wt_' + goal.id + '_' + task.id + '">' +
-          '<input type="checkbox" class="task-checkbox"' + checked +
-          ' onchange="window._gv2ToggleWT(' + goal.id + ',' + task.id + ')" />' +
-          '<label class="task-label"' + strike + '>' + esc(task.text) + '</label>' +
-          '<button type="button" class="task-edit-btn" onclick="window._gv2EditWT(' + goal.id + ',' + task.id + ')" title="編集">✏️</button>' +
-        '</div>';
-      });
+      if (tasks.length === 0) {
+        html += '<div style="color:#999;font-size:13px;padding:4px 0 8px;">この週のタスクはまだありません</div>';
+      } else {
+        tasks.forEach(function(task) {
+          var checked = task.done ? ' checked' : '';
+          var strike = task.done ? ' style="text-decoration:line-through;color:#999;"' : '';
+          html += '<div class="task-item" id="wt_' + goal.id + '_' + task.id + '">' +
+            '<input type="checkbox" class="task-checkbox"' + checked +
+            ' onchange="window._gv2ToggleWT(' + goal.id + ',' + task.id + ')" />' +
+            '<label class="task-label"' + strike + '>' + esc(task.text) + '</label>' +
+            '<button type="button" class="task-edit-btn" onclick="window._gv2EditWT(' + goal.id + ',' + task.id + ')" title="編集">✏️</button>' +
+          '</div>';
+        });
+      }
 
       html += '<button type="button" class="task-add-btn" onclick="window._gv2AddWT(' + goal.id + ')">＋ 追加</button>';
       html += '</div>';
     });
 
     if (!hasAnyTask) {
-      html += '<div style="text-align:center;color:#999;padding:16px;font-size:13px;">この週のタスクはまだありません</div>';
+      html += '<div style="text-align:center;color:#999;padding:16px;font-size:13px;">目標がまだありません</div>';
     }
 
     html += '</div></div>';
@@ -532,6 +549,7 @@
   // 既存の window.* を上書きして全体の整合性を保つ
   window.addGoal = addGoalV2;
   window.changeGoalsMonth = changeGoalsMonthV2;
+  window.updateGoalsMonthDisplay = updateMonthDisplayV2;
   window.renderGoals = renderAll;
   window.renderGoalsProgress = function() {}; // 不要化（サマリーに統合）
   window.renderGoalsAll = renderAll;

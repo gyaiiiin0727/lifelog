@@ -5304,9 +5304,9 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 
         <div class="dashboard-card" onclick="switchTab('goals')">
             <div class="card-icon">🎯</div>
-            <div class="card-label">目標</div>
+            <div class="card-label">今週のタスク</div>
             <div class="card-value" id="dashGoalProgress">0%</div>
-            <div class="card-sub" id="dashGoalCount">0/0 達成</div>
+            <div class="card-sub" id="dashGoalCount">タスクなし</div>
         </div>
     </div>
 
@@ -13086,12 +13086,16 @@ try{
       const hitokotoText = document.getElementById('todaySumHitokotoText');
       if (hitokotoBox && hitokotoLabel && hitokotoText) {
         if (e.hitokoto) {
-          const ci2 = (typeof getCharacterInfo === 'function') ? getCharacterInfo(e.aiFeedbackTone) : {name:'',color:'#4a90e2'};
+          const toneForHitokoto = e.aiFeedbackTone || localStorage.getItem('journalFeedbackTone') || 'normal';
+          const toneNames = {harsh:'マネージャー', normal:'タクヤ先輩', gentle:'ハナさん'};
+          const toneColors = {harsh:'#e74c3c', normal:'#4a90e2', gentle:'#27ae60'};
+          const charNameH = toneNames[toneForHitokoto] || 'タクヤ先輩';
+          const charColorH = toneColors[toneForHitokoto] || '#4a90e2';
           hitokotoBox.style.display = 'block';
-          hitokotoBox.style.borderLeftColor = ci2.color;
+          hitokotoBox.style.borderLeftColor = charColorH;
           hitokotoBox.style.background = '#f0f7ff';
-          hitokotoLabel.style.color = ci2.color;
-          hitokotoLabel.textContent = ci2.name ? '💬 ' + ci2.name + ' の一言' : '💬 整える一言';
+          hitokotoLabel.style.color = charColorH;
+          hitokotoLabel.textContent = '💬 ' + charNameH + ' の一言';
           hitokotoText.textContent = e.hitokoto;
         } else {
           hitokotoBox.style.display = 'none';
@@ -14840,17 +14844,22 @@ textarea { width: 100%; }
     if (expenseEl) expenseEl.textContent = `¥${expense.toLocaleString()}`;
     if (incomeEl) incomeEl.textContent = `収入: ¥${income.toLocaleString()}`;
 
-    // 目標
+    // 目標（今週のタスク達成度）
     const goals = safeParse('monthlyGoals', []);
     const monthGoals = goals.filter(g => g.month === monthKey);
-    const completedGoals = monthGoals.filter(g => g.completed).length;
-    const totalGoals = monthGoals.length;
-    const percent = totalGoals > 0 ? Math.round((completedGoals / totalGoals) * 100) : 0;
+    const weekKey = window.currentWeekKey || '';
+    let totalTasks = 0, doneTasks = 0;
+    monthGoals.forEach(g => {
+      const wt = (g.weeklyTasks || []).filter(t => t.week === weekKey);
+      totalTasks += wt.length;
+      doneTasks += wt.filter(t => t.done).length;
+    });
+    const percent = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
     const gp = document.getElementById('dashGoalProgress');
     const gc = document.getElementById('dashGoalCount');
     if (gp) gp.textContent = `${percent}%`;
-    if (gc) gc.textContent = `${completedGoals}/${totalGoals} 達成`;
+    if (gc) gc.textContent = totalTasks > 0 ? `${doneTasks}/${totalTasks} 完了` : 'タスクなし';
 
     // ジャーナル（V3: dateKey -> {raw: "..."}）
     const journalEntries = safeParse('journalEntriesV3', {});
@@ -17681,17 +17690,23 @@ const modal = $('qrModal');
     if (expenseEl) expenseEl.textContent = '¥' + expense.toLocaleString();
     if (incomeEl) incomeEl.textContent = '収入: ¥' + income.toLocaleString();
 
-    // ===== 目標 =====
+    // ===== 目標（今週のタスク達成度） =====
     var goals = getGoals();
     var monthGoals = goals.filter(function(g) { return g.month === monthKey; });
-    var completedGoals = monthGoals.filter(function(g) { return g.completed; }).length;
-    var totalGoals = monthGoals.length;
-    var percent = totalGoals > 0 ? Math.round((completedGoals / totalGoals) * 100) : 0;
+    var weekKey = window.currentWeekKey || '';
+    var totalTasks = 0;
+    var doneTasks = 0;
+    monthGoals.forEach(function(g) {
+      var wt = (g.weeklyTasks || []).filter(function(t) { return t.week === weekKey; });
+      totalTasks += wt.length;
+      doneTasks += wt.filter(function(t) { return t.done; }).length;
+    });
+    var percent = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
     var gp = document.getElementById('dashGoalProgress');
     var gc = document.getElementById('dashGoalCount');
     if (gp) gp.textContent = percent + '%';
-    if (gc) gc.textContent = completedGoals + '/' + totalGoals + ' 達成';
+    if (gc) gc.textContent = totalTasks > 0 ? (doneTasks + '/' + totalTasks + ' 完了') : 'タスクなし';
 
     // ===== ジャーナル =====
     var journalEntries = getJournalEntries();
