@@ -615,19 +615,11 @@
     if (!task) return;
 
     var today = todayStr();
-    // 既に今日に同じテキストのタスクがある場合はスキップ
-    var alreadyExists = g.weeklyTasks.some(function(t) {
-      return t.date === today && t.text === task.text;
-    });
-    if (alreadyExists) {
-      alert('このタスクは今日に既にあります');
-      return;
-    }
-
     var newTask = { id: Date.now(), text: task.text, date: today, done: false };
     g.weeklyTasks.push(newTask);
     saveGoals(goals);
     renderAll();
+    if (typeof window.showStatus === 'function') window.showStatus('goalStatus', '✓ 今日にコピーしました');
   }
 
   // ===== 翌週に持ち越し =====
@@ -644,19 +636,12 @@
     nextWeekDate.setDate(nextWeekDate.getDate() + 7);
     var newDateStr = toDateStr(nextWeekDate);
 
-    // 既に翌週に同じテキストのタスクがある場合はスキップ
-    var alreadyExists = g.weeklyTasks.some(function(t) {
-      return t.date === newDateStr && t.text === task.text;
-    });
-    if (alreadyExists) {
-      alert('翌週の同じ日に既にこのタスクがあります');
-      return;
-    }
-
     // 元タスクを未完了のまま移動（コピーではなく移動）
     task.date = newDateStr;
     saveGoals(goals);
     renderAll();
+    var td = new Date(newDateStr + 'T00:00:00');
+    if (typeof window.showStatus === 'function') window.showStatus('goalStatus', '✓ ' + (td.getMonth()+1) + '/' + td.getDate() + 'へ移動しました');
   }
 
   function toggleWeeklyTask(goalId, taskId) {
