@@ -3070,7 +3070,8 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
   font-size:18px;
   font-weight:700;
   color:#000;
-  min-width:140px;
+  min-width:0;
+  flex:1 1 auto;
   text-align:center;
 }
 
@@ -3689,6 +3690,8 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 
 .tab-content {
   max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
@@ -4189,6 +4192,14 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 #goals .simple-month-display{
   font-size: 18px !important;
   font-weight: 800 !important;
+  min-width: 0 !important;
+}
+
+/* 目標タブの月選択バーがはみ出さないように */
+#goals .simple-month-selector {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
 }
 
 @media (max-width: 480px){

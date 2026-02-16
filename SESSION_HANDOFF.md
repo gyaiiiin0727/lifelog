@@ -132,7 +132,16 @@ index.html 内の古い3ブロックは全て削除済み（コメントのみ�
 2. 編集モード中にFABを非表示（z-index干渉防止）
 3. FABドラッグ移動機能追加（位置をlocalStorageに保存）
 
-### G. その他
+### G. FABドラッグ修正（!important問題）
+- L3578の `right: 12px !important` / `bottom: 24px !important` がインラインstyleを上書きしドラッグ不能だった
+- `!important` 付きの位置CSSを削除、ドラッグ計算式のY方向バグも修正
+
+### H. カレンダー右はみ出し修正
+- `.tab-content` に `overflow-x: hidden` 追加
+- `#goals .simple-month-display` の `min-width:140px` → `min-width:0; flex:1 1 auto`
+- `#goals .simple-month-selector` に `max-width:100%; overflow:hidden` 追加
+
+### I. その他
 - 空 `<script>` タグ修正（L13831、元から存在していた問題）
 - 未使用関数 `getDateOffset` 削除（goal-ai-breakdown.js）
 

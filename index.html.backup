@@ -3070,7 +3070,8 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
   font-size:18px;
   font-weight:700;
   color:#000;
-  min-width:140px;
+  min-width:0;
+  flex:1 1 auto;
   text-align:center;
 }
 
@@ -3574,21 +3575,11 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 }
 
 
-/* ===== v40.24 FAB 位置微調整（右に寄せる） ===== */
-.fab-container {
-  right: 12px !important;   /* 右へ寄せる */
-  bottom: 24px !important;  /* 24px に統一 */
-}
+/* ===== v40.24 FAB 位置微調整 → ドラッグ移動対応で !important 削除 ===== */
+/* right/bottom は inline style でドラッグ制御するため !important 不可 */
+/* デフォルト位置は .fab-container 本体定義（L17745付近）で設定済み */
 
-/* iPhone セーフエリア対策 */
-@supports (padding: env(safe-area-inset-bottom)) {
-  .fab-container {
-    right: calc(12px + env(safe-area-inset-right)) !important;
-    bottom: calc(24px + env(safe-area-inset-bottom)) !important;
-  }
-}
-
-/* 影を強めて“浮いてる感”アップ（任意だがデフォでON） */
+/* 影を強めて"浮いてる感"アップ（任意だがデフォでON） */
 .fab-main {
   box-shadow: 0 10px 24px rgba(0,0,0,0.35) !important;
 }
@@ -3699,6 +3690,8 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 
 .tab-content {
   max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
@@ -4199,6 +4192,14 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 #goals .simple-month-display{
   font-size: 18px !important;
   font-weight: 800 !important;
+  min-width: 0 !important;
+}
+
+/* 目標タブの月選択バーがはみ出さないように */
+#goals .simple-month-selector {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
 }
 
 @media (max-width: 480px){
@@ -17916,9 +17917,13 @@ if ("serviceWorker" in navigator) {
     var touch = e.touches ? e.touches[0] : e;
     dragStartX = touch.clientX;
     dragStartY = touch.clientY;
+    // right/bottom の現在値を取得（CSS computedStyle から）
+    var cs = window.getComputedStyle(fabContainer);
     var rect = fabContainer.getBoundingClientRect();
-    fabStartX = window.innerWidth - rect.right + (rect.width / 2);
-    fabStartY = window.innerHeight - rect.bottom + (rect.height / 2);
+    // right = viewport幅 - 要素の右端
+    fabStartX = window.innerWidth - rect.right;
+    // bottom = viewport高さ - 要素の下端
+    fabStartY = window.innerHeight - rect.bottom;
     isDragging = true;
     hasMoved = false;
   }
@@ -17933,8 +17938,10 @@ if ("serviceWorker" in navigator) {
     hasMoved = true;
     e.preventDefault();
 
+    // 右に動く → dx>0 → right減少、左に動く → dx<0 → right増加
     var newRight = Math.max(0, Math.min(window.innerWidth - 60, fabStartX - dx));
-    var newBottom = Math.max(0, Math.min(window.innerHeight - 60, fabStartY + dy));
+    // 下に動く → dy>0 → bottom減少、上に動く → dy<0 → bottom増加
+    var newBottom = Math.max(0, Math.min(window.innerHeight - 60, fabStartY - dy));
     fabContainer.style.right = newRight + 'px';
     fabContainer.style.bottom = newBottom + 'px';
     fabContainer.style.transition = 'none';
