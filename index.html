@@ -5887,7 +5887,17 @@ const Storage = {
 
     // 対応するボタンをアクティブに
     const btn = document.querySelector(`.tab-button[data-tab="${tabName}"]`);
-    if (btn) btn.classList.add('active');
+    if (btn) {
+      btn.classList.add('active');
+      // タブナビ内でアクティブボタンが見えるようスクロール
+      const nav = btn.closest('.tab-nav');
+      if (nav) {
+        const navRect = nav.getBoundingClientRect();
+        const btnRect = btn.getBoundingClientRect();
+        const offsetLeft = btnRect.left - navRect.left + nav.scrollLeft;
+        nav.scrollTo({ left: offsetLeft - (navRect.width / 2) + (btnRect.width / 2), behavior: 'smooth' });
+      }
+    }
 
     // タブ固有要素（data-only-tab）の表示切替
     applyTabOnlyVisibility(tabName);
