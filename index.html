@@ -5903,6 +5903,74 @@ const Storage = {
     if (tabName === 'reportMoney') { setTimeout(() => { try { renderMoneyReport(); } catch(e) {} }, 0); }
 }
 
+// ===== スワイプでタブ切替 =====
+(function() {
+  var TAB_ORDER = ['home', 'activity', 'money', 'reportActivity', 'reportMoney', 'journal', 'goals', 'aiConsult'];
+  var swipeStartX = 0;
+  var swipeStartY = 0;
+  var swipeStartTime = 0;
+  var SWIPE_THRESHOLD = 50;   // 最低スワイプ距離(px)
+  var SWIPE_MAX_TIME = 400;   // 最大許容時間(ms)
+  var SWIPE_ANGLE_LIMIT = 30; // 水平方向からの角度制限(度)
+
+  function getCurrentTab() {
+    var active = document.querySelector('.tab-content.active');
+    if (active) return active.id;
+    // フォールバック: display:block のタブを探す
+    var tabs = document.querySelectorAll('.tab-content');
+    for (var i = 0; i < tabs.length; i++) {
+      if (tabs[i].style.display === 'block') return tabs[i].id;
+    }
+    return 'home';
+  }
+
+  document.addEventListener('touchstart', function(e) {
+    // フォーム入力中・モーダル上・チャットUI上はスワイプ無効
+    var tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    if (e.target.closest('.modal, .gai-container, [class*="slider"], [class*="range"]')) return;
+
+    swipeStartX = e.touches[0].clientX;
+    swipeStartY = e.touches[0].clientY;
+    swipeStartTime = Date.now();
+  }, { passive: true });
+
+  document.addEventListener('touchend', function(e) {
+    if (!swipeStartTime) return;
+    var dx = e.changedTouches[0].clientX - swipeStartX;
+    var dy = e.changedTouches[0].clientY - swipeStartY;
+    var dt = Date.now() - swipeStartTime;
+    swipeStartTime = 0;
+
+    // 時間チェック
+    if (dt > SWIPE_MAX_TIME) return;
+    // 距離チェック
+    if (Math.abs(dx) < SWIPE_THRESHOLD) return;
+    // 角度チェック（水平に近いスワイプのみ）
+    var angle = Math.abs(Math.atan2(dy, dx)) * (180 / Math.PI);
+    if (angle > SWIPE_ANGLE_LIMIT && angle < (180 - SWIPE_ANGLE_LIMIT)) return;
+
+    var currentTab = getCurrentTab();
+    var idx = TAB_ORDER.indexOf(currentTab);
+    if (idx === -1) return;
+
+    var nextIdx;
+    if (dx < 0) {
+      // 左スワイプ → 次のタブ
+      nextIdx = idx + 1;
+      if (nextIdx >= TAB_ORDER.length) return; // 最後のタブ
+    } else {
+      // 右スワイプ → 前のタブ
+      nextIdx = idx - 1;
+      if (nextIdx < 0) return; // 最初のタブ
+    }
+
+    if (typeof window.switchTab === 'function') {
+      window.switchTab(TAB_ORDER[nextIdx]);
+    }
+  }, { passive: true });
+})();
+
 function applyTabOnlyVisibility(activeTab) {
   document.querySelectorAll('[data-only-tab]').forEach(el => {
     const tabs = (el.getAttribute('data-only-tab') || '').split(',').map(s => s.trim()).filter(Boolean);
