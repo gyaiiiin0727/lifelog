@@ -5263,10 +5263,10 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <div class="section-title" style="margin:0 0 8px;">🗣️ 話した内容（そのまま）</div>
 <div class="small" style="margin-bottom:10px;">項目は「話すヒント」です。あとは自由に話してください。</div>
 <ul class="journal-hints">
-<li>今日あったこと</li>
+<li>よかったこと</li>
 <li>気づいたこと・学び</li>
 <li>モヤっとしたこと・感情</li>
-<li>感謝</li>
+<li>改善したいこと</li>
 <li>明日やること：MUST / WANT</li>
 </ul>
 <textarea class="input journal-raw" id="journalV3Raw" placeholder="今日の振り返りをそのまま話してください（文字起こしもOK）"></textarea>
@@ -5364,7 +5364,6 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <span id="todaySumCharName" style="font-weight:700;font-size:15px;color:#4a90e2;"></span>
 </div>
 <div class="summary-grid">
-<div class="summary-item"><div class="summary-k">今日あったこと</div><div class="summary-v" id="todaySumFacts">—</div></div>
 <div class="summary-item"><div class="summary-k">よかったこと</div><div class="summary-v" id="todaySumEvents">—</div></div>
 <div class="summary-item"><div class="summary-k">改善したいこと</div><div class="summary-v" id="todaySumLearnings">—</div></div>
 <div class="summary-item"><div class="summary-k">気づき・学び</div><div class="summary-v" id="todaySumFeelings">—</div></div>
@@ -5373,7 +5372,7 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <div class="summary-item"><div class="summary-k want">WANT</div><div class="summary-v" id="todaySumWant">—</div></div>
 </div>
 <div id="todaySumHitokoto" style="display:none;margin-top:12px;padding:12px;border-radius:10px;border-left:4px solid #4a90e2;background:#f0f7ff;">
-<div id="todaySumHitokotoLabel" style="font-weight:700;font-size:13px;color:#4a90e2;margin-bottom:6px;">💬 整える一言</div>
+<div id="todaySumHitokotoLabel" style="font-weight:700;font-size:13px;color:#4a90e2;margin-bottom:6px;">💬 コメント</div>
 <div id="todaySumHitokotoText" style="font-size:14px;line-height:1.6;color:#333;"></div>
 </div>
 </div>
@@ -11875,7 +11874,6 @@ try{
     if(e && e.summary){
       if(empty) empty.style.display='none';
       if(body) body.style.display='block';
-      set('todaySumFacts', e.summary.facts);
       set('todaySumEvents', e.summary.events);
       set('todaySumLearnings', e.summary.learnings);
       set('todaySumFeelings', e.summary.feelings);
@@ -12030,7 +12028,6 @@ try{
     // ===== ステップ入力機能 =====
     (function initStepInput(){
       var STEPS = [
-        { key:'facts',     label:'今日あったこと',   question:'今日は何があった？',      emoji:'📝' },
         { key:'events',    label:'よかったこと',     question:'よかったことは？',        emoji:'😊' },
         { key:'learnings', label:'改善したいこと',   question:'改善できることは？',      emoji:'💡' },
         { key:'feelings',  label:'気づき・学び',     question:'気づいたこと・学びは？',  emoji:'🔍' },

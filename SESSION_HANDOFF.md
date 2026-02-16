@@ -159,25 +159,122 @@ index.html 内の古い3ブロックは全て削除済み（コメントのみ�
 - **修正3**: `buildContextSummary` の topic='money'/'activity' でも目標データ（`summarizeGoals`）を含めるように変更
 - **修正4**: AI相談 `noAnalysisRule` にもギャップ指摘ルール追加
 
-### J. タスク「今日にコピー」「翌週に持ち越し」ボタン追加
-- 各タスク行に📅（今日にコピー）と➡️（翌週に持ち越し）アイコンを追加
-- `copyToToday(goalId, taskId)` — 同テキストのタスクを今日の日付で複製、重複チェックあり
-- `carryToNextWeek(goalId, taskId)` — タスクの日付を+7日に移動（コピーではなく移動）
+### J. タスク「MUST」「翌週」ボタン追加 + ホーム画面連動
+- 各タスク行に [MUST]（ホーム画面のMUSTに追加）と [翌週]（翌週に持ち越し）テキストボタンを追加
+- `copyToToday(goalId, taskId)` — confirm確認後、昨日のジャーナル `summary.must` にテキスト追加 → ホーム「今日のタスク」MUSTに表示
+- `carryToNextWeek(goalId, taskId)` — confirm確認後、タスクの日付を+7日に移動
 - 完了済みタスクにはボタン非表示
-- 今日のタスクには📅（今日へ）ボタン非表示（既に今日なので）
+- チェック状態のインデックスずれ防止（新規追加時に明示的に `false` 設定）
 - window公開: `_gv2CopyToToday`, `_gv2CarryToNextWeek`
+- **重要**: ホーム画面の「今日のタスク」は `journalEntriesV3[昨日の日付].summary.must/want` から表示。目標の `weeklyTasks` とは別システム。
+- ホーム画面ダッシュボードの「今週のタスク %」は `getWeeklyTaskStats()` で目標の weeklyTasks から計算
 
 ### K. その他
 - 空 `<script>` タグ修正（L13831、元から存在していた問題）
 - 未使用関数 `getDateOffset` 削除（goal-ai-breakdown.js）
 
+## 3つのタスクシステム（重要な設計メモ）
+
+このアプリにはタスクに関する3つの独立システムがある。混同しないこと。
+
+### 1. ホーム「今日のタスク」MUST/WANT
+- **データソース**: `journalEntriesV3[昨日の日付].summary.must` / `.want`
+- **形式**: 改行区切りのテキスト（`\n`で分割して表示）
+- **日付キー**: `getTaskDateKey()` → **昨日の日付**（「明日やること」を昨日のジャーナルに書くため）
+- **チェック状態**: `taskChecks_YYYY-MM-DD`（今日の日付）のlocalStorageにインデックスベースで保存
+  - ID例: `homeMustTask0`, `homeMustTask1`, `homeWantTask0`
+- **表示関数**: `renderHomeTodayTasks()`（index.html L6728-6824付近）
+
+### 2. 目標「今週やること」weeklyTasks
+- **データソース**: `monthlyGoals[].weeklyTasks[]`
+- **形式**: `{ id: timestamp, text: string, date: "YYYY-MM-DD", done: boolean }`
+- **表示関数**: `renderWeekly()`（goals-v2.js内）
+- **操作**: MUSTボタン → システム1に追加、翌週ボタン → date+7日
+
+### 3. ダッシュボード「今週のタスク %」
+- **データソース**: `monthlyGoals[].weeklyTasks[]`（システム2と同じデータ）
+- **計算関数**: `getWeeklyTaskStats()`（goals-v2.js内）
+- **範囲**: 今週の月曜〜日曜の weeklyTasks を集計
+- **表示**: `#dashGoalProgress`（%）, `#dashGoalCount`（n/m）
+
+### システム間の連携
+```
+AI目標チャット → distributeDates() → weeklyTasks に追加（システム2）
+                                         ↓
+                                    ダッシュボード%に反映（システム3）
+                                         ↓
+                              ユーザーが[MUST]ボタン押す
+                                         ↓
+                              journalEntriesV3.summary.mustに追加（システム1）
+                                         ↓
+                              ホーム画面「今日のタスク」に表示
+```
+
 ## 未解決・今後の課題
 
-### 最優先（次回セッション）
-- **カテゴリと目標の連動（UI面）**: 目標カテゴリを行動カテゴリと統一する、行動記録時に関連目標を表示する、等のUI連動
+### 最優先：クラウド同期 → 販売準備ロードマップ
 
-### 優先度中
-- **クラウド同期**: デバイス間データ同期（バックエンド変更必要、別セッション推奨）
+ユーザーは**アプリの販売を考えている**。以下の優先順で進める合意あり。
+
+#### ステップ① クラウド同期（合言葉版） ← 次にやること
+- **認証方式**: 合言葉（パスフレーズ）方式でまず実装
+  - ユーザーが自分で決めた合言葉を入力 → SHA-256ハッシュ → KVのキーに
+  - アカウント不要、外部サービス依存ゼロ
+  - 販売時にGoogleログインに切り替え可能（データ構造は同じ、認証部分のみ差し替え）
+- **バックエンド**: 既存Cloudflare Worker拡張 + KV
+  - KV名前空間: `DAYCE_SYNC`（Worker設定でバインド名 `SYNC_KV`）
+  - 新規エンドポイント3つ:
+    - `POST /api/sync/upload` — データアップロード（passphrase + data + syncedAt）
+    - `GET /api/sync/download?p=xxx` — データダウンロード
+    - `GET /api/sync/status?p=xxx` — 同期状態確認
+  - `hashPassphrase()` — Web Crypto API SHA-256（Worker内で実行）
+  - CORS対応済み（既存のOPTIONSハンドラ拡張）
+- **フロントエンド**:
+  - 新規ファイル `cloud-sync.js` — `window.CloudSync` オブジェクト公開
+  - index.html に同期UIセクション追加（AI相談タブのデータ管理セクション付近）
+  - 合言葉入力 → リンク → アップロード/ダウンロードボタン
+- **同期対象localStorage キー**:
+  - 同期する: `activities`, `moneyRecords`, `journalEntriesV3`, `monthlyGoals`, `weightRecords`, `activityCategories`, `expenseCategories`, `incomeCategories`, `journalFeedbackTone`, `aiConsultTone`, `aiConsultHistory`
+  - 同期しない（デバイス固有）: `fabPosition`, `lastActiveTab`, `taskChecks_*`, `isPremium`, `journalAiEndpoint`
+- **競合解決**: Last-Write-Wins（タイムスタンプベース）。個人利用なのでシンプルに
+- **新規localStorageキー**: `syncPassphrase`（合言葉保存）, `syncLastSynced`（最終同期日時）
+- **KV制限**: 無料枠（読み取り10万回/日、書き込み1000回/日、値サイズ上限25MB）→ 個人利用で十分
+
+#### ステップ② AIプロンプトのサーバー移行
+- 現状: index.html内の `dataInterpretRule`, `noAnalysisRule` 等が**ソースコードから丸見え**
+- これがアプリの価値の核なので、Workerに移してフロントからは見えないようにする
+- クラウド同期と同時にWorkerを触るので一緒にやると効率的
+
+#### ステップ③ Googleログインに切り替え（販売前）
+- 合言葉 → Google OAuth に認証部分のみ差し替え
+- Google Cloud Console でOAuthクライアントID作成が必要
+- `isPremium` をサーバー側で管理（現在はlocalStorageで改ざん可能）
+- メールアドレスでユーザー特定 → 課金連携
+
+#### ステップ④ 課金システム（販売前）
+- Stripe/RevenueCat等で月額課金
+- 無料版と有料版の機能線引き
+
+#### ステップ⑤ コード難読化（販売前）
+- JavaScript難読化ツールで読みにくくする
+- 完全防御は不可能だが、カジュアルコピー防止
+
+#### ステップ⑥ 利用規約・プライバシーポリシー（販売前）
+- 個人データを扱うので法的に必須
+
+#### ステップ⑦ アナリティクス（販売後）
+- Mixpanel等でどの機能が使われているか把握
+
+#### ステップ⑧ App Store対応（販売後）
+- TWA/Capacitorでストア公開を検討
+
+### その他の改善候補
+- **カテゴリと目標の連動（UI面）**: 目標カテゴリを行動カテゴリと統一する、行動記録時に関連目標を表示する
+- **コード分割**: index.htmlが2万行は保守が厳しい。ファイル分割+ビルドツール導入
+- **テスト追加**: 課金周りにバグがあると致命的
+- **CI/CD導入**: 手動アップロードだとミスが起きやすい
+- **オンボーディング**: 初回起動時の使い方ガイド
+- **多言語対応**: 海外展開を考えるなら
 
 ### 既知の残留（低優先）
 - **旧`journals`キー（L6088, L6116, L6999）**: 古い保存機能が残存。メイン機能はjournalEntriesV3なので直接影響なし
@@ -202,6 +299,52 @@ index.html 内の古い3ブロックは全て削除済み（コメントのみ�
 | `lastActiveTab` | 最後に開いたタブ |
 | `isPremium` | 有料会員フラグ |
 | `fabPosition` | FABボタンの位置 `{x, y}` |
+
+## 今回のセッション（セッション3）の議論記録
+
+### 前セッションの修正確認
+- MUST表示・confirmポップアップ・チェックボックスの3つの修正は全て goals-v2.js に反映済み
+- ユーザーのアップロード後の動作確認待ち → そのままクラウド同期の議論に移行
+
+### クラウド同期の方針決定
+1. ユーザーの当初の希望: 「治ったらクラウド同期をしたい」
+2. 認証方式の比較検討: Google, 合言葉, メールリンク, デバイスID+QR
+3. ユーザーから「販売を見据えている」との情報 → 方針見直し
+4. **最終合意**: まず合言葉で実装 → 販売が具体化したらGoogleログインに切り替え
+   - 理由: 合言葉ならすぐ動く、データ構造は同じなので切り替え容易
+
+### 販売に向けたロードマップ策定
+- 8ステップのロードマップを作成（詳細は「未解決・今後の課題」セクション参照）
+- 特に重要: AIプロンプトのサーバー移行（コードから丸見え問題）
+- コード難読化、課金システム、利用規約等も必要
+
+### このセッションでのコード変更
+
+#### L. 目標設定AIチャットを「今月中」ベースに変更
+**ファイル: `goal-ai-breakdown.js`**
+- `weeklyPlanRule`: 「4週間分の計画」→「○月末（残りN日間）の計画」に変更
+- 残り日数に応じてフェーズ数を自動調整:
+  - 7日以下 → 「今月中」（1フェーズ）
+  - 14日以下 → 「前半/後半」（2フェーズ）
+  - 21日以下 → 「第1週/第2週/第3週」（3フェーズ）
+  - 22日以上 → 「第1週〜第4週」（4フェーズ）
+- 全AIプロンプト: 「4週間後」→「○月末」に統一
+- `parseWeeklyPlan()`: 「前半」「後半」「今月中」ヘッダーにも対応するよう拡張
+- `showWeeklyPlanSelection()`: ラベルを動的生成、ボタン文言を「○月の計画を追加」に変更
+- `distributeDates()` は既に月の残り日数ベースなので変更不要
+
+#### M. ジャーナルまとめ「整える一言」→キャラ名コメント
+**ファイル: `index.html`**
+- HTML初期値 `💬 整える一言` → `💬 コメント` に変更（L5376）
+- 動的設定（L11918, L8994, L11965）は既に `💬 キャラ名 の一言` だったので変更不要
+- AIの出力パース `【整える一言】` はそのまま維持（AI出力フォーマットに影響させない）
+
+#### N. ステップ入力「今日は何があった？」を削除
+**ファイル: `index.html`**
+- STEPSから `facts` ステップを削除（7ステップ→6ステップ、L12032）
+- フリートークのヒントリストから「今日あったこと」→「よかったこと」に差し替え（L5266）
+- まとめ表示から「今日あったこと」行を削除（L5367の `todaySumFacts` 行）
+- `renderTodaySummary` から `set('todaySumFacts', ...)` を削除（L11877）
 
 ## 技術的な注意点
 - `index.html`は約20000行, 1.7MBあり全体を一度に読めない。Grep/行番号指定で必要箇所を読むこと

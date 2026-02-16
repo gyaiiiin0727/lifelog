@@ -641,34 +641,48 @@
       userContext = window.buildContextSummary('goals', { goalCategory: _state.category });
     }
 
+    // 今月の残り期間を計算
+    var _now = new Date();
+    var _monthEnd = new Date(_now.getFullYear(), _now.getMonth() + 1, 0);
+    var _remainDays = Math.max(1, Math.floor((_monthEnd - _now) / 86400000) + 1);
+    var _monthLabel = (_now.getMonth() + 1) + '月' + _now.getDate() + '日〜' + (_monthEnd.getMonth() + 1) + '月' + _monthEnd.getDate() + '日';
+    var _monthName = (_now.getMonth() + 1) + '月';
+
+    // 残り日数に応じてフェーズ数を決定
+    var _phaseCount, _phaseLabels;
+    if (_remainDays <= 7) {
+      _phaseCount = 1;
+      _phaseLabels = '【今月中】';
+    } else if (_remainDays <= 14) {
+      _phaseCount = 2;
+      _phaseLabels = '【前半】\n1. タスクA\n【後半】\n1. タスクB';
+    } else if (_remainDays <= 21) {
+      _phaseCount = 3;
+      _phaseLabels = '【第1週】\n1. タスクA\n【第2週】\n1. タスクB\n【第3週】\n1. タスクC';
+    } else {
+      _phaseCount = 4;
+      _phaseLabels = '【第1週】\n1. タスクA\n【第2週】\n1. タスクB\n【第3週】\n1. タスクC\n【第4週】\n1. タスクD';
+    }
+
     var weeklyPlanRule =
       '【タスク提案のルール】\n' +
-      '- 4週間分の段階的な計画を提案してください\n' +
+      '- ' + _monthName + '末（' + _monthLabel + '、残り' + _remainDays + '日間）の計画を提案してください\n' +
       '- 必ず以下のフォーマットで出力してください：\n' +
-      '【1週目】\n' +
-      '1. タスクA\n' +
-      '2. タスクB\n' +
-      '【2週目】\n' +
-      '1. タスクC\n' +
-      '2. タスクD\n' +
-      '【3週目】\n' +
-      '1. タスクE\n' +
-      '【4週目】\n' +
-      '1. タスクF\n' +
-      '- 各週2〜3個、全体で8〜12個のタスクにしてください\n' +
-      '- 1週目は取り組みやすいタスク、後半の週はステップアップした内容にしてください\n' +
+      _phaseLabels + '\n' +
+      '- 各フェーズ2〜3個、全体で6〜12個のタスクにしてください\n' +
+      '- 最初は取り組みやすいタスク、後半はステップアップした内容にしてください\n' +
       '- 「週○回〜する」「毎日〜する」のような頻度・回数付きの行動にしてください\n' +
       '- 準備やTips（「バッグを用意する」等）ではなく、目標達成に直結する行動そのものにしてください\n' +
-      '- 例: ダイエット → 1週目「週2回ジムに行く」→ 2週目「週3回ジムに行く」→ 3週目「週3回ジム+自宅筋トレ1回」→ 4週目「振り返り+新たな目標設定」\n';
+      '- 例: ダイエット → 前半「週2回ジムに行く」→ 後半「週3回ジム+自宅筋トレ1回」\n';
 
     // 初回: ヒアリング質問
     if (_state.turnCount === 0) {
       return charHeader + userContext +
         '【指示】あなたは目標設定のコーチです。\n' +
         'ユーザーが「' + _state.goalText + '」（カテゴリ: ' + _state.category + '）という目標を立てようとしています。\n' +
-        'この目標を4週間の計画に落とし込むために、1つだけ短い質問をしてください。\n' +
+        'この目標を' + _monthName + '末までの計画に落とし込むために、1つだけ短い質問をしてください。\n' +
         '- ユーザーの過去データがあれば、それを踏まえた質問をしてください\n' +
-        '- 具体的な数値、頻度（週何回？毎日？）、4週間後にどうなりたいかを聞く質問が望ましい\n' +
+        '- 具体的な数値、頻度（週何回？毎日？）、' + _monthName + '末にどうなりたいかを聞く質問が望ましい\n' +
         '- 質問は1〜2文で簡潔に\n' +
         '- キャラクター設定の口調に従って会話してください\n' +
         '- タスクリストや分析結果は出力しないでください\n' +
@@ -680,7 +694,7 @@
       return charHeader +
         '【指示】あなたは目標設定のコーチです。\n' +
         '以下の会話を踏まえて、もう1つだけ追加の短い質問をしてください。\n' +
-        '- 「最初の1週間はどれくらいやれそう？」「4週間後にはどうなっていたい？」など、4週間の計画を作るための質問をしてください\n' +
+        '- 「最初の1週間はどれくらいやれそう？」「' + _monthName + '末にはどうなっていたい？」など、' + _monthName + '末までの計画を作るための質問をしてください\n' +
         '- 質問は1〜2文で簡潔に\n' +
         '- キャラクター設定の口調に従ってください\n' +
         '- タスクリストはまだ出力しないでください\n\n' +
@@ -693,7 +707,7 @@
         '【指示】あなたは目標設定のコーチです。\n' +
         '以下の会話を踏まえて、次のどちらかを行ってください：\n' +
         '- まだ情報が足りなければ、1つだけ追加の短い質問をしてください\n' +
-        '- 十分な情報があれば、4週間分の計画を提案してください\n' +
+        '- 十分な情報があれば、' + _monthName + '末までの計画を提案してください\n' +
         weeklyPlanRule +
         '- キャラクター設定の口調に従ってください\n\n' +
         '【会話履歴】\n' + historyText;
@@ -701,7 +715,7 @@
 
     // 最終回: 強制タスク提案
     return charHeader +
-      '【指示】以下の会話を踏まえて、4週間分の行動計画を提案してください。\n' +
+      '【指示】以下の会話を踏まえて、' + _monthName + '末までの行動計画を提案してください。\n' +
       weeklyPlanRule + '\n' +
       '【会話履歴】\n' + historyText;
   }
@@ -729,25 +743,34 @@
     return tasks.slice(0, 8);
   }
 
-  // ========== 4週間計画パーサー ==========
+  // ========== 月間計画パーサー ==========
   function parseWeeklyPlan(text) {
-    // 戻り値: { 1: ['task1', 'task2'], 2: ['task3'], 3: [...], 4: [...] }
+    // 戻り値: { 1: ['task1', 'task2'], 2: ['task3'], ... }
+    // 「第N週」「N週目」「前半」「後半」「今月中」に対応
     var result = {};
-    var currentWeek = 0;
+    var currentPhase = 0;
     var lines = text.split('\n');
+    var phaseMap = { '前半': 1, '後半': 2, '今月中': 1 };
 
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i].trim();
 
-      // 週ヘッダー検出: 【1週目】, [1週目], 1週目:, 第1週, Week 1 など
+      // フェーズヘッダー検出: 【第1週】, 【1週目】, 【前半】, 【後半】, 【今月中】
       var weekMatch = line.match(/[【\[]*\s*第?\s*(\d)\s*週目?\s*[】\]:]*/);
       if (weekMatch) {
-        currentWeek = parseInt(weekMatch[1]);
-        if (!result[currentWeek]) result[currentWeek] = [];
+        currentPhase = parseInt(weekMatch[1]);
+        if (!result[currentPhase]) result[currentPhase] = [];
+        continue;
+      }
+      // 前半/後半/今月中
+      var phaseMatch = line.match(/[【\[]*\s*(前半|後半|今月中)\s*[】\]:]*/);
+      if (phaseMatch) {
+        currentPhase = phaseMap[phaseMatch[1]] || 1;
+        if (!result[currentPhase]) result[currentPhase] = [];
         continue;
       }
 
-      if (currentWeek === 0) continue;
+      if (currentPhase === 0) continue;
 
       // 番号付き・箇条書きリストをタスクとして認識
       var isNumbered = /^[\d①②③④⑤⑥⑦⑧⑨⑩]+[\.\)）]/.test(line);
@@ -759,7 +782,7 @@
         .replace(/^[-・●▪▸]\s*/, '')
         .trim();
       if (cleaned.length > 2 && cleaned.length < 100) {
-        result[currentWeek].push(cleaned);
+        result[currentPhase].push(cleaned);
       }
     }
     return result;
@@ -843,7 +866,7 @@
     }
   }
 
-  // ========== 4週間計画 選択UI表示 ==========
+  // ========== 月間計画 選択UI表示 ==========
   function showWeeklyPlanSelection(weeklyPlan) {
     var tasksEl = document.getElementById('gaiTasks');
     var inputArea = document.getElementById('gaiInputArea');
@@ -851,24 +874,38 @@
     if (inputArea) inputArea.style.display = 'none';
 
     var canContinue = _state.turnCount < _state.maxTurns;
-    var weekLabels = { 1: '1週目（今週）', 2: '2週目', 3: '3週目', 4: '4週目' };
+
+    // フェーズ数に応じたラベルを動的生成
+    var phaseKeys = Object.keys(weeklyPlan).map(Number).sort(function(a,b){return a-b;});
+    var phaseCount = phaseKeys.length;
+    var phaseLabels = {};
+    if (phaseCount <= 1) {
+      phaseLabels[phaseKeys[0] || 1] = '今月中';
+    } else if (phaseCount === 2) {
+      phaseLabels[phaseKeys[0]] = '前半';
+      phaseLabels[phaseKeys[1]] = '後半';
+    } else {
+      phaseKeys.forEach(function(k, i) { phaseLabels[k] = '第' + (i+1) + '週'; });
+    }
+
     var html = '';
-
-    for (var week = 1; week <= 4; week++) {
-      var tasks = weeklyPlan[week];
-      if (!tasks || tasks.length === 0) continue;
-
-      html += '<div class="gai-week-header">📅 ' + weekLabels[week] + '</div>';
+    phaseKeys.forEach(function(phase) {
+      var tasks = weeklyPlan[phase];
+      if (!tasks || tasks.length === 0) return;
+      html += '<div class="gai-week-header">📅 ' + (phaseLabels[phase] || ('第' + phase + '週')) + '</div>';
       tasks.forEach(function(task, i) {
         html += '<label class="gai-task-item">' +
-          '<input type="checkbox" checked data-week="' + week + '" data-task-index="' + i + '" />' +
+          '<input type="checkbox" checked data-week="' + phase + '" data-task-index="' + i + '" />' +
           '<span class="gai-task-text">' + escapeHTML(task) + '</span>' +
           '</label>';
       });
-    }
+    });
 
     tasksEl.innerHTML = html;
     tasksEl.style.display = 'block';
+
+    var now = new Date();
+    var monthName = (now.getMonth() + 1) + '月';
 
     var sheet = tasksEl.closest('.gai-sheet');
     if (sheet) {
@@ -880,7 +917,7 @@
       var actionsDiv = document.createElement('div');
       actionsDiv.className = 'gai-task-actions';
       actionsDiv.innerHTML =
-        '<button class="gai-add-btn" onclick="window._gaiAddTasks()">✅ 4週間の計画を追加</button>' +
+        '<button class="gai-add-btn" onclick="window._gaiAddTasks()">✅ ' + monthName + 'の計画を追加</button>' +
         '<button class="gai-cancel-btn" onclick="window._closeGoalAIChat()">キャンセル</button>';
       sheet.appendChild(actionsDiv);
 
