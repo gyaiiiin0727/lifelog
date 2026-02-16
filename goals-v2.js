@@ -236,6 +236,9 @@
     var goalsTab = document.getElementById('goals');
     if (!goalsTab) return;
 
+    // 二重呼び出し防止
+    if (document.getElementById('goalsV2Container')) return;
+
     var monthSelector = goalsTab.querySelector('.goals-month-selector');
 
     // 既存のgoals-section, goals-list-section, goals-progress-sectionを非表示
@@ -243,6 +246,10 @@
     for (var i = 0; i < oldSections.length; i++) {
       oldSections[i].style.display = 'none';
     }
+
+    // 旧 goalStatus 要素を削除して ID 重複を防ぐ
+    var oldGoalStatus = document.getElementById('goalStatus');
+    if (oldGoalStatus) oldGoalStatus.remove();
 
     var container = document.createElement('div');
     container.id = 'goalsV2Container';
@@ -298,7 +305,7 @@
     var cats = {};
     current.forEach(function(g) { cats[g.category] = (cats[g.category]||0) + 1; });
     var catTags = Object.keys(cats).map(function(c) {
-      return '<span class="gv2-summary-cat">' + catEmoji(c) + ' ' + c + ' ' + cats[c] + '</span>';
+      return '<span class="gv2-summary-cat">' + catEmoji(c) + ' ' + esc(c) + ' ' + cats[c] + '</span>';
     }).join('');
 
     el.innerHTML = '<div class="gv2-summary">' +
@@ -375,7 +382,7 @@
       var tasks = (goal.weeklyTasks || []).filter(function(t) {
         return t.date && isDateInRange(t.date, range.start, range.end);
       });
-      hasAnyTask = true;
+      if (tasks.length > 0) hasAnyTask = true;
       var emoji = catEmoji(goal.category);
 
       html += '<div class="task-group">';

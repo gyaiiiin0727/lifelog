@@ -623,14 +623,7 @@ select.text-input{
             margin-top: 5px;
         }
         
-        /* AIフィードバック */
-        .ai-feedback-container {
-            margin: 20px 0;
-            padding: 25px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 12px;
-            border: 2px solid #000;
-        }
+        /* [REMOVED] .ai-feedback-container — goals-v2.js で不使用 */
         
         .ai-feedback-title {
             font-size: 1.5em;
@@ -1019,150 +1012,7 @@ select.text-input{
     font-size: 0.85em;
     color: #666;
 }
-/* 目標機能のスタイル */
-.goals-section {
-    background: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-.goals-list-section {
-    margin: 20px 0;
-}
-
-.goal-item {
-    background: white;
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 8px;
-    border: 2px solid #e0e0e0;
-    transition: all 0.2s;
-}
-
-.goal-item:hover {
-    border-color: #4CAF50;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.goal-item.completed {
-    opacity: 0.7;
-    background: #f0f8f0;
-}
-
-.goal-item.completed .goal-text {
-    text-decoration: line-through;
-    color: #999;
-}
-
-.goal-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.goal-checkbox {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-}
-
-.goal-text {
-    flex: 1;
-    font-size: 1.05em;
-    font-weight: 500;
-}
-
-.goal-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.goal-category {
-    padding: 4px 10px;
-    background: #f0f0f0;
-    border-radius: 4px;
-    font-size: 0.9em;
-}
-
-.goals-progress-section {
-    background: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    margin: 20px 0;
-}
-
-.progress-summary {
-    margin-bottom: 20px;
-}
-
-.progress-bar-container {
-    width: 100%;
-    height: 30px;
-    background: #e0e0e0;
-    border-radius: 15px;
-    overflow: hidden;
-    margin-bottom: 10px;
-}
-
-.progress-bar {
-    height: 100%;
-    background: linear-gradient(90deg, #4CAF50, #8BC34A);
-    transition: width 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-}
-
-.progress-text {
-    text-align: center;
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #4CAF50;
-}
-
-.category-progress h4 {
-    margin-bottom: 15px;
-    color: #333;
-}
-
-.category-stat {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    margin: 5px 0;
-    background: white;
-    border-radius: 4px;
-    border-left: 4px solid #4CAF50;
-}
-
-.goals-feedback-section {
-    margin: 20px 0;
-}
-
-.goals-feedback-section h3 {
-    margin-bottom: 15px;
-}
-
-.feedback-content {
-    line-height: 1.8;
-}
-
-.feedback-content p {
-    margin: 15px 0;
-}
-
-.feedback-content ul {
-    padding-left: 20px;
-}
-
-.feedback-content li {
-    margin: 8px 0;
-}
+/* [REMOVED] 旧目標CSS (.goal-item, .goals-section等 全144行) — goals-v2.js の gv2-* に移行済み */
 
 .empty-state {
     text-align: center;
@@ -2330,7 +2180,7 @@ button, .btn-primary, .action-btn, .save-btn{
 }
 
 /* Cards / sections */
-.today-tasks-section, .section, .card, .goals-input-section, .goals-list-section, .goals-progress-section, .goals-feedback-section{
+.today-tasks-section, .section, .card{
   background:#fff !important;
   border:2px solid #111 !important;
   border-radius:12px !important;
@@ -2347,16 +2197,7 @@ input, select, textarea{
 }
 input::placeholder, textarea::placeholder{ color:#888 !important; }
 
-/* Goal progress bars: force monochrome */
-.progress-bar-fill, .progress-fill{
-  background:#111 !important;
-}
-.goal-item{
-  border:2px solid #ddd !important;
-  border-radius:12px !important;
-  background:#fff !important;
-}
-.goal-item.completed{ opacity:.75 !important; }
+/* [REMOVED] .progress-bar-fill, .goal-item overrides — goals-v2.js で不使用 */
 
 
 /* ===== Journal v2 (fixed fields) ===== */
@@ -2388,67 +2229,7 @@ input::placeholder, textarea::placeholder{ color:#888 !important; }
 }
 
 
-/* ===== FIX: progress bar fill (v36.4) ===== */
-.progress-bar-fill{
-  height: 100%;
-  width: 0%;
-  background: #111;
-  border-radius: 15px;
-  display: block;
-  transition: width 0.25s ease;
-}
-
-
-/* ===== Enhancement: 10% tick marks on progress bar (v36.5) ===== */
-.progress-bar-container{
-  position: relative;
-  overflow: hidden;
-}
-/* tick overlay */
-.progress-bar-container::after{
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    repeating-linear-gradient(
-      to right,
-      rgba(0,0,0,0.22) 0px,
-      rgba(0,0,0,0.22) 1px,
-      rgba(0,0,0,0) 1px,
-      rgba(0,0,0,0) 10%
-    );
-  mix-blend-mode: multiply;
-}
-
-
-/* ===== Enhancement: fill ends square at tick boundary (v36.6) ===== */
-.progress-bar-container{
-  overflow: hidden; /* 角丸は外枠だけに適用 */
-}
-.progress-bar-fill{
-  border-radius: 999px 0 0 999px; /* 左だけ丸く、右端は角にする */
-}
-
-
-/* ===== Enhancement: block (10 segments) filled gauge (v36.7) ===== */
-.progress-bar-container{
-  border-radius: 999px;
-  overflow: hidden;
-}
-/* Fill uses block pattern aligned to 10% segments */
-.progress-bar-fill{
-  height: 100%;
-  background:
-    repeating-linear-gradient(
-      to right,
-      #111 0%,
-      #111 9%,
-      transparent 9%,
-      transparent 10%
-    );
-  border-radius: 999px 0 0 999px; /* left rounded, right squared */
-}
+/* [REMOVED] progress-bar v36.4〜v36.7 — goals-v2.js で不使用 */
 
 
 /* ===== Enhancement: MUST/WANT visual differentiation (v36.8) ===== */
@@ -2476,15 +2257,7 @@ input::placeholder, textarea::placeholder{ color:#888 !important; }
   border:2px dashed #111 !important;
 }
 
-/* (optional) if you later add progress bars for MUST/WANT, these helpers are ready */
-.progress-bar-fill.must{
-  background:
-    repeating-linear-gradient(to right,#111 0%,#111 9%,transparent 9%,transparent 10%);
-}
-.progress-bar-fill.want{
-  background:
-    repeating-linear-gradient(45deg,#111 0,#111 6px, transparent 6px, transparent 12px);
-}
+/* [REMOVED] .progress-bar-fill.must/.want — 未使用 */
 
 
 /* ===== AI Summary Cards UI (v36.9) ===== */
@@ -3706,141 +3479,7 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 }
 
 
-/* ===== v40.18 目標タブ: 太い黒枠を緩和（goalsのみ） ===== */
-
-/* 目標タブ配下のセクション枠を細く＆影なし */
-#goals .goals-list-section,
-#goals .goals-section,
-#goals .goals-progress-section,
-#goals .goals-feedback-section {
-  border: 1px solid #e6e6e6 !important;
-  box-shadow: none !important;
-  background: #fff !important;
-  border-radius: 12px !important;
-  padding: 16px !important;
-  margin-bottom: 16px !important;
-}
-
-/* 個別の目標カード（黒太枠を解除） */
-#goals .goal-item {
-  border: 1px solid #e0e0e0 !important;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06) !important;
-  background: #fff !important;
-  border-radius: 12px !important;
-}
-
-/* ホバー時も黒くしない */
-#goals .goal-item:hover {
-  border-color: #cfcfcf !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
-}
-
-/* 左アクセントの無効化 */
-#goals .goal-item::before {
-  display: none !important;
-}
-
-/* 進捗バー外枠 */
-#goals .progress-bar-container {
-  border: none !important;
-  background: #e5e5e5 !important;
-}
-
-/* 月切替ナビ */
-#goals .simple-month-selector,
-#goals .goals-month-selector,
-#goals .month-selector-section {
-  border: 1px solid #e6e6e6 !important;
-  box-shadow: none !important;
-  background: #fff !important;
-}
-
-/* 月切替ボタン */
-#goals .simple-nav-btn,
-#goals .month-nav-button {
-  border: 1px solid #ddd !important;
-  background: #fff !important;
-  color: #111 !important;
-}
-
-/* AIフィードバック枠 */
-#goals .ai-feedback-container,
-#goals .ai-feedback-box {
-  border: 1px solid #e6e6e6 !important;
-  background: #f5f7fa !important;
-  box-shadow: none !important;
-}
-
-
-/* ===== v40.18 Goals Tab: 角丸を完全に四角へ（#goals スコープ） ===== */
-
-/* 目標タブ配下のセクション外枠 */
-#goals .goals-list-section,
-#goals .goals-section,
-#goals .goals-progress-section,
-#goals .goals-feedback-section {
-  border-radius: 0 !important;
-}
-
-/* 目標カード */
-#goals .goal-item,
-#goals .goal-card {
-  border-radius: 0 !important;
-}
-
-/* 進捗バー（外枠・中身・旧クラス対策） */
-#goals .progress-bar-container,
-#goals .progress-bar,
-#goals .progress-bar-fill,
-#goals .progress-fill {
-  border-radius: 0 !important;
-}
-
-/* カテゴリバッジ */
-#goals .goal-category,
-#goals .category-badge {
-  border-radius: 0 !important;
-}
-
-/* 月切替 UI（両デザイン対応） */
-#goals .simple-month-selector,
-#goals .month-selector-section,
-#goals .simple-nav-btn,
-#goals .month-nav-button,
-#goals button[onclick*="changeGoalsMonth"] {
-  border-radius: 0 !important;
-}
-
-/* レベル選択・入力欄 */
-#goals select,
-#goals input,
-#goals textarea,
-#goals .progress-level-select,
-#goals .progress-comment-input {
-  border-radius: 0 !important;
-}
-
-/* 目標タブ内の全ボタン */
-#goals button,
-#goals .btn-primary,
-#goals .btn-secondary,
-#goals .add-button,
-#goals .goal-add-button {
-  border-radius: 0 !important;
-}
-
-/* 達成状況（進捗サマリ） */
-#goals #goalsProgress,
-#goals .progress-summary {
-  border-radius: 0 !important;
-}
-
-/* AIフィードバック */
-#goals .ai-feedback-container,
-#goals .ai-feedback-box,
-#goals #goalsFeedback {
-  border-radius: 0 !important;
-}
+/* [REMOVED] v40.18 目標タブCSS全体 (旧 .goal-item, .progress-bar等) — goals-v2.js の gv2-* に移行済み */
 
 
 
@@ -7029,9 +6668,10 @@ function analyzJournal(text) {
         // ステータス表示
         function showStatus(elementId, message) {
             const statusEl = document.getElementById(elementId);
+            if (!statusEl) return;
             statusEl.textContent = message;
             setTimeout(() => {
-                statusEl.textContent = '';
+                if (statusEl) statusEl.textContent = '';
             }, 3000);
         }
         
@@ -17492,137 +17132,7 @@ const modal = $('qrModal');
 
 
 <style>
-/* ===== v40.9 目標カードを“プロジェクトカード”風に ===== */
-/* ねらい: 目標名を主役に / カテゴリはバッジ化 / カードの情報設計を整理 */
-
-/* 目標リスト全体の余白 */
-#goals .goals-list-section{
-  margin-top: 14px !important;
-}
-
-/* 1件のカード */
-#goals .goal-item{
-  position: relative !important;
-  padding: 16px 16px 14px 16px !important;
-  margin: 12px 0 !important;
-  border-radius: 14px !important;
-  border: 2px solid #111 !important;
-  background: #fff !important;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08) !important;
-  overflow: hidden !important;
-}
-
-/* 左側のアクセントバー */
-#goals .goal-item::before{
-  content: "" !important;
-  position: absolute !important;
-  left: 0 !important;
-  top: 0 !important;
-  bottom: 0 !important;
-  width: 6px !important;
-  background: #111 !important;
-  opacity: 0.12 !important;
-}
-
-/* hover（PC） */
-#goals .goal-item:hover{
-  transform: translateY(-1px) !important;
-  box-shadow: 0 10px 26px rgba(0,0,0,0.10) !important;
-}
-
-/* 完了カード */
-#goals .goal-item.completed{
-  opacity: 0.85 !important;
-  background: #fbfbfb !important;
-}
-#goals .goal-item.completed::before{
-  opacity: 0.06 !important;
-}
-
-/* ヘッダー: タイトルとカテゴリ */
-#goals .goal-header{
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  margin-bottom: 12px !important;
-  flex-wrap: wrap !important; /* 長い目標名でも崩れにくく */
-}
-
-/* チェックボックスを少し大きく */
-#goals .goal-checkbox{
-  width: 22px !important;
-  height: 22px !important;
-  flex: 0 0 auto !important;
-}
-
-/* 目標名（=主役） */
-#goals .goal-text{
-  flex: 1 1 auto !important;
-  min-width: 160px !important;
-  font-size: 17px !important;
-  font-weight: 900 !important;
-  line-height: 1.25 !important;
-  color: #111 !important;
-  letter-spacing: 0.2px !important;
-}
-
-/* 完了時の目標名 */
-#goals .goal-item.completed .goal-text{
-  text-decoration: line-through !important;
-  color: #777 !important;
-}
-
-/* カテゴリ（=控えめバッジ） */
-#goals .goal-category,
-#goals .category-badge{
-  margin-left: auto !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 6px 10px !important;
-  border-radius: 999px !important;
-  border: 2px solid rgba(17,17,17,0.12) !important;
-  background: #f6f6f6 !important;
-  font-size: 12px !important;
-  font-weight: 800 !important;
-  color: #333 !important;
-  white-space: nowrap !important;
-}
-
-/* 進捗表示（Lv/％）を見出しっぽく */
-#goals .goal-progress,
-#goals .goal-level,
-#goals .goal-level-display{
-  font-weight: 900 !important;
-}
-
-/* カード内の操作群を整列（存在する場合に効く） */
-#goals .goal-actions,
-#goals .goal-controls,
-#goals .goal-buttons{
-  display: flex !important;
-  gap: 10px !important;
-  align-items: center !important;
-  flex-wrap: wrap !important;
-  margin-top: 10px !important;
-}
-
-/* スマホ最適化 */
-@media (max-width: 480px){
-  #goals .goal-item{
-    padding: 14px 14px 12px 14px !important;
-    border-radius: 12px !important;
-  }
-  #goals .goal-text{
-    font-size: 16px !important;
-    min-width: 140px !important;
-  }
-  #goals .goal-category,
-  #goals .category-badge{
-    padding: 5px 9px !important;
-    font-size: 11px !important;
-  }
-}
+/* [REMOVED] v40.9 旧目標プロジェクトカードCSS — goals-v2.js の gv2-* に移行済み */
 
 @media (max-width: 480px){
   .money-category-buttons{
@@ -17813,7 +17323,6 @@ const modal = $('qrModal');
 
 /* 1) 枠線（border）を削除 */
 .log-item,
-.goal-item,
 .category-summary,
 .journal-log-item,
 .stat-card,
@@ -17849,7 +17358,6 @@ input, select, textarea {
 
 /* 2) 角丸を四角に（モーダルと一部ボタンは少し残す） */
 .log-item,
-.goal-item,
 .card,
 .dashboard-card,
 .dashboard-journal,
@@ -17863,8 +17371,6 @@ input, select, textarea {
 .text-input,
 input, select, textarea,
 .calendar-day,
-.progress-bar-container,
-.progress-bar-fill,
 .simple-calendar,
 .simple-summary,
 .simple-chart,
@@ -17884,8 +17390,7 @@ input, select, textarea,
   border-radius: 4px !important;
 }
 
-.category-badge,
-.goal-category {
+.category-badge {
   border-radius: 2px !important;
 }
 
@@ -17913,12 +17418,7 @@ input, select, textarea,
 #journal .journal-simple.card { background: #fff !important; }
 #journal .journal-log { background: #f9fafb !important; }
 
-/* 目標 */
-#goals .goals-section { background: #f8f9fa !important; }
-#goals .goals-list-section { background: #fafafa !important; padding: 16px !important; }
-#goals .goals-progress-section { background: #f5f7fa !important; }
-#goals .goal-item { background: #fff !important; }
-#goals .goal-item:nth-child(odd) { background: #fdfdfd !important; }
+/* [REMOVED] 旧目標背景色 — goals-v2.js で不使用 */
 
 /* レポート */
 #reportActivity .simple-summary { background: #f8f9fa !important; }
@@ -17943,7 +17443,6 @@ input, select, textarea,
 
 /* 枠線の代わりに薄い影 */
 .log-item,
-.goal-item,
 .dashboard-card,
 .recent-item {
   box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
@@ -17951,7 +17450,6 @@ input, select, textarea,
 
 /* hover時は背景色で強調 */
 .log-item:hover { background: #f5f5f5 !important; }
-.goal-item:hover { background: #f8f8f8 !important; }
 .dashboard-card:hover { background: #f5f5f5 !important; }
 
 /* タブナビの背景フェードが白固定だと濁るので、ベース背景に合わせる */
@@ -17973,78 +17471,12 @@ input, select, textarea,
 
 <style>
 /* ===== v40.14 Fix: 角丸をさらに徹底して四角へ ===== */
+/* [REMOVED] 旧目標カード・進捗バー・カテゴリバッジ等の角丸ルール — goals-v2.js で不使用 */
 
-/* 月切替ナビ（目標） */
-.goals-month-nav,
-.goals-month-nav button,
-#goals .month-nav,
-#goals .month-nav button,
-#goals .simple-nav,
-#goals .simple-nav button,
-.simple-nav-btn {
-  border-radius: 0 !important;
-}
-
-/* 「＋ 新しい目標を追加」 */
-.add-goal-btn,
-.add-goal-card,
-.add-goal,
-#goals .add-goal,
-#goals .add-button {
-  border-radius: 0 !important;
-}
-
-/* 目標カード全体 */
-.goal-item,
-.goal-card,
-.goal-project-card,
-#goals .goal-item,
-#goals .goal-card,
-#goals .card {
-  border-radius: 0 !important;
-}
-
-/* 進捗バー外枠・中身 */
-.progress-bar-container,
-.progress-bar-fill,
-#goals .progress-bar-container,
-#goals .progress-bar-fill,
-.progress-bar,
-.progress-fill {
-  border-radius: 0 !important;
-}
-
-/* カテゴリバッジ */
-.goal-category,
-.category-badge,
-#goals .goal-category,
-#goals .category-badge {
-  border-radius: 0 !important;
-}
-
-/* Lvセレクト・入力欄・ボタン（目標カード内） */
-#goals select,
-#goals input,
-#goals button,
-.goal-item select,
-.goal-item input,
-.goal-item button {
-  border-radius: 0 !important;
-}
-
-/* 完了切替・削除ボタン（クラス揺れ対策） */
+/* 完了切替・削除ボタン */
 .complete-toggle,
 .delete-btn,
-.btn-icon,
-.goal-item .complete-toggle,
-.goal-item .delete-btn {
-  border-radius: 0 !important;
-}
-
-/* 進捗履歴トグル */
-.goal-history-toggle,
-#goals .goal-history-toggle,
-#goals .history-toggle {
+.btn-icon {
   border-radius: 0 !important;
 }
 
@@ -18089,8 +17521,6 @@ input, select, textarea,
 }
 
 /* 影もシャープに（枠線が無いデザインと相性良く） */
-.goal-item,
-.goal-card,
 .dashboard-card,
 .recent-item,
 .log-item {

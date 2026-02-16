@@ -765,20 +765,15 @@
     return result;
   }
 
-  // ========== 日付オフセット計算（週単位） ==========
-  function getDateOffset(baseDate, weekOffset) {
-    // baseDate: "YYYY-MM-DD" or Date, weekOffset: 週数
-    var d = (typeof baseDate === 'string') ? new Date(baseDate + 'T00:00:00') : new Date(baseDate);
-    d.setDate(d.getDate() + weekOffset * 7);
-    return _toDateStr(d);
-  }
-
+  // ========== 日付ユーティリティ ==========
   function _toDateStr(d) {
     return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
   }
 
   // 月の残り日数でタスクを均等分散する日付配列を生成
   function distributeDates(taskCount, weekOffset) {
+    if (taskCount <= 0) return [];
+
     var today = new Date();
     today.setHours(0,0,0,0);
 
