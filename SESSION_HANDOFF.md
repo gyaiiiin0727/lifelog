@@ -70,6 +70,23 @@ index.html 内の古い3ブロックは全て削除済み（コメントのみ�
 | `getTodayTaskStats()` | 今日のタスク達成度（ダッシュボード用） |
 | `getWeeklyTaskStats()` | 今週のタスク達成度（後方互換） |
 
+### カレンダー連動（完了済み）
+- カレンダータブにタスク情報を表示
+- タスクがある日に青い左ボーダー + `done/total` 数字表示
+- 全完了時は緑色表示
+- 日クリック → モーダルにタスク一覧（チェックボックス付き）
+- モーダルから完了トグル・タスク追加が可能
+- `getTasksForDate(dateStr)` — 指定日のタスク一覧
+- `getTaskDatesForMonth(yearMonth)` — 月全体のタスク有無マップ
+- `_gv2AddTaskDirect(dateStr, taskText)` — カレンダーから直接タスク追加
+
+### FABドラッグ移動（完了済み）
+- FAB（+ボタン）をドラッグで自由に移動可能
+- 位置は `localStorage('fabPosition')` に保存・復元
+- ドラッグ閾値 8px でタップとドラッグを判別
+- `touch-action: none` で意図しないスクロール防止
+- 編集モード中はFABを非表示（タップ干渉防止）
+
 ### goal-ai-breakdown.js の変更点
 - `getWeekKeyOffset` → 削除
 - `distributeDates(taskCount, weekOffset)` 追加 — 月の残り日数でタスクを均等分散
@@ -104,14 +121,24 @@ index.html 内の古い3ブロックは全て削除済み（コメントのみ�
 - 他モジュールと混在していたルールから goal セレクタだけ外科的に除去
 - v36.8 journal MUST/WANT CSS は保持
 
-### E. その他
+### E. カレンダー × タスク連動（全4ステップ完了）
+1. goals-v2.js にカレンダー用ヘルパー3関数追加（`getTasksForDate`, `getTaskDatesForMonth`, `_gv2AddTaskDirect`）
+2. index.html にカレンダー用CSS追加（`.has-tasks`, `.calendar-day-tasks`, `.all-done`）
+3. `renderCalendar()` 修正 — 日セルにタスク数表示（青ボーダー＋done/total）
+4. `showCalendarDetailModal()` 修正 — タスク一覧・完了トグル・追加ボタン
+
+### F. タスクボタンのタップ改善（3段階）
+1. タスク関連CSS定義追加（`.task-item`, `.task-checkbox` 等、min 44x44px タップターゲット）
+2. 編集モード中にFABを非表示（z-index干渉防止）
+3. FABドラッグ移動機能追加（位置をlocalStorageに保存）
+
+### G. その他
 - 空 `<script>` タグ修正（L13831、元から存在していた問題）
 - 未使用関数 `getDateOffset` 削除（goal-ai-breakdown.js）
 
 ## 未解決・今後の課題
 
 ### 最優先（次回セッション）
-- **カレンダー連動**: カレンダーUIにタスクを表示、カレンダーからタスク追加/管理
 - **カテゴリと目標の連動**: 行動カテゴリと目標をリンク
 
 ### 優先度中
@@ -139,6 +166,7 @@ index.html 内の古い3ブロックは全て削除済み（コメントのみ�
 | `aiConsultTone` | AI相談のキャラクター選択（独立） |
 | `lastActiveTab` | 最後に開いたタブ |
 | `isPremium` | 有料会員フラグ |
+| `fabPosition` | FABボタンの位置 `{x, y}` |
 
 ## 技術的な注意点
 - `index.html`は約20000行, 1.7MBあり全体を一度に読めない。Grep/行番号指定で必要箇所を読むこと

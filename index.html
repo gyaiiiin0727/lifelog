@@ -17768,6 +17768,9 @@ if ("serviceWorker" in navigator) {
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: none; /* ドラッグ移動用 */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .fab-main:hover { background: #333; }
@@ -17891,8 +17894,80 @@ if ("serviceWorker" in navigator) {
     fabOverlay.classList.remove('open');
   }
 
+  // ========== ドラッグ移動 ==========
+  var fabContainer = document.getElementById('fabContainer');
+  var isDragging = false;
+  var dragStartX = 0, dragStartY = 0;
+  var fabStartX = 0, fabStartY = 0;
+  var hasMoved = false;
+  var DRAG_THRESHOLD = 8; // px — これ以上動いたらドラッグ扱い
+
+  // 保存位置を復元
+  try {
+    var savedPos = JSON.parse(localStorage.getItem('fabPosition'));
+    if (savedPos && typeof savedPos.right === 'number' && typeof savedPos.bottom === 'number') {
+      fabContainer.style.right = savedPos.right + 'px';
+      fabContainer.style.bottom = savedPos.bottom + 'px';
+    }
+  } catch(_) {}
+
+  function onDragStart(e) {
+    if (isOpen) return; // メニュー展開中はドラッグしない
+    var touch = e.touches ? e.touches[0] : e;
+    dragStartX = touch.clientX;
+    dragStartY = touch.clientY;
+    var rect = fabContainer.getBoundingClientRect();
+    fabStartX = window.innerWidth - rect.right + (rect.width / 2);
+    fabStartY = window.innerHeight - rect.bottom + (rect.height / 2);
+    isDragging = true;
+    hasMoved = false;
+  }
+
+  function onDragMove(e) {
+    if (!isDragging) return;
+    var touch = e.touches ? e.touches[0] : e;
+    var dx = touch.clientX - dragStartX;
+    var dy = touch.clientY - dragStartY;
+
+    if (!hasMoved && Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD) return;
+    hasMoved = true;
+    e.preventDefault();
+
+    var newRight = Math.max(0, Math.min(window.innerWidth - 60, fabStartX - dx));
+    var newBottom = Math.max(0, Math.min(window.innerHeight - 60, fabStartY + dy));
+    fabContainer.style.right = newRight + 'px';
+    fabContainer.style.bottom = newBottom + 'px';
+    fabContainer.style.transition = 'none';
+  }
+
+  function onDragEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    fabContainer.style.transition = '';
+
+    if (hasMoved) {
+      // 位置を保存
+      try {
+        localStorage.setItem('fabPosition', JSON.stringify({
+          right: parseInt(fabContainer.style.right) || 12,
+          bottom: parseInt(fabContainer.style.bottom) || 24
+        }));
+      } catch(_) {}
+    }
+  }
+
+  fabMain.addEventListener('touchstart', onDragStart, { passive: true });
+  document.addEventListener('touchmove', onDragMove, { passive: false });
+  document.addEventListener('touchend', onDragEnd);
+  // マウス対応
+  fabMain.addEventListener('mousedown', onDragStart);
+  document.addEventListener('mousemove', onDragMove);
+  document.addEventListener('mouseup', onDragEnd);
+
+  // ========== クリック / タップ ==========
   fabMain.addEventListener('click', function(e) {
     e.stopPropagation();
+    if (hasMoved) { hasMoved = false; return; } // ドラッグ後のclickは無視
     toggleFab();
   });
   fabOverlay.addEventListener('click', closeFab);
@@ -17921,7 +17996,7 @@ if ("serviceWorker" in navigator) {
     if (e.key === 'Escape') closeFab();
   });
 
-  console.log('✅ FAB (Floating Action Button) 初期化完了');
+  console.log('✅ FAB (Floating Action Button) 初期化完了 — ドラッグ移動対応');
 })();
 </script>
 

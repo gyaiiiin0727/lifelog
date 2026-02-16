@@ -586,7 +586,31 @@ select.text-input{
             margin-top: 1px;
             line-height: 1;
         }
-        
+
+        /* カレンダー: タスク表示 */
+        .calendar-day.has-tasks {
+            border-left: 3px solid #2196F3;
+        }
+        .calendar-day.today.has-tasks {
+            border-left: 3px solid #fff;
+        }
+        .calendar-day-tasks {
+            font-size: 0.55em;
+            color: #2196F3;
+            font-weight: 600;
+            line-height: 1;
+            margin-top: 1px;
+        }
+        .calendar-day-tasks.all-done {
+            color: #16a34a;
+        }
+        .calendar-day.today .calendar-day-tasks {
+            color: rgba(255,255,255,0.8);
+        }
+        .calendar-day.today .calendar-day-tasks.all-done {
+            color: #90EE90;
+        }
+
         /* レポート */
         .chart-container {
             margin: 20px 0;
@@ -8843,6 +8867,12 @@ function drawMoneyChart(categoryData) {
             }
             
             const v3Entries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+
+            // タスク日付マップを取得（goals-v2.js 連動）
+            const yearMonth = year + '-' + String(month + 1).padStart(2, '0');
+            const taskDates = (typeof window.getTaskDatesForMonth === 'function')
+                ? window.getTaskDatesForMonth(yearMonth) : {};
+
             for (let date = 1; date <= lastDate; date++) {
                 const currentDate = new Date(year, month, date);
                 const dateStr = currentDate.toLocaleDateString('ja-JP');
@@ -8858,9 +8888,14 @@ function drawMoneyChart(categoryData) {
                     today.getMonth() === month &&
                     today.getDate() === date;
                 
+                // タスク情報
+                const taskInfo = taskDates[v3Key];
+                const hasTasks = !!(taskInfo && taskInfo.total > 0);
+
                 let className = 'calendar-day';
                 if (isToday) className += ' today';
                 if (hasJournal) className += ' has-journal';
+                if (hasTasks) className += ' has-tasks';
                 
                 // 気分絵文字を追加（日本語キー・英語キー両対応）
                 let moodEmoji = '';
@@ -8876,7 +8911,15 @@ function drawMoneyChart(categoryData) {
                     moodEmoji = '<div class="calendar-day-mood">✨</div>';
                 }
                 
-                html += `<div class="${className}" onclick="viewJournalByDate('${dateStr}')">${date}${moodEmoji}</div>`;
+                // タスク数表示
+                let taskIndicator = '';
+                if (hasTasks) {
+                    const allDone = taskInfo.done === taskInfo.total;
+                    taskIndicator = '<div class="calendar-day-tasks' + (allDone ? ' all-done' : '') + '">'
+                        + taskInfo.done + '/' + taskInfo.total + '</div>';
+                }
+
+                html += `<div class="${className}" onclick="viewJournalByDate('${dateStr}')">${date}${moodEmoji}${taskIndicator}</div>`;
             }
             
             document.getElementById('calendar').innerHTML = html;
@@ -8988,6 +9031,38 @@ function drawMoneyChart(categoryData) {
                 ).join('')
               + '</div></div>';
 
+            // タスクセクション（goals-v2.js 連動）
+            let taskSectionHtml = '';
+            const tasksForDay = (typeof window.getTasksForDate === 'function')
+                ? window.getTasksForDate(v3Key) : [];
+            {
+                let taskListHtml = '';
+                if (tasksForDay.length > 0) {
+                    taskListHtml = tasksForDay.map(function(t) {
+                        const checked = t.done ? ' checked' : '';
+                        const strike = t.done ? 'text-decoration:line-through;color:#999;' : '';
+                        const goalLabel = t.goalText ? '<span style="font-size:10px;color:#999;display:block;">' + escH(t.goalText) + '</span>' : '';
+                        return '<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid #f0f0f0;">'
+                          + '<input type="checkbox"' + checked + ' data-goal-id="' + t.goalId + '" data-task-id="' + t.taskId + '" class="calTaskCb" style="width:18px;height:18px;min-width:18px;margin-top:2px;accent-color:#2196F3;cursor:pointer;">'
+                          + '<div style="flex:1;min-width:0;">'
+                          + '<div style="font-size:14px;' + strike + '">' + escH(t.text) + '</div>'
+                          + goalLabel
+                          + '</div></div>';
+                    }).join('');
+                } else {
+                    taskListHtml = '<div style="text-align:center;color:#bbb;font-size:13px;padding:10px 0;">タスクなし</div>';
+                }
+                const doneCount = tasksForDay.filter(function(t){ return t.done; }).length;
+                const countLabel = tasksForDay.length > 0 ? ' (' + doneCount + '/' + tasksForDay.length + ')' : '';
+                taskSectionHtml = '<div style="margin-bottom:16px;border-top:1px solid #eee;padding-top:14px;">'
+                  + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
+                  + '<div style="font-size:13px;color:#666;font-weight:600;">📋 この日のタスク' + countLabel + '</div>'
+                  + '<button id="calModalAddTaskBtn" style="background:#f0f0f0;border:none;border-radius:8px;padding:4px 12px;font-size:12px;font-weight:600;color:#555;cursor:pointer;">＋ 追加</button>'
+                  + '</div>'
+                  + '<div id="calModalTaskList">' + taskListHtml + '</div>'
+                  + '</div>';
+            }
+
             const modal = document.createElement('div');
             modal.id = 'calendarDetailModal';
             modal.style.cssText = 'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);';
@@ -8995,6 +9070,7 @@ function drawMoneyChart(categoryData) {
               + '<button id="calModalCloseBtn" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:22px;cursor:pointer;color:#999;line-height:1;">✕</button>'
               + '<div style="font-size:18px;font-weight:800;margin-bottom:16px;">📅 ' + escH(dateStr) + '</div>'
               + moodPickerHtml
+              + taskSectionHtml
               + content
               + '</div>';
 
@@ -9030,6 +9106,38 @@ function drawMoneyChart(categoryData) {
             document.getElementById('calModalCloseBtn').addEventListener('click', () => modal.remove());
             // 背景クリックで閉じる
             modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+
+            // タスクチェックボックスのトグル
+            modal.querySelectorAll('.calTaskCb').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const goalId = Number(this.getAttribute('data-goal-id'));
+                    const taskId = Number(this.getAttribute('data-task-id'));
+                    if (typeof window._gv2ToggleWT === 'function') {
+                        window._gv2ToggleWT(goalId, taskId);
+                    }
+                    // モーダルを再表示
+                    modal.remove();
+                    renderCalendar();
+                    viewJournalByDate(dateStr);
+                });
+            });
+
+            // タスク追加ボタン
+            const addTaskBtn = document.getElementById('calModalAddTaskBtn');
+            if (addTaskBtn) {
+                addTaskBtn.addEventListener('click', () => {
+                    const name = prompt('タスク名を入力');
+                    if (!name || !name.trim()) return;
+                    if (typeof window._gv2AddTaskDirect === 'function') {
+                        const ok = window._gv2AddTaskDirect(v3Key, name.trim());
+                        if (!ok) { alert('この月の目標がありません。先に目標タブで目標を追加してください。'); return; }
+                    }
+                    modal.remove();
+                    renderCalendar();
+                    if (typeof window.renderGoals === 'function') window.renderGoals();
+                    viewJournalByDate(dateStr);
+                });
+            }
 
             // ジャーナルへ移動ボタン
             const goBtn = document.getElementById('calModalGoBtn');
@@ -17660,6 +17768,9 @@ if ("serviceWorker" in navigator) {
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: none; /* ドラッグ移動用 */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .fab-main:hover { background: #333; }
@@ -17783,8 +17894,80 @@ if ("serviceWorker" in navigator) {
     fabOverlay.classList.remove('open');
   }
 
+  // ========== ドラッグ移動 ==========
+  var fabContainer = document.getElementById('fabContainer');
+  var isDragging = false;
+  var dragStartX = 0, dragStartY = 0;
+  var fabStartX = 0, fabStartY = 0;
+  var hasMoved = false;
+  var DRAG_THRESHOLD = 8; // px — これ以上動いたらドラッグ扱い
+
+  // 保存位置を復元
+  try {
+    var savedPos = JSON.parse(localStorage.getItem('fabPosition'));
+    if (savedPos && typeof savedPos.right === 'number' && typeof savedPos.bottom === 'number') {
+      fabContainer.style.right = savedPos.right + 'px';
+      fabContainer.style.bottom = savedPos.bottom + 'px';
+    }
+  } catch(_) {}
+
+  function onDragStart(e) {
+    if (isOpen) return; // メニュー展開中はドラッグしない
+    var touch = e.touches ? e.touches[0] : e;
+    dragStartX = touch.clientX;
+    dragStartY = touch.clientY;
+    var rect = fabContainer.getBoundingClientRect();
+    fabStartX = window.innerWidth - rect.right + (rect.width / 2);
+    fabStartY = window.innerHeight - rect.bottom + (rect.height / 2);
+    isDragging = true;
+    hasMoved = false;
+  }
+
+  function onDragMove(e) {
+    if (!isDragging) return;
+    var touch = e.touches ? e.touches[0] : e;
+    var dx = touch.clientX - dragStartX;
+    var dy = touch.clientY - dragStartY;
+
+    if (!hasMoved && Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD) return;
+    hasMoved = true;
+    e.preventDefault();
+
+    var newRight = Math.max(0, Math.min(window.innerWidth - 60, fabStartX - dx));
+    var newBottom = Math.max(0, Math.min(window.innerHeight - 60, fabStartY + dy));
+    fabContainer.style.right = newRight + 'px';
+    fabContainer.style.bottom = newBottom + 'px';
+    fabContainer.style.transition = 'none';
+  }
+
+  function onDragEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    fabContainer.style.transition = '';
+
+    if (hasMoved) {
+      // 位置を保存
+      try {
+        localStorage.setItem('fabPosition', JSON.stringify({
+          right: parseInt(fabContainer.style.right) || 12,
+          bottom: parseInt(fabContainer.style.bottom) || 24
+        }));
+      } catch(_) {}
+    }
+  }
+
+  fabMain.addEventListener('touchstart', onDragStart, { passive: true });
+  document.addEventListener('touchmove', onDragMove, { passive: false });
+  document.addEventListener('touchend', onDragEnd);
+  // マウス対応
+  fabMain.addEventListener('mousedown', onDragStart);
+  document.addEventListener('mousemove', onDragMove);
+  document.addEventListener('mouseup', onDragEnd);
+
+  // ========== クリック / タップ ==========
   fabMain.addEventListener('click', function(e) {
     e.stopPropagation();
+    if (hasMoved) { hasMoved = false; return; } // ドラッグ後のclickは無視
     toggleFab();
   });
   fabOverlay.addEventListener('click', closeFab);
@@ -17813,7 +17996,7 @@ if ("serviceWorker" in navigator) {
     if (e.key === 'Escape') closeFab();
   });
 
-  console.log('✅ FAB (Floating Action Button) 初期化完了');
+  console.log('✅ FAB (Floating Action Button) 初期化完了 — ドラッグ移動対応');
 })();
 </script>
 
