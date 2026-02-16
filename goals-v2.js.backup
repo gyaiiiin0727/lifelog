@@ -448,10 +448,8 @@
           // 未完了タスクにアクションボタンを表示
           var actionBtns = '';
           if (!task.done) {
-            // 今日以外 → 「今日へ」ボタン
-            if (task.date !== today) {
-              actionBtns += '<button type="button" class="task-action-btn task-copy-btn" onclick="window._gv2CopyToToday(' + goal.id + ',' + task.id + ')" title="今日にコピー">今日</button>';
-            }
+            // 「今日のMUSTへ」ボタン（全タスクに表示）
+            actionBtns += '<button type="button" class="task-action-btn task-copy-btn" onclick="window._gv2CopyToToday(' + goal.id + ',' + task.id + ')" title="今日のMUSTに追加">MUST</button>';
             // 翌週へ持ち越し
             actionBtns += '<button type="button" class="task-action-btn task-carry-btn" onclick="window._gv2CarryToNextWeek(' + goal.id + ',' + task.id + ')" title="翌週へ持ち越し">翌週</button>';
           }
@@ -606,7 +604,7 @@
     addWeeklyTask(active[0].id, dateStr);
   }
 
-  // ===== 今日にコピー（目標タスク → 今日の weeklyTask + ホームMUSTに追加） =====
+  // ===== 今日のMUSTに追加（ホーム画面の今日のタスクへコピー） =====
   function copyToToday(goalId, taskId) {
     var goals = getGoals();
     var g = goals.find(function(x) { return x && x.id === goalId; });
@@ -614,15 +612,11 @@
     var task = g.weeklyTasks.find(function(x) { return x.id === taskId; });
     if (!task) return;
 
-    var today = todayStr();
+    // 確認ポップアップ
+    if (!confirm('「' + task.text + '」を\n今日のMUSTに追加しますか？')) return;
 
-    // 1. 目標の weeklyTasks に今日の日付でコピー
-    var newTask = { id: Date.now(), text: task.text, date: today, done: false };
-    g.weeklyTasks.push(newTask);
-    saveGoals(goals);
-
-    // 2. ホーム画面の「今日のタスク」MUSTにも追加
-    //    （昨日のジャーナル summary.must に書き込む）
+    // ホーム画面の「今日のタスク」MUSTに追加
+    // （昨日のジャーナル summary.must に書き込む）
     try {
       var yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
@@ -638,11 +632,20 @@
       entries[yKey] = entry;
       localStorage.setItem('journalEntriesV3', JSON.stringify(entries));
 
+      // 新タスクのチェック状態をリセット（インデックスずれ防止）
+      var now = new Date();
+      var todayKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+      var checkKey = 'taskChecks_' + todayKey;
+      var checks = JSON.parse(localStorage.getItem(checkKey) || '{}');
+      // 新しく追加されるMUSTタスクのIDをfalseに設定
+      var newIdx = mustTasks.length - 1;
+      checks['homeMustTask' + newIdx] = false;
+      localStorage.setItem(checkKey, JSON.stringify(checks));
+
       // ホーム画面を再描画
       if (typeof window.renderHomeTodayTasks === 'function') window.renderHomeTodayTasks();
     } catch(e) {}
 
-    renderAll();
     if (typeof window.showStatus === 'function') window.showStatus('goalStatus', '✓ 今日のMUSTに追加しました');
   }
 
@@ -659,6 +662,9 @@
     var nextWeekDate = new Date(origDate);
     nextWeekDate.setDate(nextWeekDate.getDate() + 7);
     var newDateStr = toDateStr(nextWeekDate);
+
+    var td = new Date(newDateStr + 'T00:00:00');
+    if (!confirm('「' + task.text + '」を\n' + (td.getMonth()+1) + '/' + td.getDate() + 'へ移動しますか？')) return;
 
     // 元タスクを未完了のまま移動（コピーではなく移動）
     task.date = newDateStr;
