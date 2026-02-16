@@ -82,8 +82,10 @@
     '.task-item { display:flex; align-items:center; gap:8px; padding:10px 4px; border-bottom:1px solid #f0f0f0; min-height:44px; }',
     '.task-checkbox { width:22px; height:22px; min-width:22px; cursor:pointer; accent-color:#2196F3; }',
     '.task-label { flex:1; min-width:0; font-size:14px; line-height:1.4; color:#333; word-break:break-word; }',
-    '.task-edit-btn { background:none; border:none; font-size:18px; cursor:pointer; padding:8px; min-width:40px; min-height:40px; display:flex; align-items:center; justify-content:center; opacity:0.4; transition:opacity .2s; }',
-    '.task-edit-btn:hover, .task-edit-btn:active { opacity:1; }',
+    '.task-edit-btn, .task-action-btn { background:none; border:none; font-size:18px; cursor:pointer; padding:8px; min-width:36px; min-height:36px; display:flex; align-items:center; justify-content:center; opacity:0.4; transition:opacity .2s; }',
+    '.task-edit-btn:hover, .task-edit-btn:active, .task-action-btn:hover, .task-action-btn:active { opacity:1; }',
+    '.task-action-btn { font-size:14px; }',
+    '.task-actions { display:flex; gap:0; flex-shrink:0; align-items:center; }',
 
     /* タスク追加ボタン */
     '.task-add-btn {',
@@ -439,11 +441,23 @@
             dateLabel = '<span style="font-size:10px;color:#999;margin-left:4px;">' +
               (td.getMonth()+1) + '/' + td.getDate() + '(' + DOW_NAMES[td.getDay()] + ')' + '</span>';
           }
+          // 今日以外の日のタスクに「今日へコピー」ボタンを表示
+          var copyBtn = (task.date !== today && !task.done)
+            ? '<button type="button" class="task-action-btn" onclick="window._gv2CopyToToday(' + goal.id + ',' + task.id + ')" title="今日にコピー">📅</button>'
+            : '';
+          // 未完了タスクに「翌週へ持ち越し」ボタンを表示
+          var carryBtn = (!task.done)
+            ? '<button type="button" class="task-action-btn" onclick="window._gv2CarryToNextWeek(' + goal.id + ',' + task.id + ')" title="翌週へ持ち越し">➡️</button>'
+            : '';
+
           html += '<div class="task-item" id="wt_' + goal.id + '_' + task.id + '">' +
             '<input type="checkbox" class="task-checkbox"' + checked +
             ' onchange="window._gv2ToggleWT(' + goal.id + ',' + task.id + ')" />' +
             '<label class="task-label"' + strike + '>' + esc(task.text) + dateLabel + '</label>' +
-            '<button type="button" class="task-edit-btn" onclick="window._gv2EditWT(' + goal.id + ',' + task.id + ')" title="編集">✏️</button>' +
+            '<div class="task-actions">' +
+              copyBtn + carryBtn +
+              '<button type="button" class="task-edit-btn" onclick="window._gv2EditWT(' + goal.id + ',' + task.id + ')" title="編集">✏️</button>' +
+            '</div>' +
           '</div>';
         });
       }
@@ -584,6 +598,59 @@
     var active = goals.filter(function(g) { return g && g.month === month && !g.completed; });
     if (active.length === 0) return;
     addWeeklyTask(active[0].id, dateStr);
+  }
+
+  // ===== 今日にコピー =====
+  function copyToToday(goalId, taskId) {
+    var goals = getGoals();
+    var g = goals.find(function(x) { return x && x.id === goalId; });
+    if (!g || !g.weeklyTasks) return;
+    var task = g.weeklyTasks.find(function(x) { return x.id === taskId; });
+    if (!task) return;
+
+    var today = todayStr();
+    // 既に今日に同じテキストのタスクがある場合はスキップ
+    var alreadyExists = g.weeklyTasks.some(function(t) {
+      return t.date === today && t.text === task.text;
+    });
+    if (alreadyExists) {
+      alert('このタスクは今日に既にあります');
+      return;
+    }
+
+    var newTask = { id: Date.now(), text: task.text, date: today, done: false };
+    g.weeklyTasks.push(newTask);
+    saveGoals(goals);
+    renderAll();
+  }
+
+  // ===== 翌週に持ち越し =====
+  function carryToNextWeek(goalId, taskId) {
+    var goals = getGoals();
+    var g = goals.find(function(x) { return x && x.id === goalId; });
+    if (!g || !g.weeklyTasks) return;
+    var task = g.weeklyTasks.find(function(x) { return x.id === taskId; });
+    if (!task) return;
+
+    // 元タスクの日付から翌週の同じ曜日を計算
+    var origDate = new Date(task.date + 'T00:00:00');
+    var nextWeekDate = new Date(origDate);
+    nextWeekDate.setDate(nextWeekDate.getDate() + 7);
+    var newDateStr = toDateStr(nextWeekDate);
+
+    // 既に翌週に同じテキストのタスクがある場合はスキップ
+    var alreadyExists = g.weeklyTasks.some(function(t) {
+      return t.date === newDateStr && t.text === task.text;
+    });
+    if (alreadyExists) {
+      alert('翌週の同じ日に既にこのタスクがあります');
+      return;
+    }
+
+    // 元タスクを未完了のまま移動（コピーではなく移動）
+    task.date = newDateStr;
+    saveGoals(goals);
+    renderAll();
   }
 
   function toggleWeeklyTask(goalId, taskId) {
@@ -729,6 +796,8 @@
   window._gv2AddWTForDate = addWeeklyTaskForDate;
   window._gv2ToggleWT = toggleWeeklyTask;
   window._gv2EditWT = editWeeklyTask;
+  window._gv2CopyToToday = copyToToday;
+  window._gv2CarryToNextWeek = carryToNextWeek;
   window._gv2ChangeWeek = changeViewingWeek;
   window._gv2GoToCurrentWeek = goToCurrentWeek;
 

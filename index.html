@@ -12219,7 +12219,7 @@ try{
           var endpoint = BACKEND_URL + '/api/analyze';
           var characterPrompt = (typeof getCharacterPrompt === 'function') ? getCharacterPrompt(tone) : '';
           var journalDataContext = (typeof buildContextSummary === 'function') ? buildContextSummary('other') : '';
-          var dataInterpretRule = '※データ解釈ルール：行動ログは記録した事実です。通勤・移動・残業などはルーティンや義務であり、褒めるのは不自然です。運動・自炊・勉強・趣味など自発的な行動のみ前向きに評価してください。データが少ない場合は無理にデータに言及せず、ジャーナル内容に集中してください。\n';
+          var dataInterpretRule = '※データ解釈ルール：行動ログは記録した事実です。通勤・移動・残業などはルーティンや義務であり、褒めるのは不自然です。運動・自炊・勉強・趣味など自発的な行動のみ前向きに評価してください。データが少ない場合は無理にデータに言及せず、ジャーナル内容に集中してください。\n※目標と実績のギャップ：「目標と実績のギャップ」データがある場合、超過や未達成を具体的な数字で指摘してください。例: 食費目標3万円→実績3.2万円なら「食費が目標を2千円超えてる」等。行動目標に対し記録が少ない場合も「今週まだ1回しかやってない」等と言及してください。\n';
           var textWithCharacter = characterPrompt
             ? '【指示】以下のキャラクターになりきって、この口調で全文を書いてください。\n' + dataInterpretRule + characterPrompt + '\n' + journalDataContext + '【ユーザーのジャーナル】\n' + text
             : dataInterpretRule + journalDataContext + text;
@@ -12552,7 +12552,7 @@ try{
         const characterPrompt = (typeof getCharacterPrompt === 'function') ? getCharacterPrompt(tone) : '';
         // 過去データコンテキストを生成
         const journalDataContext = (typeof buildContextSummary === 'function') ? buildContextSummary('other') : '';
-        const dataInterpretRule = '※データ解釈ルール：行動ログは記録した事実です。通勤・移動・残業などはルーティンや義務であり、褒めるのは不自然です。運動・自炊・勉強・趣味など自発的な行動のみ前向きに評価してください。データが少ない場合は無理にデータに言及せず、ジャーナル内容に集中してください。\n';
+        const dataInterpretRule = '※データ解釈ルール：行動ログは記録した事実です。通勤・移動・残業などはルーティンや義務であり、褒めるのは不自然です。運動・自炊・勉強・趣味など自発的な行動のみ前向きに評価してください。データが少ない場合は無理にデータに言及せず、ジャーナル内容に集中してください。\n※目標と実績のギャップ：「目標と実績のギャップ」データがある場合、超過や未達成を具体的な数字で指摘してください。例: 食費目標3万円→実績3.2万円なら「食費が目標を2千円超えてる」等。行動目標に対し記録が少ない場合も「今週まだ1回しかやってない」等と言及してください。\n';
         // キャラクター口調指示をテキストに直接前置（バックエンドがcharacterPromptを無視する場合の保険）
         const textWithCharacter = characterPrompt
           ? `【指示】以下のキャラクターになりきって、この口調で全文を書いてください。\n${dataInterpretRule}${characterPrompt}\n${journalDataContext}【ユーザーのジャーナル】\n${text}`
@@ -19418,6 +19418,124 @@ function summarizeWeight() {
   return line;
 }
 
+// ===== 目標 vs 実績クロスリファレンス =====
+function summarizeGoalVsReality() {
+  var goals;
+  try { goals = JSON.parse(localStorage.getItem('monthlyGoals') || '[]'); } catch(e) { return ''; }
+  if (!Array.isArray(goals) || goals.length === 0) return '';
+
+  var records;
+  try { records = JSON.parse(localStorage.getItem('moneyRecords') || '[]'); } catch(e) { records = []; }
+
+  var activities;
+  try { activities = JSON.parse(localStorage.getItem('activities') || '[]'); } catch(e) { activities = []; }
+
+  var now = new Date();
+  var monthKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+  var weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  // 今月のアクティブ目標
+  var current = goals.filter(function(g) { return g && g.month === monthKey && !g.completed; });
+  if (current.length === 0) return '';
+
+  // 今月の支出をカテゴリ別に集計
+  var expByCat = {};
+  if (Array.isArray(records)) {
+    records.forEach(function(r) {
+      if (!r || !r.timestamp) return;
+      if (new Date(r.timestamp) < monthStart) return;
+      var amt = Number(r.amount || 0);
+      if (amt < 0 || r.type === 'expense') {
+        var cat = (r.category || '').trim();
+        if (cat) expByCat[cat] = (expByCat[cat] || 0) + Math.abs(amt);
+      }
+    });
+  }
+
+  // 直近7日の行動をカテゴリ別に集計
+  var actByCat = {};
+  if (Array.isArray(activities)) {
+    activities.forEach(function(a) {
+      if (!a) return;
+      if (new Date(a.startTime || a.timestamp) < weekAgo) return;
+      var cat = (a.category || '').trim();
+      if (cat) {
+        if (!actByCat[cat]) actByCat[cat] = { count: 0, minutes: 0 };
+        actByCat[cat].count++;
+        actByCat[cat].minutes += (a.durationMinutes || 0);
+      }
+    });
+  }
+
+  // お金関連キーワード → 支出カテゴリのマッピング
+  var moneyKeywords = {
+    '食費': ['食費', '食事', '外食', 'ランチ', 'ごはん'],
+    '日用品': ['日用品'],
+    '衣服': ['衣服', '服', 'ファッション'],
+    '交通費': ['交通費', '交通', '電車'],
+    '娯楽': ['娯楽', '遊び', 'エンタメ']
+  };
+  // 行動関連キーワード → 行動カテゴリのマッピング
+  var actKeywords = {
+    '運動': ['運動', '筋トレ', 'ジム', 'ランニング', 'トレーニング', 'ウォーキング'],
+    '勉強': ['勉強', '学習', '読書', '資格', 'スキル'],
+    '仕事': ['仕事', '残業', '業務'],
+    '睡眠': ['睡眠', '早寝', '起床']
+  };
+
+  var lines = [];
+
+  current.forEach(function(g) {
+    var text = (g.text || '').toLowerCase();
+    var insights = [];
+
+    // お金の目標チェック
+    Object.keys(moneyKeywords).forEach(function(expCat) {
+      var keywords = moneyKeywords[expCat];
+      var matched = keywords.some(function(kw) { return text.indexOf(kw) !== -1; });
+      if (matched && expByCat[expCat]) {
+        // 目標テキストから金額を抽出（例: "3万" "30000" "3万円"）
+        var amtMatch = g.text.match(/(\d+)万/);
+        var targetAmt = amtMatch ? parseInt(amtMatch[1]) * 10000 : null;
+        var actual = expByCat[expCat];
+        if (targetAmt && actual > targetAmt) {
+          insights.push(expCat + '目標¥' + targetAmt.toLocaleString() + ' → 実績¥' + actual.toLocaleString() + '（⚠️超過）');
+        } else if (targetAmt) {
+          var pct = Math.round((actual / targetAmt) * 100);
+          insights.push(expCat + '目標¥' + targetAmt.toLocaleString() + ' → 実績¥' + actual.toLocaleString() + '（' + pct + '%消化）');
+        } else {
+          insights.push(expCat + '今月: ¥' + actual.toLocaleString());
+        }
+      }
+    });
+
+    // 行動の目標チェック
+    Object.keys(actKeywords).forEach(function(actCat) {
+      var keywords = actKeywords[actCat];
+      var matched = keywords.some(function(kw) { return text.indexOf(kw) !== -1; });
+      if (matched) {
+        var data = actByCat[actCat];
+        if (data) {
+          var h = Math.floor(data.minutes / 60);
+          var m = data.minutes % 60;
+          insights.push(actCat + '今週: ' + data.count + '回 ' + h + 'h' + m + 'm');
+        } else {
+          insights.push(actCat + '今週: 記録なし ⚠️');
+        }
+      }
+    });
+
+    if (insights.length > 0) {
+      lines.push('  ⬜ ' + g.text);
+      insights.forEach(function(ins) { lines.push('    → ' + ins); });
+    }
+  });
+
+  if (lines.length === 0) return '';
+  return '[目標と実績のギャップ]\n' + lines.join('\n');
+}
+
 function buildContextSummary(topic, opts) {
   opts = opts || {};
   var parts = [];
@@ -19430,9 +19548,15 @@ function buildContextSummary(topic, opts) {
     var monS = summarizeMoney();
     if (monS) parts.push(monS);
   }
-  if (topic === 'goals' || topic === 'other') {
+  // 目標は全トピックで含める（お金や行動の相談でも目標を踏まえたアドバイスが有用）
+  if (topic === 'goals' || topic === 'other' || topic === 'money' || topic === 'activity') {
     var goalS = summarizeGoals(opts.goalCategory);
     if (goalS) parts.push(goalS);
+  }
+  // 目標と実績のクロスリファレンス（全トピックで追加）
+  if (topic === 'other' || topic === 'goals' || topic === 'money' || topic === 'activity') {
+    var gapS = summarizeGoalVsReality();
+    if (gapS) parts.push(gapS);
   }
   if (topic === 'other') {
     var jourS = summarizeJournal();
@@ -19477,7 +19601,8 @@ async function sendAIConsult() {
 
     var noAnalysisRule = '※重要ルール：\n' +
       '1. 絶対に【よかったこと】【改善したいこと】【気づいたこと】【もやっとしたこと】【明日のMUST】などのジャーナル分析フォーマットは使わないでください。普通の会話として、相談に対する回答だけを返してください。箇条書きや見出しのフォーマットも不要です。友達に相談されたときのように自然に回答してください。\n' +
-      '2. 過去データの解釈ルール：行動ログは「ユーザーが記録した事実」であり、すべてが良いこととは限りません。例えば通勤・移動・残業などはルーティンや義務であり「頑張っている」と褒めるのは不自然です。運動・自炊・勉強・趣味など自発的な行動のみ前向きに評価してください。データが少ない場合は無理にデータに言及せず、相談内容に集中して回答してください。\n\n';
+      '2. 過去データの解釈ルール：行動ログは「ユーザーが記録した事実」であり、すべてが良いこととは限りません。例えば通勤・移動・残業などはルーティンや義務であり「頑張っている」と褒めるのは不自然です。運動・自炊・勉強・趣味など自発的な行動のみ前向きに評価してください。データが少ない場合は無理にデータに言及せず、相談内容に集中して回答してください。\n' +
+      '3. 目標と実績のギャップ：「目標と実績のギャップ」データがある場合、超過や未達成があれば具体的な数字で指摘してアドバイスしてください。\n\n';
 
     var textWithChar = charPrompt
       ? noAnalysisRule + '【指示】以下のキャラクターになりきって、この口調で全文を書いてください。相談に対して200文字程度で簡潔に回答してください。\n' + charPrompt + '\n' + topicContext + dataContext + '【ユーザーの相談】\n' + text
