@@ -66,18 +66,6 @@
     '  border-radius:6px; padding:2px 8px; cursor:pointer; margin-left:6px;',
     '}',
 
-    /* 日付ヘッダー */
-    '.gv2-day-header { display:flex; gap:2px; margin-bottom:8px; overflow-x:auto; }',
-    '.gv2-day-chip {',
-    '  flex:1; min-width:0; text-align:center; padding:6px 2px; border-radius:8px;',
-    '  font-size:11px; color:#666; cursor:pointer; transition:all .2s; background:#f5f5f5;',
-    '}',
-    '.gv2-day-chip.today { background:#2196F3; color:#fff; font-weight:700; }',
-    '.gv2-day-chip.has-tasks { font-weight:600; color:#333; }',
-    '.gv2-day-chip .gv2-day-num { font-size:15px; font-weight:700; display:block; line-height:1.2; }',
-    '.gv2-day-chip .gv2-day-dow { font-size:10px; display:block; }',
-    '.gv2-day-chip .gv2-day-count { font-size:9px; display:block; color:#2196F3; margin-top:1px; }',
-
     /* タスクアイテム */
     '.task-item { display:flex; align-items:center; gap:8px; padding:10px 4px; border-bottom:1px solid #f0f0f0; min-height:44px; }',
     '.task-checkbox { width:22px; height:22px; min-width:22px; cursor:pointer; accent-color:#2196F3; }',
@@ -403,20 +391,7 @@
       '<button class="gv2-week-nav-btn" onclick="window._gv2ChangeWeek(1)">次週 ▶</button>' +
     '</div>';
 
-    // 日付ヘッダー（曜日チップ）
-    html += '<div class="gv2-day-header">';
-    weekDates.forEach(function(d) {
-      var ds = toDateStr(d);
-      var isToday = (ds === today);
-      var count = tasksByDate[ds] || 0;
-      var cls = 'gv2-day-chip' + (isToday ? ' today' : '') + (count > 0 ? ' has-tasks' : '');
-      html += '<div class="' + cls + '" onclick="window._gv2AddWTForDate(\'' + ds + '\')">' +
-        '<span class="gv2-day-dow">' + DOW_NAMES[d.getDay()] + '</span>' +
-        '<span class="gv2-day-num">' + d.getDate() + '</span>' +
-        (count > 0 ? '<span class="gv2-day-count">' + count + '件</span>' : '') +
-      '</div>';
-    });
-    html += '</div>';
+    // 日付ヘッダーは非表示（週単位のフラットなリスト表示）
 
     html += '<div class="today-tasks-content">';
 
@@ -439,12 +414,7 @@
         tasks.forEach(function(task) {
           var checked = task.done ? ' checked' : '';
           var strike = task.done ? ' style="text-decoration:line-through;color:#999;"' : '';
-          var dateLabel = '';
-          if (task.date) {
-            var td = new Date(task.date + 'T00:00:00');
-            dateLabel = '<span style="font-size:10px;color:#999;margin-left:4px;">' +
-              (td.getMonth()+1) + '/' + td.getDate() + '(' + DOW_NAMES[td.getDay()] + ')' + '</span>';
-          }
+          var dateLabel = ''; // 日付ラベル非表示（週単位で管理）
           // 未完了タスクにアクションボタンを表示
           var actionBtns = '';
           if (!task.done) {

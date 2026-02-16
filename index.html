@@ -5368,6 +5368,10 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <div class="summary-item"><div class="summary-k">改善したいこと</div><div class="summary-v" id="todaySumLearnings">—</div></div>
 <div class="summary-item"><div class="summary-k">気づき・学び</div><div class="summary-v" id="todaySumFeelings">—</div></div>
 <div class="summary-item"><div class="summary-k">もやっとしていること</div><div class="summary-v" id="todaySumGratitude">—</div></div>
+<div id="todaySumTaskRecord" style="display:none;margin-bottom:8px;">
+<div class="summary-item"><div class="summary-k" style="background:#e8f5e9;color:#2e7d32;">完了タスク</div><div class="summary-v" id="todaySumTaskDone">—</div></div>
+<div class="summary-item"><div class="summary-k" style="background:#fff3e0;color:#e65100;">未完了タスク</div><div class="summary-v" id="todaySumTaskUndone">—</div></div>
+</div>
 <div class="summary-item"><div class="summary-k must">MUST</div><div class="summary-v" id="todaySumMust">—</div></div>
 <div class="summary-item"><div class="summary-k want">WANT</div><div class="summary-v" id="todaySumWant">—</div></div>
 </div>
@@ -6723,6 +6727,47 @@ function restoreTaskChecks() {
         if (el) el.checked = !!checks[id];
     });
 }
+
+// ホーム「今日のタスク」の達成状況を取得（ジャーナル保存時に記録用）
+function getHomeTodayTaskRecord() {
+    var today = (typeof localDateKey === 'function') ? localDateKey(new Date()) : new Date().toISOString().slice(0, 10);
+    var checksKey = 'taskChecks_' + today;
+    var checks = JSON.parse(localStorage.getItem(checksKey) || '{}');
+
+    // 昨日のジャーナルからMUST/WANTタスクを取得
+    var yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    var yesterdayStr = (typeof localDateKey === 'function') ? localDateKey(yesterday) : '';
+    var journalEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+    var yEntry = journalEntries[yesterdayStr];
+    if (!yEntry || !yEntry.summary) return null;
+
+    var parseTasks = function(text) {
+        if (!text || text === '—') return [];
+        return String(text).split(/[\n・]/).map(function(s){ return s.trim(); }).filter(function(s){ return s && s !== '—'; });
+    };
+
+    var mustTasks = parseTasks(yEntry.summary.must || '');
+    var wantTasks = parseTasks(yEntry.summary.want || '');
+    if (mustTasks.length === 0 && wantTasks.length === 0) return null;
+
+    var done = [];
+    var undone = [];
+
+    mustTasks.forEach(function(task, i) {
+        var id = 'homeMustTask' + i;
+        if (checks[id]) done.push('MUST: ' + task);
+        else undone.push('MUST: ' + task);
+    });
+    wantTasks.forEach(function(task, i) {
+        var id = 'homeWantTask' + i;
+        if (checks[id]) done.push('WANT: ' + task);
+        else undone.push('WANT: ' + task);
+    });
+
+    return { done: done, undone: undone };
+}
+window.getHomeTodayTaskRecord = getHomeTodayTaskRecord;
 
 // ホーム用：今日のタスクを表示（昨日の summary.must / summary.want）
 function renderHomeTodayTasks() {
@@ -11880,6 +11925,18 @@ try{
       set('todaySumGratitude', e.summary.gratitude);
       set('todaySumMust', e.summary.must);
       set('todaySumWant', e.summary.want);
+      // タスク達成状況を表示
+      const taskRecordEl = document.getElementById('todaySumTaskRecord');
+      if (taskRecordEl && e.summary.taskRecord) {
+        const tr = e.summary.taskRecord;
+        const doneText = (tr.done && tr.done.length > 0) ? tr.done.join('\n') : '—';
+        const undoneText = (tr.undone && tr.undone.length > 0) ? tr.undone.join('\n') : '—';
+        set('todaySumTaskDone', doneText);
+        set('todaySumTaskUndone', undoneText);
+        taskRecordEl.style.display = 'block';
+      } else if (taskRecordEl) {
+        taskRecordEl.style.display = 'none';
+      }
       // キャラクターヘッダー表示
       const charHeader = document.getElementById('todaySumCharHeader');
       const charImg = document.getElementById('todaySumCharImg');
@@ -12256,6 +12313,11 @@ try{
             if(feelMatch) entry.summary.feelings = feelMatch[1].trim();
             if(worryMatch) entry.summary.gratitude = worryMatch[1].trim();
             if(hitokotoMatch) entry.hitokoto = hitokotoMatch[1].trim();
+            // ホーム「今日のタスク」の達成状況を記録
+            if(typeof getHomeTodayTaskRecord === 'function') {
+              var taskRec = getHomeTodayTaskRecord();
+              if(taskRec) entry.summary.taskRecord = taskRec;
+            }
             entry.updatedAt = new Date().toISOString();
             allEntries[dateKey] = entry;
             localStorage.setItem('journalEntriesV3', JSON.stringify(allEntries));
@@ -12598,6 +12660,11 @@ try{
           if (feelMatch) entry.summary.feelings = feelMatch[1].trim();
           if (worryMatch) entry.summary.gratitude = worryMatch[1].trim();
           if (hitokotoMatch) entry.hitokoto = hitokotoMatch[1].trim();
+          // ホーム「今日のタスク」の達成状況を記録
+          if (typeof getHomeTodayTaskRecord === 'function') {
+            const taskRec = getHomeTodayTaskRecord();
+            if (taskRec) entry.summary.taskRecord = taskRec;
+          }
           entry.updatedAt = new Date().toISOString();
           allEntries[dateKey] = entry;
           localStorage.setItem('journalEntriesV3', JSON.stringify(allEntries));

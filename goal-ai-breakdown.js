@@ -519,14 +519,14 @@
 
       // タスク提案が含まれているかチェック（最低2回は会話してから提案を判定）
       if (_state.turnCount >= 2) {
-        // まず4週間計画パーサーを試す
+        // まずフェーズ別計画パーサーを試す
         var weeklyPlan = parseWeeklyPlan(responseText);
         var weeklyPlanTotal = Object.keys(weeklyPlan).reduce(function(sum, k) {
           return sum + weeklyPlan[k].length;
         }, 0);
 
         if (weeklyPlanTotal >= 3) {
-          // 4週間計画あり → チャットに表示 + 週別タスク選択UI
+          // フェーズ別計画あり → チャットに表示 + フェーズ別タスク選択UI
           addMessage('ai', responseText);
           showWeeklyPlanSelection(weeklyPlan);
         } else {
@@ -541,7 +541,7 @@
             if (_state.turnCount >= _state.maxTurns) {
               var inputArea = document.getElementById('gaiInputArea');
               if (inputArea) inputArea.style.display = 'none';
-              addMessage('ai', 'それでは、4週間の計画を提案しますね...');
+              addMessage('ai', 'それでは、' + (new Date().getMonth() + 1) + '月末までの計画を提案しますね...');
               await sendFinalProposal();
             }
           }
@@ -576,11 +576,27 @@
         return (m.role === 'user' ? 'ユーザー' : 'AI') + ': ' + m.text;
       }).join('\n');
 
-      var prompt = '【指示】以下の会話を踏まえて、4週間分の行動計画を提案してください。\n' +
+      // 月の残り日数に応じてフェーズを決定（buildPromptと同じロジック）
+      var _fnow = new Date();
+      var _fmonthEnd = new Date(_fnow.getFullYear(), _fnow.getMonth() + 1, 0);
+      var _fremainDays = Math.max(1, Math.floor((_fmonthEnd - _fnow) / 86400000) + 1);
+      var _fmonthName = (_fnow.getMonth() + 1) + '月';
+      var _fphaseLabels;
+      if (_fremainDays <= 7) {
+        _fphaseLabels = '【今月中】\n1. タスク';
+      } else if (_fremainDays <= 14) {
+        _fphaseLabels = '【前半】\n1. タスク\n【後半】\n1. タスク';
+      } else if (_fremainDays <= 21) {
+        _fphaseLabels = '【第1週】\n1. タスク\n【第2週】\n1. タスク\n【第3週】\n1. タスク';
+      } else {
+        _fphaseLabels = '【第1週】\n1. タスク\n【第2週】\n1. タスク\n【第3週】\n1. タスク\n【第4週】\n1. タスク';
+      }
+
+      var prompt = '【指示】以下の会話を踏まえて、' + _fmonthName + '末（残り' + _fremainDays + '日間）の行動計画を提案してください。\n' +
         '必ず以下のフォーマットで出力してください：\n' +
-        '【1週目】\n1. タスク\n【2週目】\n1. タスク\n【3週目】\n1. タスク\n【4週目】\n1. タスク\n' +
-        '- 各週2〜3個、全体で8〜12個\n' +
-        '- 1週目は取り組みやすく、後半はステップアップ\n' +
+        _fphaseLabels + '\n' +
+        '- 各フェーズ2〜3個、全体で6〜12個\n' +
+        '- 最初は取り組みやすく、後半はステップアップ\n' +
         '- 「週○回〜する」「毎日〜する」のような頻度付き行動\n' +
         '- 準備やTipsではなく行動そのもの\n\n' +
         '【会話履歴】\n' + historyText;
@@ -603,7 +619,7 @@
       if (responseText) {
         _state.chatHistory.push({ role: 'ai', text: responseText });
         addMessage('ai', responseText);
-        // まず4週間計画パーサーを試す
+        // まずフェーズ別計画パーサーを試す
         var weeklyPlan = parseWeeklyPlan(responseText);
         var planTotal = Object.keys(weeklyPlan).reduce(function(sum, k) {
           return sum + weeklyPlan[k].length;
@@ -1046,15 +1062,15 @@
     if (typeof window.renderGoalsAll === 'function') window.renderGoalsAll();
     else if (typeof window.renderGoals === 'function') window.renderGoals();
 
-    // 4週間計画かどうかで表示メッセージを変える
-    var hasMultiWeek = false;
-    checkboxes.forEach(function(cb) {
-      var w = cb.getAttribute('data-week');
-      if (w && parseInt(w) > 1) hasMultiWeek = true;
-    });
+    // 表示メッセージ
     if (typeof window.showStatus === 'function') {
-      var msg = hasMultiWeek
-        ? '✅ ' + added + '個のタスクを4週間の計画に追加しました'
+      var hasMultiPhase = false;
+      checkboxes.forEach(function(cb) {
+        var w = cb.getAttribute('data-week');
+        if (w && parseInt(w) > 1) hasMultiPhase = true;
+      });
+      var msg = hasMultiPhase
+        ? '✅ ' + added + '個のタスクを今月の計画に追加しました'
         : '✅ ' + added + '個のタスクを今週のやることに追加しました';
       window.showStatus('goalStatus', msg);
     }
