@@ -17830,11 +17830,12 @@ if ("serviceWorker" in navigator) {
 .journal-ai-inline{ position: relative; z-index: 5; }
 .journal-ai-big{ position: relative; z-index: 6; pointer-events: auto; }
 
-/* FABボタン: 角丸復元 + 幅統一 */
+/* FABボタン: 角丸復元 + 幅統一（AI相談基準） */
 #fabMenu .fab-sub {
   border-radius: 30px !important;
-  width: auto !important;
-  min-width: 0 !important;
+  width: 140px !important;
+  box-sizing: border-box !important;
+  justify-content: center !important;
 }
 
 </style>
