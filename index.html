@@ -12238,7 +12238,7 @@ try{
             if(raw.gratitude) lines.push('【もやっとしたこと】\n' + raw.gratitude);
             if(raw.must) lines.push('【明日のMUST】\n' + raw.must);
             if(raw.want) lines.push('【明日のWANT】\n' + raw.want);
-            if(raw.oneLiner) lines.push('【整える一言】\n' + raw.oneLiner);
+            if(raw.oneLiner) lines.push('【コメント】\n' + raw.oneLiner);
             out = lines.join('\n\n');
           }
 
@@ -12268,7 +12268,7 @@ try{
               var moreMatch = out.match(/【改善したいこと】\n([\s\S]*?)(?=【|$)/);
               var feelMatch = out.match(/【気づいたこと】\n([\s\S]*?)(?=【|$)/);
               var worryMatch = out.match(/【もやっと(?:した|している)こと】\n([\s\S]*?)(?=【|$)/);
-              var hitokotoMatch = out.match(/【整える一言】\n([\s\S]*?)(?=【|$)/);
+              var hitokotoMatch = out.match(/【(?:整える一言|コメント)】\n([\s\S]*?)(?=【|$)/);
               if(mustMatch) entry.summary.must = mustMatch[1].trim();
               if(wantMatch) entry.summary.want = wantMatch[1].trim();
               if(eventsMatch) entry.summary.events = eventsMatch[1].trim();
@@ -12603,7 +12603,7 @@ try{
           if (raw.gratitude) lines.push('【もやっとしたこと】\n' + raw.gratitude);
           if (raw.must) lines.push('【明日のMUST】\n' + raw.must);
           if (raw.want) lines.push('【明日のWANT】\n' + raw.want);
-          if (raw.oneLiner) lines.push('【整える一言】\n' + raw.oneLiner);
+          if (raw.oneLiner) lines.push('【コメント】\n' + raw.oneLiner);
           out = lines.join('\n\n');
         }
 
@@ -12640,7 +12640,7 @@ try{
             const moreMatch = out.match(/【改善したいこと】\n([\s\S]*?)(?=【|$)/);
             const feelMatch = out.match(/【気づいたこと】\n([\s\S]*?)(?=【|$)/);
             const worryMatch = out.match(/【もやっと(?:した|している)こと】\n([\s\S]*?)(?=【|$)/);
-            const hitokotoMatch = out.match(/【整える一言】\n([\s\S]*?)(?=【|$)/);
+            const hitokotoMatch = out.match(/【(?:整える一言|コメント)】\n([\s\S]*?)(?=【|$)/);
             if (mustMatch) entry.summary.must = mustMatch[1].trim();
             if (wantMatch) entry.summary.want = wantMatch[1].trim();
             if (eventsMatch) entry.summary.events = eventsMatch[1].trim();
