@@ -8852,10 +8852,34 @@ function drawMoneyChart(categoryData) {
             
             const v3Entries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
 
-            // タスク日付マップを取得（goals-v2.js 連動）
-            const yearMonth = year + '-' + String(month + 1).padStart(2, '0');
-            const taskDates = (typeof window.getTaskDatesForMonth === 'function')
-                ? window.getTaskDatesForMonth(yearMonth) : {};
+            // ホーム画面タスク（MUST/WANT）の日付マップを構築
+            // その日のタスク = 前日のジャーナルのsummary.must/want
+            const _parseHomeTasks = function(text) {
+                if (!text || text === '—') return [];
+                return String(text).split(/[\n・]/).map(function(s){ return s.trim(); }).filter(function(s){ return s && s !== '—'; });
+            };
+            const taskDates = {};
+            Object.keys(v3Entries).forEach(function(jKey) {
+                const jSum = v3Entries[jKey] && v3Entries[jKey].summary;
+                if (!jSum) return;
+                const mustTasks = _parseHomeTasks(jSum.must);
+                const wantTasks = _parseHomeTasks(jSum.want);
+                const total = mustTasks.length + wantTasks.length;
+                if (total === 0) return;
+                // このジャーナル(jKey)のMUST/WANTは翌日のホームタスク
+                const jDate = new Date(jKey + 'T00:00:00');
+                const nextDate = new Date(jDate);
+                nextDate.setDate(nextDate.getDate() + 1);
+                const nextKey = nextDate.getFullYear() + '-' + String(nextDate.getMonth()+1).padStart(2,'0') + '-' + String(nextDate.getDate()).padStart(2,'0');
+                // チェック状態を取得
+                const checksKey = 'taskChecks_' + nextKey;
+                let checks = {};
+                try { checks = JSON.parse(localStorage.getItem(checksKey) || '{}'); } catch(_){}
+                let done = 0;
+                mustTasks.forEach(function(_, i){ if (checks['homeMustTask' + i]) done++; });
+                wantTasks.forEach(function(_, i){ if (checks['homeWantTask' + i]) done++; });
+                taskDates[nextKey] = { total: total, done: done };
+            });
 
             for (let date = 1; date <= lastDate; date++) {
                 const currentDate = new Date(year, month, date);
@@ -9015,33 +9039,60 @@ function drawMoneyChart(categoryData) {
                 ).join('')
               + '</div></div>';
 
-            // タスクセクション（goals-v2.js 連動）
+            // タスクセクション（ホーム画面のMUST/WANTタスク）
+            // その日に表示されていたタスク = 前日のジャーナルのMUST/WANT
             let taskSectionHtml = '';
-            const tasksForDay = (typeof window.getTasksForDate === 'function')
-                ? window.getTasksForDate(v3Key) : [];
             {
+                // v3Key = "YYYY-MM-DD"（選択された日付）
+                // この日のホームタスク = 前日(v3Key-1)のジャーナルのsummary.must/want
+                const selDate = new Date(v3Key + 'T00:00:00');
+                const prevDate = new Date(selDate);
+                prevDate.setDate(prevDate.getDate() - 1);
+                const prevKey = prevDate.getFullYear() + '-' + String(prevDate.getMonth()+1).padStart(2,'0') + '-' + String(prevDate.getDate()).padStart(2,'0');
+                const allJournals = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+                const prevJournal = allJournals[prevKey];
+                const prevSum = (prevJournal && prevJournal.summary) ? prevJournal.summary : {};
+                const parseTasks = function(text) {
+                    if (!text || text === '—') return [];
+                    return String(text).split(/[\n・]/).map(function(s){ return s.trim(); }).filter(function(s){ return s && s !== '—'; });
+                };
+                const mustTasks = parseTasks(prevSum.must || '');
+                const wantTasks = parseTasks(prevSum.want || '');
+                const allTasks = [];
+                mustTasks.forEach(function(t){ allTasks.push({text:t, type:'MUST'}); });
+                wantTasks.forEach(function(t){ allTasks.push({text:t, type:'WANT'}); });
+
+                // チェック状態を復元（taskChecks_YYYY-MM-DD はその日の日付）
+                const checksKey = 'taskChecks_' + v3Key;
+                let checks = {};
+                try { checks = JSON.parse(localStorage.getItem(checksKey) || '{}'); } catch(_){}
+
                 let taskListHtml = '';
-                if (tasksForDay.length > 0) {
-                    taskListHtml = tasksForDay.map(function(t) {
-                        const checked = t.done ? ' checked' : '';
-                        const strike = t.done ? 'text-decoration:line-through;color:#999;' : '';
-                        const goalLabel = t.goalText ? '<span style="font-size:10px;color:#999;display:block;">' + escH(t.goalText) + '</span>' : '';
+                if (allTasks.length > 0) {
+                    let mustIdx = 0, wantIdx = 0;
+                    taskListHtml = allTasks.map(function(t) {
+                        const checkId = t.type === 'MUST' ? 'homeMustTask' + (mustIdx++) : 'homeWantTask' + (wantIdx++);
+                        const checked = checks[checkId] ? ' checked' : '';
+                        const strike = checks[checkId] ? 'text-decoration:line-through;color:#999;' : '';
+                        const typeBadge = t.type === 'MUST'
+                          ? '<span style="font-size:10px;color:#fff;background:#111;padding:1px 6px;border-radius:4px;margin-right:6px;">MUST</span>'
+                          : '<span style="font-size:10px;color:#111;background:#fff;border:1px dashed #111;padding:1px 6px;border-radius:4px;margin-right:6px;">WANT</span>';
                         return '<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid #f0f0f0;">'
-                          + '<input type="checkbox"' + checked + ' data-goal-id="' + t.goalId + '" data-task-id="' + t.taskId + '" class="calTaskCb" style="width:18px;height:18px;min-width:18px;margin-top:2px;accent-color:#2196F3;cursor:pointer;">'
+                          + '<input type="checkbox"' + checked + ' disabled style="width:18px;height:18px;min-width:18px;margin-top:2px;accent-color:#2196F3;">'
                           + '<div style="flex:1;min-width:0;">'
-                          + '<div style="font-size:14px;' + strike + '">' + escH(t.text) + '</div>'
-                          + goalLabel
+                          + '<div style="font-size:14px;' + strike + '">' + typeBadge + escH(t.text) + '</div>'
                           + '</div></div>';
                     }).join('');
                 } else {
-                    taskListHtml = '<div style="text-align:center;color:#bbb;font-size:13px;padding:10px 0;">タスクなし</div>';
+                    taskListHtml = '<div style="text-align:center;color:#bbb;font-size:13px;padding:10px 0;">この日のタスクはありません</div>';
                 }
-                const doneCount = tasksForDay.filter(function(t){ return t.done; }).length;
-                const countLabel = tasksForDay.length > 0 ? ' (' + doneCount + '/' + tasksForDay.length + ')' : '';
+                let doneCount = 0;
+                mustTasks.forEach(function(_, i){ if (checks['homeMustTask' + i]) doneCount++; });
+                wantTasks.forEach(function(_, i){ if (checks['homeWantTask' + i]) doneCount++; });
+                const countLabel = allTasks.length > 0 ? ' (' + doneCount + '/' + allTasks.length + ')' : '';
                 taskSectionHtml = '<div style="margin-bottom:16px;border-top:1px solid #eee;padding-top:14px;">'
                   + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
                   + '<div style="font-size:13px;color:#666;font-weight:600;">📋 この日のタスク' + countLabel + '</div>'
-                  + '<button id="calModalAddTaskBtn" style="background:#f0f0f0;border:none;border-radius:8px;padding:4px 12px;font-size:12px;font-weight:600;color:#555;cursor:pointer;">＋ 追加</button>'
                   + '</div>'
                   + '<div id="calModalTaskList">' + taskListHtml + '</div>'
                   + '</div>';
@@ -9091,37 +9142,7 @@ function drawMoneyChart(categoryData) {
             // 背景クリックで閉じる
             modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
 
-            // タスクチェックボックスのトグル
-            modal.querySelectorAll('.calTaskCb').forEach(cb => {
-                cb.addEventListener('change', function() {
-                    const goalId = Number(this.getAttribute('data-goal-id'));
-                    const taskId = Number(this.getAttribute('data-task-id'));
-                    if (typeof window._gv2ToggleWT === 'function') {
-                        window._gv2ToggleWT(goalId, taskId);
-                    }
-                    // モーダルを再表示
-                    modal.remove();
-                    renderCalendar();
-                    viewJournalByDate(dateStr);
-                });
-            });
-
-            // タスク追加ボタン
-            const addTaskBtn = document.getElementById('calModalAddTaskBtn');
-            if (addTaskBtn) {
-                addTaskBtn.addEventListener('click', () => {
-                    const name = prompt('タスク名を入力');
-                    if (!name || !name.trim()) return;
-                    if (typeof window._gv2AddTaskDirect === 'function') {
-                        const ok = window._gv2AddTaskDirect(v3Key, name.trim());
-                        if (!ok) { alert('この月の目標がありません。先に目標タブで目標を追加してください。'); return; }
-                    }
-                    modal.remove();
-                    renderCalendar();
-                    if (typeof window.renderGoals === 'function') window.renderGoals();
-                    viewJournalByDate(dateStr);
-                });
-            }
+            // タスクは閲覧専用（ホーム画面MUST/WANTの履歴表示）
 
             // ジャーナルへ移動ボタン
             const goBtn = document.getElementById('calModalGoBtn');
@@ -11854,7 +11875,7 @@ try{
     const e = entries()[d];
     const empty = document.getElementById('journalV3TodaySummaryEmpty');
     const body = document.getElementById('journalV3TodaySummaryBody');
-    const set = (id,val)=>{ const el=document.getElementById(id); if(el) el.textContent = val || '—'; };
+    const set = (id,val)=>{ const el=document.getElementById(id); if(el){ if(val){ const esc=String(val).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); el.innerHTML = esc.replace(/\n/g,'<br>'); }else{ el.textContent='—'; } } };
     if(e && e.summary){
       if(empty) empty.style.display='none';
       if(body) body.style.display='block';
@@ -11910,7 +11931,8 @@ try{
           hitokotoBox.style.background = '#f0f7ff';
           hitokotoLabel.style.color = charColorH;
           hitokotoLabel.textContent = '💬 ' + charNameH + ' の一言';
-          hitokotoText.textContent = e.hitokoto;
+          const hEsc = String(e.hitokoto).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+          hitokotoText.innerHTML = hEsc.replace(/\n/g,'<br>');
         } else {
           hitokotoBox.style.display = 'none';
         }
