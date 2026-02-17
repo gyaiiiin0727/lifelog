@@ -17788,8 +17788,6 @@ if ("serviceWorker" in navigator) {
   border: 2px solid #111;
   border-radius: 30px;
   padding: 12px 20px;
-  width: 170px !important;
-  box-sizing: border-box;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -17832,12 +17830,16 @@ if ("serviceWorker" in navigator) {
 .journal-ai-inline{ position: relative; z-index: 5; }
 .journal-ai-big{ position: relative; z-index: 6; pointer-events: auto; }
 
-/* FABボタン幅統一（最終上書き） */
+/* FABボタン: 角丸復元 + 幅統一 */
 #fabMenu .fab-sub {
-  width: 170px !important;
-  min-width: 170px !important;
-  box-sizing: border-box !important;
   border-radius: 30px !important;
+  width: auto !important;
+  min-width: 0 !important;
+}
+#fabMenu .fab-sub .fab-label {
+  display: inline-block !important;
+  min-width: 4.5em !important;
+  text-align: left !important;
 }
 
 </style>
