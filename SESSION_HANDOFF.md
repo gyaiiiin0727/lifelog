@@ -14,13 +14,43 @@
 | `goals-v2.js` | 目標ページUI（進捗カード、日付ベースタスク、目標リスト）**← 最終的にwindow関数を支配** |
 | `manifest.json` | PWA設定 |
 | `icon.jpg` | アプリアイコン |
+| `cloud-sync.js` | クラウド同期UI + 認証（`window.CloudSync`） |
 | `*.backup` | 各ファイルのバックアップ（最新状態） |
 
 ## バックエンドAPI
-- URL: `https://lifelog-ai.little-limit-621c.workers.dev/api/analyze`
-- Method: POST
-- Body: `{ text, tone, type:'consult'|'journal', characterPrompt }`
-- Cloudflare Workers
+- **Worker URL**: `https://lifelog-ai.little-limit-621c.workers.dev`
+- **Worker名**: `lifelog-ai`（wrangler.tomlの `name`）
+- **Worker ソース**: `/Users/shuhei.sugai/Downloads/pwa_with_ai_and_worker_package/worker/src/worker.js`
+- **Cloudflare Workers + KV**
+- **KV binding**: `SYNC_KV` (id: `2f01eec6f13849b2a0eb4546c2ffc00c`)
+- **Secrets**: `OPENAI_API_KEY`, `JWT_SECRET`, `RESEND_API_KEY`(optional), `RESEND_FROM`(optional)
+
+### エンドポイント一覧
+| Method | Path | 認証 | 用途 |
+|---|---|---|---|
+| POST | `/api/analyze` | 不要 | AI分析（journal/consult） |
+| POST | `/api/auth/register` | 不要 | ユーザー登録 |
+| POST | `/api/auth/login` | 不要 | ログイン |
+| POST | `/api/auth/reset-password` | 不要 | パスワードリセット要求 |
+| POST | `/api/auth/reset-confirm` | 不要 | パスワードリセット確認 |
+| POST | `/api/sync/upload` | JWT必須 | データアップロード |
+| GET | `/api/sync/download` | JWT必須 | データダウンロード |
+| GET | `/api/sync/status` | JWT必須 | 同期状態確認 |
+
+### AI Analyze API
+- Body: `{ text, tone, type:'consult'|'journal' }`
+- `type: 'journal'` → JSON構造化応答（`{ events, learnings, feelings, gratitude, must, want, oneLiner }`）
+- `type: 'consult'` → テキスト応答（ジャーナル分析フォーマット禁止）
+- `tone`: 'harsh'|'normal'|'gentle' — Worker側でキャラクタープロンプト注入
+- **AIプロンプトはすべてWorker側に格納**（フロントエンドから完全除去済み）
+  - `CHARACTER_PROMPTS` — 3キャラの口調定義
+  - `DATA_INTERPRET_RULE` — データ解釈ルール（ジャーナル用）
+  - `NO_ANALYSIS_RULE` — 分析フォーマット禁止ルール（相談用）
+
+### 認証の仕組み
+- パスワードハッシュ: PBKDF2 (Web Crypto API, 100000 iterations, SHA-256)
+- JWT: HMAC-SHA256, 30日有効期限
+- KVキー: `user:{email}`, `data:{email}`, `reset:{email}`
 
 ## アクセントカラー
 - Primary: `#2196F3`（Material Design Blue、ロゴのマイク色と統一）
@@ -101,8 +131,9 @@ index.html 内の古い3ブロックは全て削除済み（コメントのみ�
 - ジャーナルAIは `buildContextSummary('other')` で全データをプロンプトに含める
 - AI相談は `buildContextSummary(topic)` でトピック別にデータを絞り込む（ただし目標は全トピックで含む）
 - `summarizeGoalVsReality()` が目標テキストからキーワード検出し、お金/行動の実績とクロスチェック
-- `dataInterpretRule` にギャップ指摘の明示的指示あり
-- **変更時の注意**: `dataInterpretRule` はES5版(~L12222)とES6版(~L12555)の2箇所ある。両方更新すること
+- **AIプロンプト（`dataInterpretRule`, `noAnalysisRule`, `characterPrompt`）はすべてWorker側に移行済み**
+  - フロントエンドには一切残っていない（コメントで「Worker側に移行済み」と記載）
+  - 変更はWorker（`worker.js`）のみで行う
 
 ## 今回のセッション（2回分+α）で完了した修正
 
@@ -212,58 +243,52 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 
 ## 未解決・今後の課題
 
-### 次にやること（セッション5以降）
-1. **クラウド同期**（メール+パスワード認証版）← 約1時間の作業
-2. **真似防止**（AIプロンプトのサーバー移行 + コード難読化）
-3. **バグや不安定なところの修正**
-4. **有料プランの内容決め**
-5. **リリースに向けた必要事項の整理**（下記ロードマップ参照）
+### 次にやること（セッション6以降）
+1. ~~**クラウド同期**（メール+パスワード認証版）~~ ✅ 完了（セッション5）
+2. ~~**AIプロンプトのサーバー移行**~~ ✅ 完了（セッション5）
+3. **有料プランの内容決め**
+4. **コード難読化**
+5. **利用規約・プライバシーポリシー**
+6. **課金システム**
+7. **Resend連携**（パスワードリセットメール送信）← 現在はコード直接通知のフォールバック
+8. **GitHub Pagesへのファイルアップロード**（index.html, cloud-sync.js, goal-ai-breakdown.js）
 
 ### セッション4-5で合意した方針
-- **認証方式**: 合言葉版はスキップ。**最初からメール+パスワード認証**で実装する
-  - 理由: 合言葉→メルパスの段階を踏む合理的理由がない。どうせ差し替えるなら最初からメルパス
+- **認証方式**: 合言葉版はスキップ。**メール+パスワード認証で実装済み**（セッション5完了）
+  - PBKDF2 + JWT で本番品質
   - Google認証は「あると便利」レベル。ユーザーが増えて要望が出たら後から追加
   - PWAではGoogle認証のポップアップが不安定（特にiOS）なのでメルパスが安定
+- **AIプロンプトのサーバー移行**: 完了済み（セッション5）。フロントエンドからプロンプト完全除去
 - **PWAアイコン更新**: キャッシュが強い。ホーム画面から削除→再追加が確実。manifest.jsonにバージョンパラメータ追加も有効
 
 ### 販売準備ロードマップ
 
 ユーザーは**アプリの販売を考えている**。以下の優先順で進める合意あり。
 
-#### ステップ① クラウド同期（メール+パスワード認証版）
-- **認証方式**: メール+パスワード（合言葉版はスキップ）
-  - 会員登録・ログインAPI
-  - パスワードハッシュ（bcrypt相当）
-  - JWTトークン発行・検証
-  - パスワードリセット（メール送信、Resend等の無料枠）
-  - そのままリリースに使える品質で作る
-  - 必要なら後からGoogle認証を追加可能
-- **バックエンド**: 既存Cloudflare Worker拡張 + KV
-  - KV名前空間: `DAYCE_SYNC`（Worker設定でバインド名 `SYNC_KV`）
-  - 新規エンドポイント3つ:
-    - `POST /api/sync/upload` — データアップロード（passphrase + data + syncedAt）
-    - `GET /api/sync/download?p=xxx` — データダウンロード
-    - `GET /api/sync/status?p=xxx` — 同期状態確認
-  - `hashPassphrase()` — Web Crypto API SHA-256（Worker内で実行）
-  - CORS対応済み（既存のOPTIONSハンドラ拡張）
-- **フロントエンド**:
-  - 新規ファイル `cloud-sync.js` — `window.CloudSync` オブジェクト公開
-  - index.html に同期UIセクション追加（AI相談タブのデータ管理セクション付近）
-  - 合言葉入力 → リンク → アップロード/ダウンロードボタン
+#### ステップ① クラウド同期（メール+パスワード認証版）✅ 完了
+- **実装完了**: 認証（register/login/reset）+ 同期（upload/download/status）
+- **認証方式**: PBKDF2パスワードハッシュ + JWT (HMAC-SHA256, 30日有効)
+- **バックエンド**: Cloudflare Worker (`lifelog-ai`) + KV (`SYNC_KV`)
+- **フロントエンド**: `cloud-sync.js` → `window.CloudSync` オブジェクト公開
+- **UI配置**: AI相談タブ内、CSVダウンロードの下・データ管理の上
 - **同期対象localStorage キー**:
   - 同期する: `activities`, `moneyRecords`, `journalEntriesV3`, `monthlyGoals`, `weightRecords`, `activityCategories`, `expenseCategories`, `incomeCategories`, `journalFeedbackTone`, `aiConsultTone`, `aiConsultHistory`
   - 同期しない（デバイス固有）: `fabPosition`, `lastActiveTab`, `taskChecks_*`, `isPremium`, `journalAiEndpoint`
-- **競合解決**: Last-Write-Wins（タイムスタンプベース）。個人利用なのでシンプルに
-- **新規localStorageキー**: `syncPassphrase`（合言葉保存）, `syncLastSynced`（最終同期日時）
+- **新規localStorageキー**: `syncAuthToken`, `syncAuthEmail`, `syncLastSynced`
+- **競合解決**: Last-Write-Wins（タイムスタンプベース）
 - **KV制限**: 無料枠（読み取り10万回/日、書き込み1000回/日、値サイズ上限25MB）→ 個人利用で十分
+- **パスワードリセット**: Resend未設定時はコンソールにコード出力（フォールバック）
 
-#### ステップ② AIプロンプトのサーバー移行
-- 現状: index.html内の `dataInterpretRule`, `noAnalysisRule` 等が**ソースコードから丸見え**
-- これがアプリの価値の核なので、Workerに移してフロントからは見えないようにする
-- クラウド同期と同時にWorkerを触るので一緒にやると効率的
+#### ステップ② AIプロンプトのサーバー移行 ✅ 完了
+- `CHARACTER_PROMPTS`（harsh/normal/gentle）→ Worker側に移行
+- `DATA_INTERPRET_RULE`（データ解釈ルール）→ Worker側に移行
+- `NO_ANALYSIS_RULE`（分析フォーマット禁止ルール）→ Worker側に移行
+- フロントエンド（index.html, goal-ai-breakdown.js）から完全除去
+- `type: 'journal'` → JSON応答 / `type: 'consult'` → テキスト応答 の分岐もWorker側
+- `oneLiner`（コメント）を3〜5文に強化
 
-#### ステップ③ Googleログインに切り替え（販売前）
-- 合言葉 → Google OAuth に認証部分のみ差し替え
+#### ステップ③ Googleログイン追加（オプション、販売後）
+- 現在のメール+パスワード認証にGoogle OAuthを追加可能
 - Google Cloud Console でOAuthクライアントID作成が必要
 - `isPremium` をサーバー側で管理（現在はlocalStorageで改ざん可能）
 - メールアドレスでユーザー特定 → 課金連携
@@ -316,6 +341,9 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 | `lastActiveTab` | 最後に開いたタブ |
 | `isPremium` | 有料会員フラグ |
 | `fabPosition` | FABボタンの位置 `{x, y}` |
+| `syncAuthToken` | クラウド同期用JWTトークン |
+| `syncAuthEmail` | クラウド同期用メールアドレス |
+| `syncLastSynced` | 最終同期日時（ISO文字列） |
 
 ## 今回のセッション（セッション3）の議論記録
 
@@ -457,6 +485,65 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 - `.tab-nav` CSSに `scroll-behavior: smooth !important` を追加
 - JS `scrollTo({ behavior: 'smooth' })` + CSS両方でスムーズスクロールを保証
 
+## セッション5の変更記録
+
+### Z. クラウド同期（メール+パスワード認証）実装
+**ファイル: `worker/src/worker.js`, `cloud-sync.js`, `index.html`**
+- Worker を全面書き換え: 認証 + 同期 + AI分析を1ファイルに統合
+- 認証エンドポイント: register, login, reset-password, reset-confirm
+- 同期エンドポイント: upload, download, status（JWT必須）
+- PBKDF2 (100000 iterations, SHA-256) でパスワードハッシュ
+- JWT (HMAC-SHA256, 30日有効) で認証
+- `cloud-sync.js` 新規作成: ログイン/登録/リセット/同期UI + `window.CloudSync` 公開
+- CSS は `cs-*` 名前空間で動的注入
+- index.html にセクション追加: CSV → クラウド同期 → データ管理の順
+
+### AA. AIプロンプトのサーバー移行
+**ファイル: `worker/src/worker.js`, `index.html`, `goal-ai-breakdown.js`**
+- `CHARACTER_PROMPTS` (harsh/normal/gentle) → Worker の定数に移行
+- `DATA_INTERPRET_RULE` → Worker の定数に移行
+- `NO_ANALYSIS_RULE` → Worker の定数に移行
+- index.html から削除: `getCharacterPrompt()` 関数, `dataInterpretRule` (ES5+ES6), `noAnalysisRule`
+- goal-ai-breakdown.js から削除: `charPrompt` 変数, `buildPrompt(charPrompt)` の引数
+- `buildPrompt()` 内の `charHeader` は空文字列に（Worker側で注入するため）
+- フロントエンドに「Worker側に移行済み」コメントを残置
+
+### AB. OpenAI Responses API 対応
+**ファイル: `worker/src/worker.js`**
+- `response_format: { type: "json_object" }` → `text: { format: { type: "json_object" } }` に修正
+- `data.output_text` のフォールバック: `data.output[0].content[0].text` を追加
+- journal → JSON パース後に `{ result: parsed }` で返却
+- consult → テキストそのまま `{ result: outText }` で返却
+
+### AC. フロントエンドのJSON応答処理修正
+**ファイル: `index.html`（ES5版 ~L12226, ES6版 ~L12589）**
+- Worker がパース済みJSONオブジェクトを返す場合の処理を追加
+- `typeof raw === 'object'` → テキスト形式に変換（`【よかったこと】\n` + raw.events 等）
+- summary 保存: `parsed` オブジェクトから直接取得（確実）、フォールバックで正規表現
+- `【整える一言】` → `【コメント】` にラベル変更（2箇所）
+- 正規表現フォールバック: `【(?:整える一言|コメント)】` で両方にマッチ
+
+### AD. consult / journal 応答の分離
+**ファイル: `worker/src/worker.js`**
+- `type: 'consult'` → テキスト応答（JSON modeなし）、`NO_ANALYSIS_RULE` 適用
+- `type: 'journal'` → JSON構造化応答（`text.format.type: "json_object"`）、`DATA_INTERPRET_RULE` 適用
+- AI相談がJSON形式で返ってくる問題を解消
+
+### AE. コメント（oneLiner）の充実化
+**ファイル: `worker/src/worker.js`**
+- `oneLiner` の指示を「1〜2文」→「3〜5文」に強化
+- キャラクターの口調で、行動評価・具体的アドバイス・背中を押す言葉を含む
+
+### AF. FABタップ干渉修正
+**ファイル: `index.html`**
+- `.fab-container` に `pointer-events: none` を追加（コンテナ自体はタップ透過）
+- `.fab-main` に `pointer-events: auto` を追加（ボタンのみタップ可能）
+- FABメニュー展開中のオーバーレイにも同様の設定
+
+### AG. セクション配置順の変更
+**ファイル: `index.html`**
+- AI相談タブ内: CSVダウンロード → **クラウド同期** → データ管理 の順に変更
+
 ### summary.taskRecord のデータ構造
 ```javascript
 // journalEntriesV3[dateKey].summary.taskRecord
@@ -479,3 +566,8 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 - タブボタンには `data-tab` 属性が必須（`switchTab` がアクティブ表示に使用）
 - スワイプハンドラは `switchTab` 直後のIIFEで定義。タブ順変更時は `TAB_ORDER` 配列を更新すること
 - 目標タスクの日付表示は非表示だが、内部の `date` フィールドは保持。カレンダー連動・翌週持ち越し・統計に使用
+- cloud-sync.js のCSSは `cs-*` 名前空間で動的注入。`#cloud-sync-css` ID で重複防止
+- Worker のデプロイ: `cd /Users/shuhei.sugai/Downloads/pwa_with_ai_and_worker_package/worker && npx wrangler deploy`
+- Worker の secrets 設定: `npx wrangler secret put OPENAI_API_KEY` 等
+- OpenAI Responses API を使用（`/v1/responses`）。`response_format` は非推奨、`text.format` を使うこと
+- AI応答: Worker が `type: 'journal'` ではJSONパースして返す → フロントで `typeof raw === 'object'` チェックが必須

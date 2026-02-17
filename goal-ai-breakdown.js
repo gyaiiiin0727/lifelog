@@ -490,9 +490,7 @@
 
     try {
       var tone = _state.tone || 'normal';
-      var charPrompt = (typeof window.getCharacterPrompt === 'function') ? window.getCharacterPrompt(tone) : '';
-
-      var prompt = buildPrompt(charPrompt);
+      var prompt = buildPrompt();
 
       var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-ai.little-limit-621c.workers.dev';
       var res = await fetch(BACKEND_URL + '/api/analyze', {
@@ -642,14 +640,13 @@
   }
 
   // ========== プロンプト構築 ==========
-  function buildPrompt(charPrompt) {
+  function buildPrompt() {
     var historyText = _state.chatHistory.map(function(m) {
       return (m.role === 'user' ? 'ユーザー' : 'AI') + ': ' + m.text;
     }).join('\n');
 
-    // キャラクター設定を先頭に配置（全フェーズ共通）
-    var noAnalysis = '※絶対に【よかったこと】【改善したいこと】【気づいたこと】【もやっとしたこと】【明日のMUST】などの分析フォーマットは使わないでください。普通の会話として返答してください。\n\n';
-    var charHeader = noAnalysis + (charPrompt ? '【キャラクター設定（この口調で話してください）】\n' + charPrompt + '\n\n' : '');
+    // キャラクター・ルールはWorker側で注入（ソースから隠蔽）
+    var charHeader = '';
 
     // 過去データのコンテキスト（初回のみ、トークン節約）
     var userContext = '';
