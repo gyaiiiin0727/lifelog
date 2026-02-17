@@ -17856,6 +17856,10 @@ if ("serviceWorker" in navigator) {
       <span class="fab-icon">📔</span>
       <span class="fab-label">ジャーナル</span>
     </button>
+    <button class="fab-sub fab-nav" id="fabHome" type="button">
+      <span class="fab-icon">🏠</span>
+      <span class="fab-label">ホーム</span>
+    </button>
     <button class="fab-sub" id="fabActivity" type="button">
       <span class="fab-icon">⏱️</span>
       <span class="fab-label">行動記録</span>
@@ -17994,6 +17998,11 @@ if ("serviceWorker" in navigator) {
   if (fabJournal) fabJournal.addEventListener('click', function() {
     closeFab();
     if (typeof window.switchTab === 'function') window.switchTab('journal');
+  });
+  var fabHome = document.getElementById('fabHome');
+  if (fabHome) fabHome.addEventListener('click', function() {
+    closeFab();
+    if (typeof window.switchTab === 'function') window.switchTab('home');
   });
 
   // 記録ボタン
