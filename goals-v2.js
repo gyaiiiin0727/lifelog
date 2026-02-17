@@ -66,6 +66,22 @@
     '  border-radius:6px; padding:2px 8px; cursor:pointer; margin-left:6px;',
     '}',
 
+    /* 週カレンダー（表示のみ） */
+    '.gv2-week-cal { display:flex; gap:2px; margin-bottom:10px; }',
+    '.gv2-cal-day {',
+    '  flex:1; text-align:center; padding:6px 0; border-radius:10px;',
+    '  background:#f8f8f8; position:relative;',
+    '}',
+    '.gv2-cal-day.today { background:#2196F3; }',
+    '.gv2-cal-day.today .gv2-cal-dow, .gv2-cal-day.today .gv2-cal-num { color:#fff; }',
+    '.gv2-cal-dow { display:block; font-size:10px; color:#999; line-height:1.3; }',
+    '.gv2-cal-num { display:block; font-size:14px; font-weight:700; color:#333; line-height:1.3; }',
+    '.gv2-cal-dot {',
+    '  display:block; width:4px; height:4px; border-radius:50%;',
+    '  background:#2196F3; margin:2px auto 0;',
+    '}',
+    '.gv2-cal-day.today .gv2-cal-dot { background:#fff; }',
+
     /* タスクアイテム */
     '.task-item { display:flex; align-items:center; gap:8px; padding:10px 4px; border-bottom:1px solid #f0f0f0; min-height:44px; }',
     '.task-checkbox { width:22px; height:22px; min-width:22px; cursor:pointer; accent-color:#2196F3; }',
@@ -391,7 +407,20 @@
       '<button class="gv2-week-nav-btn" onclick="window._gv2ChangeWeek(1)">次週 ▶</button>' +
     '</div>';
 
-    // 日付ヘッダーは非表示（週単位のフラットなリスト表示）
+    // 1週間カレンダー（表示のみ）
+    html += '<div class="gv2-week-cal">';
+    weekDates.forEach(function(d) {
+      var ds = toDateStr(d);
+      var isToday = (ds === today);
+      var taskCount = tasksByDate[ds] || 0;
+      var cls = 'gv2-cal-day' + (isToday ? ' today' : '');
+      html += '<div class="' + cls + '">' +
+        '<span class="gv2-cal-dow">' + DOW_NAMES[d.getDay()] + '</span>' +
+        '<span class="gv2-cal-num">' + d.getDate() + '</span>' +
+        (taskCount > 0 ? '<span class="gv2-cal-dot"></span>' : '') +
+      '</div>';
+    });
+    html += '</div>';
 
     html += '<div class="today-tasks-content">';
 
