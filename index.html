@@ -3202,19 +3202,6 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 .journal-cta:active{ transform:scale(.97); }
 .dashboard-journal.done .journal-cta{ background:#16a34a; }
 
-.dashboard-quick{
-    margin-bottom:20px;
-    padding: 36px 24px;
-}
-.dashboard-quick h3{ font-size:16px; font-weight:700; margin-bottom:12px; }
-
-.quick-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
-.quick-btn{ padding:14px 8px; background:#fff; border:2px solid #ddd; border-radius:12px; text-align:center; cursor:pointer; transition:all .2s; }
-.quick-btn:hover{ border-color:#111; }
-.quick-btn:active{ background:#111; color:#fff; border-color:#111; }
-.quick-btn .emoji{ font-size:24px; display:block; margin-bottom:4px; }
-.quick-btn .label{ font-size:11px; font-weight:600; }
-
 .dashboard-recent{ margin-bottom:20px; }
 .dashboard-recent h3{ font-size:16px; font-weight:700; margin-bottom:12px; }
 
@@ -3230,71 +3217,10 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
   .dashboard-card{ padding:12px 8px; }
   .card-icon{ font-size:24px; }
   .card-value{ font-size:16px; }
-  .quick-grid{ gap:8px; }
-  .quick-btn{ padding:10px 4px; }
-  .quick-btn .emoji{ font-size:20px; }
-  .quick-btn .label{ font-size:10px; }
 }
 
 
-/* ===== クイック記録の強化（上書き） ===== */
-.dashboard-quick{
-  background: linear-gradient(135deg, #111 0%, #333 100%);
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 20px;
-}
-.dashboard-quick h3{
-  color:#fff;
-  margin:0 0 16px 0;
-  font-size:18px;
-}
-.quick-grid{
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-.quick-btn{
-  padding: 14px 6px;
-  background:#fff;
-  border:2px solid transparent;
-  border-radius:14px;
-  text-align:center;
-  cursor:pointer;
-  transition: all .2s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,.1);
-}
-/* ページ移動ボタン: 青枠 */
-.quick-btn.quick-nav{ border-color:#2196F3; }
-/* 記録ボタン: グレー枠 */
-.quick-btn.quick-rec{ border-color:#999; }
-.quick-btn:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,.2);
-}
-.quick-btn:active{
-  transform: scale(.95);
-  background:#111;
-  color:#fff;
-}
-.quick-btn .emoji{
-  font-size:28px;
-  display:block;
-  margin-bottom:6px;
-}
-.quick-btn .label{
-  font-size:12px;
-  font-weight:700;
-  color:#333;
-}
-.quick-btn:active .label{ color:#fff; }
-
-@media (max-width:480px){
-  .quick-grid{ gap:8px; }
-  .quick-btn{ padding:10px 4px; }
-  .quick-btn .emoji{ font-size:22px; }
-  .quick-btn .label{ font-size:10px; }
-}
+/* クイックグリッドは削除済み（FABメニューに統合） */
 
 
 /* ===== Quick Record Modal ===== */
@@ -3514,71 +3440,6 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 
 
 /* ===== v40.21 Quick: Hero化（目立たせる・縦並び） ===== */
-.dashboard-quick {
-  background: linear-gradient(180deg, #111 0%, #2a2a2a 100%) !important;
-  color: #fff !important;
-  padding: 14px 16px !important;
-  border-radius: 14px !important;
-  margin-bottom: 16px !important;
-}
-
-.dashboard-quick .quick-header {
-  display: block !important;
-  text-align: center !important;
-  margin-bottom: 8px !important;
-}
-
-.dashboard-quick .quick-header h3 {
-  font-size: 15px !important;
-  font-weight: 900 !important;
-  color: #fff !important;
-  letter-spacing: .04em;
-  margin: 0 !important;
-}
-
-.dashboard-quick .quick-mode-switch {
-  margin: 0 auto !important;
-  background: #000 !important;
-  padding: 4px !important;
-  border-radius: 10px !important;
-  box-shadow: none !important;
-}
-
-.dashboard-quick .quick-mode-switch .seg-btn {
-  color: #bbb !important;
-}
-
-.dashboard-quick .quick-mode-switch .seg-btn.active {
-  background: #fff !important;
-  color: #111 !important;
-}
-
-
-/* ===== v40.22 Quick: 行動 / お金 ボタンを大きく ===== */
-.dashboard-quick .quick-mode-switch {
-  padding: 6px !important;
-  border-radius: 14px !important;
-}
-
-.dashboard-quick .quick-mode-switch .seg-btn {
-  min-width: 92px !important;   /* 横幅アップ */
-  height: 40px !important;     /* 高さアップ */
-  padding: 10px 16px !important;
-  font-size: 14px !important;  /* 文字を少し大きく */
-  font-weight: 800 !important;
-  border-radius: 10px !important;
-}
-
-@media (max-width: 480px) {
-  .dashboard-quick .quick-mode-switch .seg-btn {
-    min-width: 84px !important;
-    height: 38px !important;
-    padding: 9px 14px !important;
-    font-size: 13px !important;
-  }
-}
-
-
 /* ===== v40.24 FAB 位置微調整 → ドラッグ移動対応で !important 削除 ===== */
 /* right/bottom は inline style でドラッグ制御するため !important 不可 */
 /* デフォルト位置は .fab-container 本体定義（L17745付近）で設定済み */
@@ -4937,17 +4798,7 @@ body.qr-open .fab-container{ pointer-events:none !important; }
     </div>
 </div>
 
-<!-- クイックアクション -->
-<div class="dashboard-quick">
-    <h3>⚡ クイック</h3>
-    <div class="quick-grid">
-        <div class="quick-btn quick-nav" onclick="switchTab('aiConsult')"><span class="emoji">🤖</span><span class="label">AI相談</span></div>
-        <div class="quick-btn quick-nav" onclick="switchTab('goals')"><span class="emoji">🎯</span><span class="label">目標</span></div>
-        <div class="quick-btn quick-nav" onclick="switchTab('journal')"><span class="emoji">📔</span><span class="label">ジャーナル</span></div>
-        <div class="quick-btn quick-rec" onclick="openQuickRecordHome('activity')"><span class="emoji">⏱️</span><span class="label">行動の記録</span></div>
-        <div class="quick-btn quick-rec" onclick="openQuickRecordHome('money')"><span class="emoji">💰</span><span class="label">お金の記録</span></div>
-    </div>
-</div>
+<!-- クイックアクションは削除済み（FABメニューに統合） -->
 
 <div class="dashboard-header">
         <h2 id="dashboardDate">📊 今日の概要</h2>
@@ -17527,15 +17378,6 @@ const modal = $('qrModal');
   line-height: 1.1 !important;
 }
 
-/* ボタンが .quick-btn の場合 */
-#home #quickModeToggle .quick-btn,
-#home .quick-mode-toggle .quick-btn,
-#home .quick-mode-switch .quick-btn {
-  min-width: 92px !important;
-  padding: 9px 12px !important;
-  font-size: 13px !important;
-}
-
 /* スマホさらに詰める */
 @media (max-width: 480px) {
   #home #quickRecordSection,
@@ -17556,13 +17398,6 @@ const modal = $('qrModal');
   #home .quick-mode-switch button,
   #home .quick-record-toggle button,
   #home .quick-toggle button,
-  #home #quickModeToggle .quick-btn,
-  #home .quick-mode-toggle .quick-btn,
-  #home .quick-mode-switch .quick-btn {
-    min-width: 86px !important;
-    padding: 8px 10px !important;
-    font-size: 12px !important;
-  }
 }
 
 @media (max-width: 480px){
@@ -17636,7 +17471,6 @@ input, select, textarea,
 }
 
 .modal-content,
-.quick-btn,
 .add-button,
 .voice-button,
 .category-btn,
@@ -17758,10 +17592,8 @@ input, select, textarea,
 }
 
 /* クイック記録 */
-.dashboard-quick,
 .quick-record-container,
-.quick-record,
-.quick-btn {
+.quick-record {
   border-radius: 0 !important;
 }
 
@@ -17966,6 +17798,9 @@ if ("serviceWorker" in navigator) {
 
 .fab-sub .fab-icon { font-size: 20px; }
 .fab-sub .fab-label { font-size: 14px; font-weight: 700; color: #111; }
+/* ページ移動ボタン: 青枠で差別化 */
+.fab-sub.fab-nav { border-color: #2196F3; }
+.fab-sub.fab-nav .fab-label { color: #1976D2; }
 
 /* オーバーレイ */
 .fab-overlay {
@@ -17981,9 +17816,6 @@ if ("serviceWorker" in navigator) {
   opacity: 1;
   pointer-events: auto;
 }
-
-/* ホームのクイック記録を非表示 */
-#home .dashboard-quick { display: none !important; }
 
 /* スマホ最適化 */
 @media (max-width: 480px) {
@@ -18004,6 +17836,18 @@ if ("serviceWorker" in navigator) {
 <div class="fab-container" id="fabContainer">
   <button class="fab-main" id="fabMain" type="button" aria-label="クイック記録">＋</button>
   <div class="fab-menu" id="fabMenu">
+    <button class="fab-sub fab-nav" id="fabAiConsult" type="button">
+      <span class="fab-icon">🤖</span>
+      <span class="fab-label">AI相談</span>
+    </button>
+    <button class="fab-sub fab-nav" id="fabGoals" type="button">
+      <span class="fab-icon">🎯</span>
+      <span class="fab-label">目標</span>
+    </button>
+    <button class="fab-sub fab-nav" id="fabJournal" type="button">
+      <span class="fab-icon">📔</span>
+      <span class="fab-label">ジャーナル</span>
+    </button>
     <button class="fab-sub" id="fabActivity" type="button">
       <span class="fab-icon">⏱️</span>
       <span class="fab-label">行動を記録</span>
@@ -18126,6 +17970,25 @@ if ("serviceWorker" in navigator) {
   });
   fabOverlay.addEventListener('click', closeFab);
 
+  // ページ移動ボタン
+  var fabAiConsult = document.getElementById('fabAiConsult');
+  var fabGoals = document.getElementById('fabGoals');
+  var fabJournal = document.getElementById('fabJournal');
+
+  if (fabAiConsult) fabAiConsult.addEventListener('click', function() {
+    closeFab();
+    if (typeof window.switchTab === 'function') window.switchTab('aiConsult');
+  });
+  if (fabGoals) fabGoals.addEventListener('click', function() {
+    closeFab();
+    if (typeof window.switchTab === 'function') window.switchTab('goals');
+  });
+  if (fabJournal) fabJournal.addEventListener('click', function() {
+    closeFab();
+    if (typeof window.switchTab === 'function') window.switchTab('journal');
+  });
+
+  // 記録ボタン
   fabActivity.addEventListener('click', function() {
     closeFab();
     if (typeof window.setQuickRecordMode === 'function') window.setQuickRecordMode('activity');

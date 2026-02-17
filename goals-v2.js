@@ -76,11 +76,6 @@
     '.gv2-cal-day.today .gv2-cal-dow, .gv2-cal-day.today .gv2-cal-num { color:#fff; }',
     '.gv2-cal-dow { display:block; font-size:10px; color:#999; line-height:1.3; }',
     '.gv2-cal-num { display:block; font-size:14px; font-weight:700; color:#333; line-height:1.3; }',
-    '.gv2-cal-dot {',
-    '  display:block; width:4px; height:4px; border-radius:50%;',
-    '  background:#2196F3; margin:2px auto 0;',
-    '}',
-    '.gv2-cal-day.today .gv2-cal-dot { background:#fff; }',
 
     /* タスクアイテム */
     '.task-item { display:flex; align-items:center; gap:8px; padding:10px 4px; border-bottom:1px solid #f0f0f0; min-height:44px; }',
@@ -417,7 +412,6 @@
       html += '<div class="' + cls + '">' +
         '<span class="gv2-cal-dow">' + DOW_NAMES[d.getDay()] + '</span>' +
         '<span class="gv2-cal-num">' + d.getDate() + '</span>' +
-        (taskCount > 0 ? '<span class="gv2-cal-dot"></span>' : '') +
       '</div>';
     });
     html += '</div>';
