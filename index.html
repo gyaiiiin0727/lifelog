@@ -5388,19 +5388,6 @@ body.qr-open .fab-container{ pointer-events:none !important; }
       <div id="aiConsultHistoryList"></div>
     </div>
 
-    <!-- データ管理セクション -->
-    <div class="ai-consult-data-section">
-        <h3 style="font-size:15px; font-weight:700; color:#333; margin:0 0 12px;">📁 データ管理</h3>
-        <div class="ai-consult-data-btns">
-            <button type="button" class="ai-data-btn" id="aiConsultExportJSON">
-                <span>💾</span> 全データをバックアップ
-            </button>
-            <button type="button" class="ai-data-btn" id="aiConsultImportJSON">
-                <span>📂</span> データを復元
-            </button>
-        </div>
-    </div>
-
     <!-- CSVダウンロードセクション（有料会員） -->
     <div class="ai-consult-csv-section">
         <h3 style="font-size:15px; font-weight:700; color:#333; margin:0 0 4px;">📊 CSVダウンロード <span class="premium-badge-inline">👑 有料会員</span></h3>
@@ -5433,6 +5420,19 @@ body.qr-open .fab-container{ pointer-events:none !important; }
     <!-- クラウド同期セクション -->
     <div class="ai-consult-data-section" id="cloudSyncSection" data-mode="login">
         <!-- cloud-sync.js が動的に描画 -->
+    </div>
+
+    <!-- データ管理セクション -->
+    <div class="ai-consult-data-section">
+        <h3 style="font-size:15px; font-weight:700; color:#333; margin:0 0 12px;">📁 データ管理</h3>
+        <div class="ai-consult-data-btns">
+            <button type="button" class="ai-data-btn" id="aiConsultExportJSON">
+                <span>💾</span> 全データをバックアップ
+            </button>
+            <button type="button" class="ai-data-btn" id="aiConsultImportJSON">
+                <span>📂</span> データを復元
+            </button>
+        </div>
     </div>
 </div>
 </div>
@@ -17737,6 +17737,7 @@ if ("serviceWorker" in navigator) {
   flex-direction: column-reverse;
   align-items: flex-end; /* center → flex-end に変更（右寄せ） */
   gap: 12px;
+  pointer-events: none; /* コンテナ自体はタップ透過 */
 }
 
 /* メインFABボタン */
@@ -17757,6 +17758,7 @@ if ("serviceWorker" in navigator) {
   touch-action: none; /* ドラッグ移動用 */
   -webkit-user-select: none;
   user-select: none;
+  pointer-events: auto; /* コンテナがnoneなのでボタン自体は有効に */
 }
 
 .fab-main:hover { background: #333; }
