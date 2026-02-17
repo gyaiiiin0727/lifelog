@@ -12225,7 +12225,22 @@ try{
 
           if(!res.ok) throw new Error('HTTP ' + res.status);
           var data = await res.json();
-          var out = (data && (data.result || data.analysis)) ? (data.result || data.analysis) : '';
+          var raw = (data && (data.result || data.analysis)) ? (data.result || data.analysis) : '';
+          // JSONオブジェクトの場合はテキスト形式に変換（Worker がパース済みJSONを返す）
+          var out = raw;
+          var parsed = null;
+          if(typeof raw === 'object' && raw !== null) {
+            parsed = raw;
+            var lines = [];
+            if(raw.events) lines.push('【よかったこと】\n' + raw.events);
+            if(raw.learnings) lines.push('【改善したいこと】\n' + raw.learnings);
+            if(raw.feelings) lines.push('【気づいたこと】\n' + raw.feelings);
+            if(raw.gratitude) lines.push('【もやっとしたこと】\n' + raw.gratitude);
+            if(raw.must) lines.push('【明日のMUST】\n' + raw.must);
+            if(raw.want) lines.push('【明日のWANT】\n' + raw.want);
+            if(raw.oneLiner) lines.push('【整える一言】\n' + raw.oneLiner);
+            out = lines.join('\n\n');
+          }
 
           // journalEntriesV3に保存
           try {
@@ -12236,22 +12251,32 @@ try{
             entry.aiFeedbackTone = tone;
             var currentMood = (typeof getMood === 'function') ? getMood() : '';
             if(currentMood) entry.mood = currentMood;
-            // AIの結果からsummaryを抽出
-            var mustMatch = out.match(/【明日のMUST】\n([\s\S]*?)(?=【|$)/);
-            var wantMatch = out.match(/【明日のWANT】\n([\s\S]*?)(?=【|$)/);
-            var eventsMatch = out.match(/【よかったこと】\n([\s\S]*?)(?=【|$)/);
-            var moreMatch = out.match(/【改善したいこと】\n([\s\S]*?)(?=【|$)/);
-            var feelMatch = out.match(/【気づいたこと】\n([\s\S]*?)(?=【|$)/);
-            var worryMatch = out.match(/【もやっと(?:した|している)こと】\n([\s\S]*?)(?=【|$)/);
-            var hitokotoMatch = out.match(/【整える一言】\n([\s\S]*?)(?=【|$)/);
             if(!entry.summary) entry.summary = {};
-            if(mustMatch) entry.summary.must = mustMatch[1].trim();
-            if(wantMatch) entry.summary.want = wantMatch[1].trim();
-            if(eventsMatch) entry.summary.events = eventsMatch[1].trim();
-            if(moreMatch) entry.summary.learnings = moreMatch[1].trim();
-            if(feelMatch) entry.summary.feelings = feelMatch[1].trim();
-            if(worryMatch) entry.summary.gratitude = worryMatch[1].trim();
-            if(hitokotoMatch) entry.hitokoto = hitokotoMatch[1].trim();
+            // JSONオブジェクトから直接取得（確実）、フォールバックで正規表現
+            if(parsed) {
+              if(parsed.must) entry.summary.must = parsed.must;
+              if(parsed.want) entry.summary.want = parsed.want;
+              if(parsed.events) entry.summary.events = parsed.events;
+              if(parsed.learnings) entry.summary.learnings = parsed.learnings;
+              if(parsed.feelings) entry.summary.feelings = parsed.feelings;
+              if(parsed.gratitude) entry.summary.gratitude = parsed.gratitude;
+              if(parsed.oneLiner) entry.hitokoto = parsed.oneLiner;
+            } else {
+              var mustMatch = out.match(/【明日のMUST】\n([\s\S]*?)(?=【|$)/);
+              var wantMatch = out.match(/【明日のWANT】\n([\s\S]*?)(?=【|$)/);
+              var eventsMatch = out.match(/【よかったこと】\n([\s\S]*?)(?=【|$)/);
+              var moreMatch = out.match(/【改善したいこと】\n([\s\S]*?)(?=【|$)/);
+              var feelMatch = out.match(/【気づいたこと】\n([\s\S]*?)(?=【|$)/);
+              var worryMatch = out.match(/【もやっと(?:した|している)こと】\n([\s\S]*?)(?=【|$)/);
+              var hitokotoMatch = out.match(/【整える一言】\n([\s\S]*?)(?=【|$)/);
+              if(mustMatch) entry.summary.must = mustMatch[1].trim();
+              if(wantMatch) entry.summary.want = wantMatch[1].trim();
+              if(eventsMatch) entry.summary.events = eventsMatch[1].trim();
+              if(moreMatch) entry.summary.learnings = moreMatch[1].trim();
+              if(feelMatch) entry.summary.feelings = feelMatch[1].trim();
+              if(worryMatch) entry.summary.gratitude = worryMatch[1].trim();
+              if(hitokotoMatch) entry.hitokoto = hitokotoMatch[1].trim();
+            }
             // ホーム「今日のタスク」の達成状況を記録
             if(typeof getHomeTodayTaskRecord === 'function') {
               var taskRec = getHomeTodayTaskRecord();
@@ -12565,7 +12590,22 @@ try{
           throw new Error('HTTP ' + res.status);
         }
         const data = await res.json();
-        const out = (data && (data.result || data.analysis)) ? (data.result || data.analysis) : '';
+        const raw = (data && (data.result || data.analysis)) ? (data.result || data.analysis) : '';
+        // JSONオブジェクトの場合はテキスト形式に変換（Worker がパース済みJSONを返す）
+        let out = raw;
+        let parsed = null;
+        if (typeof raw === 'object' && raw !== null) {
+          parsed = raw;
+          const lines = [];
+          if (raw.events) lines.push('【よかったこと】\n' + raw.events);
+          if (raw.learnings) lines.push('【改善したいこと】\n' + raw.learnings);
+          if (raw.feelings) lines.push('【気づいたこと】\n' + raw.feelings);
+          if (raw.gratitude) lines.push('【もやっとしたこと】\n' + raw.gratitude);
+          if (raw.must) lines.push('【明日のMUST】\n' + raw.must);
+          if (raw.want) lines.push('【明日のWANT】\n' + raw.want);
+          if (raw.oneLiner) lines.push('【整える一言】\n' + raw.oneLiner);
+          out = lines.join('\n\n');
+        }
 
         // AIの結果をjournalEntriesV3に保存（MUST/WANTをホームに表示するため）
         try {
@@ -12583,22 +12623,32 @@ try{
           // 気分も保存（カレンダー絵文字表示のため）
           const currentMood = (typeof getMood === 'function') ? getMood() : '';
           if (currentMood) entry.mood = currentMood;
-          // AIの結果からMUST/WANTを抽出してsummaryに保存
-          const mustMatch = out.match(/【明日のMUST】\n([\s\S]*?)(?=【|$)/);
-          const wantMatch = out.match(/【明日のWANT】\n([\s\S]*?)(?=【|$)/);
-          const eventsMatch = out.match(/【よかったこと】\n([\s\S]*?)(?=【|$)/);
-          const moreMatch = out.match(/【改善したいこと】\n([\s\S]*?)(?=【|$)/);
-          const feelMatch = out.match(/【気づいたこと】\n([\s\S]*?)(?=【|$)/);
-          const worryMatch = out.match(/【もやっと(?:した|している)こと】\n([\s\S]*?)(?=【|$)/);
-          const hitokotoMatch = out.match(/【整える一言】\n([\s\S]*?)(?=【|$)/);
           if (!entry.summary) entry.summary = {};
-          if (mustMatch) entry.summary.must = mustMatch[1].trim();
-          if (wantMatch) entry.summary.want = wantMatch[1].trim();
-          if (eventsMatch) entry.summary.events = eventsMatch[1].trim();
-          if (moreMatch) entry.summary.learnings = moreMatch[1].trim();
-          if (feelMatch) entry.summary.feelings = feelMatch[1].trim();
-          if (worryMatch) entry.summary.gratitude = worryMatch[1].trim();
-          if (hitokotoMatch) entry.hitokoto = hitokotoMatch[1].trim();
+          // JSONオブジェクトから直接取得（確実）、フォールバックで正規表現
+          if (parsed) {
+            if (parsed.must) entry.summary.must = parsed.must;
+            if (parsed.want) entry.summary.want = parsed.want;
+            if (parsed.events) entry.summary.events = parsed.events;
+            if (parsed.learnings) entry.summary.learnings = parsed.learnings;
+            if (parsed.feelings) entry.summary.feelings = parsed.feelings;
+            if (parsed.gratitude) entry.summary.gratitude = parsed.gratitude;
+            if (parsed.oneLiner) entry.hitokoto = parsed.oneLiner;
+          } else {
+            const mustMatch = out.match(/【明日のMUST】\n([\s\S]*?)(?=【|$)/);
+            const wantMatch = out.match(/【明日のWANT】\n([\s\S]*?)(?=【|$)/);
+            const eventsMatch = out.match(/【よかったこと】\n([\s\S]*?)(?=【|$)/);
+            const moreMatch = out.match(/【改善したいこと】\n([\s\S]*?)(?=【|$)/);
+            const feelMatch = out.match(/【気づいたこと】\n([\s\S]*?)(?=【|$)/);
+            const worryMatch = out.match(/【もやっと(?:した|している)こと】\n([\s\S]*?)(?=【|$)/);
+            const hitokotoMatch = out.match(/【整える一言】\n([\s\S]*?)(?=【|$)/);
+            if (mustMatch) entry.summary.must = mustMatch[1].trim();
+            if (wantMatch) entry.summary.want = wantMatch[1].trim();
+            if (eventsMatch) entry.summary.events = eventsMatch[1].trim();
+            if (moreMatch) entry.summary.learnings = moreMatch[1].trim();
+            if (feelMatch) entry.summary.feelings = feelMatch[1].trim();
+            if (worryMatch) entry.summary.gratitude = worryMatch[1].trim();
+            if (hitokotoMatch) entry.hitokoto = hitokotoMatch[1].trim();
+          }
           // ホーム「今日のタスク」の達成状況を記録
           if (typeof getHomeTodayTaskRecord === 'function') {
             const taskRec = getHomeTodayTaskRecord();
