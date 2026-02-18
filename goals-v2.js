@@ -340,9 +340,18 @@
       return;
     }
 
-    var completed = current.filter(function(g) { return g.completed; }).length;
-    var total = current.length;
-    var pct = Math.round((completed / total) * 100);
+    // 週タスクの完了数/総数を母数にする（進捗が実感しやすい）
+    var month = getSelectedMonth();
+    var totalTasks = 0, doneTasks = 0;
+    current.forEach(function(g) {
+      (g.weeklyTasks || []).forEach(function(t) {
+        if (t.date && t.date.substring(0, 7) === month) {
+          totalTasks++;
+          if (t.done) doneTasks++;
+        }
+      });
+    });
+    var pct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
     var cats = {};
     current.forEach(function(g) { cats[g.category] = (cats[g.category]||0) + 1; });
@@ -353,7 +362,7 @@
     el.innerHTML = '<div class="gv2-summary">' +
       '<div class="gv2-summary-top">' +
         '<div><div class="gv2-summary-title">📊 今月の進捗</div></div>' +
-        '<div class="gv2-summary-num">' + pct + '% <small>' + completed + '/' + total + ' 達成</small></div>' +
+        '<div class="gv2-summary-num">' + pct + '% <small>' + doneTasks + '/' + totalTasks + ' タスク達成</small></div>' +
       '</div>' +
       '<div class="gv2-summary-bar"><div class="gv2-summary-fill" style="width:' + pct + '%"></div></div>' +
       '<div class="gv2-summary-cats">' + catTags + '</div>' +
