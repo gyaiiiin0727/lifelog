@@ -133,9 +133,10 @@
 
   async function upload() {
     var data = collectSyncData();
+    var planLevel = (window.DaycePlan) ? window.DaycePlan.getPlan() : (localStorage.getItem('planLevel') || 'free');
     var res = await apiCall('/api/sync/upload', {
       method: 'POST',
-      body: { data: data }
+      body: { data: data, planLevel: planLevel }
     });
     localStorage.setItem(LS_LAST_SYNCED, res.syncedAt);
     return res;

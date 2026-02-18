@@ -5315,6 +5315,17 @@ body.qr-open .fab-container{ pointer-events:none !important; }
     <h2 class="section-title" style="text-align:center;">🤖 AIに相談</h2>
     <p style="text-align:center; color:#666; font-size:13px; margin:0 0 16px;">キャラクターを選んで、なんでも相談してみよう</p>
 
+    <!-- プランバッジ・残回数 -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+      <span id="dayce-plan-badge" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#e3f2fd;color:#1976D2;">無料プラン</span>
+      <span style="font-size:12px;color:#888;">AI相談: <span id="dayce-usage-consult" style="font-weight:600;">—</span></span>
+      <span style="font-size:12px;color:#888;">心を整える: <span id="dayce-usage-journal" style="font-weight:600;">—</span></span>
+      <span style="font-size:12px;color:#888;">目標コーチ: <span id="dayce-usage-goalCoach" style="font-weight:600;">—</span></span>
+    </div>
+    <div style="text-align:center;margin-bottom:16px;">
+      <button type="button" onclick="if(window.DaycePlan)window.DaycePlan.showPlanUI();" style="font-size:13px;color:#2196F3;background:none;border:1px solid #2196F3;border-radius:20px;padding:5px 16px;cursor:pointer;">📋 プラン変更</button>
+    </div>
+
     <!-- キャラクター選択（アイコン付き） -->
     <div class="ai-consult-chars" id="aiConsultChars">
         <button type="button" class="ai-char-btn" data-ai-tone="harsh" onclick="selectAIConsultTone('harsh')">
@@ -12209,6 +12220,15 @@ try{
         var btn = document.querySelector('.step-complete .step-next');
         if(!box) return;
 
+        // プラン制限チェック
+        if (window.DaycePlan) {
+          var limit = window.DaycePlan.checkLimit('journal');
+          if (!limit.allowed) {
+            window.DaycePlan.showUpgradeModal(limit);
+            return;
+          }
+        }
+
         // rawテキスト構築
         var rawParts = [];
         STEPS.forEach(function(s){
@@ -12236,9 +12256,10 @@ try{
           // プロンプトルール・キャラクター口調はWorker側で注入（ソースから隠蔽）
           var textToSend = journalDataContext + '【ユーザーのジャーナル】\n' + text;
 
+          var aiHeaders5 = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : {'Content-Type':'application/json'};
           var res = await fetch(endpoint, {
             method: 'POST',
-            headers: {'Content-Type':'application/json'},
+            headers: aiHeaders5,
             body: JSON.stringify({ text: textToSend, tone: tone, type: 'journal' })
           });
 
@@ -12309,6 +12330,9 @@ try{
             try { renderLog(); } catch(_){}
             if(typeof renderHomeTodayTasks === 'function') renderHomeTodayTasks();
           } catch(saveErr){ console.warn('AI結果保存失敗:', saveErr); }
+
+          // 使用回数カウント
+          if (window.DaycePlan) { window.DaycePlan.incrementUsage('journal'); window.DaycePlan.renderPlanBadges(); }
 
           // フィードバック表示
           var toneNames = {harsh:'マネージャー', normal:'タクヤ先輩', gentle:'ハナさん'};
@@ -12562,6 +12586,15 @@ try{
         const box = document.getElementById('journalAiFeedbackBox');
         if (!btn || !box) return;
 
+        // プラン制限チェック
+        if (window.DaycePlan) {
+          const limit = window.DaycePlan.checkLimit('journal');
+          if (!limit.allowed) {
+            window.DaycePlan.showUpgradeModal(limit);
+            return;
+          }
+        }
+
         // 入力本文（既存の入力欄が複数あるため、見つかったものを優先）
         const candidates = [
           document.getElementById('journalV3Raw'),
@@ -12595,9 +12628,10 @@ try{
         const journalDataContext = (typeof buildContextSummary === 'function') ? buildContextSummary('other') : '';
         // プロンプトルール・キャラクター口調はWorker側で注入（ソースから隠蔽）
         const textToSend = `${journalDataContext}【ユーザーのジャーナル】\n${text}`;
+        const aiHeaders6 = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : {'Content-Type':'application/json'};
         const res = await fetch(endpoint, {
           method: 'POST',
-          headers: {'Content-Type':'application/json'},
+          headers: aiHeaders6,
           body: JSON.stringify({ text: textToSend, tone, type: 'journal' })
         });
 
@@ -12684,6 +12718,9 @@ try{
           try { renderLog(); } catch(_){}
           try { renderTodaySummary(); } catch(_){}
         } catch(saveErr) { console.warn('AI結果の保存に失敗:', saveErr); }
+
+        // 使用回数カウント
+        if (window.DaycePlan) { window.DaycePlan.incrementUsage('journal'); window.DaycePlan.renderPlanBadges(); }
 
         // キャラクター情報を取得してフィードバック表示
         const toneNames = { harsh: 'マネージャー', normal: 'タクヤ先輩', gentle: 'ハナさん' };
@@ -17122,13 +17159,319 @@ const modal = $('qrModal');
 
 
 <script>
-/* ===== v40.6 Premium Gate: CSVは有料のみ（未課金はモーダル表示のみでDL不可） ===== */
+/* ===== DaycePlan: プラン管理・AI回数制限ゲート ===== */
 (function(){
   'use strict';
 
-  // ===== 有料判定（後で本実装に置き換えやすい形） =====
-  // 例: localStorage.setItem('isPremium','true') で有料化
+  // --- プラン定義 ---
+  var PLANS = {
+    free:    { label: '無料プラン',    journal: 15, consult: 0,  goalCoach: 1, charLimit: true,  csv: false, cloudSync: false },
+    lite:    { label: 'ライト（¥480/月）', journal: 30, consult: 10, goalCoach: 3, charLimit: false, csv: true,  cloudSync: true  },
+    premium: { label: 'プレミアム（¥980/月）', journal: 9999, consult: 9999, goalCoach: 9999, charLimit: false, csv: true, cloudSync: true }
+  };
+
+  // --- 現在のプランレベル取得 ---
+  function getPlan() {
+    try {
+      var v = localStorage.getItem('planLevel');
+      if (v && PLANS[v]) return v;
+    } catch(e) {}
+    // 旧 isPremium との後方互換
+    try {
+      var p = localStorage.getItem('isPremium');
+      if (p === 'true' || p === '1' || p === 'yes') return 'premium';
+    } catch(e) {}
+    return 'free';
+  }
+
+  function setPlan(level) {
+    if (!PLANS[level]) return;
+    localStorage.setItem('planLevel', level);
+    // 旧isPremiumとの互換維持
+    localStorage.setItem('isPremium', level !== 'free' ? 'true' : 'false');
+    // UIを更新
+    renderPlanBadges();
+  }
+
+  // --- 月間使用回数管理 ---
+  function getMonthKey() {
+    var d = new Date();
+    return 'aiUsage_' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+  }
+
+  function getUsage() {
+    try {
+      var raw = localStorage.getItem(getMonthKey());
+      if (raw) return JSON.parse(raw);
+    } catch(e) {}
+    return { journal: 0, consult: 0, goalCoach: 0 };
+  }
+
+  function saveUsage(usage) {
+    localStorage.setItem(getMonthKey(), JSON.stringify(usage));
+  }
+
+  function incrementUsage(type) {
+    var u = getUsage();
+    u[type] = (u[type] || 0) + 1;
+    saveUsage(u);
+    return u[type];
+  }
+
+  // --- 制限チェック（呼び出し前にチェック） ---
+  // 戻り値: { allowed: true } or { allowed: false, reason: '...', current: n, limit: m }
+  function checkLimit(type) {
+    var plan = getPlan();
+    var limits = PLANS[plan];
+    var usage = getUsage();
+    var limit = limits[type];
+    var current = usage[type] || 0;
+
+    if (limit === 9999) return { allowed: true, current: current, limit: limit };
+    if (current >= limit) {
+      return {
+        allowed: false,
+        current: current,
+        limit: limit,
+        plan: plan,
+        type: type,
+        reason: limit === 0
+          ? 'この機能は' + (plan === 'free' ? 'ライト' : 'プレミアム') + 'プラン以上で利用できます'
+          : '今月の利用回数（' + limit + '回）に達しました'
+      };
+    }
+    return { allowed: true, current: current, limit: limit };
+  }
+
+  // --- キャラクター制限チェック ---
+  function checkCharacter(tone) {
+    var plan = getPlan();
+    if (PLANS[plan].charLimit && tone !== 'normal') {
+      return { allowed: false, reason: 'キャラクター選択はライトプラン以上で利用できます' };
+    }
+    return { allowed: true };
+  }
+
+  // --- アップグレード誘導モーダル ---
+  function showUpgradeModal(info) {
+    // 既存のモーダルがあれば削除
+    var old = document.getElementById('dayce-upgrade-modal');
+    if (old) old.remove();
+
+    var typeLabels = { journal: '心を整える', consult: 'AI相談', goalCoach: 'AI目標コーチ' };
+    var typeLabel = typeLabels[info.type] || 'AI機能';
+
+    var usageText = '';
+    if (info.limit === 0) {
+      usageText = '<div style="font-size:14px;color:#666;margin-bottom:16px;">「' + typeLabel + '」は無料プランでは利用できません</div>';
+    } else {
+      usageText = '<div style="font-size:14px;color:#666;margin-bottom:16px;">「' + typeLabel + '」の今月の利用: <b>' + info.current + ' / ' + info.limit + '回</b></div>';
+    }
+
+    var nextPlan = info.plan === 'free' ? 'lite' : 'premium';
+    var nextLabel = PLANS[nextPlan].label;
+    var nextLimit = PLANS[nextPlan][info.type];
+    var nextText = nextLimit === 9999 ? '無制限' : '月' + nextLimit + '回';
+
+    var overlay = document.createElement('div');
+    overlay.id = 'dayce-upgrade-modal';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    overlay.innerHTML =
+      '<div style="background:#fff;border-radius:16px;max-width:340px;width:100%;padding:28px 24px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.15);">' +
+        '<div style="font-size:36px;margin-bottom:12px;">🔒</div>' +
+        '<div style="font-size:18px;font-weight:700;margin-bottom:8px;">利用制限に達しました</div>' +
+        usageText +
+        '<div style="background:#f0f7ff;border-radius:12px;padding:16px;margin-bottom:20px;text-align:left;">' +
+          '<div style="font-weight:600;color:#1976D2;margin-bottom:8px;">👑 ' + nextLabel + '</div>' +
+          '<div style="font-size:13px;color:#444;line-height:1.6;">' +
+            '• ' + typeLabel + ': <b>' + nextText + '</b><br>' +
+            '• AI相談: <b>' + (PLANS[nextPlan].consult === 9999 ? '無制限' : '月' + PLANS[nextPlan].consult + '回') + '</b><br>' +
+            '• 目標コーチ: <b>' + (PLANS[nextPlan].goalCoach === 9999 ? '無制限' : '月' + PLANS[nextPlan].goalCoach + '回') + '</b><br>' +
+            '• CSV / クラウド同期: <b>✅</b>' +
+          '</div>' +
+        '</div>' +
+        '<button onclick="document.getElementById(\'dayce-upgrade-modal\').remove();window.DaycePlan.showPlanUI();" style="width:100%;padding:14px;background:#2196F3;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;">プランを見る</button>' +
+        '<button onclick="document.getElementById(\'dayce-upgrade-modal\').remove();" style="width:100%;padding:12px;background:none;border:1px solid #ddd;border-radius:10px;font-size:14px;color:#666;cursor:pointer;">閉じる</button>' +
+      '</div>';
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) overlay.remove();
+    });
+    document.body.appendChild(overlay);
+  }
+
+  // --- プランバッジ表示更新 ---
+  function renderPlanBadges() {
+    var plan = getPlan();
+    var usage = getUsage();
+    var limits = PLANS[plan];
+
+    // AI相談タブ内の残回数表示
+    var badge = document.getElementById('dayce-plan-badge');
+    if (badge) {
+      badge.textContent = PLANS[plan].label;
+      badge.className = 'dayce-plan-badge dayce-plan-' + plan;
+    }
+
+    // 各機能の残回数をバッジ表示
+    var types = ['journal', 'consult', 'goalCoach'];
+    types.forEach(function(t) {
+      var el = document.getElementById('dayce-usage-' + t);
+      if (!el) return;
+      var lim = limits[t];
+      var used = usage[t] || 0;
+      if (lim === 9999) {
+        el.textContent = '無制限';
+        el.style.color = '#27ae60';
+      } else if (lim === 0) {
+        el.textContent = '利用不可';
+        el.style.color = '#999';
+      } else {
+        var remain = Math.max(0, lim - used);
+        el.textContent = '残り' + remain + '回';
+        el.style.color = remain <= 2 ? '#e74c3c' : remain <= 5 ? '#f39c12' : '#27ae60';
+      }
+    });
+  }
+
+  // --- プラン選択UI表示 ---
+  function showPlanUI() {
+    var old = document.getElementById('dayce-plan-modal');
+    if (old) old.remove();
+
+    var plan = getPlan();
+
+    var overlay = document.createElement('div');
+    overlay.id = 'dayce-plan-modal';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto;';
+
+    var cards = [
+      { key: 'free', name: '無料', price: '¥0', color: '#78909c', features: [
+        '記録・カレンダー・レポート: ✅',
+        '心を整える: 月15回',
+        'AI相談: ❌',
+        '目標コーチ: 月1回',
+        'キャラクター: タクヤ先輩のみ',
+        'CSV / クラウド同期: ❌'
+      ]},
+      { key: 'lite', name: 'ライト', price: '¥480/月', color: '#2196F3', features: [
+        '記録・カレンダー・レポート: ✅',
+        '心を整える: 月30回（1日1回）',
+        'AI相談: 月10回',
+        '目標コーチ: 月3回',
+        'キャラクター: 3種から選択',
+        'CSV / クラウド同期: ✅'
+      ]},
+      { key: 'premium', name: 'プレミアム', price: '¥980/月', color: '#f59e0b', features: [
+        '記録・カレンダー・レポート: ✅',
+        '心を整える: 無制限',
+        'AI相談: 無制限',
+        '目標コーチ: 無制限',
+        'キャラクター: 3種から選択',
+        'CSV / クラウド同期: ✅'
+      ]}
+    ];
+
+    var html = '<div style="max-width:400px;width:100%;max-height:90vh;overflow-y:auto;background:#fff;border-radius:16px;padding:24px 16px;">' +
+      '<div style="text-align:center;margin-bottom:20px;">' +
+        '<div style="font-size:24px;font-weight:700;">プラン選択</div>' +
+        '<div style="font-size:13px;color:#888;margin-top:4px;">現在: ' + PLANS[plan].label + '</div>' +
+      '</div>';
+
+    cards.forEach(function(c) {
+      var isCurrent = (c.key === plan);
+      var border = isCurrent ? '2px solid ' + c.color : '1px solid #e0e0e0';
+      html += '<div style="border:' + border + ';border-radius:12px;padding:16px;margin-bottom:12px;' + (isCurrent ? 'background:#f8fafc;' : '') + '">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
+          '<div>' +
+            '<span style="font-size:17px;font-weight:700;color:' + c.color + ';">' + c.name + '</span>' +
+            (isCurrent ? ' <span style="font-size:11px;background:' + c.color + ';color:#fff;padding:2px 8px;border-radius:10px;">現在</span>' : '') +
+          '</div>' +
+          '<div style="font-size:16px;font-weight:600;">' + c.price + '</div>' +
+        '</div>' +
+        '<div style="font-size:13px;color:#555;line-height:1.8;">';
+      c.features.forEach(function(f) {
+        html += f + '<br>';
+      });
+      html += '</div>';
+      if (!isCurrent && c.key !== 'free') {
+        html += '<button onclick="window.DaycePlan.selectPlan(\'' + c.key + '\')" style="width:100%;margin-top:10px;padding:10px;background:' + c.color + ';color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">このプランにする</button>';
+      } else if (!isCurrent && c.key === 'free') {
+        html += '<button onclick="window.DaycePlan.selectPlan(\'free\')" style="width:100%;margin-top:10px;padding:10px;background:#eee;color:#666;border:none;border-radius:8px;font-size:14px;cursor:pointer;">無料プランに戻す</button>';
+      }
+      html += '</div>';
+    });
+
+    html += '<div style="text-align:center;margin-top:8px;">' +
+      '<button onclick="document.getElementById(\'dayce-plan-modal\').remove();" style="padding:10px 32px;background:none;border:1px solid #ddd;border-radius:8px;font-size:14px;color:#666;cursor:pointer;">閉じる</button>' +
+      '</div>' +
+      '<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;">※ 課金連携は準備中です。現在はプラン切替のみ動作します。</div>' +
+    '</div>';
+
+    overlay.innerHTML = html;
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) overlay.remove();
+    });
+    document.body.appendChild(overlay);
+  }
+
+  function selectPlan(level) {
+    setPlan(level);
+    var modal = document.getElementById('dayce-plan-modal');
+    if (modal) modal.remove();
+    // 成功メッセージ
+    var toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 24px;border-radius:24px;font-size:14px;z-index:99999;box-shadow:0 4px 12px rgba(0,0,0,.2);';
+    toast.textContent = '✅ ' + PLANS[level].label + ' に変更しました';
+    document.body.appendChild(toast);
+    setTimeout(function(){ toast.remove(); }, 2500);
+  }
+
+  // --- グローバル公開 ---
+  // --- AI呼び出し用ヘッダー（認証トークンがあれば付与） ---
+  function getAIHeaders() {
+    var headers = { 'Content-Type': 'application/json' };
+    try {
+      var token = localStorage.getItem('syncAuthToken');
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+    } catch(e) {}
+    return headers;
+  }
+
+  window.DaycePlan = {
+    PLANS: PLANS,
+    getPlan: getPlan,
+    setPlan: setPlan,
+    getUsage: getUsage,
+    incrementUsage: incrementUsage,
+    checkLimit: checkLimit,
+    checkCharacter: checkCharacter,
+    showUpgradeModal: showUpgradeModal,
+    showPlanUI: showPlanUI,
+    selectPlan: selectPlan,
+    renderPlanBadges: renderPlanBadges,
+    getAIHeaders: getAIHeaders
+  };
+
+  // 初期化（DOMReady後）
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderPlanBadges);
+  } else {
+    setTimeout(renderPlanBadges, 500);
+  }
+})();
+</script>
+
+<script>
+/* ===== v40.6 Premium Gate: CSVは有料のみ（DaycePlanベース） ===== */
+(function(){
+  'use strict';
+
+  // ===== 有料判定（DaycePlanと統合） =====
   function isPremiumUser(){
+    if (window.DaycePlan) {
+      var plan = window.DaycePlan.getPlan();
+      return window.DaycePlan.PLANS[plan] && window.DaycePlan.PLANS[plan].csv;
+    }
     try {
       var v = localStorage.getItem('isPremium');
       return v === 'true' || v === '1' || v === 'yes';
@@ -17138,8 +17481,12 @@ const modal = $('qrModal');
   }
 
   function showPremiumNotice(){
-    var msg = '🔒 有料会員限定\n\nCSVダウンロードは有料会員向け機能です。\n\n※現在は試作版のため、課金連携は未実装です。\n（開発用）有料として動作確認するには:\nlocalStorage の isPremium を true にしてください。';
-    alert(msg);
+    if (window.DaycePlan) {
+      window.DaycePlan.showUpgradeModal({ type: 'consult', plan: window.DaycePlan.getPlan(), current: 0, limit: 0,
+        reason: 'CSVダウンロードはライトプラン以上で利用できます' });
+    } else {
+      alert('🔒 有料会員限定\n\nCSVダウンロードは有料会員向け機能です。');
+    }
   }
 
   // ===== AIタブのCSVボタンを「条件付き」にする =====
@@ -19289,6 +19636,15 @@ var aiConsultTone = localStorage.getItem('aiConsultTone') || 'normal';
 var aiConsultTopic = 'activity';
 
 function selectAIConsultTone(tone) {
+  // キャラクター制限チェック（無料プランはタクヤ先輩のみ）
+  if (window.DaycePlan) {
+    var charCheck = window.DaycePlan.checkCharacter(tone);
+    if (!charCheck.allowed) {
+      window.DaycePlan.showUpgradeModal({ type: 'consult', plan: window.DaycePlan.getPlan(), current: 0, limit: 0,
+        reason: charCheck.reason });
+      return;
+    }
+  }
   aiConsultTone = tone;
   localStorage.setItem('aiConsultTone', tone);
   var btns = document.querySelectorAll('.ai-char-btn');
@@ -19669,6 +20025,15 @@ async function sendAIConsult() {
     return;
   }
 
+  // プラン制限チェック
+  if (window.DaycePlan) {
+    var limit = window.DaycePlan.checkLimit('consult');
+    if (!limit.allowed) {
+      window.DaycePlan.showUpgradeModal(limit);
+      return;
+    }
+  }
+
   var sendBtn = document.getElementById('aiConsultSendBtn');
   var loading = document.getElementById('aiConsultLoading');
   var answer = document.getElementById('aiConsultAnswer');
@@ -19695,9 +20060,10 @@ async function sendAIConsult() {
     var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-ai.little-limit-621c.workers.dev';
     var endpoint = BACKEND_URL + '/api/analyze';
 
+    var aiHeaders = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : { 'Content-Type': 'application/json' };
     var res = await fetch(endpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: aiHeaders,
       body: JSON.stringify({ text: textToSend, tone: tone, type: 'consult' })
     });
 
@@ -19737,6 +20103,9 @@ async function sendAIConsult() {
     if (nameEl) nameEl.textContent = charInfo.name;
     if (textEl) textEl.textContent = responseText;
     if (answer) answer.style.display = 'block';
+
+    // 使用回数カウント
+    if (window.DaycePlan) { window.DaycePlan.incrementUsage('consult'); window.DaycePlan.renderPlanBadges(); }
 
     // 履歴に保存
     saveConsultHistory(text, responseText, charInfo.name, tone);
@@ -19819,16 +20188,22 @@ setTimeout(function(){ renderConsultHistory(); }, 600);
 
 // CSVダウンロードハンドラー（有料会員チェック付き）
 function handleCSVDownload(type) {
-  // 有料判定
-  function isPremiumUser() {
-    try {
-      var v = localStorage.getItem('isPremium');
-      return v === 'true' || v === '1' || v === 'yes';
-    } catch(e) { return false; }
+  // 有料判定（DaycePlanベース）
+  var canCSV = false;
+  if (window.DaycePlan) {
+    var plan = window.DaycePlan.getPlan();
+    canCSV = window.DaycePlan.PLANS[plan] && window.DaycePlan.PLANS[plan].csv;
+  } else {
+    try { canCSV = localStorage.getItem('isPremium') === 'true'; } catch(e) {}
   }
 
-  if (!isPremiumUser()) {
-    alert('🔒 有料会員限定\n\nCSVダウンロードは有料会員向け機能です。\n\n有料会員になると:\n• 全データをCSVでダウンロード\n• クラウドバックアップ\n\n※ 現在準備中です');
+  if (!canCSV) {
+    if (window.DaycePlan) {
+      window.DaycePlan.showUpgradeModal({ type: 'consult', plan: window.DaycePlan.getPlan(), current: 0, limit: 0,
+        reason: 'CSVダウンロードはライトプラン以上で利用できます' });
+    } else {
+      alert('🔒 有料会員限定\n\nCSVダウンロードは有料会員向け機能です。');
+    }
     return;
   }
 
@@ -19971,6 +20346,15 @@ function getCharacterInfo(tone) {
 }
 
 function selectFeedbackTone(tone) {
+  // キャラクター制限チェック（無料プランはタクヤ先輩のみ）
+  if (window.DaycePlan) {
+    var charCheck = window.DaycePlan.checkCharacter(tone);
+    if (!charCheck.allowed) {
+      window.DaycePlan.showUpgradeModal({ type: 'journal', plan: window.DaycePlan.getPlan(), current: 0, limit: 0,
+        reason: charCheck.reason });
+      return;
+    }
+  }
   localStorage.setItem('journalFeedbackTone', tone);
   updateFeedbackToneUI();
 }

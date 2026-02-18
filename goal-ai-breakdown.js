@@ -220,6 +220,15 @@
 
   // ========== キャラクター選択 ==========
   function selectChar(tone) {
+    // キャラクター制限チェック（無料プランはタクヤ先輩のみ）
+    if (window.DaycePlan) {
+      var charCheck = window.DaycePlan.checkCharacter(tone);
+      if (!charCheck.allowed) {
+        window.DaycePlan.showUpgradeModal({ type: 'goalCoach', plan: window.DaycePlan.getPlan(), current: 0, limit: 0,
+          reason: charCheck.reason });
+        return;
+      }
+    }
     _state.tone = tone;
     // ボタンのアクティブ状態を更新
     var btns = document.querySelectorAll('.gai-char-btn');
@@ -288,11 +297,15 @@
     aiBtn.type = 'button';
     aiBtn.id = 'goalAIBreakdownBtn';
     aiBtn.className = 'goal-ai-btn';
-    aiBtn.innerHTML = '🤖 AIと目標設定 <span class="premium-tag">👑 有料</span>';
+    aiBtn.innerHTML = '🤖 AIと目標設定';
     aiBtn.onclick = function() {
-      if (!isPremium()) {
-        alert('🔒 有料会員限定\n\n「AIと目標設定」は有料会員向けの機能です。\n\n有料会員になると:\n• AIが対話で目標を具体化\n• CSV データダウンロード\n• その他プレミアム機能');
-        return;
+      // プラン制限チェック
+      if (window.DaycePlan) {
+        var limit = window.DaycePlan.checkLimit('goalCoach');
+        if (!limit.allowed) {
+          window.DaycePlan.showUpgradeModal(limit);
+          return;
+        }
       }
       // キャラ選択 + 開始ボタンを表示
       charWrap.style.display = 'flex';
@@ -493,9 +506,10 @@
       var prompt = buildPrompt();
 
       var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-ai.little-limit-621c.workers.dev';
+      var _gaiH = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : { 'Content-Type': 'application/json' };
       var res = await fetch(BACKEND_URL + '/api/analyze', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: _gaiH,
         body: JSON.stringify({ text: prompt, tone: tone, type: 'consult' })
       });
 
@@ -600,9 +614,10 @@
         '【会話履歴】\n' + historyText;
 
       var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-ai.little-limit-621c.workers.dev';
+      var _gaiH = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : { 'Content-Type': 'application/json' };
       var res = await fetch(BACKEND_URL + '/api/analyze', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: _gaiH,
         body: JSON.stringify({ text: prompt, tone: tone, type: 'consult' })
       });
 
@@ -677,6 +692,20 @@
       _phaseLabels = '【第1週】\n1. タスクA\n【第2週】\n1. タスクB\n【第3週】\n1. タスクC\n【第4週】\n1. タスクD';
     }
 
+    // カテゴリに応じて頻度ルールを切り替え
+    var _cat = _state.category || 'その他';
+    var _freqRule;
+    if (_cat === '健康') {
+      _freqRule =
+        '- 「週○回〜する」「毎日〜する」のような頻度・回数付きの行動にしてください\n' +
+        '- 例: ダイエット → 前半「週2回ジムに行く」→ 後半「週3回ジム+自宅筋トレ1回」\n';
+    } else {
+      _freqRule =
+        '- タスクはシンプルな行動で書いてください（例:「完成したシナリオを見直す」「企画書の骨子を作る」）\n' +
+        '- 頻度（週○回等）は、運動や反復練習など回数が重要な場合のみ付けてください\n' +
+        '- 創作・学習・計画系のタスクは回数より「何をするか」を明確に書いてください\n';
+    }
+
     var weeklyPlanRule =
       '【タスク提案のルール】\n' +
       '- ' + _monthName + '末（' + _monthLabel + '、残り' + _remainDays + '日間）の計画を提案してください\n' +
@@ -684,9 +713,8 @@
       _phaseLabels + '\n' +
       '- 各フェーズ2〜3個、全体で6〜12個のタスクにしてください\n' +
       '- 最初は取り組みやすいタスク、後半はステップアップした内容にしてください\n' +
-      '- 「週○回〜する」「毎日〜する」のような頻度・回数付きの行動にしてください\n' +
-      '- 準備やTips（「バッグを用意する」等）ではなく、目標達成に直結する行動そのものにしてください\n' +
-      '- 例: ダイエット → 前半「週2回ジムに行く」→ 後半「週3回ジム+自宅筋トレ1回」\n';
+      _freqRule +
+      '- 準備やTips（「バッグを用意する」等）ではなく、目標達成に直結する行動そのものにしてください\n';
 
     // 初回: ヒアリング質問
     if (_state.turnCount === 0) {
@@ -695,7 +723,7 @@
         'ユーザーが「' + _state.goalText + '」（カテゴリ: ' + _state.category + '）という目標を立てようとしています。\n' +
         'この目標を' + _monthName + '末までの計画に落とし込むために、1つだけ短い質問をしてください。\n' +
         '- ユーザーの過去データがあれば、それを踏まえた質問をしてください\n' +
-        '- 具体的な数値、頻度（週何回？毎日？）、' + _monthName + '末にどうなりたいかを聞く質問が望ましい\n' +
+        '- ' + (_cat === '健康' ? '具体的な数値、頻度（週何回？毎日？）、' : '具体的なゴールイメージや現在の状況、') + _monthName + '末にどうなりたいかを聞く質問が望ましい\n' +
         '- 質問は1〜2文で簡潔に\n' +
         '- キャラクター設定の口調に従って会話してください\n' +
         '- タスクリストや分析結果は出力しないでください\n' +
@@ -1071,6 +1099,9 @@
         : '✅ ' + added + '個のタスクを今週のやることに追加しました';
       window.showStatus('goalStatus', msg);
     }
+
+    // 使用回数カウント（タスク追加完了時に1回カウント）
+    if (window.DaycePlan) { window.DaycePlan.incrementUsage('goalCoach'); window.DaycePlan.renderPlanBadges(); }
 
     closeChat();
   }
