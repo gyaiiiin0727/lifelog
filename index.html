@@ -11886,7 +11886,7 @@ try{
     const e = entries()[d];
     const empty = document.getElementById('journalV3TodaySummaryEmpty');
     const body = document.getElementById('journalV3TodaySummaryBody');
-    const set = (id,val)=>{ const el=document.getElementById(id); if(el){ if(val){ const esc=String(val).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); el.innerHTML = esc.replace(/\n/g,'<br>'); }else{ el.textContent='—'; } } };
+    const set = (id,val)=>{ const el=document.getElementById(id); if(el){ if(val){ let s=String(val); s=s.replace(/([^\n])・/g,'$1\n・'); const esc=s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); el.innerHTML = esc.replace(/\n/g,'<br>'); }else{ el.textContent='—'; } } };
     if(e && e.summary){
       if(empty) empty.style.display='none';
       if(body) body.style.display='block';
@@ -12269,15 +12269,20 @@ try{
           // JSONオブジェクトの場合はテキスト形式に変換（Worker がパース済みJSONを返す）
           var out = raw;
           var parsed = null;
+          // 箇条書きの「・」の前に改行を確保するヘルパー
+          var _ensureBullets = function(s) {
+            if (!s || typeof s !== 'string') return s;
+            return s.replace(/([^\n])・/g, '$1\n・').replace(/^\n/, '');
+          };
           if(typeof raw === 'object' && raw !== null) {
             parsed = raw;
             var lines = [];
-            if(raw.events) lines.push('【よかったこと】\n' + raw.events);
-            if(raw.learnings) lines.push('【改善したいこと】\n' + raw.learnings);
-            if(raw.feelings) lines.push('【気づいたこと】\n' + raw.feelings);
-            if(raw.gratitude) lines.push('【もやっとしたこと】\n' + raw.gratitude);
-            if(raw.must) lines.push('【明日のMUST】\n' + raw.must);
-            if(raw.want) lines.push('【明日のWANT】\n' + raw.want);
+            if(raw.events) lines.push('【よかったこと】\n' + _ensureBullets(raw.events));
+            if(raw.learnings) lines.push('【改善したいこと】\n' + _ensureBullets(raw.learnings));
+            if(raw.feelings) lines.push('【気づいたこと】\n' + _ensureBullets(raw.feelings));
+            if(raw.gratitude) lines.push('【もやっとしたこと】\n' + _ensureBullets(raw.gratitude));
+            if(raw.must) lines.push('【明日のMUST】\n' + _ensureBullets(raw.must));
+            if(raw.want) lines.push('【明日のWANT】\n' + _ensureBullets(raw.want));
             if(raw.oneLiner) lines.push('【コメント】\n' + raw.oneLiner);
             out = lines.join('\n\n');
           }
@@ -12643,15 +12648,21 @@ try{
         // JSONオブジェクトの場合はテキスト形式に変換（Worker がパース済みJSONを返す）
         let out = raw;
         let parsed = null;
+        // 箇条書きの「・」の前に改行を確保するヘルパー
+        const ensureBulletBreaks = (s) => {
+          if (!s || typeof s !== 'string') return s;
+          // 「・」が行頭でない場合に改行を挿入（連続する箇条書きを分割）
+          return s.replace(/([^\n])・/g, '$1\n・').replace(/^\n/, '');
+        };
         if (typeof raw === 'object' && raw !== null) {
           parsed = raw;
           const lines = [];
-          if (raw.events) lines.push('【よかったこと】\n' + raw.events);
-          if (raw.learnings) lines.push('【改善したいこと】\n' + raw.learnings);
-          if (raw.feelings) lines.push('【気づいたこと】\n' + raw.feelings);
-          if (raw.gratitude) lines.push('【もやっとしたこと】\n' + raw.gratitude);
-          if (raw.must) lines.push('【明日のMUST】\n' + raw.must);
-          if (raw.want) lines.push('【明日のWANT】\n' + raw.want);
+          if (raw.events) lines.push('【よかったこと】\n' + ensureBulletBreaks(raw.events));
+          if (raw.learnings) lines.push('【改善したいこと】\n' + ensureBulletBreaks(raw.learnings));
+          if (raw.feelings) lines.push('【気づいたこと】\n' + ensureBulletBreaks(raw.feelings));
+          if (raw.gratitude) lines.push('【もやっとしたこと】\n' + ensureBulletBreaks(raw.gratitude));
+          if (raw.must) lines.push('【明日のMUST】\n' + ensureBulletBreaks(raw.must));
+          if (raw.want) lines.push('【明日のWANT】\n' + ensureBulletBreaks(raw.want));
           if (raw.oneLiner) lines.push('【コメント】\n' + raw.oneLiner);
           out = lines.join('\n\n');
         }

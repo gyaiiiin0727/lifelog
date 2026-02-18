@@ -242,19 +242,19 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 
 ## 未解決・今後の課題
 
-### 次にやること（セッション7以降）
+### 次にやること（セッション8以降）
 1. ~~**クラウド同期**（メール+パスワード認証版）~~ ✅ 完了（セッション5）
 2. ~~**AIプロンプトのサーバー移行**~~ ✅ 完了（セッション5）
 3. ~~**有料プランの内容決め**~~ ✅ 確定（セッション6）
 4. ~~**AIキャラクター差別化**~~ ✅ 完了（セッション6）
 5. ~~**AIゴールコーチ頻度改善**~~ ✅ 完了（セッション6）
 6. ~~**バグ修正（改行表示・カレンダーモーダル）**~~ ✅ 完了（セッション6）
-7. **有料プランの実装**（回数制限ゲート + プランUI）← 次の優先
-8. **課金システム**（Stripe連携）
-9. **コード難読化**
-10. **利用規約・プライバシーポリシー**
-11. **Resend連携**（パスワードリセットメール送信）← 現在はコード直接通知のフォールバック
-12. **GitHub Pagesへのファイルアップロード**（index.html, cloud-sync.js, goal-ai-breakdown.js）
+7. ~~**有料プランの実装**（回数制限ゲート + プランUI）~~ ✅ 完了（セッション7）
+8. ~~**GitHub Pagesへのファイルアップロード**~~ ✅ 完了（セッション7）
+9. **課金システム**（Stripe連携）← 次の優先
+10. **コード難読化**
+11. **利用規約・プライバシーポリシー**
+12. **Resend連携**（パスワードリセットメール送信）← 現在はコード直接通知のフォールバック
 
 ### 有料プラン確定内容（セッション6で決定）
 
@@ -363,7 +363,9 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 | `journalFeedbackTone` | ジャーナルのフィードバック担当 |
 | `aiConsultTone` | AI相談のキャラクター選択（独立） |
 | `lastActiveTab` | 最後に開いたタブ |
-| `isPremium` | 有料会員フラグ |
+| `isPremium` | 有料会員フラグ（旧。planLevelとの後方互換あり） |
+| `planLevel` | プランレベル: 'free'\|'lite'\|'premium'（セッション7で追加） |
+| `aiUsage_YYYY-MM` | AI月間使用回数 JSON `{journal:n, consult:n, goalCoach:n}`（セッション7で追加） |
 | `fabPosition` | FABボタンの位置 `{x, y}` |
 | `syncAuthToken` | クラウド同期用JWTトークン |
 | `syncAuthEmail` | クラウド同期用メールアドレス |
@@ -621,6 +623,72 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
   - それ以外: 「具体的なゴールイメージや現在の状況」を質問
 - 対象箇所: `buildPrompt()` 内 ~L680-702（weeklyPlanRule）, ~L711（初回質問）
 
+## セッション7の変更記録
+
+### AM. 有料プラン実装（DaycePlanモジュール）
+**ファイル: `index.html`（約280行追加）**
+- `window.DaycePlan` グローバルモジュール新設（IIFE）
+- プラン定義: `PLANS = { free, lite, premium }` — 各機能の回数上限を定義
+- `getPlan()` / `setPlan()` — `planLevel` localStorage管理（旧`isPremium`との後方互換あり）
+- `getUsage()` / `incrementUsage(type)` — 月間使用回数管理（`aiUsage_YYYY-MM` localStorage）
+- `checkLimit(type)` — journal/consult/goalCoach の回数制限チェック
+- `checkCharacter(tone)` — 無料プランはタクヤ先輩（normal）のみ許可
+- `showUpgradeModal(info)` — 🔒アップグレード誘導モーダル（次のプランの機能比較表示）
+- `showPlanUI()` — 3プラン比較モーダル（無料/ライト/プレミアム、カード型UI）
+- `getAIHeaders()` — `syncAuthToken` があればAuthorizationヘッダー付与
+- `renderPlanBadges()` — AI相談タブ上部の残回数バッジ自動更新
+- **新規localStorage キー**: `planLevel`（'free'|'lite'|'premium'）, `aiUsage_YYYY-MM`（JSON）
+
+### AN. AI回数制限ゲート挿入（4箇所）
+**ファイル: `index.html`**
+- ジャーナルAI ES5版（`stepAIRefine`）: `checkLimit('journal')` + 成功後 `incrementUsage`
+- ジャーナルAI ES6版（`journalAiBigBtn`）: 同上
+- AI相談（`sendAIConsult`）: `checkLimit('consult')` + 成功後 `incrementUsage`
+- 全fetchに `getAIHeaders()` でAuthorizationヘッダー付与（Worker側二重チェック用）
+
+### AO. キャラクター制限（3箇所）
+**ファイル: `index.html`, `goal-ai-breakdown.js`**
+- `selectAIConsultTone()` — AI相談のキャラ選択にゲート
+- `selectFeedbackTone()` — ジャーナルのキャラ選択にゲート
+- `selectChar()` — 目標コーチのキャラ選択にゲート
+- 無料プランでマネージャー/ハナさんを選択 → アップグレードモーダル表示
+
+### AP. AI目標コーチの制限ゲート
+**ファイル: `goal-ai-breakdown.js`**
+- ボタンから「👑 有料」タグ削除 → DaycePlanモーダルで代替
+- `checkLimit('goalCoach')` ゲート追加
+- タスク追加完了時に `incrementUsage('goalCoach')`
+- fetchに `getAIHeaders()` 付与（2箇所）
+
+### AQ. CSV・クラウド同期のDaycePlan統合
+**ファイル: `index.html`, `cloud-sync.js`**
+- 既存CSVゲート（v40.6 Premium Gate）の `isPremiumUser()` を DaycePlan ベースに書き換え
+- `handleCSVDownload()` 内の有料判定も統合
+- `showPremiumNotice()` → `showUpgradeModal()` に置き換え
+- cloud-sync.js: upload時に `planLevel` をWorkerに送信
+
+### AR. Worker側プラン検証・回数チェック
+**ファイル: `worker/src/worker.js`（デプロイ済み）**
+- `PLAN_LIMITS` 定数追加（free/lite/premium の回数上限）
+- `checkAndIncrementUsage(env, email, aiType)` — KVベースの月間回数管理
+  - KVキー: `usage:{email}:YYYY-MM`（TTL 35日）
+  - 上限到達時は HTTP 429 + `limitReached: true` を返却
+- `/api/analyze` がオプションJWT認証対応 — 認証ユーザーはWorker側でも二重チェック
+- `handleSyncUpload` で `planLevel` をユーザーレコード（`user:{email}`）に保存
+- **回数制限の二重チェック構造**:
+  - フロント（localStorage）← 即座にブロック（UX重視）
+  - Worker（KV）← 改ざん防止（セキュリティ重視）
+
+### AS. プランUI配置
+**ファイル: `index.html`**
+- AI相談タブ上部にプランバッジ・残回数表示を追加
+  - プラン名バッジ（`#dayce-plan-badge`）
+  - 残回数: AI相談（`#dayce-usage-consult`）、心を整える（`#dayce-usage-journal`）、目標コーチ（`#dayce-usage-goalCoach`）
+  - 「📋 プラン変更」ボタン → `showPlanUI()` モーダル
+
+### AT. GitHub Pagesアップロード
+- index.html, goal-ai-breakdown.js, cloud-sync.js の3ファイルをアップロード済み
+
 ## 技術的な注意点
 - `index.html`は約20000行, 1.7MBあり全体を一度に読めない。Grep/行番号指定で必要箇所を読むこと
 - JavaScriptモジュールはIIFE（即時実行関数）パターン。`window.xxx` でグローバル公開
@@ -638,3 +706,8 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 - Worker の secrets 設定: `npx wrangler secret put OPENAI_API_KEY` 等
 - OpenAI Responses API を使用（`/v1/responses`）。`response_format` は非推奨、`text.format` を使うこと
 - AI応答: Worker が `type: 'journal'` ではJSONパースして返す → フロントで `typeof raw === 'object'` チェックが必須
+- **DaycePlan**: `window.DaycePlan` でプラン管理。AI呼び出し前に `checkLimit()` ゲート必須
+- **回数制限の二重チェック**: フロント（localStorage `aiUsage_YYYY-MM`）+ Worker（KV `usage:{email}:YYYY-MM`）
+- **planLevel**: localStorage `planLevel` = 'free'|'lite'|'premium'。旧 `isPremium` との後方互換あり
+- **キャラ制限**: 無料プランは `tone='normal'`（タクヤ先輩）のみ。Worker側での検証は未実装（将来追加可能）
+- **Stripe未連携**: 現在はプラン切替のみ（`DaycePlan.selectPlan('lite')` で手動切替可能）
