@@ -17176,21 +17176,25 @@ const modal = $('qrModal');
 
   // --- プラン定義 ---
   var PLANS = {
-    free:    { label: '無料プラン',    journal: 15, consult: 0,  goalCoach: 1, charLimit: true,  csv: false, cloudSync: false },
-    lite:    { label: 'ライト（¥480/月）', journal: 30, consult: 10, goalCoach: 3, charLimit: false, csv: true,  cloudSync: true  },
-    premium: { label: 'プレミアム（¥980/月）', journal: 9999, consult: 9999, goalCoach: 9999, charLimit: false, csv: true, cloudSync: true }
+    free:    { label: '無料プラン',    journal: 15, consult: 0,  goalCoach: 1, charLimit: true,  csv: false, cloudSync: true },
+    pro:     { label: 'プロ（¥390/月）', journal: 9999, consult: 9999, goalCoach: 9999, charLimit: false, csv: true, cloudSync: true },
+    // 後方互換: 旧プランでログインしているユーザー向け
+    lite:    { label: 'プロ（¥390/月）', journal: 9999, consult: 9999, goalCoach: 9999, charLimit: false, csv: true, cloudSync: true },
+    premium: { label: 'プロ（¥390/月）', journal: 9999, consult: 9999, goalCoach: 9999, charLimit: false, csv: true, cloudSync: true }
   };
 
   // --- 現在のプランレベル取得 ---
   function getPlan() {
     try {
       var v = localStorage.getItem('planLevel');
+      // 旧プラン(lite/premium)はproに統合
+      if (v === 'lite' || v === 'premium') return 'pro';
       if (v && PLANS[v]) return v;
     } catch(e) {}
     // 旧 isPremium との後方互換
     try {
       var p = localStorage.getItem('isPremium');
-      if (p === 'true' || p === '1' || p === 'yes') return 'premium';
+      if (p === 'true' || p === '1' || p === 'yes') return 'pro';
     } catch(e) {}
     return 'free';
   }
@@ -17247,7 +17251,7 @@ const modal = $('qrModal');
         plan: plan,
         type: type,
         reason: limit === 0
-          ? 'この機能は' + (plan === 'free' ? 'ライト' : 'プレミアム') + 'プラン以上で利用できます'
+          ? 'この機能はプロプランで利用できます'
           : '今月の利用回数（' + limit + '回）に達しました'
       };
     }
@@ -17258,7 +17262,7 @@ const modal = $('qrModal');
   function checkCharacter(tone) {
     var plan = getPlan();
     if (PLANS[plan].charLimit && tone !== 'normal') {
-      return { allowed: false, reason: 'キャラクター選択はライトプラン以上で利用できます' };
+      return { allowed: false, reason: 'キャラクター選択はプロプランで利用できます' };
     }
     return { allowed: true };
   }
@@ -17279,11 +17283,6 @@ const modal = $('qrModal');
       usageText = '<div style="font-size:14px;color:#666;margin-bottom:16px;">「' + typeLabel + '」の今月の利用: <b>' + info.current + ' / ' + info.limit + '回</b></div>';
     }
 
-    var nextPlan = info.plan === 'free' ? 'lite' : 'premium';
-    var nextLabel = PLANS[nextPlan].label;
-    var nextLimit = PLANS[nextPlan][info.type];
-    var nextText = nextLimit === 9999 ? '無制限' : '月' + nextLimit + '回';
-
     var overlay = document.createElement('div');
     overlay.id = 'dayce-upgrade-modal';
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
@@ -17293,15 +17292,16 @@ const modal = $('qrModal');
         '<div style="font-size:18px;font-weight:700;margin-bottom:8px;">利用制限に達しました</div>' +
         usageText +
         '<div style="background:#f0f7ff;border-radius:12px;padding:16px;margin-bottom:20px;text-align:left;">' +
-          '<div style="font-weight:600;color:#1976D2;margin-bottom:8px;">👑 ' + nextLabel + '</div>' +
-          '<div style="font-size:13px;color:#444;line-height:1.6;">' +
-            '• ' + typeLabel + ': <b>' + nextText + '</b><br>' +
-            '• AI相談: <b>' + (PLANS[nextPlan].consult === 9999 ? '無制限' : '月' + PLANS[nextPlan].consult + '回') + '</b><br>' +
-            '• 目標コーチ: <b>' + (PLANS[nextPlan].goalCoach === 9999 ? '無制限' : '月' + PLANS[nextPlan].goalCoach + '回') + '</b><br>' +
-            '• CSV / クラウド同期: <b>✅</b>' +
+          '<div style="font-weight:600;color:#1976D2;margin-bottom:8px;">👑 プロプラン（¥390/月）</div>' +
+          '<div style="font-size:13px;color:#444;line-height:1.8;">' +
+            '• 心を整える: <b>無制限</b><br>' +
+            '• AI相談: <b>無制限</b><br>' +
+            '• 目標コーチ: <b>無制限</b><br>' +
+            '• キャラクター: <b>3種から選択</b><br>' +
+            '• CSV出力 / クラウド同期: <b>✅</b>' +
           '</div>' +
         '</div>' +
-        '<button onclick="document.getElementById(\'dayce-upgrade-modal\').remove();window.DaycePlan.showPlanUI();" style="width:100%;padding:14px;background:#2196F3;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;">プランを見る</button>' +
+        '<button onclick="document.getElementById(\'dayce-upgrade-modal\').remove();window.DaycePlan.showPlanUI();" style="width:100%;padding:14px;background:#2196F3;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;">プロプランにする</button>' +
         '<button onclick="document.getElementById(\'dayce-upgrade-modal\').remove();" style="width:100%;padding:12px;background:none;border:1px solid #ddd;border-radius:10px;font-size:14px;color:#666;cursor:pointer;">閉じる</button>' +
       '</div>';
     overlay.addEventListener('click', function(e) {
@@ -17362,23 +17362,17 @@ const modal = $('qrModal');
         'AI相談: ❌',
         '目標コーチ: 月1回',
         'キャラクター: タクヤ先輩のみ',
-        'CSV / クラウド同期: ❌'
+        'CSV出力: ❌',
+        'クラウド同期: ✅'
       ]},
-      { key: 'lite', name: 'ライト', price: '¥480/月', color: '#2196F3', features: [
-        '記録・カレンダー・レポート: ✅',
-        '心を整える: 月30回（1日1回）',
-        'AI相談: 月10回',
-        '目標コーチ: 月3回',
-        'キャラクター: 3種から選択',
-        'CSV / クラウド同期: ✅'
-      ]},
-      { key: 'premium', name: 'プレミアム', price: '¥980/月', color: '#f59e0b', features: [
+      { key: 'pro', name: 'プロ', price: '¥390/月', color: '#2196F3', features: [
         '記録・カレンダー・レポート: ✅',
         '心を整える: 無制限',
         'AI相談: 無制限',
         '目標コーチ: 無制限',
         'キャラクター: 3種から選択',
-        'CSV / クラウド同期: ✅'
+        'CSV出力: ✅',
+        'クラウド同期: ✅'
       ]}
     ];
 
@@ -17415,7 +17409,7 @@ const modal = $('qrModal');
     html += '<div style="text-align:center;margin-top:8px;">' +
       '<button onclick="document.getElementById(\'dayce-plan-modal\').remove();" style="padding:10px 32px;background:none;border:1px solid #ddd;border-radius:8px;font-size:14px;color:#666;cursor:pointer;">閉じる</button>' +
       '</div>' +
-      '<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;">※ 課金連携は準備中です。現在はプラン切替のみ動作します。</div>' +
+      '<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;">※ Stripe決済連携は準備中です</div>' +
     '</div>';
 
     overlay.innerHTML = html;

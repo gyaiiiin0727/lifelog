@@ -256,26 +256,28 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 11. **利用規約・プライバシーポリシー**
 12. **Resend連携**（パスワードリセットメール送信）← 現在はコード直接通知のフォールバック
 
-### 有料プラン確定内容（セッション6で決定）
+### 有料プラン確定内容（セッション8で2プラン化）
 
-| 機能 | 無料 | ライト（月480円） | プレミアム（月980円） |
-|---|---|---|---|
-| 記録（行動/お金/体重/ジャーナル） | ✅ 無制限 | ✅ | ✅ |
-| カレンダー・レポート | ✅ | ✅ | ✅ |
-| 目標・タスク管理 | ✅ | ✅ | ✅ |
-| JSONバックアップ/復元 | ✅ | ✅ | ✅ |
-| ジャーナルAI「心を整える」 | **月15回** | **月30回（1日1回）** | **無制限** |
-| AI相談チャット | ❌ | **月10回** | **無制限** |
-| AI目標コーチ | **月1回** | **月3回** | **無制限** |
-| キャラクター選択 | タクヤ先輩のみ | ✅ 3種 | ✅ 3種 |
-| CSVダウンロード | ❌ | ✅ | ✅ |
-| クラウド同期 | ❌ | ✅ | ✅ |
+| 機能 | 無料 | プロ（月390円） |
+|---|---|---|
+| 記録（行動/お金/体重/ジャーナル） | ✅ 無制限 | ✅ |
+| カレンダー・レポート | ✅ | ✅ |
+| 目標・タスク管理 | ✅ | ✅ |
+| JSONバックアップ/復元 | ✅ | ✅ |
+| ジャーナルAI「心を整える」 | **月15回** | **無制限** |
+| AI相談チャット | ❌ | **無制限** |
+| AI目標コーチ | **月1回** | **無制限** |
+| キャラクター選択 | タクヤ先輩のみ | ✅ 3種 |
+| CSVダウンロード | ❌ | ✅ |
+| クラウド同期 | ✅ | ✅ |
 
 #### 実装メモ
 - 回数カウントは `localStorage` + Worker側で二重チェック（改ざん防止）
 - 月初リセット（`aiUsage_YYYY-MM` キーで管理）
-- `isPremium` → `planLevel: 'free'|'lite'|'premium'` に拡張
-- キャラクター制限: 無料ユーザーは tone='normal' のみ送信可能（Worker側でも検証）
+- `planLevel: 'free'|'pro'`（旧 'lite'/'premium' は 'pro' にマッピング）
+- キャラクター制限: 無料ユーザーは tone='normal' のみ送信可能
+- Stripe商品ID: `prod_U0JNaY75j8VPFM`（¥390/月、サンドボックス）
+- Stripe APIキー: テスト用 `pk_test_...` / `sk_test_...` 取得済み
 
 ### セッション4-5で合意した方針
 - **認証方式**: 合言葉版はスキップ。**メール+パスワード認証で実装済み**（セッション5完了）
@@ -364,7 +366,7 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 | `aiConsultTone` | AI相談のキャラクター選択（独立） |
 | `lastActiveTab` | 最後に開いたタブ |
 | `isPremium` | 有料会員フラグ（旧。planLevelとの後方互換あり） |
-| `planLevel` | プランレベル: 'free'\|'lite'\|'premium'（セッション7で追加） |
+| `planLevel` | プランレベル: 'free'\|'pro'（旧lite/premiumはproにマッピング） |
 | `aiUsage_YYYY-MM` | AI月間使用回数 JSON `{journal:n, consult:n, goalCoach:n}`（セッション7で追加） |
 | `fabPosition` | FABボタンの位置 `{x, y}` |
 | `syncAuthToken` | クラウド同期用JWTトークン |
@@ -689,6 +691,51 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 ### AT. GitHub Pagesアップロード
 - index.html, goal-ai-breakdown.js, cloud-sync.js の3ファイルをアップロード済み
 
+## セッション8の変更記録
+
+### AU. プラン構成を2プラン化（無料 + プロ ¥390/月）
+**ファイル: `index.html`, `worker/src/worker.js`**
+- **旧**: 無料 / ライト（¥480/月）/ プレミアム（¥980/月）の3プラン
+- **新**: 無料 / プロ（¥390/月）の2プランに統合
+- `PLANS` 定義: `free` + `pro`（旧 `lite`/`premium` は `pro` 相当で後方互換残存）
+- `getPlan()`: `localStorage` の旧 `lite`/`premium` → `pro` にマッピング
+- `checkLimit()`: アップグレード文言を「プロプランで利用できます」に統一
+- `checkCharacter()`: 文言を「プロプランで利用できます」に変更
+- `showUpgradeModal()`: プロプラン（¥390/月）の機能一覧をハードコード表示
+- `showPlanUI()`: 2カード（無料/プロ）表示に変更
+- Worker `PLAN_LIMITS`: `pro` 追加、旧 `lite`/`premium` はpro相当で後方互換
+- Worker `handleSyncUpload`: `planLevel` に `'pro'` を受付可能に
+
+### AV. クラウド同期を無料プランでも利用可能に
+**ファイル: `index.html`**
+- `PLANS.free.cloudSync` を `false` → `true` に変更
+- データ保全はユーザー体験の基本との判断
+
+### AW. 目標進捗パーセンテージの母数変更
+**ファイル: `goals-v2.js`**
+- **旧**: 完了した目標数 / 月の目標数（例: 1/5 = 20%）
+- **新**: 完了した週タスク数 / 月内の全週タスク数（例: 12/20 = 60%）
+- `renderSummary()` を修正: `weeklyTasks` の `done` 数でパーセンテージ計算
+- 表示ラベル: 「達成」→「タスク達成」
+
+### AX. FABクイックボタンの順番変更
+**ファイル: `index.html`**
+- **旧順**: AI相談 → 目標 → ジャーナル → ホーム → 行動記録 → 支出記録
+- **新順**: AI相談 → **ジャーナル** → **目標** → ホーム → 行動記録 → 支出記録
+
+### AY. ジャーナルAIの箇条書き改行修正
+**ファイル: `index.html`, `goals-v2.js`**
+- AIが返すテキストで「・」の前に改行がない場合に`\n`を挿入する処理を3箇所に追加
+- ES6版: `ensureBulletBreaks()` 関数
+- ES5版: `_ensureBullets()` 関数
+- 今日のまとめ: `set()` 内で `・` の前に `\n` 挿入
+
+### AZ. Stripe連携準備
+- Stripeサンドボックスアカウント作成済み（lofelog_app）
+- テスト用APIキー取得済み（pk_test_... / sk_test_...）
+- 商品作成済み: `prod_U0JNaY75j8VPFM`（プロプラン ¥390/月）
+- **未実装**: Checkout Session作成、Webhook受信、フロントのStripe Checkoutリダイレクト
+
 ## 技術的な注意点
 - `index.html`は約20000行, 1.7MBあり全体を一度に読めない。Grep/行番号指定で必要箇所を読むこと
 - JavaScriptモジュールはIIFE（即時実行関数）パターン。`window.xxx` でグローバル公開
@@ -708,6 +755,7 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 - AI応答: Worker が `type: 'journal'` ではJSONパースして返す → フロントで `typeof raw === 'object'` チェックが必須
 - **DaycePlan**: `window.DaycePlan` でプラン管理。AI呼び出し前に `checkLimit()` ゲート必須
 - **回数制限の二重チェック**: フロント（localStorage `aiUsage_YYYY-MM`）+ Worker（KV `usage:{email}:YYYY-MM`）
-- **planLevel**: localStorage `planLevel` = 'free'|'lite'|'premium'。旧 `isPremium` との後方互換あり
+- **planLevel**: localStorage `planLevel` = 'free'|'pro'。旧 'lite'/'premium' は getPlan() で 'pro' にマッピング
 - **キャラ制限**: 無料プランは `tone='normal'`（タクヤ先輩）のみ。Worker側での検証は未実装（将来追加可能）
-- **Stripe未連携**: 現在はプラン切替のみ（`DaycePlan.selectPlan('lite')` で手動切替可能）
+- **Stripe連携**: テストAPIキー取得済み、商品ID `prod_U0JNaY75j8VPFM`（¥390/月）。Checkout Session / Webhook は未実装（次ステップ）
+- **プラン構成**: 無料 + プロ（¥390/月）の2プラン。PLANS定義に旧lite/premiumはpro相当として後方互換で残存
