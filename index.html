@@ -17301,7 +17301,7 @@ const modal = $('qrModal');
             '• CSV出力 / クラウド同期: <b>✅</b>' +
           '</div>' +
         '</div>' +
-        '<button onclick="document.getElementById(\'dayce-upgrade-modal\').remove();window.DaycePlan.showPlanUI();" style="width:100%;padding:14px;background:#2196F3;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;">プロプランにする</button>' +
+        '<button onclick="document.getElementById(\'dayce-upgrade-modal\').remove();window.DaycePlan.startStripeCheckout();" style="width:100%;padding:14px;background:#2196F3;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;">プロプランに申し込む</button>' +
         '<button onclick="document.getElementById(\'dayce-upgrade-modal\').remove();" style="width:100%;padding:12px;background:none;border:1px solid #ddd;border-radius:10px;font-size:14px;color:#666;cursor:pointer;">閉じる</button>' +
       '</div>';
     overlay.addEventListener('click', function(e) {
@@ -17399,7 +17399,7 @@ const modal = $('qrModal');
       });
       html += '</div>';
       if (!isCurrent && c.key !== 'free') {
-        html += '<button onclick="window.DaycePlan.selectPlan(\'' + c.key + '\')" style="width:100%;margin-top:10px;padding:10px;background:' + c.color + ';color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">このプランにする</button>';
+        html += '<button onclick="window.DaycePlan.startStripeCheckout()" style="width:100%;margin-top:10px;padding:10px;background:' + c.color + ';color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">プロプランに申し込む</button>';
       } else if (!isCurrent && c.key === 'free') {
         html += '<button onclick="window.DaycePlan.selectPlan(\'free\')" style="width:100%;margin-top:10px;padding:10px;background:#eee;color:#666;border:none;border-radius:8px;font-size:14px;cursor:pointer;">無料プランに戻す</button>';
       }
@@ -17409,7 +17409,7 @@ const modal = $('qrModal');
     html += '<div style="text-align:center;margin-top:8px;">' +
       '<button onclick="document.getElementById(\'dayce-plan-modal\').remove();" style="padding:10px 32px;background:none;border:1px solid #ddd;border-radius:8px;font-size:14px;color:#666;cursor:pointer;">閉じる</button>' +
       '</div>' +
-      '<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;">※ Stripe決済連携は準備中です</div>' +
+      '<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;">※ Stripeの安全な決済ページに移動します</div>' +
     '</div>';
 
     overlay.innerHTML = html;
@@ -17431,7 +17431,6 @@ const modal = $('qrModal');
     setTimeout(function(){ toast.remove(); }, 2500);
   }
 
-  // --- グローバル公開 ---
   // --- AI呼び出し用ヘッダー（認証トークンがあれば付与） ---
   function getAIHeaders() {
     var headers = { 'Content-Type': 'application/json' };
@@ -17442,6 +17441,95 @@ const modal = $('qrModal');
     return headers;
   }
 
+  var BACKEND_URL = 'https://lifelog-ai.little-limit-621c.workers.dev';
+
+  // --- Stripe Checkout 開始 ---
+  function startStripeCheckout() {
+    // ログインチェック
+    var token = localStorage.getItem('syncAuthToken');
+    if (!token) {
+      alert('プロプランに申し込むにはログインが必要です。\nAI相談タブの「クラウド同期」からログインしてください。');
+      return;
+    }
+
+    // モーダルを閉じる
+    var modal = document.getElementById('dayce-plan-modal');
+    if (modal) modal.remove();
+
+    // ローディング表示
+    var loading = document.createElement('div');
+    loading.id = 'dayce-checkout-loading';
+    loading.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;';
+    loading.innerHTML = '<div style="background:#fff;border-radius:16px;padding:32px;text-align:center;"><div style="font-size:24px;margin-bottom:12px;">⏳</div><div style="font-size:15px;font-weight:600;">決済ページに移動中...</div></div>';
+    document.body.appendChild(loading);
+
+    var currentUrl = window.location.href.split('?')[0];
+
+    fetch(BACKEND_URL + '/api/stripe/checkout', {
+      method: 'POST',
+      headers: getAIHeaders(),
+      body: JSON.stringify({
+        successUrl: currentUrl + '?stripe=success',
+        cancelUrl: currentUrl + '?stripe=cancel'
+      })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      loading.remove();
+      if (data.error) {
+        alert('エラー: ' + data.error);
+        return;
+      }
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    })
+    .catch(function(err) {
+      loading.remove();
+      alert('通信エラーが発生しました。もう一度お試しください。');
+    });
+  }
+
+  // --- サーバーからプラン状態を同期 ---
+  function syncPlanFromServer() {
+    var token = localStorage.getItem('syncAuthToken');
+    if (!token) return;
+
+    fetch(BACKEND_URL + '/api/plan/status', {
+      method: 'GET',
+      headers: getAIHeaders()
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data.plan && PLANS[data.plan]) {
+        setPlan(data.plan);
+      }
+    })
+    .catch(function() {});
+  }
+
+  // --- Stripe戻りURLのチェック ---
+  function checkStripeReturn() {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('stripe') === 'success') {
+      // 決済成功 → サーバーからプラン同期
+      syncPlanFromServer();
+      // URLのパラメータをクリーン
+      history.replaceState(null, '', window.location.pathname);
+      // 成功メッセージ
+      setTimeout(function() {
+        var toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#27ae60;color:#fff;padding:14px 28px;border-radius:24px;font-size:15px;z-index:99999;box-shadow:0 4px 12px rgba(0,0,0,.2);';
+        toast.textContent = '🎉 プロプランへようこそ！';
+        document.body.appendChild(toast);
+        setTimeout(function(){ toast.remove(); }, 4000);
+      }, 500);
+    } else if (params.get('stripe') === 'cancel') {
+      history.replaceState(null, '', window.location.pathname);
+    }
+  }
+
+  // --- グローバル公開 ---
   window.DaycePlan = {
     PLANS: PLANS,
     getPlan: getPlan,
@@ -17454,14 +17542,24 @@ const modal = $('qrModal');
     showPlanUI: showPlanUI,
     selectPlan: selectPlan,
     renderPlanBadges: renderPlanBadges,
-    getAIHeaders: getAIHeaders
+    getAIHeaders: getAIHeaders,
+    startStripeCheckout: startStripeCheckout,
+    syncPlanFromServer: syncPlanFromServer
   };
 
   // 初期化（DOMReady後）
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', renderPlanBadges);
+    document.addEventListener('DOMContentLoaded', function() {
+      renderPlanBadges();
+      checkStripeReturn();
+      syncPlanFromServer();
+    });
   } else {
-    setTimeout(renderPlanBadges, 500);
+    setTimeout(function() {
+      renderPlanBadges();
+      checkStripeReturn();
+      syncPlanFromServer();
+    }, 500);
   }
 })();
 </script>
