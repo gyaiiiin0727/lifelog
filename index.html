@@ -3513,6 +3513,7 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 }
 .pwa-install-banner .row{
   display:flex;
+  flex-wrap:wrap;
   gap:10px;
   align-items:center;
   justify-content:space-between;
@@ -19958,6 +19959,14 @@ window.__qrSaving = false;
            (window.navigator && window.navigator.standalone === true);
   }
 
+  function isIOS(){
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  }
+  function isIOSSafari(){
+    // iOS Safari（Chrome on iOSなども含む）
+    return isIOS() && !inStandalone();
+  }
+
   function canShowBanner(){
     if (inStandalone()) return false;
     try{
@@ -20024,12 +20033,23 @@ window.__qrSaving = false;
   function showBannerIfNeeded(){
     var b = $('pwaInstallBanner');
     if (!b) return;
-
-    // promptできない端末（iOS等）はここでは表示しない（誤認の元）
-    if (!deferredPrompt) return;
-
     if (!canShowBanner()) return;
-    b.style.display = 'block';
+
+    if (deferredPrompt) {
+      // Android Chrome等: インストールプロンプト可能
+      var msg = $('pwaInstallBannerMsg');
+      if (msg) msg.textContent = 'ホーム画面に追加すると、アプリとして使えて快適です。';
+      var installBtn = $('pwaBannerInstallBtn');
+      if (installBtn) installBtn.style.display = '';
+      b.style.display = 'block';
+    } else if (isIOSSafari()) {
+      // iOS Safari: 手動ガイド
+      var msg = $('pwaInstallBannerMsg');
+      if (msg) msg.innerHTML = '📲 ホーム画面に追加するには：<br>画面下の <span style="font-size:18px;">⬆</span>（共有）→「<b>ホーム画面に追加</b>」をタップ';
+      var installBtn = $('pwaBannerInstallBtn');
+      if (installBtn) installBtn.style.display = 'none'; // インストールボタンは非表示
+      b.style.display = 'block';
+    }
   }
 
   window.addEventListener('beforeinstallprompt', function(e){
@@ -20084,6 +20104,10 @@ window.__qrSaving = false;
   document.addEventListener('DOMContentLoaded', function(){
     wireEvents();
     updateInstallUI();
+    // iOS Safari向け: beforeinstallpromptが発火しないので、ロード後にバナー表示
+    if (isIOSSafari()) {
+      setTimeout(showBannerIfNeeded, 1200);
+    }
   });
 })();
 </script>
