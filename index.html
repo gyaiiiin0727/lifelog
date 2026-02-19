@@ -569,6 +569,9 @@ select.text-input{
             background: #f0f8ff;
             border-color: #666;
         }
+        .calendar-day.free-locked {
+            opacity: 0.4;
+        }
         
         .calendar-day.today.has-journal {
             background: #000;
@@ -6980,13 +6983,25 @@ function changeReportMonth(type, offset) {
     if (type === 'activity') {
         const [year, month] = activityReportMonth.split('-').map(Number);
         const date = new Date(year, month - 1 + offset, 1);
-        activityReportMonth = monthKeyFromDate(date);
+        const newMonth = monthKeyFromDate(date);
+        // 無料プラン: 過去30日制限
+        if (offset < 0 && window.DaycePlan && !window.DaycePlan.isMonthViewable(newMonth)) {
+            window.DaycePlan.showFreeViewLimitMessage();
+            return;
+        }
+        activityReportMonth = newMonth;
         updateReportMonthDisplay('activity');
         renderActivityReport();
     } else {
         const [year, month] = moneyReportMonth.split('-').map(Number);
         const date = new Date(year, month - 1 + offset, 1);
-        moneyReportMonth = monthKeyFromDate(date);
+        const newMonth = monthKeyFromDate(date);
+        // 無料プラン: 過去30日制限
+        if (offset < 0 && window.DaycePlan && !window.DaycePlan.isMonthViewable(newMonth)) {
+            window.DaycePlan.showFreeViewLimitMessage();
+            return;
+        }
+        moneyReportMonth = newMonth;
         updateReportMonthDisplay('money');
         renderMoneyReport();
     }
@@ -7143,7 +7158,7 @@ function renderMoneyBreakdown() {
           const w = maxVal ? Math.round((v / maxVal) * 100) : 0;
           const shown = (key === 'amount') ? Math.round(v).toLocaleString() : v;
           return `
-            <div class="bar-row">
+            <div class="bar-row" onclick="showCategoryHistory('money','${escapeHtml(i.cat).replace(/'/g, "\\'")}')" style="cursor:pointer;">
               <div class="bar-label">${escapeHtml(i.cat)}</div>
               <div class="bar-track"><div class="bar-fill" style="width:${w}%"></div></div>
               <div class="bar-value">${shown}${suffix}</div>
@@ -7440,7 +7455,7 @@ function renderActivityBars(items, key){
     const v = Number(i[key]) || 0;
     const w = maxVal ? Math.round((v / maxVal) * 100) : 0;
     return `
-      <div class="bar-row">
+      <div class="bar-row" onclick="showCategoryHistory('activity','${escapeHtml(i.cat).replace(/'/g, "\\'")}') " style="cursor:pointer;">
         <div class="bar-label">${escapeHtml(i.cat)}</div>
         <div class="bar-track"><div class="bar-fill" style="width:${w}%"></div></div>
         <div class="bar-value">${v}${suffix}</div>
@@ -7526,7 +7541,7 @@ function renderActivityPie(items, key){
         const v = Number(it[key]) || 0;
         const pct = Math.round((v / total) * 100);
         return `
-          <div class="legend-row">
+          <div class="legend-row" onclick="showCategoryHistory('activity','${escapeHtml(it.cat).replace(/'/g, "\\'")}')" style="cursor:pointer;">
             <span class="legend-dot" style="background:${palette[idx % palette.length]}"></span>
             <span class="legend-cat">${escapeHtml(it.cat)}</span>
             <span class="legend-amt">${v}${suffix}</span>
@@ -7624,7 +7639,7 @@ function renderMoneyPieChart(expenses) {
     legendEl.innerHTML = entries.map(([cat, amt], i) => {
       const pct = Math.round((amt / total) * 100);
       return `
-        <div class="legend-row">
+        <div class="legend-row" onclick="showCategoryHistory('money','${escapeHtml(cat).replace(/'/g, "\\'")}')" style="cursor:pointer;">
           <span class="legend-dot" style="background:${colors[i % colors.length]}"></span>
           <span class="legend-cat">${escapeHtml(cat)}</span>
           <span class="legend-amt">${Math.round(amt).toLocaleString()}円</span>
@@ -7635,6 +7650,84 @@ function renderMoneyPieChart(expenses) {
   }
 }
 
+
+// カテゴリ別履歴ポップアップ表示
+function showCategoryHistory(type, category) {
+  var old = document.getElementById('category-history-modal');
+  if (old) old.remove();
+
+  var records = [];
+  if (type === 'activity') {
+    records = (activities || []).filter(function(a) {
+      var cat = ((a.category || '未分類') + '').trim() || '未分類';
+      return cat === category && monthKeyFromTimestamp(a.timestamp) === activityReportMonth;
+    }).sort(function(a, b) { return new Date(b.timestamp) - new Date(a.timestamp); });
+  } else {
+    var mode = window.moneyBreakdownMode || 'expense';
+    records = (window.moneyRecords || []).filter(function(r) {
+      var cat = ((r.category || 'その他') + '').trim() || 'その他';
+      var amt = Number(r.amount) || 0;
+      var matchMode = mode === 'income' ? (amt > 0) : (amt < 0);
+      return cat === category && matchMode && monthKeyFromTimestamp(r.timestamp) === moneyReportMonth;
+    }).sort(function(a, b) { return new Date(b.timestamp) - new Date(a.timestamp); });
+  }
+
+  var overlay = document.createElement('div');
+  overlay.id = 'category-history-modal';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:flex-end;justify-content:center;padding:0;';
+
+  var html = '<div style="background:#fff;border-radius:16px 16px 0 0;max-width:480px;width:100%;max-height:75vh;overflow-y:auto;padding:20px 16px 24px;">';
+  html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">';
+  html += '<div style="font-size:17px;font-weight:700;">' + escapeHtml(category) + ' の履歴</div>';
+  html += '<button onclick="document.getElementById(\'category-history-modal\').remove();" style="background:none;border:none;font-size:22px;color:#999;cursor:pointer;padding:4px 8px;">✕</button>';
+  html += '</div>';
+
+  if (!records.length) {
+    html += '<p style="text-align:center;color:#999;padding:24px 0;">記録がありません</p>';
+  } else if (type === 'activity') {
+    records.forEach(function(r) {
+      var d = new Date(r.timestamp);
+      var dateStr = (d.getMonth()+1) + '/' + d.getDate();
+      var dow = ['日','月','火','水','木','金','土'][d.getDay()];
+      var time = d.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+      var mins = Number(r.durationMinutes) || 0;
+      if (mins <= 0 && r.startTime && r.endTime) {
+        mins = Math.round((new Date(r.endTime) - new Date(r.startTime)) / 60000);
+      }
+      var durStr = mins > 0 ? (mins >= 60 ? Math.floor(mins/60) + '時間' + (mins%60 > 0 ? mins%60 + '分' : '') : mins + '分') : '';
+      html += '<div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0;">';
+      html += '<div style="min-width:64px;font-size:13px;color:#666;">' + dateStr + '(' + dow + ')</div>';
+      html += '<div style="flex:1;font-size:14px;">' + escapeHtml(r.text || '') + '</div>';
+      if (durStr) html += '<div style="font-size:12px;color:#888;white-space:nowrap;margin-left:8px;">' + durStr + '</div>';
+      html += '</div>';
+    });
+  } else {
+    var totalAmt = 0;
+    records.forEach(function(r) {
+      var d = new Date(r.timestamp);
+      var dateStr = (d.getMonth()+1) + '/' + d.getDate();
+      var dow = ['日','月','火','水','木','金','土'][d.getDay()];
+      var amt = Math.abs(Number(r.amount) || 0);
+      totalAmt += amt;
+      var sign = (Number(r.amount) || 0) > 0 ? '+' : '-';
+      var color = sign === '+' ? '#16a34a' : '#ef4444';
+      html += '<div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0;">';
+      html += '<div style="min-width:64px;font-size:13px;color:#666;">' + dateStr + '(' + dow + ')</div>';
+      html += '<div style="flex:1;font-size:14px;">' + escapeHtml(r.text || r.memo || '') + '</div>';
+      html += '<div style="font-size:14px;font-weight:600;color:' + color + ';white-space:nowrap;margin-left:8px;">' + sign + amt.toLocaleString() + '円</div>';
+      html += '</div>';
+    });
+    html += '<div style="display:flex;justify-content:flex-end;padding:12px 0 0;font-size:15px;font-weight:700;">合計: ' + totalAmt.toLocaleString() + '円（' + records.length + '件）</div>';
+  }
+
+  html += '</div>';
+  overlay.innerHTML = html;
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) overlay.remove();
+  });
+  document.body.appendChild(overlay);
+}
+window.showCategoryHistory = showCategoryHistory;
 
 // 日別詳細
 function renderActivityDailyDetails() {
@@ -7849,7 +7942,13 @@ function changeActivityHistoryDate(delta) {
     var y = d.getFullYear();
     var m = String(d.getMonth() + 1).padStart(2, '0');
     var dd = String(d.getDate()).padStart(2, '0');
-    input.value = y + '-' + m + '-' + dd;
+    var newDateStr = y + '-' + m + '-' + dd;
+    // 無料プラン: 過去30日制限
+    if (delta < 0 && window.DaycePlan && !window.DaycePlan.isDateViewable(newDateStr)) {
+        window.DaycePlan.showFreeViewLimitMessage();
+        return;
+    }
+    input.value = newDateStr;
     renderActivityHistory();
 }
 window.changeActivityHistoryDate = changeActivityHistoryDate;
@@ -8311,7 +8410,13 @@ function changeMoneyHistoryDate(delta) {
     var y = d.getFullYear();
     var m = String(d.getMonth() + 1).padStart(2, '0');
     var dd = String(d.getDate()).padStart(2, '0');
-    input.value = y + '-' + m + '-' + dd;
+    var newDateStr = y + '-' + m + '-' + dd;
+    // 無料プラン: 過去30日制限
+    if (delta < 0 && window.DaycePlan && !window.DaycePlan.isDateViewable(newDateStr)) {
+        window.DaycePlan.showFreeViewLimitMessage();
+        return;
+    }
+    input.value = newDateStr;
     renderMoneyHistory();
 }
 window.changeMoneyHistoryDate = changeMoneyHistoryDate;
@@ -8380,7 +8485,11 @@ function renderJournalLogs() {
 
     // V3形式（journalEntriesV3）から読み込む
     const entriesV3 = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
-    const keys = Object.keys(entriesV3).sort().reverse();
+    var allKeys = Object.keys(entriesV3).sort().reverse();
+    // 無料プラン: 過去30日制限
+    const keys = (window.DaycePlan && window.DaycePlan.getPlan() === 'free')
+      ? allKeys.filter(k => window.DaycePlan.isDateViewable(k))
+      : allKeys;
     const journals = keys
       .map(k => ({ dateKey: k, ...entriesV3[k] }))
       .filter(e => (e.raw && e.raw.trim()) || e.summary || e.aiFeedback);
@@ -8389,6 +8498,9 @@ function renderJournalLogs() {
         container.innerHTML = '<div class="log-item">記録がありません</div>';
         return;
     }
+
+    // 無料プランで制限されたエントリがある場合にメッセージ表示
+    var hasHidden = allKeys.length > keys.length;
 
     const recent = journals.slice(0, 15);
     const escHtml = (s) => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -8446,6 +8558,14 @@ function renderJournalLogs() {
           + '</div>'
           + '</div>';
     }).join('');
+
+    // 無料プランで過去のエントリが制限されている場合
+    if (hasHidden) {
+      container.innerHTML += '<div style="text-align:center;padding:16px;margin-top:8px;background:#f8f8f8;border-radius:10px;font-size:13px;color:#888;">'
+        + '🔒 30日より前のジャーナルはプロプランで閲覧できます<br>'
+        + '<span onclick="if(window.DaycePlan)window.DaycePlan.startStripeCheckout();" style="color:#2196F3;cursor:pointer;text-decoration:underline;font-size:12px;">プロプランに申し込む</span>'
+        + '</div>';
+    }
 }
 
 function toggleJournalDetail(id) {
@@ -8911,10 +9031,14 @@ function drawMoneyChart(categoryData) {
                 const taskInfo = taskDates[v3Key];
                 const hasTasks = !!(taskInfo && taskInfo.total > 0);
 
+                // 無料プラン: 30日制限チェック
+                const isViewable = !(window.DaycePlan) || window.DaycePlan.isDateViewable(v3Key);
+
                 let className = 'calendar-day';
                 if (isToday) className += ' today';
-                if (hasJournal) className += ' has-journal';
-                if (hasTasks) className += ' has-tasks';
+                if (hasJournal && isViewable) className += ' has-journal';
+                if (hasTasks && isViewable) className += ' has-tasks';
+                if (!isViewable) className += ' free-locked';
                 
                 // 気分絵文字を追加（日本語キー・英語キー両対応）
                 let moodEmoji = '';
@@ -8947,7 +9071,15 @@ function drawMoneyChart(categoryData) {
         function changeMonth(delta) {
             // 月移動時の「月飛び」防止：必ず1日に固定してから移動
             currentCalendarDate.setDate(1);
-            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
+            var newMonth = currentCalendarDate.getMonth() + delta;
+            var testDate = new Date(currentCalendarDate.getFullYear(), newMonth, 1);
+            var testKey = testDate.getFullYear() + '-' + String(testDate.getMonth()+1).padStart(2,'0');
+            // 無料プラン: 過去30日制限
+            if (delta < 0 && window.DaycePlan && !window.DaycePlan.isMonthViewable(testKey)) {
+                window.DaycePlan.showFreeViewLimitMessage();
+                return;
+            }
+            currentCalendarDate.setMonth(newMonth);
             renderCalendar();
         }
         
@@ -8957,6 +9089,11 @@ function drawMoneyChart(categoryData) {
             // dateStr は "2026/2/9" 形式 → V3キーに変換
             const parts = dateStr.split('/');
             const v3Key = parts.length === 3 ? parts[0] + '-' + parts[1].padStart(2,'0') + '-' + parts[2].padStart(2,'0') : dateStr;
+            // 無料プラン: 過去30日制限
+            if (window.DaycePlan && !window.DaycePlan.isDateViewable(v3Key)) {
+                window.DaycePlan.showFreeViewLimitMessage();
+                return;
+            }
             const journal = v3Entries[v3Key];
 
             if (journal && (journal.raw || journal.summary || journal.aiFeedback)) {
@@ -12892,9 +13029,9 @@ function renderDonutChart(canvasId, legendId, items, key, suffix) {
       .map((it, idx) => {
         const v = Number(it[key]) || 0;
         const pct = Math.round((v / total) * 100);
-        return `<div class="legend-row">
+        return `<div class="legend-row" onclick="showCategoryHistory('money','${escapeHtml(it.cat).replace(/'/g, "\\'")}')" style="cursor:pointer;">
           <span class="legend-dot" style="background:${palette[idx % palette.length]}"></span>
-          <span class="legend-cat">${it.cat}</span>
+          <span class="legend-cat">${escapeHtml(it.cat)}</span>
           <span class="legend-amt">${v}${suffix}</span>
           <span class="legend-pct">${pct}%</span>
         </div>`;
@@ -17176,11 +17313,11 @@ const modal = $('qrModal');
 
   // --- プラン定義 ---
   var PLANS = {
-    free:    { label: '無料プラン',    journal: 15, consult: 0,  goalCoach: 1, charLimit: true,  csv: false, cloudSync: true },
-    pro:     { label: 'プロ（¥390/月）', journal: 9999, consult: 9999, goalCoach: 9999, charLimit: false, csv: true, cloudSync: true },
+    free:    { label: '無料プラン',    journal: 30, consult: 0,  goalCoach: 1, charLimit: true,  csv: false, cloudSync: true, journalDaily: 1 },
+    pro:     { label: 'プロ（¥500/月）', journal: 9999, consult: 9999, goalCoach: 9999, charLimit: false, csv: true, cloudSync: true },
     // 後方互換: 旧プランでログインしているユーザー向け
-    lite:    { label: 'プロ（¥390/月）', journal: 9999, consult: 9999, goalCoach: 9999, charLimit: false, csv: true, cloudSync: true },
-    premium: { label: 'プロ（¥390/月）', journal: 9999, consult: 9999, goalCoach: 9999, charLimit: false, csv: true, cloudSync: true }
+    lite:    { label: 'プロ（¥500/月）', journal: 9999, consult: 9999, goalCoach: 9999, charLimit: false, csv: true, cloudSync: true },
+    premium: { label: 'プロ（¥500/月）', journal: 9999, consult: 9999, goalCoach: 9999, charLimit: false, csv: true, cloudSync: true }
   };
 
   // --- 現在のプランレベル取得 ---
@@ -17230,11 +17367,33 @@ const modal = $('qrModal');
     var u = getUsage();
     u[type] = (u[type] || 0) + 1;
     saveUsage(u);
+    // ジャーナルは日次使用回数もインクリメント
+    if (type === 'journal') incrementDailyUsage('journal');
     return u[type];
   }
 
   // --- 制限チェック（呼び出し前にチェック） ---
   // 戻り値: { allowed: true } or { allowed: false, reason: '...', current: n, limit: m }
+  // --- 今日の使用回数取得（ジャーナル日次制限用） ---
+  function getTodayKey() {
+    var d = new Date();
+    return 'aiDaily_' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  function getDailyUsage(type) {
+    try {
+      var raw = localStorage.getItem(getTodayKey());
+      if (raw) { var d = JSON.parse(raw); return d[type] || 0; }
+    } catch(e) {}
+    return 0;
+  }
+  function incrementDailyUsage(type) {
+    var key = getTodayKey();
+    var d;
+    try { var raw = localStorage.getItem(key); d = raw ? JSON.parse(raw) : {}; } catch(e) { d = {}; }
+    d[type] = (d[type] || 0) + 1;
+    localStorage.setItem(key, JSON.stringify(d));
+  }
+
   function checkLimit(type) {
     var plan = getPlan();
     var limits = PLANS[plan];
@@ -17254,6 +17413,20 @@ const modal = $('qrModal');
           ? 'この機能はプロプランで利用できます'
           : '今月の利用回数（' + limit + '回）に達しました'
       };
+    }
+    // 日次制限チェック（無料プランのジャーナル: 1日1回）
+    if (type === 'journal' && limits.journalDaily) {
+      var dailyUsed = getDailyUsage('journal');
+      if (dailyUsed >= limits.journalDaily) {
+        return {
+          allowed: false,
+          current: current,
+          limit: limit,
+          plan: plan,
+          type: type,
+          reason: '「心を整える」は1日1回まで利用できます（次は明日）'
+        };
+      }
     }
     return { allowed: true, current: current, limit: limit };
   }
@@ -17292,8 +17465,9 @@ const modal = $('qrModal');
         '<div style="font-size:18px;font-weight:700;margin-bottom:8px;">利用制限に達しました</div>' +
         usageText +
         '<div style="background:#f0f7ff;border-radius:12px;padding:16px;margin-bottom:20px;text-align:left;">' +
-          '<div style="font-weight:600;color:#1976D2;margin-bottom:8px;">👑 プロプラン（¥390/月）</div>' +
+          '<div style="font-weight:600;color:#1976D2;margin-bottom:8px;">👑 プロプラン（¥500/月）</div>' +
           '<div style="font-size:13px;color:#444;line-height:1.8;">' +
+            '• 過去データ閲覧: <b>無制限</b><br>' +
             '• 心を整える: <b>無制限</b><br>' +
             '• AI相談: <b>無制限</b><br>' +
             '• 目標コーチ: <b>無制限</b><br>' +
@@ -17336,6 +17510,12 @@ const modal = $('qrModal');
       } else if (lim === 0) {
         el.textContent = '利用不可';
         el.style.color = '#999';
+      } else if (t === 'journal' && limits.journalDaily) {
+        // 日次制限表示（無料プランのジャーナル）
+        var dailyUsed = getDailyUsage('journal');
+        var dailyRemain = Math.max(0, limits.journalDaily - dailyUsed);
+        el.textContent = dailyRemain > 0 ? '今日あと' + dailyRemain + '回' : '今日は使用済み';
+        el.style.color = dailyRemain > 0 ? '#27ae60' : '#e74c3c';
       } else {
         var remain = Math.max(0, lim - used);
         el.textContent = '残り' + remain + '回';
@@ -17358,15 +17538,17 @@ const modal = $('qrModal');
     var cards = [
       { key: 'free', name: '無料', price: '¥0', color: '#78909c', features: [
         '記録・カレンダー・レポート: ✅',
-        '心を整える: 月15回',
+        '過去データ閲覧: 30日分',
+        '心を整える: 1日1回（月30回）',
         'AI相談: ❌',
         '目標コーチ: 月1回',
         'キャラクター: タクヤ先輩のみ',
         'CSV出力: ❌',
         'クラウド同期: ✅'
       ]},
-      { key: 'pro', name: 'プロ', price: '¥390/月', color: '#2196F3', features: [
+      { key: 'pro', name: 'プロ', price: '¥500/月', color: '#2196F3', features: [
         '記録・カレンダー・レポート: ✅',
+        '過去データ閲覧: 無制限',
         '心を整える: 無制限',
         'AI相談: 無制限',
         '目標コーチ: 無制限',
@@ -17529,6 +17711,39 @@ const modal = $('qrModal');
     }
   }
 
+  // --- 無料プラン: 過去30日制限 ---
+  function getFreeViewCutoff() {
+    // 30日前の日付を返す（YYYY-MM-DD）
+    var d = new Date();
+    d.setDate(d.getDate() - 30);
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  function isMonthViewable(monthKey) {
+    // monthKey = "YYYY-MM" — その月の最終日が30日前より後かチェック
+    if (getPlan() !== 'free') return true;
+    var parts = monthKey.split('-').map(Number);
+    var lastDay = new Date(parts[0], parts[1], 0); // 月の最終日
+    var cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 30);
+    cutoff.setHours(0,0,0,0);
+    return lastDay >= cutoff;
+  }
+  function isDateViewable(dateStr) {
+    // dateStr = "YYYY-MM-DD"
+    if (getPlan() !== 'free') return true;
+    return dateStr >= getFreeViewCutoff();
+  }
+  function showFreeViewLimitMessage() {
+    var old = document.getElementById('free-view-limit-toast');
+    if (old) old.remove();
+    var toast = document.createElement('div');
+    toast.id = 'free-view-limit-toast';
+    toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 20px;border-radius:24px;font-size:13px;z-index:99999;box-shadow:0 4px 12px rgba(0,0,0,.2);text-align:center;max-width:320px;';
+    toast.innerHTML = '🔒 無料プランでは過去30日分まで閲覧できます<br><span style="font-size:12px;color:#90caf9;cursor:pointer;text-decoration:underline;" onclick="window.DaycePlan.startStripeCheckout();document.getElementById(\'free-view-limit-toast\').remove();">プロプランで制限解除</span>';
+    document.body.appendChild(toast);
+    setTimeout(function(){ var t = document.getElementById('free-view-limit-toast'); if(t) t.remove(); }, 4000);
+  }
+
   // --- グローバル公開 ---
   window.DaycePlan = {
     PLANS: PLANS,
@@ -17544,7 +17759,10 @@ const modal = $('qrModal');
     renderPlanBadges: renderPlanBadges,
     getAIHeaders: getAIHeaders,
     startStripeCheckout: startStripeCheckout,
-    syncPlanFromServer: syncPlanFromServer
+    syncPlanFromServer: syncPlanFromServer,
+    isMonthViewable: isMonthViewable,
+    isDateViewable: isDateViewable,
+    showFreeViewLimitMessage: showFreeViewLimitMessage
   };
 
   // 初期化（DOMReady後）

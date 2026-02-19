@@ -242,29 +242,33 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 
 ## 未解決・今後の課題
 
-### 次にやること（セッション8以降）
-1. ~~**クラウド同期**（メール+パスワード認証版）~~ ✅ 完了（セッション5）
-2. ~~**AIプロンプトのサーバー移行**~~ ✅ 完了（セッション5）
-3. ~~**有料プランの内容決め**~~ ✅ 確定（セッション6）
-4. ~~**AIキャラクター差別化**~~ ✅ 完了（セッション6）
-5. ~~**AIゴールコーチ頻度改善**~~ ✅ 完了（セッション6）
-6. ~~**バグ修正（改行表示・カレンダーモーダル）**~~ ✅ 完了（セッション6）
-7. ~~**有料プランの実装**（回数制限ゲート + プランUI）~~ ✅ 完了（セッション7）
-8. ~~**GitHub Pagesへのファイルアップロード**~~ ✅ 完了（セッション7）
-9. **課金システム**（Stripe連携）← 次の優先
-10. **コード難読化**
-11. **利用規約・プライバシーポリシー**
-12. **Resend連携**（パスワードリセットメール送信）← 現在はコード直接通知のフォールバック
+### 次にやること（セッション9）
+**優先度高（ユーザーから依頼済み）：**
+1. ~~**レポートのカテゴリ詳細タップ → 履歴ポップアップ表示**~~ ✅ 完了（セッション9）
+2. ~~**無料プランのジャーナル回数変更**~~ ✅ 完了（セッション9）— 月30回 + 1日1回制限
+3. ~~**価格を¥390 → ¥500に変更**~~ ✅ 完了（セッション9）— price_id: `price_1T2NU42QTqqbetSWpGPn3xnT`
+4. ~~**無料会員は過去30日分のみ閲覧可能**~~ ✅ 完了（セッション9）
 
-### 有料プラン確定内容（セッション8で2プラン化）
+**優先度中：**
+5. ~~**課金システム**（Stripe連携）~~ ✅ 完了（セッション8）
+6. **解約フロー**（Stripe Customer Portal連携）
+7. **コード難読化**
+8. **利用規約・プライバシーポリシー**
+9. **Resend連携**（パスワードリセットメール送信）← 現在はコード直接通知のフォールバック
+10. **本番モード切替**（Stripe本番APIキー・価格ID・Webhookに差し替え）
 
-| 機能 | 無料 | プロ（月390円） |
+### 有料プラン確定内容（セッション9で更新予定）
+
+**セッション9で変更済み**: ジャーナル無料回数 15回→30回(1日1回)、価格¥390→¥500、過去30日制限追加
+
+| 機能 | 無料 | プロ（月500円） |
 |---|---|---|
 | 記録（行動/お金/体重/ジャーナル） | ✅ 無制限 | ✅ |
 | カレンダー・レポート | ✅ | ✅ |
+| 過去データ閲覧 | **30日分** | **無制限** |
 | 目標・タスク管理 | ✅ | ✅ |
 | JSONバックアップ/復元 | ✅ | ✅ |
-| ジャーナルAI「心を整える」 | **月15回** | **無制限** |
+| ジャーナルAI「心を整える」 | **1日1回（月30回）** | **無制限** |
 | AI相談チャット | ❌ | **無制限** |
 | AI目標コーチ | **月1回** | **無制限** |
 | キャラクター選択 | タクヤ先輩のみ | ✅ 3種 |
@@ -274,10 +278,13 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 #### 実装メモ
 - 回数カウントは `localStorage` + Worker側で二重チェック（改ざん防止）
 - 月初リセット（`aiUsage_YYYY-MM` キーで管理）
+- ジャーナル日次制限（`aiDaily_YYYY-MM-DD` キーで管理、無料プランのみ）
 - `planLevel: 'free'|'pro'`（旧 'lite'/'premium' は 'pro' にマッピング）
 - キャラクター制限: 無料ユーザーは tone='normal' のみ送信可能
-- Stripe商品ID: `prod_U0JNaY75j8VPFM`（¥390/月、サンドボックス）
+- Stripe商品ID: `prod_U0JNaY75j8VPFM`（サンドボックス）
+- Stripe価格ID: `price_1T2NU42QTqqbetSWpGPn3xnT`（¥500/月 recurring）
 - Stripe APIキー: テスト用 `pk_test_...` / `sk_test_...` 取得済み
+- 過去30日閲覧制限: `DaycePlan.isMonthViewable()` / `isDateViewable()` で判定
 
 ### セッション4-5で合意した方針
 - **認証方式**: 合言葉版はスキップ。**メール+パスワード認証で実装済み**（セッション5完了）
@@ -730,11 +737,55 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 - ES5版: `_ensureBullets()` 関数
 - 今日のまとめ: `set()` 内で `・` の前に `\n` 挿入
 
-### AZ. Stripe連携準備
-- Stripeサンドボックスアカウント作成済み（lofelog_app）
-- テスト用APIキー取得済み（pk_test_... / sk_test_...）
-- 商品作成済み: `prod_U0JNaY75j8VPFM`（プロプラン ¥390/月）
-- **未実装**: Checkout Session作成、Webhook受信、フロントのStripe Checkoutリダイレクト
+### AZ. Stripe決済連携（完全実装・テスト決済成功）
+**ファイル: `worker/src/worker.js`, `index.html`**
+
+#### Stripe設定情報
+- Stripeサンドボックスアカウント: lofelog_app
+- 公開キー: `pk_test_51T2Igs2QTqqbetSW...`
+- シークレットキー: Worker secret `STRIPE_SECRET_KEY` に登録済み
+- Webhook署名シークレット: Worker secret `STRIPE_WEBHOOK_SECRET` に登録済み
+- 商品ID: `prod_U0JNaY75j8VPFM`
+- 価格ID: `price_1T2IkP2QTqqbetSWO52yy7VM`（¥390/月 recurring）
+- Webhook URL: `https://lifelog-ai.little-limit-621c.workers.dev/api/stripe/webhook`
+- Webhookリッスンイベント: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`
+
+#### Worker側の追加（3エンドポイント）
+- **`POST /api/stripe/checkout`**（JWT認証必須）— Stripe Checkout Session 作成。`successUrl` / `cancelUrl` を受け取り、Stripe APIで決済セッション作成 → セッションURLを返却
+- **`POST /api/stripe/webhook`**（認証不要）— Stripe からのイベント受信。`checkout.session.completed` でユーザーの `planLevel` を `"pro"` に更新、`customer.subscription.deleted` で `"free"` に戻す。署名検証あり（`verifyStripeSignature()`）
+- **`GET /api/plan/status`**（JWT認証必須）— KVからユーザーのプランレベルを返却
+
+#### フロント側の追加
+- `startStripeCheckout()` — ログインチェック → Worker `/api/stripe/checkout` → `window.location.href` でStripe決済ページにリダイレクト
+- `syncPlanFromServer()` — Worker `/api/plan/status` からプラン状態を取得し `setPlan()` で反映。ページロード時に自動実行
+- `checkStripeReturn()` — URL パラメータ `?stripe=success` / `?stripe=cancel` を検出。成功時はプラン同期 + トースト表示「🎉 プロプランへようこそ！」
+- プラン選択UIのボタン: 「このプランにする」→「プロプランに申し込む」（`startStripeCheckout()` 呼び出し）
+- アップグレードモーダルのボタン: 「プランを見る」→「プロプランに申し込む」（`startStripeCheckout()` 直接呼び出し）
+- `BACKEND_URL` 定数を DaycePlan IIFE 内に追加
+
+#### 決済フロー
+```
+ユーザー「プロプランに申し込む」クリック
+  → フロント → Worker /api/stripe/checkout（JWT認証）
+  → Worker → Stripe API（Checkout Session作成）
+  → ユーザーがStripe決済ページで支払い
+  → 成功 → アプリに戻る（?stripe=success）
+  → フロント → Worker /api/plan/status でプラン同期
+  → 「🎉 プロプランへようこそ！」トースト表示
+
+（裏側）Stripe → Worker /api/stripe/webhook
+  → KV user:{email} の planLevel を "pro" に更新
+  → stripeCustomerId, stripeSubscriptionId も保存
+```
+
+#### テスト結果
+- テストカード `4242 4242 4242 4242` で決済成功確認済み
+- プランが「プロ」に切り替わることを確認済み
+
+#### 未対応（今後の課題）
+- **本番モード切替**: Stripe本番申請後、本番APIキー・価格ID・Webhookに差し替え
+- **解約フロー**: アプリ内から解約する手段（Stripe Customer Portal連携）
+- **利用規約・プライバシーポリシー**: 課金するなら法的に必須
 
 ## 技術的な注意点
 - `index.html`は約20000行, 1.7MBあり全体を一度に読めない。Grep/行番号指定で必要箇所を読むこと
@@ -757,5 +808,54 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 - **回数制限の二重チェック**: フロント（localStorage `aiUsage_YYYY-MM`）+ Worker（KV `usage:{email}:YYYY-MM`）
 - **planLevel**: localStorage `planLevel` = 'free'|'pro'。旧 'lite'/'premium' は getPlan() で 'pro' にマッピング
 - **キャラ制限**: 無料プランは `tone='normal'`（タクヤ先輩）のみ。Worker側での検証は未実装（将来追加可能）
-- **Stripe連携**: テストAPIキー取得済み、商品ID `prod_U0JNaY75j8VPFM`（¥390/月）。Checkout Session / Webhook は未実装（次ステップ）
-- **プラン構成**: 無料 + プロ（¥390/月）の2プラン。PLANS定義に旧lite/premiumはpro相当として後方互換で残存
+- **Stripe連携**: テストAPIキー取得済み、商品ID `prod_U0JNaY75j8VPFM`。Checkout Session / Webhook 実装済み（セッション8）
+- **プラン構成**: 無料 + プロ（¥500/月）の2プラン。PLANS定義に旧lite/premiumはpro相当として後方互換で残存
+- **Stripe価格ID**: `price_1T2NU42QTqqbetSWpGPn3xnT`（¥500/月 recurring、セッション9で更新）
+- **ジャーナル日次制限**: 無料プランは1日1回。`aiDaily_YYYY-MM-DD` localStorageで管理。`incrementUsage('journal')` 内で自動インクリメント
+- **過去30日閲覧制限**: 無料プランはカレンダー・レポート・ジャーナル履歴が30日前まで。`DaycePlan.isMonthViewable()` / `isDateViewable()` でチェック
+- **カテゴリ履歴ポップアップ**: `showCategoryHistory(type, category)` — レポートのバーチャート/凡例タップで月内のカテゴリ履歴をボトムシート表示
+
+## セッション9の変更記録
+
+### BA. レポートカテゴリ詳細タップ → 履歴ポップアップ
+**ファイル: `index.html`**
+- `showCategoryHistory(type, category)` 関数新設 — カテゴリの月内履歴をボトムシートモーダルで表示
+- 行動レポート: 日付・内容・時間を一覧表示
+- お金レポート: 日付・内容・金額を一覧表示 + 合計金額
+- 棒グラフの `.bar-row` に `onclick` 追加（activity/money両方）
+- 円グラフの `.legend-row` に `onclick` 追加（activity pie / money pie / donut chart）
+- `window.showCategoryHistory` としてグローバル公開
+
+### BB. 無料プランジャーナル回数変更（月15回 → 月30回/1日1回）
+**ファイル: `index.html`, `worker/src/worker.js`**
+- `PLANS.free.journal`: 15 → 30 に変更
+- `PLANS.free.journalDaily`: 1 を追加（日次制限）
+- `getTodayKey()` / `getDailyUsage(type)` / `incrementDailyUsage(type)` 関数追加
+- `checkLimit('journal')`: 月間制限に加えて日次制限もチェック
+- `incrementUsage('journal')`: 内部で `incrementDailyUsage` も自動呼び出し
+- `renderPlanBadges()`: 日次制限プランの場合「今日あと1回」/「今日は使用済み」表示
+- Worker `PLAN_LIMITS.free.journal`: 15 → 30 に変更
+- **新規localStorageキー**: `aiDaily_YYYY-MM-DD`（日次AI使用回数JSON）
+
+### BC. 価格¥390 → ¥500に変更
+**ファイル: `index.html`, `worker/src/worker.js`**
+- `PLANS.pro.label` 等: `¥390/月` → `¥500/月` に全箇所変更
+- `showUpgradeModal`: `¥390/月` → `¥500/月`
+- `showPlanUI`: cards定義の price を `¥500/月` に変更
+- Worker `STRIPE_PRICE_ID`: `price_1T2IkP2QTqqbetSWO52yy7VM` → `price_1T2NU42QTqqbetSWpGPn3xnT`
+
+### BD. 無料会員は過去30日分のみ閲覧可能
+**ファイル: `index.html`**
+- DaycePlan に3関数追加:
+  - `getFreeViewCutoff()` — 30日前の日付（YYYY-MM-DD）を返す
+  - `isMonthViewable(monthKey)` — その月の最終日が30日前より後か判定
+  - `isDateViewable(dateStr)` — その日付が30日以内か判定
+  - `showFreeViewLimitMessage()` — 制限トースト表示
+- `changeReportMonth()`: 前月ナビゲーション時に `isMonthViewable` チェック
+- `changeMonth()` (カレンダー): 前月ナビゲーション時に `isMonthViewable` チェック
+- `changeActivityHistoryDate()` / `changeMoneyHistoryDate()`: 前日ナビゲーション時に `isDateViewable` チェック
+- `viewJournalByDate()`: 日付クリック時に `isDateViewable` チェック
+- `renderCalendar()`: 30日外の日付に `.free-locked` クラス追加（opacity 0.4）
+- `renderJournalLogs()`: 30日外のエントリをフィルタ + 制限メッセージ表示
+- `showPlanUI` / `showUpgradeModal`: 「過去データ閲覧」行を追加
+- CSS `.calendar-day.free-locked { opacity: 0.4; }` 追加
