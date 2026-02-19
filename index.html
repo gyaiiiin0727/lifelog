@@ -5221,7 +5221,7 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 </div>
 
 
-<div class="journal-today-summary" id="journalV3TodaySummary">
+<div class="journal-today-summary" id="journalV3TodaySummary" style="display:none !important;">
 <div class="journal-log-title">🧠 今日の要約（選択中の日付）</div>
 <div class="small" id="journalV3TodaySummaryEmpty">まだ要約がありません。「要約（デモ）」を押してください。</div>
 <div id="journalV3TodaySummaryBody" style="display:none;">
@@ -9897,8 +9897,7 @@ function drawMoneyChart(categoryData) {
 
             let content = '';
             if (!journal) {
-                content = '<div style="text-align:center;color:#999;padding:30px 0;">この日にはジャーナルがありません。</div>'
-                  + '<div style="text-align:center;margin-top:10px;"><button id="calModalGoBtn" style="background:#111;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;cursor:pointer;">📝 この日のジャーナルを書く</button></div>';
+                content = '<div style="text-align:center;color:#999;padding:30px 0;">この日にはジャーナルがありません。</div>';
             } else {
                 // キャラクター情報を取得
                 const ci = (typeof getCharacterInfo === 'function') ? getCharacterInfo(journal.aiFeedbackTone) : {name:'',color:'#4a90e2',img:''};
@@ -9943,7 +9942,7 @@ function drawMoneyChart(categoryData) {
                   + '</details>' : '';
 
                 content = charHeaderHtml + rawHtml + summaryHtml + hitokotoHtml + feedbackHtml
-                  + '<div style="text-align:center;margin-top:10px;"><button id="calModalGoBtn" style="background:#111;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;cursor:pointer;">📖 この日のジャーナルを開く</button></div>';
+                  + '<div style="text-align:center;margin-top:14px;"><button id="calModalDeleteBtn" style="background:#fff;color:#ef4444;border:1.5px solid #ef4444;padding:10px 24px;border-radius:8px;font-size:14px;cursor:pointer;">🗑️ この日のジャーナルを削除</button></div>';
             }
 
             // 気分選択UI（data-mood値はジャーナルの気分カードと同じ日本語キー）
@@ -10078,18 +10077,18 @@ function drawMoneyChart(categoryData) {
             // タスクは閲覧専用（ホーム画面MUST/WANTの履歴表示）
 
             // ジャーナルへ移動ボタン
-            const goBtn = document.getElementById('calModalGoBtn');
-            if (goBtn) {
-                goBtn.addEventListener('click', () => {
-                    const dateInput = document.getElementById('journalV2Date');
-                    if (dateInput) {
-                        dateInput.value = v3Key;
-                        if (typeof window.switchTab === 'function') window.switchTab('journal');
-                        // V3のload関数を呼ぶ
-                        try { load(); } catch(_){}
-                        try { renderTodaySummary(); } catch(_){}
-                    }
+            const delBtn = document.getElementById('calModalDeleteBtn');
+            if (delBtn) {
+                delBtn.addEventListener('click', () => {
+                    if (!confirm('「' + dateStr + '」のジャーナルを削除しますか？\nこの操作は取り消せません。')) return;
+                    try {
+                        const allJ = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+                        delete allJ[v3Key];
+                        localStorage.setItem('journalEntriesV3', JSON.stringify(allJ));
+                    } catch(_){}
                     modal.remove();
+                    // カレンダーを再描画
+                    try { renderCalendar(); } catch(_){}
                 });
             }
         }

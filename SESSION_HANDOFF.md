@@ -994,6 +994,51 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 - `showBannerIfNeeded()` にiOS用ガイドメッセージ追加
 - 「共有→ホーム画面に追加」手順案内バナー
 
+### BS. 旧ジャーナルUI非表示化
+**ファイル: `index.html`**
+- `journal-v2 card` 全体を `display:none`（日付選択、気分、旧textarea、要約セクション）
+- `journal-v2-voice card`（音声入力セクション）を `display:none`
+- `journal-simple card` の中身（タイトル、ヒント、journalV3Raw、feedbackToneSelector）を非表示
+- `journalAiBigBtn` を `display:none`（DOM内保持、フローが `.click()` で使用）
+- `journalAiFeedbackBox` のみ表示を維持（AI結果表示用）
+- 削除ボタン行も非表示
+
+### BT. フィードバック担当にキャラクター画像追加
+**ファイル: `index.html`**
+- `openJournalFlow()` のトーン選択: 絵文字 → キャラ画像に変更
+  - `drill_instructor.png`（マネージャー）
+  - `takumi_senpai.png`（タクヤ先輩）
+  - `hana_san.png`（ハナさん）
+- 48x48px丸型 `object-fit:cover` で表示
+
+### BU. AIで整えるボタンの色変更
+**ファイル: `index.html`**
+- 紫グラデーション `#667eea→#764ba2` → 青グラデーション `#2196F3→#1565C0`
+
+### BV. ジャーナル音声入力の改善
+**ファイル: `index.html`**
+- **自動再開方式**: `_jfStartRec()` で毎回新SpeechRecognitionインスタンス作成
+  - `_jfShouldRestart` フラグで `onend` 時に自動再開
+  - モバイル: `continuous=false` + 1.1秒後に新インスタンスで再開
+  - デスクトップ: `continuous=true` + 0.5秒後に再開
+- **リアルタイム文字起こし**: `jfTextArea`（editable textarea）に直接反映
+- **テキスト編集ボタン削除**: マイクボタンのみに統一
+- **ボタンデザイン統一**: `border:2px solid #111` フル幅ボタン（voice-input-extra準拠）
+- 録音中: 赤背景 `#ef4444` + パルスアニメ + `⏹️ 録音停止`
+- `var final` → `var confirmed` に変更（予約語回避）
+
+### BW. カレンダーポップアップ「ジャーナルを書く」→「削除」ボタン
+**ファイル: `index.html`**
+- ジャーナルなし時: 「📝 この日のジャーナルを書く」ボタン → 削除
+- ジャーナルあり時: 「📖 この日のジャーナルを開く」→「🗑️ この日のジャーナルを削除」に変更
+  - `confirm()` で確認後 `journalEntriesV3` から該当日を `delete`
+  - 削除後 `renderCalendar()` で再描画
+
+### BX. 今日の要約セクション非表示
+**ファイル: `index.html`**
+- `journalV3TodaySummary` に `display:none !important` を追加
+- カレンダーポップアップで過去ジャーナル閲覧できるため不要
+
 ## セッション10以降で残っているタスク
 
 ### 検討中
