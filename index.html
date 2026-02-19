@@ -4977,7 +4977,7 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <button type="button" id="journalStartBtn" onclick="window.openJournalFlow()" style="width:100%;padding:18px;border:none;border-radius:14px;background:linear-gradient(135deg,#2196F3 0%,#1976D2 100%);color:#fff;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(33,150,243,0.3);transition:all 0.3s;">📔 今日のジャーナルを始める</button>
 </div>
 
-<div class="journal-v2 card">
+<div class="journal-v2 card" style="display:none;">
 <div class="journal-dateblock">
 <div class="journal-date-title">📅 記録する日付を選択</div>
 <div class="journal-date-row">
@@ -5108,7 +5108,7 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 
 <!-- フリートーク用セクション（既存） -->
 <div id="journalFreetalkSection">
-<div class="journal-v2-voice card">
+<div class="journal-v2-voice card" style="display:none !important;">
 <div class="section-title" style="margin:0 0 8px;">🎤 音声入力</div>
 <div class="journal-v2-row" style="margin-bottom:10px;">
 <label class="journal-v2-label">入力先</label>
@@ -5125,19 +5125,19 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 </div>
 <div class="small">※ うまく認識されない場合は、ブラウザのマイク許可とHTTPS（またはローカル）を確認してください。</div>
 </div>
-<div class="journal-simple card">
-<div class="section-title" style="margin:0 0 8px;">🗣️ 話した内容（そのまま）</div>
-<div class="small" style="margin-bottom:10px;">項目は「話すヒント」です。あとは自由に話してください。</div>
-<ul class="journal-hints">
+<div class="journal-simple card" style="border:none !important;box-shadow:none !important;padding:0 !important;margin:0 !important;background:transparent !important;">
+<div class="section-title" style="display:none;">🗣️ 話した内容（そのまま）</div>
+<div class="small" style="display:none;">項目は「話すヒント」です。あとは自由に話してください。</div>
+<ul class="journal-hints" style="display:none;">
 <li>よかったこと</li>
 <li>気づいたこと・学び</li>
 <li>モヤっとしたこと・感情</li>
 <li>改善したいこと</li>
 <li>明日やること：MUST / WANT</li>
 </ul>
-<textarea class="input journal-raw" id="journalV3Raw" placeholder="今日の振り返りをそのまま話してください（文字起こしもOK）"></textarea>
+<textarea class="input journal-raw" id="journalV3Raw" placeholder="今日の振り返りをそのまま話してください（文字起こしもOK）" style="display:none;"></textarea>
     <!-- フィードバック担当選択UI -->
-    <div class="feedback-tone-selector" id="feedbackToneSelector" style="margin: 20px 0; padding: 20px; background: #f9f9f9; border-radius: 12px; border: 1px solid #e0e0e0;">
+    <div class="feedback-tone-selector" id="feedbackToneSelector" style="display:none;margin: 20px 0; padding: 20px; background: #f9f9f9; border-radius: 12px; border: 1px solid #e0e0e0;">
       <div class="feedback-tone-label" style="font-size: 14px; font-weight: 600; color: #555; margin-bottom: 12px; text-align: center;">フィードバック担当</div>
       <div class="feedback-tone-options" style="display: flex; gap: 8px; justify-content: center; flex-wrap: nowrap;">
         <button class="feedback-tone-btn" data-tone="harsh" onclick="selectFeedbackTone('harsh')" style="display: flex; flex-direction: column; align-items: center; padding: 8px; background: white; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; flex: 1; min-width: 0; max-width: 110px;">
@@ -5159,13 +5159,13 @@ body.qr-open .fab-container{ pointer-events:none !important; }
     </div>
 
 <div class="journal-ai-inline">
-<button class="journal-ai-big" id="journalAiBigBtn" type="button">✨ 心を整える</button>
+<button class="journal-ai-big" id="journalAiBigBtn" type="button" style="display:none;">✨ 心を整える</button>
 <div id="journalAiFeedbackBox" class="journal-ai-result" style="display:none; margin-top:10px; padding:12px; border:1px solid #e5e5e5; border-radius:12px; background:#fff; white-space:pre-wrap; font-size:14px; line-height:1.6;"></div>
 </div>
 </div>
 </div><!-- /journalFreetalkSection -->
 
-<div class="journal-simple-row" style="margin-top:12px;">
+<div class="journal-simple-row" style="display:none;margin-top:12px;">
 <button class="btn-secondary" id="journalV3ClearBtn" style="color:#ef4444; border-color:#ef4444;">🗑️ この日のジャーナルを削除</button>
 </div>
 
@@ -7431,22 +7431,22 @@ function openJournalFlow() {
     html += '<div style="display:flex;gap:8px;justify-content:center;" id="jfToneRow">';
     var currentTone = localStorage.getItem('journalFeedbackTone') || 'normal';
     var toneData = [
-        {id:'harsh',icon:'🔥',name:'マネージャー',color:'#e74c3c',rgba:'rgba(231,76,60,0.06)'},
-        {id:'normal',icon:'💬',name:'タクヤ先輩',color:'#4a90e2',rgba:'rgba(74,144,226,0.06)'},
-        {id:'gentle',icon:'🌿',name:'ハナさん',color:'#27ae60',rgba:'rgba(39,174,96,0.06)'}
+        {id:'harsh',img:'drill_instructor.png',name:'マネージャー',color:'#e74c3c',rgba:'rgba(231,76,60,0.06)'},
+        {id:'normal',img:'takumi_senpai.png',name:'タクヤ先輩',color:'#4a90e2',rgba:'rgba(74,144,226,0.06)'},
+        {id:'gentle',img:'hana_san.png',name:'ハナさん',color:'#27ae60',rgba:'rgba(39,174,96,0.06)'}
     ];
     for (var ti = 0; ti < toneData.length; ti++) {
         var td = toneData[ti];
         var tSel = (td.id === currentTone);
-        html += '<button type="button" onclick="window.jfSelectTone(\'' + td.id + '\')" data-tone="' + td.id + '" style="flex:1;max-width:110px;padding:8px 4px;border-radius:10px;border:2px solid ' + (tSel ? td.color : '#e0e0e0') + ';background:' + (tSel ? td.rgba : '#fff') + ';cursor:pointer;text-align:center;">';
-        html += '<div style="font-size:20px;">' + td.icon + '</div>';
+        html += '<button type="button" onclick="window.jfSelectTone(\'' + td.id + '\')" data-tone="' + td.id + '" style="flex:1;max-width:110px;padding:10px 4px;border-radius:12px;border:2px solid ' + (tSel ? td.color : '#e0e0e0') + ';background:' + (tSel ? td.rgba : '#fff') + ';cursor:pointer;text-align:center;">';
+        html += '<img src="' + td.img + '" alt="' + td.name + '" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-bottom:4px;">';
         html += '<div style="font-size:11px;font-weight:600;color:' + (tSel ? td.color : '#999') + ';">' + td.name + '</div>';
         html += '</button>';
     }
     html += '</div></div>';
 
     // ===== AIで整えるボタン =====
-    html += '<button type="button" id="jfAIBtn" onclick="window.jfSubmitAI()" style="width:100%;padding:16px;border:none;border-radius:14px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(102,126,234,0.3);margin-bottom:12px;">✨ AIで整える</button>';
+    html += '<button type="button" id="jfAIBtn" onclick="window.jfSubmitAI()" style="width:100%;padding:16px;border:none;border-radius:14px;background:linear-gradient(135deg,#2196F3 0%,#1565C0 100%);color:#fff;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(33,150,243,0.3);margin-bottom:12px;">✨ AIで整える</button>';
 
     // ===== 保存のみボタン =====
     html += '<button type="button" onclick="window.jfSaveOnly()" style="width:100%;padding:12px;border:1.5px solid #ddd;border-radius:10px;background:#fff;color:#666;font-size:14px;font-weight:600;cursor:pointer;">💾 保存のみ（AI不要）</button>';
