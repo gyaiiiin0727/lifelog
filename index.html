@@ -7306,14 +7306,19 @@ window.jvpConfirm = jvpConfirm;
 var _jfRec = null;
 var _jfActive = false;
 var _jfFinalText = '';
-var _jfInputMode = 'raw'; // 'raw' or category key
+var _jfBaseText = '';
+var _jfShouldRestart = false;
+var _jfInputMode = 'raw';
+var _jfIsMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 function openJournalFlow() {
   try {
     var old = document.getElementById('journalFlowOverlay');
     if (old) old.remove();
     _jfFinalText = '';
+    _jfBaseText = '';
     _jfActive = false;
+    _jfShouldRestart = false;
     if (_jfRec) { try { _jfRec.stop(); } catch(e){} _jfRec = null; }
 
     // 今日の日付
@@ -7409,21 +7414,13 @@ function openJournalFlow() {
         html += '</div></div>';
     }
 
-    // ===== フリートーク表示エリア =====
+    // ===== フリートーク入力エリア =====
     html += '<div style="font-size:13px;color:#888;font-weight:600;margin-bottom:8px;">🗣️ フリートーク</div>';
-    html += '<div id="jfTranscript" style="min-height:160px;max-height:280px;overflow-y:auto;padding:16px;background:#f8f9fa;border-radius:14px;border:1.5px solid #e0e0e0;margin-bottom:12px;font-size:15px;line-height:1.7;color:#666;white-space:pre-wrap;">今日あったこと、感じたこと、明日やりたいことなど\n自由に話してください</div>';
+    html += '<textarea id="jfTextArea" placeholder="今日あったこと、感じたこと、明日やりたいことなど&#10;自由に話してください（音声入力＆テキスト編集OK）" style="width:100%;min-height:180px;padding:14px;border:1.5px solid #e0e0e0;border-radius:12px;font-size:15px;line-height:1.7;resize:vertical;outline:none;box-sizing:border-box;background:#f8f9fa;color:#333;font-family:inherit;"></textarea>';
 
-    // ===== ステータス =====
-    html += '<div id="jfStatus" style="text-align:center;font-size:13px;color:#999;margin-bottom:12px;min-height:20px;"></div>';
-
-    // ===== 大きな音声ボタン =====
-    html += '<div style="display:flex;justify-content:center;gap:16px;align-items:center;margin-bottom:16px;">';
-    html += '<button type="button" id="jfMicBtn" onclick="window.jfToggleVoice()" style="width:72px;height:72px;border-radius:50%;border:none;background:linear-gradient(135deg,#2196F3 0%,#1976D2 100%);color:#fff;font-size:32px;cursor:pointer;box-shadow:0 4px 16px rgba(33,150,243,0.4);display:flex;align-items:center;justify-content:center;">🎤</button>';
-    html += '<button type="button" onclick="window.jfToggleEdit()" id="jfEditBtn" style="padding:10px 16px;border:1.5px solid #ddd;border-radius:10px;background:#fff;color:#666;font-size:13px;font-weight:600;cursor:pointer;">✏️ テキスト編集</button>';
-    html += '</div>';
-
-    // ===== テキスト編集エリア（初期非表示） =====
-    html += '<textarea id="jfEditArea" placeholder="テキストで入力・編集..." style="width:100%;min-height:100px;padding:14px;border:1.5px solid #ddd;border-radius:12px;font-size:14px;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:16px;display:none;"></textarea>';
+    // ===== 音声入力ボタン（他ページと統一デザイン） =====
+    html += '<div id="jfStatus" style="text-align:center;font-size:13px;color:#999;margin-top:8px;margin-bottom:4px;min-height:20px;"></div>';
+    html += '<button type="button" id="jfMicBtn" onclick="window.jfToggleVoice()" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:12px;border:2px solid #111;border-radius:10px;background:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-bottom:16px;">🎤 音声入力</button>';
 
     // ===== フィードバック担当 =====
     html += '<div style="margin-bottom:16px;">';
@@ -7552,101 +7549,108 @@ function jfSelectTone(tone) {
     }
 }
 
-function jfToggleVoice() {
-    if (_jfActive) { jfStopVoice(); return; }
+function _jfStartRec() {
     var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) { alert('お使いのブラウザは音声入力に対応していません'); return; }
+    if (!SR) return;
+    var textArea = document.getElementById('jfTextArea');
+    if (!textArea) return;
 
     _jfRec = new SR();
     _jfRec.lang = 'ja-JP';
     _jfRec.interimResults = true;
-    _jfRec.continuous = true;
-
-    var transcript = document.getElementById('jfTranscript');
-    var status = document.getElementById('jfStatus');
-    var micBtn = document.getElementById('jfMicBtn');
+    _jfRec.continuous = !_jfIsMobile;
+    _jfRec.maxAlternatives = 1;
 
     _jfRec.onresult = function(e) {
         var interim = '';
-        _jfFinalText = '';
-        for (var i = 0; i < e.results.length; i++) {
-            var res = e.results[i];
-            if (res.isFinal) _jfFinalText += res[0].transcript;
-            else interim += res[0].transcript;
+        var confirmed = '';
+        for (var i = e.resultIndex; i < e.results.length; i++) {
+            var t = e.results[i][0].transcript;
+            if (e.results[i].isFinal) confirmed += t;
+            else interim = t;
         }
-        if (transcript) {
-            transcript.textContent = _jfFinalText + (interim ? interim : '');
-            transcript.style.color = '#333';
-        }
+        _jfFinalText += confirmed;
+        textArea.value = _jfBaseText + _jfFinalText + interim;
+        textArea.scrollTop = textArea.scrollHeight;
     };
 
     _jfRec.onend = function() {
-        _jfActive = false;
-        if (micBtn) {
-            micBtn.style.background = 'linear-gradient(135deg,#2196F3 0%,#1976D2 100%)';
-            micBtn.style.animation = '';
-            micBtn.style.boxShadow = '0 4px 16px rgba(33,150,243,0.4)';
+        _jfBaseText += _jfFinalText;
+        _jfFinalText = '';
+        if (_jfShouldRestart) {
+            setTimeout(function() {
+                if (_jfShouldRestart) {
+                    try { _jfStartRec(); } catch(e) { _jfCleanupVoiceUI(); }
+                }
+            }, _jfIsMobile ? 1100 : 500);
+        } else {
+            _jfCleanupVoiceUI();
         }
-        if (status) status.textContent = _jfFinalText ? '✓ 音声入力完了' : '';
     };
 
-    _jfRec.onerror = function() {
-        _jfActive = false;
-        if (micBtn) {
-            micBtn.style.background = 'linear-gradient(135deg,#2196F3 0%,#1976D2 100%)';
-            micBtn.style.animation = '';
-        }
+    _jfRec.onerror = function(e) {
+        if (e.error === 'no-speech' || e.error === 'aborted') return;
+        _jfShouldRestart = false;
+        _jfCleanupVoiceUI();
+        var status = document.getElementById('jfStatus');
         if (status) status.textContent = '❌ 音声入力エラー';
     };
 
-    _jfRec.start();
+    try { _jfRec.start(); } catch(e) { _jfCleanupVoiceUI(); }
+}
+
+function jfToggleVoice() {
+    if (_jfShouldRestart) { jfStopVoice(); return; }
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { alert('お使いのブラウザは音声入力に対応していません'); return; }
+
+    var textArea = document.getElementById('jfTextArea');
+    var status = document.getElementById('jfStatus');
+    var micBtn = document.getElementById('jfMicBtn');
+    if (!textArea) return;
+
+    _jfBaseText = textArea.value || '';
+    _jfFinalText = '';
+    _jfShouldRestart = true;
     _jfActive = true;
+
     if (micBtn) {
         micBtn.style.background = '#ef4444';
+        micBtn.style.borderColor = '#ef4444';
+        micBtn.style.color = '#fff';
         micBtn.style.animation = 'gv2-pulse 1s infinite';
-        micBtn.style.boxShadow = '0 4px 16px rgba(239,68,68,0.5)';
+        micBtn.innerHTML = '⏹️ 録音停止';
     }
-    if (transcript) { transcript.textContent = ''; transcript.style.color = '#333'; }
-    if (status) status.textContent = '🎙️ 聞いています... タップで停止';
+    if (status) status.textContent = '🎙️ 聞いています... もう一度タップで停止';
+
+    _jfStartRec();
 }
 
 function jfStopVoice() {
-    if (_jfRec) { try { _jfRec.stop(); } catch(e){} _jfRec = null; }
+    _jfShouldRestart = false;
     _jfActive = false;
-    var micBtn = document.getElementById('jfMicBtn');
-    if (micBtn) {
-        micBtn.style.background = 'linear-gradient(135deg,#2196F3 0%,#1976D2 100%)';
-        micBtn.style.animation = '';
-        micBtn.style.boxShadow = '0 4px 16px rgba(33,150,243,0.4)';
-    }
+    if (_jfRec) { try { _jfRec.stop(); } catch(e){} _jfRec = null; }
+    _jfCleanupVoiceUI();
 }
 
-function jfToggleEdit() {
-    var editArea = document.getElementById('jfEditArea');
-    var transcript = document.getElementById('jfTranscript');
-    var editBtn = document.getElementById('jfEditBtn');
-    if (!editArea || !transcript) return;
-
-    if (editArea.style.display === 'none') {
-        editArea.value = _jfFinalText || (transcript.style.color !== 'rgb(153, 153, 153)' ? transcript.textContent : '');
-        editArea.style.display = '';
-        transcript.style.display = 'none';
-        if (editBtn) editBtn.textContent = '📝 プレビュー';
-        editArea.focus();
-    } else {
-        _jfFinalText = editArea.value;
-        transcript.textContent = _jfFinalText || '入力内容がここに表示されます';
-        transcript.style.color = _jfFinalText ? '#333' : '#999';
-        editArea.style.display = 'none';
-        transcript.style.display = '';
-        if (editBtn) editBtn.textContent = '✏️ テキスト編集';
+function _jfCleanupVoiceUI() {
+    _jfActive = false;
+    var micBtn = document.getElementById('jfMicBtn');
+    var status = document.getElementById('jfStatus');
+    if (micBtn) {
+        micBtn.style.background = '#fff';
+        micBtn.style.borderColor = '#111';
+        micBtn.style.color = '';
+        micBtn.style.animation = '';
+        micBtn.innerHTML = '🎤 音声入力';
     }
+    var textArea = document.getElementById('jfTextArea');
+    if (status) status.textContent = (textArea && textArea.value.trim()) ? '✓ 音声入力完了' : '';
 }
 
 function _jfGetText() {
-    var editArea = document.getElementById('jfEditArea');
-    if (editArea && editArea.style.display !== 'none') return editArea.value.trim();
-    return _jfFinalText.trim();
+    var textArea = document.getElementById('jfTextArea');
+    return textArea ? textArea.value.trim() : '';
 }
 
 function _jfWriteToFields(text) {
@@ -7723,7 +7727,6 @@ window.jfSelectMood = jfSelectMood;
 window.jfSwitchMode = jfSwitchMode;
 window.jfSelectTone = jfSelectTone;
 window.jfToggleVoice = jfToggleVoice;
-window.jfToggleEdit = jfToggleEdit;
 window.jfSaveOnly = jfSaveOnly;
 window.jfSubmitAI = jfSubmitAI;
 
