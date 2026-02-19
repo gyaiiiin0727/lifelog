@@ -7442,6 +7442,13 @@ function setActivityChartType(type){
   renderActivityChart();
 }
 
+function formatMinutesToHM(m) {
+  if (m < 60) return m + '分';
+  var h = Math.floor(m / 60);
+  var r = m % 60;
+  return r > 0 ? h + '時間' + r + '分' : h + '時間';
+}
+
 function renderActivityBars(items, key){
   const wrap = document.getElementById('activityCategoryChart');
   const legend = document.getElementById('activityCategoryLegend');
@@ -7449,16 +7456,17 @@ function renderActivityBars(items, key){
   if (legend) legend.innerHTML = '';
 
   const maxVal = Math.max(...items.map(i => Number(i[key]) || 0), 0);
-  const suffix = key === 'minutes' ? '分' : '回';
+  const isMinutes = key === 'minutes';
 
   wrap.innerHTML = items.map(i => {
     const v = Number(i[key]) || 0;
     const w = maxVal ? Math.round((v / maxVal) * 100) : 0;
+    const shown = isMinutes ? formatMinutesToHM(v) : v + '回';
     return `
       <div class="bar-row" onclick="showCategoryHistory('activity','${escapeHtml(i.cat).replace(/'/g, "\\'")}') " style="cursor:pointer;">
         <div class="bar-label">${escapeHtml(i.cat)}</div>
         <div class="bar-track"><div class="bar-fill" style="width:${w}%"></div></div>
-        <div class="bar-value">${v}${suffix}</div>
+        <div class="bar-value">${shown}</div>
       </div>
     `;
   }).join('');
@@ -7470,7 +7478,7 @@ function renderActivityPie(items, key){
   if (!wrap) return;
 
   const total = items.reduce((s, i) => s + (Number(i[key]) || 0), 0);
-  const suffix = key === 'minutes' ? '分' : '回';
+  const isMinutes = key === 'minutes';
 
   if (!total) {
     wrap.innerHTML = '<p class="empty-message">データがありません</p>';
@@ -7531,7 +7539,7 @@ function renderActivityPie(items, key){
   ctx.font = '700 18px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
   ctx.fillText('合計', cx, cy - 10);
   ctx.font = '800 22px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
-  ctx.fillText(`${total}${suffix}`, cx, cy + 18);
+  ctx.fillText(isMinutes ? formatMinutesToHM(total) : `${total}回`, cx, cy + 18);
 
   // 凡例（下）
   if (legend) {
@@ -7544,7 +7552,7 @@ function renderActivityPie(items, key){
           <div class="legend-row" onclick="showCategoryHistory('activity','${escapeHtml(it.cat).replace(/'/g, "\\'")}')" style="cursor:pointer;">
             <span class="legend-dot" style="background:${palette[idx % palette.length]}"></span>
             <span class="legend-cat">${escapeHtml(it.cat)}</span>
-            <span class="legend-amt">${v}${suffix}</span>
+            <span class="legend-amt">${isMinutes ? formatMinutesToHM(v) : v + '回'}</span>
             <span class="legend-pct">${pct}%</span>
           </div>
         `;

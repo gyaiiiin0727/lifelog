@@ -118,7 +118,32 @@
     '  border-radius:10px; font-size:14px; outline:none;',
     '  transition:border-color .2s;',
     '}',
-    '.task-input:focus { border-color:#2196F3; }'
+    '.task-input:focus { border-color:#2196F3; }',
+
+    /* タスクポップアップ */
+    '.gv2-popup-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.5); z-index:99999; display:flex; align-items:flex-end; justify-content:center; }',
+    '.gv2-popup { background:#fff; border-radius:16px 16px 0 0; max-width:480px; width:100%; padding:20px 16px 28px; max-height:80vh; overflow-y:auto; }',
+    '.gv2-popup-title { font-size:16px; font-weight:700; color:#333; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; }',
+    '.gv2-popup-close { background:none; border:none; font-size:22px; color:#999; cursor:pointer; padding:4px 8px; }',
+    '.gv2-popup-task-text { font-size:15px; color:#333; padding:12px; background:#f8f8f8; border-radius:10px; margin-bottom:16px; line-height:1.5; word-break:break-word; }',
+    '.gv2-popup-actions { display:flex; flex-direction:column; gap:8px; }',
+    '.gv2-popup-btn { display:flex; align-items:center; gap:10px; padding:14px 16px; border:none; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer; transition:all .2s; width:100%; text-align:left; }',
+    '.gv2-popup-btn:active { transform:scale(0.98); }',
+    '.gv2-popup-btn-must { background:#e3f2fd; color:#1565c0; }',
+    '.gv2-popup-btn-want { background:#e8f5e9; color:#2e7d32; }',
+    '.gv2-popup-btn-next { background:#f3f4f6; color:#555; }',
+    '.gv2-popup-btn-edit { background:#fff3e0; color:#e65100; }',
+    '.gv2-popup-btn-del { background:#fce4ec; color:#c62828; }',
+    '.gv2-popup-btn-icon { font-size:18px; width:28px; text-align:center; }',
+    /* タスク追加ポップアップ */
+    '.gv2-add-input-wrap { display:flex; gap:8px; align-items:center; margin-bottom:12px; }',
+    '.gv2-add-input { flex:1; padding:12px 14px; border:1.5px solid #ddd; border-radius:10px; font-size:15px; outline:none; }',
+    '.gv2-add-input:focus { border-color:#2196F3; }',
+    '.gv2-voice-btn { width:48px; height:48px; min-width:48px; border:none; border-radius:50%; background:#f0f0f0; font-size:22px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; }',
+    '.gv2-voice-btn.recording { background:#ef4444; animation:gv2-pulse 1s infinite; }',
+    '@keyframes gv2-pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.08);} }',
+    '.gv2-add-submit { width:100%; padding:14px; background:#2196F3; color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer; }',
+    '.gv2-add-submit:active { background:#1976D2; }'
   ].join('\n');
   document.head.appendChild(style);
 
@@ -446,29 +471,16 @@
         tasks.forEach(function(task) {
           var checked = task.done ? ' checked' : '';
           var strike = task.done ? ' style="text-decoration:line-through;color:#999;"' : '';
-          var dateLabel = ''; // 日付ラベル非表示（週単位で管理）
-          // 未完了タスクにアクションボタンを表示
-          var actionBtns = '';
-          if (!task.done) {
-            // 「今日のMUSTへ」ボタン（全タスクに表示）
-            actionBtns += '<button type="button" class="task-action-btn task-copy-btn" onclick="window._gv2CopyToToday(' + goal.id + ',' + task.id + ')" title="今日のMUSTに追加">MUST</button>';
-            // 翌週へ持ち越し
-            actionBtns += '<button type="button" class="task-action-btn task-carry-btn" onclick="window._gv2CarryToNextWeek(' + goal.id + ',' + task.id + ')" title="翌週へ持ち越し">翌週</button>';
-          }
 
           html += '<div class="task-item" id="wt_' + goal.id + '_' + task.id + '">' +
             '<input type="checkbox" class="task-checkbox"' + checked +
             ' onchange="window._gv2ToggleWT(' + goal.id + ',' + task.id + ')" />' +
-            '<label class="task-label"' + strike + '>' + esc(task.text) + dateLabel + '</label>' +
-            '<div class="task-actions">' +
-              actionBtns +
-              '<button type="button" class="task-edit-btn" onclick="window._gv2EditWT(' + goal.id + ',' + task.id + ')" title="編集">✏️</button>' +
-            '</div>' +
+            '<label class="task-label" onclick="window._gv2ShowTaskPopup(' + goal.id + ',' + task.id + ')"' + strike + ' style="cursor:pointer;' + (task.done ? 'text-decoration:line-through;color:#999;' : '') + '">' + esc(task.text) + '</label>' +
           '</div>';
         });
       }
 
-      html += '<button type="button" class="task-add-btn" onclick="window._gv2AddWT(' + goal.id + ')">＋ 追加</button>';
+      html += '<button type="button" class="task-add-btn" onclick="window._gv2ShowAddPopup(' + goal.id + ')">＋ 追加</button>';
       html += '</div>';
     });
 
@@ -606,19 +618,15 @@
     addWeeklyTask(active[0].id, dateStr);
   }
 
-  // ===== 今日のMUSTに追加（ホーム画面の今日のタスクへコピー） =====
-  function copyToToday(goalId, taskId) {
+  // ===== 今日のMUST/WANTに追加（ホーム画面の今日のタスクへコピー） =====
+  function copyToTodayAs(goalId, taskId, taskType) {
+    // taskType: 'must' or 'want'
     var goals = getGoals();
     var g = goals.find(function(x) { return x && x.id === goalId; });
     if (!g || !g.weeklyTasks) return;
     var task = g.weeklyTasks.find(function(x) { return x.id === taskId; });
     if (!task) return;
 
-    // 確認ポップアップ
-    if (!confirm('「' + task.text + '」を\n今日のMUSTに追加しますか？')) return;
-
-    // ホーム画面の「今日のタスク」MUSTに追加
-    // （昨日のジャーナル summary.must に書き込む）
     try {
       var yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
@@ -627,28 +635,34 @@
       var entry = entries[yKey] || { date: yKey, summary: {} };
       if (!entry.summary) entry.summary = {};
 
-      var mustText = entry.summary.must || '';
-      var mustTasks = String(mustText).split(/[\n・]/).map(function(s) { return s.trim(); }).filter(function(s) { return s && s !== '—'; });
-      mustTasks.push(task.text);
-      entry.summary.must = mustTasks.join('\n');
+      var fieldKey = taskType === 'want' ? 'want' : 'must';
+      var existingText = entry.summary[fieldKey] || '';
+      var existingTasks = String(existingText).split(/[\n・]/).map(function(s) { return s.trim(); }).filter(function(s) { return s && s !== '—'; });
+      existingTasks.push(task.text);
+      entry.summary[fieldKey] = existingTasks.join('\n');
       entries[yKey] = entry;
       localStorage.setItem('journalEntriesV3', JSON.stringify(entries));
 
-      // 新タスクのチェック状態をリセット（インデックスずれ防止）
+      // 新タスクのチェック状態をリセット
       var now = new Date();
       var todayKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
       var checkKey = 'taskChecks_' + todayKey;
       var checks = JSON.parse(localStorage.getItem(checkKey) || '{}');
-      // 新しく追加されるMUSTタスクのIDをfalseに設定
-      var newIdx = mustTasks.length - 1;
-      checks['homeMustTask' + newIdx] = false;
+      var prefix = taskType === 'want' ? 'homeWantTask' : 'homeMustTask';
+      var newIdx = existingTasks.length - 1;
+      checks[prefix + newIdx] = false;
       localStorage.setItem(checkKey, JSON.stringify(checks));
 
-      // ホーム画面を再描画
       if (typeof window.renderHomeTodayTasks === 'function') window.renderHomeTodayTasks();
     } catch(e) {}
 
-    if (typeof window.showStatus === 'function') window.showStatus('goalStatus', '✓ 今日のMUSTに追加しました');
+    var label = taskType === 'want' ? 'WANT' : 'MUST';
+    if (typeof window.showStatus === 'function') window.showStatus('goalStatus', '✓ 今日の' + label + 'に追加しました');
+  }
+
+  // 後方互換
+  function copyToToday(goalId, taskId) {
+    copyToTodayAs(goalId, taskId, 'must');
   }
 
   // ===== 翌週に持ち越し =====
@@ -664,9 +678,6 @@
     var nextWeekDate = new Date(origDate);
     nextWeekDate.setDate(nextWeekDate.getDate() + 7);
     var newDateStr = toDateStr(nextWeekDate);
-
-    var td = new Date(newDateStr + 'T00:00:00');
-    if (!confirm('「' + task.text + '」を\n' + (td.getMonth()+1) + '/' + td.getDate() + 'へ移動しますか？')) return;
 
     // 元タスクを未完了のまま移動（コピーではなく移動）
     task.date = newDateStr;
@@ -772,6 +783,173 @@
     });
   }
 
+  // ===== タスク詳細ポップアップ =====
+  function closeTaskPopup() {
+    var old = document.getElementById('gv2-task-popup');
+    if (old) old.remove();
+  }
+
+  function showTaskPopup(goalId, taskId) {
+    closeTaskPopup();
+    var goals = getGoals();
+    var g = goals.find(function(x) { return x && x.id === goalId; });
+    if (!g || !g.weeklyTasks) return;
+    var task = g.weeklyTasks.find(function(x) { return x.id === taskId; });
+    if (!task) return;
+
+    var overlay = document.createElement('div');
+    overlay.id = 'gv2-task-popup';
+    overlay.className = 'gv2-popup-overlay';
+
+    var doneLabel = task.done ? '未完了に戻す' : '完了にする';
+    var doneIcon = task.done ? '⬜' : '✅';
+
+    var html = '<div class="gv2-popup">';
+    html += '<div class="gv2-popup-title"><span>タスク</span><button class="gv2-popup-close" onclick="window._gv2CloseTaskPopup()">✕</button></div>';
+    html += '<div class="gv2-popup-task-text">' + esc(task.text) + '</div>';
+    html += '<div class="gv2-popup-actions">';
+
+    // 完了/未完了トグル
+    html += '<button class="gv2-popup-btn gv2-popup-btn-next" onclick="window._gv2ToggleWT(' + goalId + ',' + taskId + ');window._gv2CloseTaskPopup();"><span class="gv2-popup-btn-icon">' + doneIcon + '</span>' + doneLabel + '</button>';
+
+    if (!task.done) {
+      // MUST
+      html += '<button class="gv2-popup-btn gv2-popup-btn-must" onclick="window._gv2CopyToTodayAs(' + goalId + ',' + taskId + ',\'must\');window._gv2CloseTaskPopup();"><span class="gv2-popup-btn-icon">📌</span>今日のMUSTに追加</button>';
+      // WANT
+      html += '<button class="gv2-popup-btn gv2-popup-btn-want" onclick="window._gv2CopyToTodayAs(' + goalId + ',' + taskId + ',\'want\');window._gv2CloseTaskPopup();"><span class="gv2-popup-btn-icon">💡</span>今日のWANTに追加</button>';
+      // 翌週
+      html += '<button class="gv2-popup-btn gv2-popup-btn-next" onclick="window._gv2CarryToNextWeek(' + goalId + ',' + taskId + ');window._gv2CloseTaskPopup();"><span class="gv2-popup-btn-icon">📅</span>来週に移動</button>';
+    }
+
+    // 編集
+    html += '<button class="gv2-popup-btn gv2-popup-btn-edit" onclick="window._gv2CloseTaskPopup();setTimeout(function(){window._gv2EditWT(' + goalId + ',' + taskId + ');},100);"><span class="gv2-popup-btn-icon">✏️</span>テキストを編集</button>';
+    // 削除
+    html += '<button class="gv2-popup-btn gv2-popup-btn-del" onclick="window._gv2DeleteTask(' + goalId + ',' + taskId + ');window._gv2CloseTaskPopup();"><span class="gv2-popup-btn-icon">🗑️</span>削除</button>';
+
+    html += '</div></div>';
+    overlay.innerHTML = html;
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeTaskPopup();
+    });
+    document.body.appendChild(overlay);
+  }
+
+  function deleteTask(goalId, taskId) {
+    var goals = getGoals();
+    var g = goals.find(function(x) { return x && x.id === goalId; });
+    if (!g || !g.weeklyTasks) return;
+    g.weeklyTasks = g.weeklyTasks.filter(function(x) { return x.id !== taskId; });
+    saveGoals(goals);
+    renderAll();
+    if (typeof window.showStatus === 'function') window.showStatus('goalStatus', '✓ タスクを削除しました');
+  }
+
+  // ===== タスク追加ポップアップ（音声入力対応） =====
+  function showTaskAddPopup(goalId) {
+    closeTaskPopup();
+    var overlay = document.createElement('div');
+    overlay.id = 'gv2-task-popup';
+    overlay.className = 'gv2-popup-overlay';
+
+    var html = '<div class="gv2-popup">';
+    html += '<div class="gv2-popup-title"><span>タスクを追加</span><button class="gv2-popup-close" onclick="window._gv2CloseTaskPopup()">✕</button></div>';
+    html += '<div class="gv2-add-input-wrap">';
+    html += '<input type="text" class="gv2-add-input" id="gv2AddTaskInput" placeholder="タスクを入力..." onkeydown="if(event.key===\'Enter\'){event.preventDefault();window._gv2SubmitAddTask(' + goalId + ');}">';
+    html += '<button type="button" class="gv2-voice-btn" id="gv2VoiceBtn" onclick="window._gv2ToggleVoice()">🎤</button>';
+    html += '</div>';
+    html += '<div id="gv2VoiceStatus" style="font-size:12px;color:#999;margin-bottom:12px;display:none;"></div>';
+    html += '<button type="button" class="gv2-add-submit" onclick="window._gv2SubmitAddTask(' + goalId + ')">追加する</button>';
+    html += '</div>';
+
+    overlay.innerHTML = html;
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) { _stopVoice(); closeTaskPopup(); }
+    });
+    document.body.appendChild(overlay);
+    setTimeout(function() {
+      var inp = document.getElementById('gv2AddTaskInput');
+      if (inp) inp.focus();
+    }, 100);
+  }
+
+  // 音声入力
+  var _voiceRecognition = null;
+  function _stopVoice() {
+    if (_voiceRecognition) {
+      try { _voiceRecognition.stop(); } catch(e) {}
+      _voiceRecognition = null;
+    }
+    var btn = document.getElementById('gv2VoiceBtn');
+    if (btn) btn.classList.remove('recording');
+    var status = document.getElementById('gv2VoiceStatus');
+    if (status) status.style.display = 'none';
+  }
+
+  function toggleVoice() {
+    if (_voiceRecognition) {
+      _stopVoice();
+      return;
+    }
+    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('お使いのブラウザは音声入力に対応していません');
+      return;
+    }
+    var recognition = new SpeechRecognition();
+    recognition.lang = 'ja-JP';
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    _voiceRecognition = recognition;
+
+    var btn = document.getElementById('gv2VoiceBtn');
+    var status = document.getElementById('gv2VoiceStatus');
+    var input = document.getElementById('gv2AddTaskInput');
+    if (btn) btn.classList.add('recording');
+    if (status) { status.style.display = 'block'; status.textContent = '🎙️ 聞いています...'; }
+
+    recognition.onresult = function(event) {
+      var transcript = '';
+      for (var i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      if (input) input.value = transcript;
+      if (status) status.textContent = '🎙️ ' + transcript;
+    };
+    recognition.onend = function() {
+      _stopVoice();
+    };
+    recognition.onerror = function(e) {
+      if (status) status.textContent = '⚠️ ' + (e.error === 'no-speech' ? '音声が検出されませんでした' : 'エラー: ' + e.error);
+      setTimeout(_stopVoice, 1500);
+    };
+    recognition.start();
+  }
+
+  function submitAddTask(goalId) {
+    var input = document.getElementById('gv2AddTaskInput');
+    if (!input) return;
+    var text = input.value.trim();
+    if (!text) return;
+    _stopVoice();
+
+    var goals = getGoals();
+    var g = goals.find(function(x) { return x && x.id === goalId; });
+    if (!g) { closeTaskPopup(); return; }
+    if (!g.weeklyTasks) g.weeklyTasks = [];
+
+    var date = todayStr();
+    var range = getWeekRange(viewingWeekMonday);
+    if (!isDateInRange(date, range.start, range.end)) {
+      date = range.start;
+    }
+
+    g.weeklyTasks.push({ id: Date.now(), text: text, date: date, done: false });
+    saveGoals(goals);
+    closeTaskPopup();
+    renderAll();
+    if (typeof window.showStatus === 'function') window.showStatus('goalStatus', '✓ タスクを追加しました');
+  }
+
   // ===== 月切替のフック =====
   function changeGoalsMonthV2(offset) {
     var month = getSelectedMonth();
@@ -820,9 +998,16 @@
   window._gv2ToggleWT = toggleWeeklyTask;
   window._gv2EditWT = editWeeklyTask;
   window._gv2CopyToToday = copyToToday;
+  window._gv2CopyToTodayAs = copyToTodayAs;
   window._gv2CarryToNextWeek = carryToNextWeek;
   window._gv2ChangeWeek = changeViewingWeek;
   window._gv2GoToCurrentWeek = goToCurrentWeek;
+  window._gv2ShowTaskPopup = showTaskPopup;
+  window._gv2ShowAddPopup = showTaskAddPopup;
+  window._gv2CloseTaskPopup = closeTaskPopup;
+  window._gv2ToggleVoice = toggleVoice;
+  window._gv2SubmitAddTask = submitAddTask;
+  window._gv2DeleteTask = deleteTask;
 
   // 既存の window.* を上書きして全体の整合性を保つ
   window.addGoal = addGoalV2;
