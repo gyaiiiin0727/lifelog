@@ -956,6 +956,44 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 - `localStorage('dayce_onboarding_done')` で初回のみ表示
 - `</body>` 直前にIIFEで配置
 
+### BN. ジャーナルフルスクリーンフロー
+**ファイル: `index.html`**
+- 「📔 今日のジャーナルを始める」ボタン → `openJournalFlow()` でフルスクリーンポップアップ
+- ヘッダー（✕/タイトル/日付ピッカー）+ スクロールコンテンツ（flex layout）
+- 気分選択（5つの絵文字）
+- 今日のタスク表示（MUST/WANT横並び）
+- フリートーク音声入力（大きい🎤ボタン72x72）+ テキスト編集切替
+- フィードバック担当選択（3キャラ）
+- 「✨ AIで整える」→ journalV3Raw書込み → journalAiBigBtn自動クリック
+- 「💾 保存のみ」→ journalV3Raw書込み → journalV2SaveBtnクリック
+- ステップ入力は廃止（journalModeTabsは`display:none`）
+
+### BO. ジャーナルフロー表示バグ修正
+**ファイル: `index.html`**
+- overlay CSS: `right:0;bottom:0` → `width:100%;height:100%` + `display:flex;flex-direction:column`
+- ヘッダー: `position:sticky` → `flex-shrink:0`（sticky+overflow問題回避）
+- コンテンツ: `flex:1;overflow-y:auto` で独立スクロール
+- 8桁hex色 `#e74c3c10` → `rgba(231,76,60,0.06)` に修正（iOS Safari互換）
+- `jfSelectTone()`のbackground色も同様にrgba修正
+- try-catch追加: タスクデータ読込み・全体関数にエラーハンドリング
+- 音声認識の確実なクリーンアップ追加
+
+### BP. ホーム画面タスク追加音声入力ポップアップ
+**ファイル: `index.html`**
+- `showHomeTaskAddPopup()`: MUST/WANT切替 + 音声入力ポップアップ
+- Web Speech API連続録音 + Enterキー対応
+
+### BQ. ジャーナル独立音声ポップアップ
+**ファイル: `index.html`**
+- `openJournalVoicePopup()`: 大きなマイクボタン付き独立ポップアップ
+- ターゲットフィールド選択、編集モード切替、確認ボタン
+
+### BR. iOS Safari PWAインストールガイド
+**ファイル: `index.html`**
+- `isIOS()`, `isIOSSafari()` ヘルパー追加
+- `showBannerIfNeeded()` にiOS用ガイドメッセージ追加
+- 「共有→ホーム画面に追加」手順案内バナー
+
 ## セッション10以降で残っているタスク
 
 ### 検討中

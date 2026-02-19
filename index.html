@@ -4971,6 +4971,12 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 </div>
 <!-- ジャーナルタブ -->
 <div class="tab-content journal-tab" id="journal">
+
+<!-- ジャーナル開始ボタン -->
+<div style="padding:16px 16px 0;">
+<button type="button" id="journalStartBtn" onclick="window.openJournalFlow()" style="width:100%;padding:18px;border:none;border-radius:14px;background:linear-gradient(135deg,#2196F3 0%,#1976D2 100%);color:#fff;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(33,150,243,0.3);transition:all 0.3s;">📔 今日のジャーナルを始める</button>
+</div>
+
 <div class="journal-v2 card">
 <div class="journal-dateblock">
 <div class="journal-date-title">📅 記録する日付を選択</div>
@@ -5076,8 +5082,8 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 </div>
 <div class="status-message" id="journalV2Status"></div>
 
-<!-- ジャーナルモード切替タブ -->
-<div class="journal-mode-tabs" id="journalModeTabs">
+<!-- ジャーナルモード切替タブ（ステップ入力廃止のため非表示） -->
+<div class="journal-mode-tabs" id="journalModeTabs" style="display:none;">
 <button class="journal-mode-tab active" id="journalModeFreetalk" type="button">🗣️ フリートーク</button>
 <button class="journal-mode-tab" id="journalModeStep" type="button">📋 ステップ入力</button>
 </div>
@@ -7295,6 +7301,431 @@ window.closeJournalVoicePopup = closeJournalVoicePopup;
 window.toggleJournalVoicePopup = toggleJournalVoicePopup;
 window.jvpToggleEdit = jvpToggleEdit;
 window.jvpConfirm = jvpConfirm;
+
+// ========== ジャーナルフルスクリーンフロー ==========
+var _jfRec = null;
+var _jfActive = false;
+var _jfFinalText = '';
+var _jfInputMode = 'raw'; // 'raw' or category key
+
+function openJournalFlow() {
+  try {
+    var old = document.getElementById('journalFlowOverlay');
+    if (old) old.remove();
+    _jfFinalText = '';
+    _jfActive = false;
+    if (_jfRec) { try { _jfRec.stop(); } catch(e){} _jfRec = null; }
+
+    // 今日の日付
+    var today = new Date();
+    var todayStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
+    // 既存の日付フィールドの値も使う
+    var dateField = document.getElementById('journalV2Date');
+    var dateVal = (dateField && dateField.value) ? dateField.value : todayStr;
+
+    // 今日のタスクデータ取得
+    var mustTasks = [], wantTasks = [];
+    try {
+        var taskDateKey = (typeof getTaskDateKey === 'function') ? getTaskDateKey() : todayStr;
+        var allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+        var taskEntry = allEntries[taskDateKey];
+        if (taskEntry && taskEntry.summary) {
+            mustTasks = String(taskEntry.summary.must || '').split(/[\n・]/).map(function(s){return s.trim();}).filter(function(s){return s && s !== '—';});
+            wantTasks = String(taskEntry.summary.want || '').split(/[\n・]/).map(function(s){return s.trim();}).filter(function(s){return s && s !== '—';});
+        }
+    } catch(e) { console.warn('JF: task load error', e); }
+
+    // 既存のジャーナルデータ（選択日付）
+    var existingMood = '';
+    try {
+        var allE = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+        var existingEntry = allE[dateVal] || {};
+        existingMood = existingEntry.mood || '';
+    } catch(e) {}
+
+    // ===== オーバーレイ作成 =====
+    var overlay = document.createElement('div');
+    overlay.id = 'journalFlowOverlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:10002;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;';
+
+    var html = '';
+    // ===== ヘッダー =====
+    html += '<div style="flex-shrink:0;background:#fff;z-index:10;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;">';
+    html += '<button type="button" onclick="window.closeJournalFlow()" style="background:none;border:none;font-size:20px;color:#666;cursor:pointer;padding:4px 8px;">✕</button>';
+    html += '<span style="font-size:15px;font-weight:600;">📔 ジャーナル</span>';
+    html += '<input type="date" id="jfDate" value="' + dateVal + '" onchange="window.jfChangeDate()" style="border:1px solid #ddd;border-radius:8px;padding:4px 8px;font-size:13px;">';
+    html += '</div>';
+
+    // ===== スクロールコンテンツ =====
+    html += '<div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;padding-bottom:40px;">';
+
+    // ===== 気分選択 =====
+    html += '<div style="margin-bottom:16px;">';
+    html += '<div style="font-size:13px;color:#888;font-weight:600;margin-bottom:8px;">今日の気分</div>';
+    html += '<div style="display:flex;gap:6px;justify-content:center;" id="jfMoodRow">';
+    var moods = [['great','😊'],['good','🙂'],['normal','😐'],['bad','😔'],['terrible','😢']];
+    for (var i = 0; i < moods.length; i++) {
+        var sel = (moods[i][0] === existingMood);
+        html += '<button type="button" onclick="window.jfSelectMood(\'' + moods[i][0] + '\')" data-mood="' + moods[i][0] + '" style="width:48px;height:48px;border-radius:50%;border:2px solid ' + (sel ? '#2196F3' : '#e0e0e0') + ';background:' + (sel ? '#e3f2fd' : '#fff') + ';font-size:22px;cursor:pointer;">' + moods[i][1] + '</button>';
+    }
+    html += '</div></div>';
+
+    // ===== 今日のタスク（横並び小表示） =====
+    if (mustTasks.length > 0 || wantTasks.length > 0) {
+        html += '<div style="margin-bottom:16px;background:#f8f9fa;border-radius:12px;padding:12px;">';
+        html += '<div style="font-size:13px;color:#888;font-weight:600;margin-bottom:8px;">📋 今日のタスク</div>';
+        html += '<div style="display:flex;gap:12px;">';
+
+        // MUST列
+        if (mustTasks.length > 0) {
+            html += '<div style="flex:1;min-width:0;">';
+            html += '<div style="font-size:11px;font-weight:700;color:#2196F3;margin-bottom:4px;">✅ MUST</div>';
+            for (var m = 0; m < mustTasks.length; m++) {
+                var done = false;
+                try {
+                    var checks = JSON.parse(localStorage.getItem('taskChecks_' + todayStr) || '{}');
+                    done = checks['homeMustTask' + m] || false;
+                } catch(e){}
+                html += '<div style="font-size:12px;line-height:1.5;color:' + (done ? '#999' : '#333') + ';' + (done ? 'text-decoration:line-through;' : '') + '">' + (done ? '✓ ' : '· ') + _jfEsc(mustTasks[m]) + '</div>';
+            }
+            html += '</div>';
+        }
+
+        // WANT列
+        if (wantTasks.length > 0) {
+            html += '<div style="flex:1;min-width:0;">';
+            html += '<div style="font-size:11px;font-weight:700;color:#ff9800;margin-bottom:4px;">💡 WANT</div>';
+            for (var w = 0; w < wantTasks.length; w++) {
+                var doneW = false;
+                try {
+                    var checksW = JSON.parse(localStorage.getItem('taskChecks_' + todayStr) || '{}');
+                    doneW = checksW['homeWantTask' + w] || false;
+                } catch(e){}
+                html += '<div style="font-size:12px;line-height:1.5;color:' + (doneW ? '#999' : '#333') + ';' + (doneW ? 'text-decoration:line-through;' : '') + '">' + (doneW ? '✓ ' : '· ') + _jfEsc(wantTasks[w]) + '</div>';
+            }
+            html += '</div>';
+        }
+
+        html += '</div></div>';
+    }
+
+    // ===== フリートーク表示エリア =====
+    html += '<div style="font-size:13px;color:#888;font-weight:600;margin-bottom:8px;">🗣️ フリートーク</div>';
+    html += '<div id="jfTranscript" style="min-height:160px;max-height:280px;overflow-y:auto;padding:16px;background:#f8f9fa;border-radius:14px;border:1.5px solid #e0e0e0;margin-bottom:12px;font-size:15px;line-height:1.7;color:#666;white-space:pre-wrap;">今日あったこと、感じたこと、明日やりたいことなど\n自由に話してください</div>';
+
+    // ===== ステータス =====
+    html += '<div id="jfStatus" style="text-align:center;font-size:13px;color:#999;margin-bottom:12px;min-height:20px;"></div>';
+
+    // ===== 大きな音声ボタン =====
+    html += '<div style="display:flex;justify-content:center;gap:16px;align-items:center;margin-bottom:16px;">';
+    html += '<button type="button" id="jfMicBtn" onclick="window.jfToggleVoice()" style="width:72px;height:72px;border-radius:50%;border:none;background:linear-gradient(135deg,#2196F3 0%,#1976D2 100%);color:#fff;font-size:32px;cursor:pointer;box-shadow:0 4px 16px rgba(33,150,243,0.4);display:flex;align-items:center;justify-content:center;">🎤</button>';
+    html += '<button type="button" onclick="window.jfToggleEdit()" id="jfEditBtn" style="padding:10px 16px;border:1.5px solid #ddd;border-radius:10px;background:#fff;color:#666;font-size:13px;font-weight:600;cursor:pointer;">✏️ テキスト編集</button>';
+    html += '</div>';
+
+    // ===== テキスト編集エリア（初期非表示） =====
+    html += '<textarea id="jfEditArea" placeholder="テキストで入力・編集..." style="width:100%;min-height:100px;padding:14px;border:1.5px solid #ddd;border-radius:12px;font-size:14px;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:16px;display:none;"></textarea>';
+
+    // ===== フィードバック担当 =====
+    html += '<div style="margin-bottom:16px;">';
+    html += '<div style="font-size:13px;color:#888;font-weight:600;margin-bottom:8px;">フィードバック担当</div>';
+    html += '<div style="display:flex;gap:8px;justify-content:center;" id="jfToneRow">';
+    var currentTone = localStorage.getItem('journalFeedbackTone') || 'normal';
+    var toneData = [
+        {id:'harsh',icon:'🔥',name:'マネージャー',color:'#e74c3c',rgba:'rgba(231,76,60,0.06)'},
+        {id:'normal',icon:'💬',name:'タクヤ先輩',color:'#4a90e2',rgba:'rgba(74,144,226,0.06)'},
+        {id:'gentle',icon:'🌿',name:'ハナさん',color:'#27ae60',rgba:'rgba(39,174,96,0.06)'}
+    ];
+    for (var ti = 0; ti < toneData.length; ti++) {
+        var td = toneData[ti];
+        var tSel = (td.id === currentTone);
+        html += '<button type="button" onclick="window.jfSelectTone(\'' + td.id + '\')" data-tone="' + td.id + '" style="flex:1;max-width:110px;padding:8px 4px;border-radius:10px;border:2px solid ' + (tSel ? td.color : '#e0e0e0') + ';background:' + (tSel ? td.rgba : '#fff') + ';cursor:pointer;text-align:center;">';
+        html += '<div style="font-size:20px;">' + td.icon + '</div>';
+        html += '<div style="font-size:11px;font-weight:600;color:' + (tSel ? td.color : '#999') + ';">' + td.name + '</div>';
+        html += '</button>';
+    }
+    html += '</div></div>';
+
+    // ===== AIで整えるボタン =====
+    html += '<button type="button" id="jfAIBtn" onclick="window.jfSubmitAI()" style="width:100%;padding:16px;border:none;border-radius:14px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(102,126,234,0.3);margin-bottom:12px;">✨ AIで整える</button>';
+
+    // ===== 保存のみボタン =====
+    html += '<button type="button" onclick="window.jfSaveOnly()" style="width:100%;padding:12px;border:1.5px solid #ddd;border-radius:10px;background:#fff;color:#666;font-size:14px;font-weight:600;cursor:pointer;">💾 保存のみ（AI不要）</button>';
+
+    html += '</div>'; // scroll content wrapper
+
+    overlay.innerHTML = html;
+    document.body.appendChild(overlay);
+
+    // 日付フィールドも同期
+    if (dateField) dateField.value = dateVal;
+  } catch(err) {
+    console.error('openJournalFlow error:', err);
+    alert('ジャーナル画面の表示でエラーが発生しました: ' + err.message);
+  }
+}
+
+function _jfEsc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function closeJournalFlow() {
+    jfStopVoice();
+    var overlay = document.getElementById('journalFlowOverlay');
+    if (overlay) overlay.remove();
+}
+
+function jfChangeDate() {
+    var dateInput = document.getElementById('jfDate');
+    if (!dateInput) return;
+    // メインの日付フィールドも同期
+    var mainDate = document.getElementById('journalV2Date');
+    if (mainDate) mainDate.value = dateInput.value;
+    // ポップアップを再描画（日付変更反映）
+    closeJournalFlow();
+    openJournalFlow();
+}
+
+function jfSelectMood(mood) {
+    var row = document.getElementById('jfMoodRow');
+    if (!row) return;
+    var btns = row.querySelectorAll('button');
+    btns.forEach(function(b) {
+        var m = b.getAttribute('data-mood');
+        var sel = (m === mood);
+        b.style.borderColor = sel ? '#2196F3' : '#e0e0e0';
+        b.style.background = sel ? '#e3f2fd' : '#fff';
+    });
+    // メインのmoodも更新
+    if (typeof selectMood === 'function') {
+        try { selectMood(mood); } catch(e) {}
+    }
+    // overlaydataに保存
+    var overlay = document.getElementById('journalFlowOverlay');
+    if (overlay) overlay.dataset.mood = mood;
+}
+
+function jfSwitchMode(mode) {
+    _jfInputMode = mode;
+    var row = document.getElementById('jfModeRow');
+    if (!row) return;
+    row.querySelectorAll('button').forEach(function(b) {
+        var m = b.getAttribute('data-mode');
+        var sel = (m === mode);
+        b.style.borderColor = sel ? '#2196F3' : '#ddd';
+        b.style.background = sel ? '#e3f2fd' : '#fff';
+        b.style.color = sel ? '#2196F3' : '#666';
+    });
+    // トランスクリプト表示をリセット
+    var t = document.getElementById('jfTranscript');
+    if (t && !_jfFinalText) {
+        var labels = {raw:'フリートーク',events:'今日の出来事',learnings:'学び',feelings:'感情',gratitude:'感謝',must:'明日のMUST',want:'明日のWANT'};
+        t.textContent = (labels[mode] || mode) + 'を音声入力またはテキストで入力...';
+        t.style.color = '#999';
+    }
+}
+
+function jfSelectTone(tone) {
+    // キャラ制限チェック
+    if (window.DaycePlan) {
+        var charCheck = window.DaycePlan.checkCharacter(tone);
+        if (!charCheck.allowed) {
+            window.DaycePlan.showUpgradeModal({ type: 'journal', plan: window.DaycePlan.getPlan(), current: 0, limit: 0, reason: charCheck.reason });
+            return;
+        }
+    }
+    localStorage.setItem('journalFeedbackTone', tone);
+    var row = document.getElementById('jfToneRow');
+    if (!row) return;
+    var colors = {harsh:'#e74c3c',normal:'#4a90e2',gentle:'#27ae60'};
+    var rgbaMap = {harsh:'rgba(231,76,60,0.06)',normal:'rgba(74,144,226,0.06)',gentle:'rgba(39,174,96,0.06)'};
+    row.querySelectorAll('button').forEach(function(b) {
+        var t = b.getAttribute('data-tone');
+        var sel = (t === tone);
+        var c = colors[t] || '#999';
+        b.style.borderColor = sel ? c : '#e0e0e0';
+        b.style.background = sel ? (rgbaMap[t] || '#fff') : '#fff';
+        b.querySelector('div:last-child').style.color = sel ? c : '#999';
+    });
+    // メインのトーンも同期
+    if (typeof selectFeedbackTone === 'function') {
+        try { selectFeedbackTone(tone); } catch(e) {}
+    }
+}
+
+function jfToggleVoice() {
+    if (_jfActive) { jfStopVoice(); return; }
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { alert('お使いのブラウザは音声入力に対応していません'); return; }
+
+    _jfRec = new SR();
+    _jfRec.lang = 'ja-JP';
+    _jfRec.interimResults = true;
+    _jfRec.continuous = true;
+
+    var transcript = document.getElementById('jfTranscript');
+    var status = document.getElementById('jfStatus');
+    var micBtn = document.getElementById('jfMicBtn');
+
+    _jfRec.onresult = function(e) {
+        var interim = '';
+        _jfFinalText = '';
+        for (var i = 0; i < e.results.length; i++) {
+            var res = e.results[i];
+            if (res.isFinal) _jfFinalText += res[0].transcript;
+            else interim += res[0].transcript;
+        }
+        if (transcript) {
+            transcript.textContent = _jfFinalText + (interim ? interim : '');
+            transcript.style.color = '#333';
+        }
+    };
+
+    _jfRec.onend = function() {
+        _jfActive = false;
+        if (micBtn) {
+            micBtn.style.background = 'linear-gradient(135deg,#2196F3 0%,#1976D2 100%)';
+            micBtn.style.animation = '';
+            micBtn.style.boxShadow = '0 4px 16px rgba(33,150,243,0.4)';
+        }
+        if (status) status.textContent = _jfFinalText ? '✓ 音声入力完了' : '';
+    };
+
+    _jfRec.onerror = function() {
+        _jfActive = false;
+        if (micBtn) {
+            micBtn.style.background = 'linear-gradient(135deg,#2196F3 0%,#1976D2 100%)';
+            micBtn.style.animation = '';
+        }
+        if (status) status.textContent = '❌ 音声入力エラー';
+    };
+
+    _jfRec.start();
+    _jfActive = true;
+    if (micBtn) {
+        micBtn.style.background = '#ef4444';
+        micBtn.style.animation = 'gv2-pulse 1s infinite';
+        micBtn.style.boxShadow = '0 4px 16px rgba(239,68,68,0.5)';
+    }
+    if (transcript) { transcript.textContent = ''; transcript.style.color = '#333'; }
+    if (status) status.textContent = '🎙️ 聞いています... タップで停止';
+}
+
+function jfStopVoice() {
+    if (_jfRec) { try { _jfRec.stop(); } catch(e){} _jfRec = null; }
+    _jfActive = false;
+    var micBtn = document.getElementById('jfMicBtn');
+    if (micBtn) {
+        micBtn.style.background = 'linear-gradient(135deg,#2196F3 0%,#1976D2 100%)';
+        micBtn.style.animation = '';
+        micBtn.style.boxShadow = '0 4px 16px rgba(33,150,243,0.4)';
+    }
+}
+
+function jfToggleEdit() {
+    var editArea = document.getElementById('jfEditArea');
+    var transcript = document.getElementById('jfTranscript');
+    var editBtn = document.getElementById('jfEditBtn');
+    if (!editArea || !transcript) return;
+
+    if (editArea.style.display === 'none') {
+        editArea.value = _jfFinalText || (transcript.style.color !== 'rgb(153, 153, 153)' ? transcript.textContent : '');
+        editArea.style.display = '';
+        transcript.style.display = 'none';
+        if (editBtn) editBtn.textContent = '📝 プレビュー';
+        editArea.focus();
+    } else {
+        _jfFinalText = editArea.value;
+        transcript.textContent = _jfFinalText || '入力内容がここに表示されます';
+        transcript.style.color = _jfFinalText ? '#333' : '#999';
+        editArea.style.display = 'none';
+        transcript.style.display = '';
+        if (editBtn) editBtn.textContent = '✏️ テキスト編集';
+    }
+}
+
+function _jfGetText() {
+    var editArea = document.getElementById('jfEditArea');
+    if (editArea && editArea.style.display !== 'none') return editArea.value.trim();
+    return _jfFinalText.trim();
+}
+
+function _jfWriteToFields(text) {
+    if (!text) return;
+    // フリートーク一本: journalV3Raw に書き込み
+    var field = document.getElementById('journalV3Raw');
+    if (field) {
+        var sep = field.value && !field.value.endsWith('\n') ? '\n' : '';
+        field.value = (field.value || '') + sep + text;
+    }
+}
+
+function jfSaveOnly() {
+    jfStopVoice();
+    var text = _jfGetText();
+    if (text) _jfWriteToFields(text);
+
+    // mood同期
+    var overlay = document.getElementById('journalFlowOverlay');
+    var mood = overlay ? overlay.dataset.mood : '';
+    if (mood && typeof selectMood === 'function') {
+        try { selectMood(mood); } catch(e) {}
+    }
+
+    // 日付同期
+    var jfDate = document.getElementById('jfDate');
+    var mainDate = document.getElementById('journalV2Date');
+    if (jfDate && mainDate) mainDate.value = jfDate.value;
+
+    // 保存実行
+    closeJournalFlow();
+    var saveBtn = document.getElementById('journalV2SaveBtn');
+    if (saveBtn) saveBtn.click();
+}
+
+function jfSubmitAI() {
+    jfStopVoice();
+    var text = _jfGetText();
+    if (!text) {
+        var status = document.getElementById('jfStatus');
+        if (status) { status.textContent = '⚠️ テキストを入力してから「AIで整える」を押してください'; status.style.color = '#ef4444'; }
+        return;
+    }
+
+    // テキストをフィールドに書き込み
+    _jfWriteToFields(text);
+
+    // mood同期
+    var overlay = document.getElementById('journalFlowOverlay');
+    var mood = overlay ? overlay.dataset.mood : '';
+    if (mood && typeof selectMood === 'function') {
+        try { selectMood(mood); } catch(e) {}
+    }
+
+    // 日付同期
+    var jfDate = document.getElementById('jfDate');
+    var mainDate = document.getElementById('journalV2Date');
+    if (jfDate && mainDate) mainDate.value = jfDate.value;
+
+    // ポップアップ閉じる
+    closeJournalFlow();
+
+    // AIボタンを自動クリック
+    setTimeout(function() {
+        var aiBtn = document.getElementById('journalAiBigBtn');
+        if (aiBtn) aiBtn.click();
+    }, 200);
+}
+
+window.openJournalFlow = openJournalFlow;
+window.closeJournalFlow = closeJournalFlow;
+window.jfChangeDate = jfChangeDate;
+window.jfSelectMood = jfSelectMood;
+window.jfSwitchMode = jfSwitchMode;
+window.jfSelectTone = jfSelectTone;
+window.jfToggleVoice = jfToggleVoice;
+window.jfToggleEdit = jfToggleEdit;
+window.jfSaveOnly = jfSaveOnly;
+window.jfSubmitAI = jfSubmitAI;
 
 // レポート機能
 let selectedReportType = 'activity'; // 'activity' または 'money'
