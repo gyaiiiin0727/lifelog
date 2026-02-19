@@ -859,3 +859,33 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 - `renderJournalLogs()`: 30日外のエントリをフィルタ + 制限メッセージ表示
 - `showPlanUI` / `showUpgradeModal`: 「過去データ閲覧」行を追加
 - CSS `.calendar-day.free-locked { opacity: 0.4; }` 追加
+
+### BE. 目標タスクUI改善 — ポップアップ化 + 音声入力
+**ファイル: `goals-v2.js`**
+- **タスク追加ポップアップ** (`showTaskAddPopup`): 「＋ 追加」ボタンでポップアップ表示
+  - テキスト入力フィールド + 🎤音声入力ボタン
+  - Web Speech API (`SpeechRecognition`) で音声→テキスト変換
+  - `toggleVoice()`: 音声認識のON/OFF トグル（録音中は赤いパルスアニメーション）
+  - `submitAddTask(goalId)`: 入力テキストでタスク追加 → 自動クローズ
+  - Enterキーでも送信可能
+- **タスク選択ポップアップ** (`showTaskPopup`): タスクラベルタップでポップアップ表示
+  - 完了/未完了トグル
+  - 📌 今日のMUSTに追加（`copyToTodayAs(goalId, taskId, 'must')`）
+  - 💡 今日のWANTに追加（`copyToTodayAs(goalId, taskId, 'want')`）
+  - 📅 来週に移動（`carryToNextWeek` — confirm削除、ポップアップから直接実行）
+  - ✏️ テキストを編集
+  - 🗑️ 削除（`deleteTask` — confirm不要、ポップアップから直接実行）
+- **`copyToTodayAs(goalId, taskId, taskType)`**: MUST/WANT両対応の新関数。旧`copyToToday`は後方互換ラッパー
+- **`deleteTask(goalId, taskId)`**: 新関数（confirmなし）
+- **タスクレンダリング簡略化**: インラインの MUST/翌週/✏️ ボタン削除 → ラベルタップでポップアップ
+- **CSS追加**: `.gv2-popup-overlay`, `.gv2-popup`, `.gv2-popup-title`, `.gv2-popup-actions`, `.gv2-popup-btn`（must/want/next/edit/del各バリアント）, `.gv2-add-input-wrap`, `.gv2-add-input`, `.gv2-voice-btn`, `@keyframes gv2-pulse`, `.gv2-add-submit`
+- **window exports追加**: `_gv2ShowTaskPopup`, `_gv2ShowAddPopup`, `_gv2CloseTaskPopup`, `_gv2ToggleVoice`, `_gv2SubmitAddTask`, `_gv2DeleteTask`, `_gv2CopyToTodayAs`
+
+### BF. 行動レポートの時間表示を時間+分に変更
+**ファイル: `index.html`**
+- `formatMinutesToHM(m)` 関数新設: 分→「◯時間◯分」/「◯分」に変換
+  - 60分未満: `"45分"`
+  - 60分以上で端数あり: `"1時間30分"`
+  - 60分以上で端数なし: `"2時間"`
+- `renderActivityBars()`: 棒グラフの数値表示を `formatMinutesToHM` 使用に変更
+- `renderActivityPie()`: 中央テキスト・凡例の数値表示を `formatMinutesToHM` 使用に変更

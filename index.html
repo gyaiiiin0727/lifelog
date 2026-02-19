@@ -6926,21 +6926,149 @@ function deleteTask(type, index) {
 }
 
 function addTask(type) {
-    const dateKey = getTaskDateKey();
-    const allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
-    const entry = allEntries[dateKey] || { date: dateKey, summary: {} };
+    showHomeTaskAddPopup(type);
+}
+
+// ========== ホームタスク追加ポップアップ（音声入力対応） ==========
+var _homeVoiceRec = null;
+var _homeVoiceActive = false;
+
+function showHomeTaskAddPopup(defaultType) {
+    // 既存ポップアップがあれば削除
+    var old = document.getElementById('homeTaskPopupOverlay');
+    if (old) old.remove();
+
+    var overlay = document.createElement('div');
+    overlay.id = 'homeTaskPopupOverlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:10000;display:flex;align-items:flex-end;justify-content:center;';
+
+    var typeLabel = (defaultType === 'must') ? 'MUST' : 'WANT';
+    var html = '<div style="background:#fff;border-radius:16px 16px 0 0;padding:20px 16px 28px;width:100%;max-width:480px;box-shadow:0 -4px 24px rgba(0,0,0,0.15);">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">';
+    html += '<span style="font-size:16px;font-weight:700;">タスクを追加</span>';
+    html += '<button type="button" onclick="closeHomeTaskPopup()" style="background:none;border:none;font-size:20px;color:#999;cursor:pointer;">✕</button>';
+    html += '</div>';
+
+    // MUST/WANT切替
+    html += '<div style="display:flex;gap:8px;margin-bottom:12px;">';
+    html += '<button type="button" id="homeTaskTypeM" onclick="switchHomeTaskType(\'must\')" style="flex:1;padding:8px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:2px solid ' + (defaultType === 'must' ? '#2196F3' : '#ddd') + ';background:' + (defaultType === 'must' ? '#e3f2fd' : '#fff') + ';color:' + (defaultType === 'must' ? '#2196F3' : '#666') + ';">✅ MUST</button>';
+    html += '<button type="button" id="homeTaskTypeW" onclick="switchHomeTaskType(\'want\')" style="flex:1;padding:8px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:2px solid ' + (defaultType === 'want' ? '#2196F3' : '#ddd') + ';background:' + (defaultType === 'want' ? '#e3f2fd' : '#fff') + ';color:' + (defaultType === 'want' ? '#2196F3' : '#666') + ';">💡 WANT</button>';
+    html += '</div>';
+
+    // 入力 + 音声
+    html += '<div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">';
+    html += '<input type="text" id="homeTaskInput" placeholder="タスクを入力..." style="flex:1;padding:12px 14px;border:1.5px solid #ddd;border-radius:10px;font-size:15px;outline:none;" onkeydown="if(event.key===\'Enter\'){event.preventDefault();submitHomeTask();}">';
+    html += '<button type="button" id="homeVoiceBtn" onclick="toggleHomeVoice()" style="width:44px;height:44px;border-radius:50%;border:none;background:#f0f0f0;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;">🎤</button>';
+    html += '</div>';
+
+    html += '<div id="homeVoiceStatus" style="font-size:12px;color:#999;margin-bottom:12px;display:none;"></div>';
+
+    html += '<button type="button" onclick="submitHomeTask()" style="width:100%;padding:12px;border:none;border-radius:10px;background:#2196F3;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">追加する</button>';
+    html += '</div>';
+
+    overlay.innerHTML = html;
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) { stopHomeVoice(); closeHomeTaskPopup(); }
+    });
+    document.body.appendChild(overlay);
+
+    // データ属性でデフォルトタイプを保持
+    overlay.dataset.taskType = defaultType;
+
+    setTimeout(function() {
+        var inp = document.getElementById('homeTaskInput');
+        if (inp) inp.focus();
+    }, 100);
+}
+
+function switchHomeTaskType(type) {
+    var overlay = document.getElementById('homeTaskPopupOverlay');
+    if (overlay) overlay.dataset.taskType = type;
+    var mBtn = document.getElementById('homeTaskTypeM');
+    var wBtn = document.getElementById('homeTaskTypeW');
+    if (mBtn) {
+        mBtn.style.borderColor = (type === 'must') ? '#2196F3' : '#ddd';
+        mBtn.style.background = (type === 'must') ? '#e3f2fd' : '#fff';
+        mBtn.style.color = (type === 'must') ? '#2196F3' : '#666';
+    }
+    if (wBtn) {
+        wBtn.style.borderColor = (type === 'want') ? '#2196F3' : '#ddd';
+        wBtn.style.background = (type === 'want') ? '#e3f2fd' : '#fff';
+        wBtn.style.color = (type === 'want') ? '#2196F3' : '#666';
+    }
+}
+
+function closeHomeTaskPopup() {
+    stopHomeVoice();
+    var overlay = document.getElementById('homeTaskPopupOverlay');
+    if (overlay) overlay.remove();
+}
+
+function submitHomeTask() {
+    var input = document.getElementById('homeTaskInput');
+    var overlay = document.getElementById('homeTaskPopupOverlay');
+    if (!input || !overlay) return;
+    var text = input.value.trim();
+    if (!text) { input.focus(); return; }
+
+    var type = overlay.dataset.taskType || 'must';
+    var dateKey = getTaskDateKey();
+    var allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+    var entry = allEntries[dateKey] || { date: dateKey, summary: {} };
     if (!entry.summary) entry.summary = {};
 
-    const field = (type === 'must') ? 'must' : 'want';
-    const text = entry.summary[field] || '';
-    const tasks = String(text).split(/[\n・]/).map(s => s.trim()).filter(s => s && s !== '—');
-    tasks.push('新しいタスク');
+    var field = (type === 'must') ? 'must' : 'want';
+    var existing = entry.summary[field] || '';
+    var tasks = String(existing).split(/[\n・]/).map(function(s){return s.trim();}).filter(function(s){return s && s !== '—';});
+    tasks.push(text);
     entry.summary[field] = tasks.join('\n');
     allEntries[dateKey] = entry;
     localStorage.setItem('journalEntriesV3', JSON.stringify(allEntries));
+
+    stopHomeVoice();
+    closeHomeTaskPopup();
     renderHomeTodayTasks();
-    // 追加直後に編集モードに
-    setTimeout(function() { editTask(type, tasks.length - 1); }, 100);
+}
+
+function toggleHomeVoice() {
+    if (_homeVoiceActive) { stopHomeVoice(); return; }
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { alert('お使いのブラウザは音声入力に対応していません'); return; }
+    _homeVoiceRec = new SR();
+    _homeVoiceRec.lang = 'ja-JP';
+    _homeVoiceRec.interimResults = true;
+    _homeVoiceRec.continuous = false;
+    var inp = document.getElementById('homeTaskInput');
+    var btn = document.getElementById('homeVoiceBtn');
+    var st = document.getElementById('homeVoiceStatus');
+    _homeVoiceRec.onresult = function(e) {
+        var t = '';
+        for (var i = 0; i < e.results.length; i++) t += e.results[i][0].transcript;
+        if (inp) inp.value = t;
+    };
+    _homeVoiceRec.onend = function() {
+        _homeVoiceActive = false;
+        if (btn) { btn.style.background = '#f0f0f0'; btn.style.animation = ''; }
+        if (st) st.style.display = 'none';
+    };
+    _homeVoiceRec.onerror = function() {
+        _homeVoiceActive = false;
+        if (btn) { btn.style.background = '#f0f0f0'; btn.style.animation = ''; }
+        if (st) st.style.display = 'none';
+    };
+    _homeVoiceRec.start();
+    _homeVoiceActive = true;
+    if (btn) { btn.style.background = '#ff4444'; btn.style.animation = 'gv2-pulse 1s infinite'; }
+    if (st) { st.style.display = 'block'; st.textContent = '🎙️ 聞いています...'; }
+}
+
+function stopHomeVoice() {
+    if (_homeVoiceRec) { try { _homeVoiceRec.stop(); } catch(e){} _homeVoiceRec = null; }
+    _homeVoiceActive = false;
+    var btn = document.getElementById('homeVoiceBtn');
+    if (btn) { btn.style.background = '#f0f0f0'; btn.style.animation = ''; }
+    var st = document.getElementById('homeVoiceStatus');
+    if (st) st.style.display = 'none';
 }
 
 // グローバル公開（onclickから呼べるように）
@@ -6951,6 +7079,12 @@ window.editTask = editTask;
 window.saveTaskEdit = saveTaskEdit;
 window.deleteTask = deleteTask;
 window.addTask = addTask;
+window.showHomeTaskAddPopup = showHomeTaskAddPopup;
+window.switchHomeTaskType = switchHomeTaskType;
+window.closeHomeTaskPopup = closeHomeTaskPopup;
+window.submitHomeTask = submitHomeTask;
+window.toggleHomeVoice = toggleHomeVoice;
+window.stopHomeVoice = stopHomeVoice;
 
 
 // レポート機能
