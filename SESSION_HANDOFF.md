@@ -889,3 +889,81 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
   - 60分以上で端数なし: `"2時間"`
 - `renderActivityBars()`: 棒グラフの数値表示を `formatMinutesToHM` 使用に変更
 - `renderActivityPie()`: 中央テキスト・凡例の数値表示を `formatMinutesToHM` 使用に変更
+
+### BG. ホーム画面タスク追加のポップアップ化 + 音声入力
+**ファイル: `index.html`**
+- `addTask(type)` を `showHomeTaskAddPopup(type)` 呼び出しに変更（旧: 「新しいタスク」追加→即編集モード）
+- `showHomeTaskAddPopup(defaultType)`: ボトムシートポップアップ表示
+  - テキスト入力フィールド + 🎤音声入力ボタン（Web Speech API）
+  - MUST/WANT切替ボタン（ポップアップ内で変更可能）
+  - Enterキーでも送信可能
+- `switchHomeTaskType(type)`: MUST/WANTトグル
+- `submitHomeTask()`: タスク追加実行 → journalEntriesV3に保存 → 自動クローズ
+- `toggleHomeVoice()` / `stopHomeVoice()`: 音声認識ON/OFFトグル
+- window公開: `showHomeTaskAddPopup`, `switchHomeTaskType`, `closeHomeTaskPopup`, `submitHomeTask`, `toggleHomeVoice`, `stopHomeVoice`
+
+### BH. iOS Safari向けPWAインストールガイドバナー
+**ファイル: `index.html`**
+- `isIOS()` / `isIOSSafari()` ヘルパー関数追加
+- `showBannerIfNeeded()` 改修:
+  - Android Chrome等: 従来通り `beforeinstallprompt` → インストールボタン付きバナー
+  - iOS Safari: 「⬆（共有）→ ホーム画面に追加をタップ」のガイドメッセージ表示、インストールボタンは非表示
+- DOMContentLoaded時にiOS Safariなら1.2秒後にバナー表示
+- バナーCSS `.row` に `flex-wrap:wrap` 追加（iOS向けメッセージが長いため）
+
+### BI. ジャーナル音声入力の独立ポップアップ化
+**ファイル: `index.html`**
+- `openJournalVoicePopup()`: フルスクリーンに近いポップアップで音声入力
+  - 入力先選択ドロップダウン（出来事/学び/感情/感謝/MUST/WANT/フリートーク）
+  - 大きな🎤ボタン（80x80px、青グラデ→録音中赤）
+  - リアルタイム文字起こし表示エリア
+  - テキスト手動編集モード切替
+  - 「入力を反映する」ボタンで対象フィールドに追記
+- `journalV2VoiceBtn` に `onclick="openJournalVoicePopup()"` を追加（既存のaddEventListenerより先に発火）
+- 関連関数: `toggleJournalVoicePopup`, `jvpStopRec`, `jvpToggleEdit`, `jvpConfirm`, `closeJournalVoicePopup`
+
+### BJ. AI目標コーチの回数制限修正
+**ファイル: `goal-ai-breakdown.js`**
+- **問題**: チャットだけして計画を追加せず閉じた場合、使用回数が増えず何度でも使えた
+- **修正1**: `startGoalAIChat()` 冒頭に `checkLimit('goalCoach')` の再チェック追加
+- **修正2**: `incrementUsage('goalCoach')` をタスク追加完了時 → チャット開始時に移動
+  - チャットを閉じても消費される（無料ユーザーの無限利用を防止）
+
+### BK. 目標タスクの折りたたみ機能
+**ファイル: `goals-v2.js`**
+- `_goalCollapsed` オブジェクト: 目標IDごとの折りたたみ状態を管理（localStorage `gv2_collapsed` に永続化）
+- `toggleCollapse(goalId)`: 折りたたみトグル → `renderAll()` で再描画
+- 目標タイトルに ▶/▼ アイコン + 達成バッジ `(done/total)` 追加
+- タイトルクリックでタスク一覧の表示/非表示を切替
+- window export: `_gv2ToggleCollapse`
+
+### BL. AI相談の回答量増加
+**ファイル: `worker/src/worker.js`（デプロイ済み: f4c04547）**
+- **旧**: 「200文字程度で簡潔に回答してください」
+- **新**: 400〜600文字を目安に、共感→具体的アドバイス2〜3個→背中を押す一言の構成
+
+### BM. 初回ユーザー向けオンボーディング
+**ファイル: `index.html`**
+- 7ページのスライド式ウェルカムガイド（カード型ポップアップ）
+  1. 👋 ようこそ（概要）
+  2. ⏱️ 行動記録
+  3. 💰 お金記録
+  4. 📔 ジャーナル振り返り
+  5. ✨ AIフィードバック
+  6. 🎯 目標設定
+  7. 🚀 はじめよう
+- ドットインジケーター + 戻る/次へボタン + スキップリンク
+- `localStorage('dayce_onboarding_done')` で初回のみ表示
+- `</body>` 直前にIIFEで配置
+
+## セッション10以降で残っているタスク
+
+### 検討中
+- **ChatGPT → Claude API切替**: AI相談はClaude Sonnetの方が自然な会話向き。ジャーナル（JSON構造化）はOpenAIが安定。ハイブリッド構成も可能。Worker側の変更のみで切替可能
+
+### リリースまでの必須タスク
+1. **解約フロー**（Stripe Customer Portal連携）
+2. **利用規約・プライバシーポリシー**
+3. **本番モード切替**（Stripe本番APIキー・価格ID・Webhook）
+4. **コード難読化**（推奨）
+5. **Resend連携**（パスワードリセットメール、推奨）

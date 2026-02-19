@@ -5115,7 +5115,7 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <option value="want">明日やること（WANT）</option>
 </select>
 <div class="spacer"></div>
-<button class="btn-primary" id="journalV2VoiceBtn">🎤 音声入力</button>
+<button class="btn-primary" id="journalV2VoiceBtn" onclick="openJournalVoicePopup(); return false;">🎤 音声入力</button>
 </div>
 <div class="small">※ うまく認識されない場合は、ブラウザのマイク許可とHTTPS（またはローカル）を確認してください。</div>
 </div>
@@ -7087,6 +7087,214 @@ window.submitHomeTask = submitHomeTask;
 window.toggleHomeVoice = toggleHomeVoice;
 window.stopHomeVoice = stopHomeVoice;
 
+// ========== ジャーナル音声入力ポップアップ ==========
+var _jvpRec = null;
+var _jvpActive = false;
+var _jvpFinalText = '';
+
+function openJournalVoicePopup() {
+    var old = document.getElementById('journalVoicePopupOverlay');
+    if (old) old.remove();
+    _jvpFinalText = '';
+
+    // 現在の入力先を取得
+    var targetSel = document.getElementById('journalV2Target');
+    var currentTarget = targetSel ? targetSel.value : 'events';
+
+    var overlay = document.createElement('div');
+    overlay.id = 'journalVoicePopupOverlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:10001;display:flex;align-items:center;justify-content:center;padding:16px;';
+
+    var html = '<div style="background:#fff;border-radius:20px;padding:24px 20px 28px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.25);">';
+
+    // ヘッダー
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">';
+    html += '<span style="font-size:18px;font-weight:700;">🎤 音声入力</span>';
+    html += '<button type="button" onclick="closeJournalVoicePopup()" style="background:none;border:none;font-size:22px;color:#999;cursor:pointer;">✕</button>';
+    html += '</div>';
+
+    // 入力先選択
+    html += '<div style="margin-bottom:16px;">';
+    html += '<label style="font-size:13px;color:#666;font-weight:600;display:block;margin-bottom:6px;">入力先</label>';
+    html += '<select id="jvpTarget" style="width:100%;padding:10px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:15px;outline:none;">';
+    var opts = [['events','今日の出来事'],['learnings','学び'],['feelings','感情'],['gratitude','感謝'],['must','明日やること（MUST）'],['want','明日やること（WANT）'],['raw','フリートーク（そのまま）']];
+    for (var i = 0; i < opts.length; i++) {
+        html += '<option value="' + opts[i][0] + '"' + (opts[i][0] === currentTarget ? ' selected' : '') + '>' + opts[i][1] + '</option>';
+    }
+    html += '</select>';
+    html += '</div>';
+
+    // 文字起こし表示エリア
+    html += '<div id="jvpTranscript" style="min-height:120px;max-height:200px;overflow-y:auto;padding:14px;background:#f8f9fa;border-radius:12px;border:1.5px solid #e0e0e0;margin-bottom:16px;font-size:15px;line-height:1.6;color:#333;white-space:pre-wrap;">ここに音声が表示されます...</div>';
+
+    // ステータス
+    html += '<div id="jvpStatus" style="text-align:center;font-size:13px;color:#999;margin-bottom:16px;min-height:20px;"></div>';
+
+    // 大きな音声ボタン
+    html += '<div style="display:flex;justify-content:center;margin-bottom:20px;">';
+    html += '<button type="button" id="jvpMicBtn" onclick="toggleJournalVoicePopup()" style="width:80px;height:80px;border-radius:50%;border:none;background:linear-gradient(135deg,#2196F3 0%,#1976D2 100%);color:#fff;font-size:36px;cursor:pointer;box-shadow:0 4px 16px rgba(33,150,243,0.4);transition:all 0.3s;display:flex;align-items:center;justify-content:center;">🎤</button>';
+    html += '</div>';
+
+    // テキスト手動編集
+    html += '<textarea id="jvpEditArea" placeholder="音声入力した内容を編集できます..." style="width:100%;min-height:80px;padding:12px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:16px;display:none;"></textarea>';
+
+    // 操作ボタン
+    html += '<div style="display:flex;gap:10px;">';
+    html += '<button type="button" onclick="jvpToggleEdit()" id="jvpEditBtn" style="flex:1;padding:12px;border:1.5px solid #ddd;border-radius:10px;background:#fff;color:#333;font-size:14px;font-weight:600;cursor:pointer;">✏️ 編集</button>';
+    html += '<button type="button" onclick="jvpConfirm()" style="flex:2;padding:12px;border:none;border-radius:10px;background:#2196F3;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">入力を反映する</button>';
+    html += '</div>';
+
+    html += '</div>';
+    overlay.innerHTML = html;
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) closeJournalVoicePopup();
+    });
+    document.body.appendChild(overlay);
+}
+
+function closeJournalVoicePopup() {
+    jvpStopRec();
+    var overlay = document.getElementById('journalVoicePopupOverlay');
+    if (overlay) overlay.remove();
+}
+
+function toggleJournalVoicePopup() {
+    if (_jvpActive) {
+        jvpStopRec();
+        return;
+    }
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { alert('お使いのブラウザは音声入力に対応していません'); return; }
+
+    _jvpRec = new SR();
+    _jvpRec.lang = 'ja-JP';
+    _jvpRec.interimResults = true;
+    _jvpRec.continuous = true;
+
+    var transcript = document.getElementById('jvpTranscript');
+    var status = document.getElementById('jvpStatus');
+    var micBtn = document.getElementById('jvpMicBtn');
+
+    _jvpRec.onresult = function(e) {
+        var interim = '';
+        _jvpFinalText = '';
+        for (var i = 0; i < e.results.length; i++) {
+            var res = e.results[i];
+            if (res.isFinal) _jvpFinalText += res[0].transcript;
+            else interim += res[0].transcript;
+        }
+        if (transcript) {
+            transcript.textContent = _jvpFinalText + (interim ? interim : '');
+            transcript.style.color = '#333';
+        }
+    };
+
+    _jvpRec.onend = function() {
+        _jvpActive = false;
+        if (micBtn) {
+            micBtn.style.background = 'linear-gradient(135deg,#2196F3 0%,#1976D2 100%)';
+            micBtn.style.animation = '';
+            micBtn.style.boxShadow = '0 4px 16px rgba(33,150,243,0.4)';
+        }
+        if (status) status.textContent = _jvpFinalText ? '✓ 音声入力完了 — 「入力を反映する」で確定' : '';
+    };
+
+    _jvpRec.onerror = function(e) {
+        _jvpActive = false;
+        if (micBtn) {
+            micBtn.style.background = 'linear-gradient(135deg,#2196F3 0%,#1976D2 100%)';
+            micBtn.style.animation = '';
+        }
+        if (status) status.textContent = '❌ 音声入力エラー（マイク許可を確認）';
+    };
+
+    _jvpRec.start();
+    _jvpActive = true;
+    if (micBtn) {
+        micBtn.style.background = '#ef4444';
+        micBtn.style.animation = 'gv2-pulse 1s infinite';
+        micBtn.style.boxShadow = '0 4px 16px rgba(239,68,68,0.5)';
+    }
+    if (transcript) { transcript.textContent = ''; transcript.style.color = '#333'; }
+    if (status) status.textContent = '🎙️ 聞いています... タップで停止';
+}
+
+function jvpStopRec() {
+    if (_jvpRec) { try { _jvpRec.stop(); } catch(e){} _jvpRec = null; }
+    _jvpActive = false;
+    var micBtn = document.getElementById('jvpMicBtn');
+    if (micBtn) {
+        micBtn.style.background = 'linear-gradient(135deg,#2196F3 0%,#1976D2 100%)';
+        micBtn.style.animation = '';
+        micBtn.style.boxShadow = '0 4px 16px rgba(33,150,243,0.4)';
+    }
+}
+
+function jvpToggleEdit() {
+    var editArea = document.getElementById('jvpEditArea');
+    var transcript = document.getElementById('jvpTranscript');
+    var editBtn = document.getElementById('jvpEditBtn');
+    if (!editArea || !transcript) return;
+
+    if (editArea.style.display === 'none') {
+        // 編集モードに切替
+        editArea.value = _jvpFinalText || transcript.textContent;
+        editArea.style.display = '';
+        transcript.style.display = 'none';
+        if (editBtn) editBtn.textContent = '📝 プレビュー';
+        editArea.focus();
+    } else {
+        // プレビューに戻す
+        _jvpFinalText = editArea.value;
+        transcript.textContent = _jvpFinalText;
+        editArea.style.display = 'none';
+        transcript.style.display = '';
+        if (editBtn) editBtn.textContent = '✏️ 編集';
+    }
+}
+
+function jvpConfirm() {
+    jvpStopRec();
+    var editArea = document.getElementById('jvpEditArea');
+    var text = '';
+    if (editArea && editArea.style.display !== 'none') {
+        text = editArea.value.trim();
+    } else {
+        text = _jvpFinalText.trim();
+    }
+    if (!text) {
+        var status = document.getElementById('jvpStatus');
+        if (status) status.textContent = '⚠️ テキストがありません。音声入力してください。';
+        return;
+    }
+
+    // ターゲットフィールドに反映
+    var targetSel = document.getElementById('jvpTarget');
+    var target = targetSel ? targetSel.value : 'events';
+    var fieldMap = {
+        events: 'journalV2Events',
+        learnings: 'journalV2Learnings',
+        feelings: 'journalV2Feelings',
+        gratitude: 'journalV2Gratitude',
+        must: 'journalV2Must',
+        want: 'journalV2Want',
+        raw: 'journalV3Raw'
+    };
+    var fieldId = fieldMap[target] || 'journalV2Events';
+    var field = document.getElementById(fieldId);
+    if (field) {
+        var sep = field.value && !field.value.endsWith('\n') ? '\n' : '';
+        field.value = (field.value || '') + sep + text;
+    }
+
+    closeJournalVoicePopup();
+}
+
+window.openJournalVoicePopup = openJournalVoicePopup;
+window.closeJournalVoicePopup = closeJournalVoicePopup;
+window.toggleJournalVoicePopup = toggleJournalVoicePopup;
+window.jvpToggleEdit = jvpToggleEdit;
+window.jvpConfirm = jvpConfirm;
 
 // レポート機能
 let selectedReportType = 'activity'; // 'activity' または 'money'
@@ -20896,6 +21104,83 @@ if ('serviceWorker' in navigator) {
 <script src="voice-input-extra.js"></script>
 <script src="goals-v2.js"></script>
 <script src="cloud-sync.js"></script>
+
+<!-- ========== 初回オンボーディング ========== -->
+<script>
+(function(){
+  var LS_KEY = 'dayce_onboarding_done';
+  if (localStorage.getItem(LS_KEY) === '1') return;
+  // スタンドアロンでもブラウザでも初回なら表示
+  var slides = [
+    { emoji: '👋', title: 'Dayceへようこそ！', desc: '毎日の行動・お金・気持ちを記録して、<br>AIと一緒に振り返るライフログアプリです。' },
+    { emoji: '⏱️', title: '行動を記録する', desc: '「行動」タブで今日やったことと<br>かかった時間を記録しましょう。' },
+    { emoji: '💰', title: 'お金を記録する', desc: '「お金」タブで支出・収入を記録。<br>カテゴリ別にレポートが見れます。' },
+    { emoji: '📔', title: 'ジャーナルで振り返り', desc: '「ジャーナル」タブで今日を振り返り。<br>🎤音声入力にも対応しています。' },
+    { emoji: '✨', title: 'AIが整理してくれる', desc: '「心を整える」ボタンでAIが<br>あなたの1日をまとめてくれます。' },
+    { emoji: '🎯', title: '目標を設定する', desc: '「目標」タブで月の目標を設定。<br>AIコーチが計画づくりをサポートします。' },
+    { emoji: '🚀', title: 'さあ始めよう！', desc: 'まずは今日の行動を1つ記録してみましょう。<br>使うほど、あなた専用の振り返りに。' }
+  ];
+
+  var currentSlide = 0;
+
+  function render() {
+    var s = slides[currentSlide];
+    var isLast = (currentSlide === slides.length - 1);
+    var isFirst = (currentSlide === 0);
+
+    var html = '<div id="onboardOverlay" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;">';
+    html += '<div style="background:#fff;border-radius:20px;padding:32px 24px;width:100%;max-width:360px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2);">';
+
+    // ドットインジケーター
+    html += '<div style="display:flex;justify-content:center;gap:6px;margin-bottom:20px;">';
+    for (var i = 0; i < slides.length; i++) {
+      html += '<div style="width:8px;height:8px;border-radius:50%;background:' + (i === currentSlide ? '#2196F3' : '#ddd') + ';"></div>';
+    }
+    html += '</div>';
+
+    html += '<div style="font-size:48px;margin-bottom:12px;">' + s.emoji + '</div>';
+    html += '<div style="font-size:20px;font-weight:700;margin-bottom:12px;color:#222;">' + s.title + '</div>';
+    html += '<div style="font-size:15px;line-height:1.6;color:#555;margin-bottom:24px;">' + s.desc + '</div>';
+
+    // ボタン
+    html += '<div style="display:flex;gap:10px;justify-content:center;">';
+    if (!isFirst) {
+      html += '<button type="button" onclick="window._onboardPrev()" style="padding:12px 20px;border:1.5px solid #ddd;border-radius:10px;background:#fff;color:#666;font-size:14px;font-weight:600;cursor:pointer;">← 戻る</button>';
+    }
+    if (isLast) {
+      html += '<button type="button" onclick="window._onboardClose()" style="padding:12px 32px;border:none;border-radius:10px;background:#2196F3;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">はじめる 🎉</button>';
+    } else {
+      html += '<button type="button" onclick="window._onboardNext()" style="padding:12px 32px;border:none;border-radius:10px;background:#2196F3;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">次へ →</button>';
+    }
+    html += '</div>';
+
+    // スキップ
+    if (!isLast) {
+      html += '<div style="margin-top:14px;"><button type="button" onclick="window._onboardClose()" style="background:none;border:none;color:#999;font-size:13px;cursor:pointer;">スキップ</button></div>';
+    }
+
+    html += '</div></div>';
+
+    var existing = document.getElementById('onboardOverlay');
+    if (existing) existing.remove();
+    var div = document.createElement('div');
+    div.innerHTML = html;
+    document.body.appendChild(div.firstChild);
+  }
+
+  window._onboardNext = function() { if (currentSlide < slides.length - 1) { currentSlide++; render(); } };
+  window._onboardPrev = function() { if (currentSlide > 0) { currentSlide--; render(); } };
+  window._onboardClose = function() {
+    localStorage.setItem(LS_KEY, '1');
+    var el = document.getElementById('onboardOverlay');
+    if (el) el.remove();
+  };
+
+  // ページロード後に表示
+  if (document.readyState === 'complete') { render(); }
+  else { window.addEventListener('load', function() { setTimeout(render, 300); }); }
+})();
+</script>
 
 </body>
 </html>

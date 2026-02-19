@@ -328,6 +328,15 @@
 
   // ========== チャット開始 ==========
   async function startGoalAIChat() {
+    // プラン制限の再チェック（タスク未追加で閉じた場合の回避防止）
+    if (window.DaycePlan) {
+      var limit = window.DaycePlan.checkLimit('goalCoach');
+      if (!limit.allowed) {
+        window.DaycePlan.showUpgradeModal(limit);
+        return;
+      }
+    }
+
     var goalInput = document.getElementById('goalInput');
     var categorySelect = document.getElementById('goalCategory');
     var text = goalInput ? goalInput.value.trim() : '';
@@ -350,6 +359,9 @@
     // キャラクター選択UIの状態を反映
     var activeCharBtn = document.querySelector('.gai-char-btn.active');
     if (activeCharBtn) _state.tone = activeCharBtn.getAttribute('data-tone') || 'normal';
+
+    // チャット開始時に使用回数をカウント（閉じても消費される）
+    if (window.DaycePlan) { window.DaycePlan.incrementUsage('goalCoach'); window.DaycePlan.renderPlanBadges(); }
 
     // 目標を先に追加（weeklyTasksにタスクを入れるため）
     var goalId = Date.now();
@@ -1100,8 +1112,7 @@
       window.showStatus('goalStatus', msg);
     }
 
-    // 使用回数カウント（タスク追加完了時に1回カウント）
-    if (window.DaycePlan) { window.DaycePlan.incrementUsage('goalCoach'); window.DaycePlan.renderPlanBadges(); }
+    // 使用回数カウントはチャット開始時に移動済み（startGoalAIChat内）
 
     closeChat();
   }

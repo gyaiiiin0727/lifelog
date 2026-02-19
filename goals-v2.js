@@ -235,6 +235,13 @@
   var currentWeekMonday = getMonday(new Date());
   var viewingWeekMonday = new Date(currentWeekMonday);
 
+  // 目標ごとの折りたたみ状態
+  var _goalCollapsed = {};
+  try {
+    var saved = localStorage.getItem('gv2_collapsed');
+    if (saved) _goalCollapsed = JSON.parse(saved);
+  } catch(e) {}
+
   // 互換用: window.currentWeekKey を維持（ダッシュボードが参照）
   var currentWeekKey = getWeekKey(new Date());
   window.getWeekKey = getWeekKey;
@@ -460,8 +467,16 @@
       if (tasks.length > 0) hasAnyTask = true;
       var emoji = catEmoji(goal.category);
 
+      var collapsed = _goalCollapsed[goal.id] ? true : false;
+      var doneCount = tasks.filter(function(t){return t.done;}).length;
+      var badge = tasks.length > 0 ? ' <span style="font-size:12px;color:#888;font-weight:400;">(' + doneCount + '/' + tasks.length + ')</span>' : '';
+      var arrow = collapsed ? '▶' : '▼';
+
       html += '<div class="task-group">';
-      html += '<div class="task-group-title">' + emoji + ' ' + esc(goal.text) + '</div>';
+      html += '<div class="task-group-title" style="cursor:pointer;display:flex;align-items:center;gap:6px;" onclick="window._gv2ToggleCollapse(' + goal.id + ')">' +
+        '<span style="font-size:11px;color:#aaa;transition:transform 0.2s;">' + arrow + '</span> ' + emoji + ' ' + esc(goal.text) + badge + '</div>';
+
+      html += '<div class="gv2-task-body" style="' + (collapsed ? 'display:none;' : '') + '">';
 
       if (tasks.length === 0) {
         html += '<div style="color:#999;font-size:13px;padding:4px 0 8px;">この週のタスクはまだありません</div>';
@@ -481,7 +496,8 @@
       }
 
       html += '<button type="button" class="task-add-btn" onclick="window._gv2ShowAddPopup(' + goal.id + ')">＋ 追加</button>';
-      html += '</div>';
+      html += '</div>'; // gv2-task-body
+      html += '</div>'; // task-group
     });
 
     if (!hasAnyTask) {
@@ -783,6 +799,13 @@
     });
   }
 
+  // ===== 目標折りたたみ =====
+  function toggleCollapse(goalId) {
+    _goalCollapsed[goalId] = !_goalCollapsed[goalId];
+    try { localStorage.setItem('gv2_collapsed', JSON.stringify(_goalCollapsed)); } catch(e) {}
+    renderAll();
+  }
+
   // ===== タスク詳細ポップアップ =====
   function closeTaskPopup() {
     var old = document.getElementById('gv2-task-popup');
@@ -1008,6 +1031,7 @@
   window._gv2ToggleVoice = toggleVoice;
   window._gv2SubmitAddTask = submitAddTask;
   window._gv2DeleteTask = deleteTask;
+  window._gv2ToggleCollapse = toggleCollapse;
 
   // 既存の window.* を上書きして全体の整合性を保つ
   window.addGoal = addGoalV2;
