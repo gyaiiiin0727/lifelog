@@ -1039,7 +1039,46 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 - `journalV3TodaySummary` に `display:none !important` を追加
 - カレンダーポップアップで過去ジャーナル閲覧できるため不要
 
-## セッション10以降で残っているタスク
+## 次セッション（Session 11）での最優先タスク
+
+### バグ確認・修正（大量の変更があったため）
+以下の機能が正しく動作するか確認し、バグがあれば修正する：
+
+1. **ジャーナルフルスクリーンフロー** (`openJournalFlow`)
+   - ポップアップが正しく全画面表示されるか
+   - 気分選択が動作するか
+   - 今日のタスクが表示されるか
+   - フィードバック担当のキャラ画像が表示されるか
+   - AIで整えるボタン（青）が動作するか → journalV3Raw書込み → AI自動実行
+   - 保存のみボタンが動作するか
+
+2. **音声入力（自動再開方式）**
+   - マイクボタン押下で録音開始、もう一度で停止
+   - モバイルで止まらずに自動再開するか
+   - リアルタイム文字起こしがtextareaに反映されるか
+   - 手動テキスト編集もできるか
+
+3. **旧ジャーナルUI非表示**
+   - 旧UIが完全に見えなくなっているか
+   - `journalAiFeedbackBox` だけ表示されているか（AI結果用）
+   - 隠した要素（journalV2Date, journalV3Raw, journalAiBigBtn）がJS経由で正常動作するか
+
+4. **カレンダーポップアップ**
+   - 削除ボタンが表示され、削除が動作するか
+   - ジャーナルなし日にはボタンが出ないか
+   - 今日の要約セクションが非表示になっているか
+
+5. **ホーム画面タスク追加ポップアップ** (`showHomeTaskAddPopup`)
+   - 音声入力が動作するか
+   - MUST/WANT切替が動作するか
+
+6. **iOS Safari PWAインストールガイド**
+   - iOS Safariで正しくバナーが出るか
+
+### アップロード対象ファイル
+- `index.html` ← 大量変更あり（要アップロード）
+- `goals-v2.js` ← window exports, collapse追加
+- `goal-ai-breakdown.js` ← goalCoach limit修正
 
 ### 検討中
 - **ChatGPT → Claude API切替**: AI相談はClaude Sonnetの方が自然な会話向き。ジャーナル（JSON構造化）はOpenAIが安定。ハイブリッド構成も可能。Worker側の変更のみで切替可能

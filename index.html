@@ -7345,7 +7345,10 @@ function openJournalFlow() {
     try {
         var allE = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
         var existingEntry = allE[dateVal] || {};
-        existingMood = existingEntry.mood || '';
+        var rawMood = existingEntry.mood || '';
+        // localStorageには日本語で保存されているので英語キーに逆変換
+        var jpToEn = {'最高':'great','良い':'good','普通':'normal','悪い':'bad','最悪':'terrible'};
+        existingMood = jpToEn[rawMood] || rawMood;
     } catch(e) {}
 
     // ===== オーバーレイ作成 =====
@@ -13660,9 +13663,9 @@ try{
         const charName = toneNames[tone] || 'タクヤ先輩';
         const charColor = toneColors[tone] || '#4a90e2';
 
-        // キャラクターの画像を取得
-        const selectedBtn = document.querySelector('.feedback-tone-btn.active, .feedback-tone-btn.selected');
-        const charImg = selectedBtn ? selectedBtn.querySelector('img')?.src : '';
+        // キャラクターの画像を取得（トーンから直接ファイル名をマッピング）
+        const toneImgs = { harsh: 'drill_instructor.png', normal: 'takumi_senpai.png', gentle: 'hana_san.png' };
+        const charImg = toneImgs[tone] || '';
 
         box.style.display = 'block';
         if (out) {
