@@ -7752,7 +7752,7 @@ function jfSubmitAI() {
     var jfAIBtn = document.getElementById('jfAIBtn');
     if (jfAIBtn) {
         jfAIBtn.disabled = true;
-        jfAIBtn.textContent = '今日もお疲れ様でした ✨ AIが整理中...';
+        jfAIBtn.textContent = '今日もお疲れ様でした ✨';
         jfAIBtn.style.opacity = '0.7';
     }
 
@@ -7765,8 +7765,7 @@ function jfSubmitAI() {
     }
 
     var BACKEND = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-ai.little-limit-621c.workers.dev';
-    var journalDataContext = (typeof buildContextSummary === 'function') ? buildContextSummary('other') : '';
-    var textToSend = journalDataContext + '【ユーザーのジャーナル】\n' + text;
+    var textToSend = '【ユーザーのジャーナル】\n' + text;
     var aiHeaders = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : {'Content-Type':'application/json'};
 
     fetch(BACKEND + '/api/analyze', {
@@ -7782,7 +7781,7 @@ function jfSubmitAI() {
         var raw = (data && (data.result || data.analysis)) ? (data.result || data.analysis) : '';
         var out = raw;
         var parsed = null;
-        var _eb = function(s) { if (!s || typeof s !== 'string') return s; return s.replace(/([^\n])・/g, '$1\n・').replace(/^\n/, ''); };
+        var _eb = function(s) { if (!s || typeof s !== 'string') return s; return s.replace(/([^\n])・/g, '$1\n・').replace(/([^\n])(\- )/g, '$1\n$2').replace(/([^\n])(\d+[\.\)]\s)/g, '$1\n$2').replace(/^\n/, ''); };
         if (typeof raw === 'object' && raw !== null) {
             parsed = raw;
             var lines = [];
@@ -7808,12 +7807,12 @@ function jfSubmitAI() {
             if (currentMood) entry.mood = currentMood;
             if (!entry.summary) entry.summary = {};
             if (parsed) {
-                if (parsed.must) entry.summary.must = parsed.must;
-                if (parsed.want) entry.summary.want = parsed.want;
-                if (parsed.events) entry.summary.events = parsed.events;
-                if (parsed.learnings) entry.summary.learnings = parsed.learnings;
-                if (parsed.feelings) entry.summary.feelings = parsed.feelings;
-                if (parsed.gratitude) entry.summary.gratitude = parsed.gratitude;
+                if (parsed.must) entry.summary.must = _eb(parsed.must);
+                if (parsed.want) entry.summary.want = _eb(parsed.want);
+                if (parsed.events) entry.summary.events = _eb(parsed.events);
+                if (parsed.learnings) entry.summary.learnings = _eb(parsed.learnings);
+                if (parsed.feelings) entry.summary.feelings = _eb(parsed.feelings);
+                if (parsed.gratitude) entry.summary.gratitude = _eb(parsed.gratitude);
                 if (parsed.oneLiner) entry.hitokoto = parsed.oneLiner;
             } else if (out) {
                 var m;
@@ -13321,9 +13320,8 @@ try{
 
         try {
           var endpoint = BACKEND_URL + '/api/analyze';
-          var journalDataContext = (typeof buildContextSummary === 'function') ? buildContextSummary('other') : '';
-          // プロンプトルール・キャラクター口調はWorker側で注入（ソースから隠蔽）
-          var textToSend = journalDataContext + '【ユーザーのジャーナル】\n' + text;
+          // ジャーナルAIは記入テキストのみで整理（他データは含めない）
+          var textToSend = '【ユーザーのジャーナル】\n' + text;
 
           var aiHeaders5 = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : {'Content-Type':'application/json'};
           var res = await fetch(endpoint, {
@@ -13341,7 +13339,7 @@ try{
           // 箇条書きの「・」の前に改行を確保するヘルパー
           var _ensureBullets = function(s) {
             if (!s || typeof s !== 'string') return s;
-            return s.replace(/([^\n])・/g, '$1\n・').replace(/^\n/, '');
+            return s.replace(/([^\n])・/g, '$1\n・').replace(/([^\n])(\- )/g, '$1\n$2').replace(/([^\n])(\d+[\.\)]\s)/g, '$1\n$2').replace(/^\n/, '');
           };
           if(typeof raw === 'object' && raw !== null) {
             parsed = raw;
@@ -13368,12 +13366,12 @@ try{
             if(!entry.summary) entry.summary = {};
             // JSONオブジェクトから直接取得（確実）、フォールバックで正規表現
             if(parsed) {
-              if(parsed.must) entry.summary.must = parsed.must;
-              if(parsed.want) entry.summary.want = parsed.want;
-              if(parsed.events) entry.summary.events = parsed.events;
-              if(parsed.learnings) entry.summary.learnings = parsed.learnings;
-              if(parsed.feelings) entry.summary.feelings = parsed.feelings;
-              if(parsed.gratitude) entry.summary.gratitude = parsed.gratitude;
+              if(parsed.must) entry.summary.must = _ensureBullets(parsed.must);
+              if(parsed.want) entry.summary.want = _ensureBullets(parsed.want);
+              if(parsed.events) entry.summary.events = _ensureBullets(parsed.events);
+              if(parsed.learnings) entry.summary.learnings = _ensureBullets(parsed.learnings);
+              if(parsed.feelings) entry.summary.feelings = _ensureBullets(parsed.feelings);
+              if(parsed.gratitude) entry.summary.gratitude = _ensureBullets(parsed.gratitude);
               if(parsed.oneLiner) entry.hitokoto = parsed.oneLiner;
             } else {
               var mustMatch = out.match(/【明日のMUST】\n([\s\S]*?)(?=【|$)/);
@@ -13698,10 +13696,8 @@ try{
 
         // Worker側は /api/analyze を想定（なければ root でも受けられるよう、まず /api/analyze を叩く）
         const endpoint = `${BACKEND_URL}/api/analyze`;
-        // 過去データコンテキストを生成
-        const journalDataContext = (typeof buildContextSummary === 'function') ? buildContextSummary('other') : '';
-        // プロンプトルール・キャラクター口調はWorker側で注入（ソースから隠蔽）
-        const textToSend = `${journalDataContext}【ユーザーのジャーナル】\n${text}`;
+        // ジャーナルAIは記入テキストのみで整理（他データは含めない）
+        const textToSend = `【ユーザーのジャーナル】\n${text}`;
         const aiHeaders6 = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : {'Content-Type':'application/json'};
         const res = await fetch(endpoint, {
           method: 'POST',
@@ -13720,8 +13716,7 @@ try{
         // 箇条書きの「・」の前に改行を確保するヘルパー
         const ensureBulletBreaks = (s) => {
           if (!s || typeof s !== 'string') return s;
-          // 「・」が行頭でない場合に改行を挿入（連続する箇条書きを分割）
-          return s.replace(/([^\n])・/g, '$1\n・').replace(/^\n/, '');
+          return s.replace(/([^\n])・/g, '$1\n・').replace(/([^\n])(\- )/g, '$1\n$2').replace(/([^\n])(\d+[\.\)]\s)/g, '$1\n$2').replace(/^\n/, '');
         };
         if (typeof raw === 'object' && raw !== null) {
           parsed = raw;
@@ -13755,12 +13750,12 @@ try{
           if (!entry.summary) entry.summary = {};
           // JSONオブジェクトから直接取得（確実）、フォールバックで正規表現
           if (parsed) {
-            if (parsed.must) entry.summary.must = parsed.must;
-            if (parsed.want) entry.summary.want = parsed.want;
-            if (parsed.events) entry.summary.events = parsed.events;
-            if (parsed.learnings) entry.summary.learnings = parsed.learnings;
-            if (parsed.feelings) entry.summary.feelings = parsed.feelings;
-            if (parsed.gratitude) entry.summary.gratitude = parsed.gratitude;
+            if (parsed.must) entry.summary.must = ensureBulletBreaks(parsed.must);
+            if (parsed.want) entry.summary.want = ensureBulletBreaks(parsed.want);
+            if (parsed.events) entry.summary.events = ensureBulletBreaks(parsed.events);
+            if (parsed.learnings) entry.summary.learnings = ensureBulletBreaks(parsed.learnings);
+            if (parsed.feelings) entry.summary.feelings = ensureBulletBreaks(parsed.feelings);
+            if (parsed.gratitude) entry.summary.gratitude = ensureBulletBreaks(parsed.gratitude);
             if (parsed.oneLiner) entry.hitokoto = parsed.oneLiner;
           } else {
             const mustMatch = out.match(/【明日のMUST】\n([\s\S]*?)(?=【|$)/);
