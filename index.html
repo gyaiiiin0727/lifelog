@@ -7748,14 +7748,125 @@ function jfSubmitAI() {
     var mainDate = document.getElementById('journalV2Date');
     if (jfDate && mainDate) mainDate.value = jfDate.value;
 
-    // ポップアップ閉じる
-    closeJournalFlow();
+    // --- ポップアップ内でAI処理を実行（閉じない） ---
+    var jfAIBtn = document.getElementById('jfAIBtn');
+    if (jfAIBtn) {
+        jfAIBtn.disabled = true;
+        jfAIBtn.textContent = '今日もお疲れ様でした ✨ AIが整理中...';
+        jfAIBtn.style.opacity = '0.7';
+    }
 
-    // AIボタンを自動クリック
-    setTimeout(function() {
-        var aiBtn = document.getElementById('journalAiBigBtn');
-        if (aiBtn) aiBtn.click();
-    }, 200);
+    // トーン取得
+    var tone = 'normal';
+    if (overlay && overlay.dataset.tone) {
+        tone = overlay.dataset.tone;
+    } else if (window.journalFeedbackTone) {
+        tone = window.journalFeedbackTone;
+    }
+
+    var BACKEND = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-ai.little-limit-621c.workers.dev';
+    var journalDataContext = (typeof buildContextSummary === 'function') ? buildContextSummary('other') : '';
+    var textToSend = journalDataContext + '【ユーザーのジャーナル】\n' + text;
+    var aiHeaders = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : {'Content-Type':'application/json'};
+
+    fetch(BACKEND + '/api/analyze', {
+        method: 'POST',
+        headers: aiHeaders,
+        body: JSON.stringify({ text: textToSend, tone: tone, type: 'journal' })
+    })
+    .then(function(res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+    })
+    .then(function(data) {
+        var raw = (data && (data.result || data.analysis)) ? (data.result || data.analysis) : '';
+        var out = raw;
+        var parsed = null;
+        var _eb = function(s) { if (!s || typeof s !== 'string') return s; return s.replace(/([^\n])・/g, '$1\n・').replace(/^\n/, ''); };
+        if (typeof raw === 'object' && raw !== null) {
+            parsed = raw;
+            var lines = [];
+            if (raw.events) lines.push('【よかったこと】\n' + _eb(raw.events));
+            if (raw.learnings) lines.push('【改善したいこと】\n' + _eb(raw.learnings));
+            if (raw.feelings) lines.push('【気づいたこと】\n' + _eb(raw.feelings));
+            if (raw.gratitude) lines.push('【もやっとしたこと】\n' + _eb(raw.gratitude));
+            if (raw.must) lines.push('【明日のMUST】\n' + _eb(raw.must));
+            if (raw.want) lines.push('【明日のWANT】\n' + _eb(raw.want));
+            if (raw.oneLiner) lines.push('【コメント】\n' + raw.oneLiner);
+            out = lines.join('\n\n');
+        }
+
+        // journalEntriesV3に保存
+        try {
+            var dateKey = (document.getElementById('journalV2Date') || {}).value || (function(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); })();
+            var allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+            var entry = allEntries[dateKey] || { date: dateKey };
+            if (!entry.raw || entry.raw.trim() === '') entry.raw = text;
+            entry.aiFeedback = out;
+            entry.aiFeedbackTone = tone;
+            var currentMood = (typeof getMood === 'function') ? getMood() : '';
+            if (currentMood) entry.mood = currentMood;
+            if (!entry.summary) entry.summary = {};
+            if (parsed) {
+                if (parsed.must) entry.summary.must = parsed.must;
+                if (parsed.want) entry.summary.want = parsed.want;
+                if (parsed.events) entry.summary.events = parsed.events;
+                if (parsed.learnings) entry.summary.learnings = parsed.learnings;
+                if (parsed.feelings) entry.summary.feelings = parsed.feelings;
+                if (parsed.gratitude) entry.summary.gratitude = parsed.gratitude;
+                if (parsed.oneLiner) entry.hitokoto = parsed.oneLiner;
+            } else if (out) {
+                var m;
+                if ((m = out.match(/【明日のMUST】\n([\s\S]*?)(?=【|$)/))) entry.summary.must = m[1].trim();
+                if ((m = out.match(/【明日のWANT】\n([\s\S]*?)(?=【|$)/))) entry.summary.want = m[1].trim();
+                if ((m = out.match(/【よかったこと】\n([\s\S]*?)(?=【|$)/))) entry.summary.events = m[1].trim();
+                if ((m = out.match(/【改善したいこと】\n([\s\S]*?)(?=【|$)/))) entry.summary.learnings = m[1].trim();
+                if ((m = out.match(/【気づいたこと】\n([\s\S]*?)(?=【|$)/))) entry.summary.feelings = m[1].trim();
+                if ((m = out.match(/【もやっと(?:した|している)こと】\n([\s\S]*?)(?=【|$)/))) entry.summary.gratitude = m[1].trim();
+                if ((m = out.match(/【(?:整える一言|コメント)】\n([\s\S]*?)(?=【|$)/))) entry.hitokoto = m[1].trim();
+            }
+            if (typeof getHomeTodayTaskRecord === 'function') {
+                var taskRec = getHomeTodayTaskRecord();
+                if (taskRec) entry.summary.taskRecord = taskRec;
+            }
+            entry.updatedAt = new Date().toISOString();
+            allEntries[dateKey] = entry;
+            localStorage.setItem('journalEntriesV3', JSON.stringify(allEntries));
+            if (typeof renderHomeTodayTasks === 'function') renderHomeTodayTasks();
+            if (typeof renderCalendar === 'function') renderCalendar();
+            if (typeof renderJournalLogs === 'function') renderJournalLogs();
+            try { if (typeof renderLog === 'function') renderLog(); } catch(_){}
+            try { if (typeof renderTodaySummary === 'function') renderTodaySummary(); } catch(_){}
+        } catch(saveErr) { console.warn('AI結果の保存に失敗:', saveErr); }
+
+        // 使用回数カウント
+        if (window.DaycePlan) { window.DaycePlan.incrementUsage('journal'); window.DaycePlan.renderPlanBadges(); }
+
+        // フィードバック表示（既存の領域にも書く）
+        var box = document.getElementById('journalAiFeedbackBox');
+        if (box && out) { box.style.display = 'block'; box.innerHTML = '<div style="white-space:pre-wrap;line-height:1.7;">' + out.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>'; }
+
+        // ポップアップ内に結果を表示してから閉じる
+        if (jfAIBtn) {
+            jfAIBtn.textContent = '✅ 保存しました！';
+            jfAIBtn.style.background = '#27ae60';
+            jfAIBtn.style.opacity = '1';
+        }
+        setTimeout(function() { closeJournalFlow(); }, 1200);
+    })
+    .catch(function(e) {
+        console.error('jfSubmitAI error:', e);
+        if (jfAIBtn) {
+            jfAIBtn.textContent = '❌ 接続に失敗しました: ' + (e.message || e);
+            jfAIBtn.style.background = '#ef4444';
+            jfAIBtn.style.opacity = '1';
+            jfAIBtn.disabled = false;
+            setTimeout(function() {
+                jfAIBtn.textContent = '✨ AIで整える';
+                jfAIBtn.style.background = 'linear-gradient(135deg,#2196F3 0%,#1565C0 100%)';
+            }, 3000);
+        }
+    });
 }
 
 window.openJournalFlow = openJournalFlow;
