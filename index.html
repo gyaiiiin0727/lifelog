@@ -18422,6 +18422,11 @@ const modal = $('qrModal');
       } else if (!isCurrent && c.key === 'free') {
         html += '<button onclick="window.DaycePlan.selectPlan(\'free\')" style="width:100%;margin-top:10px;padding:10px;background:#eee;color:#666;border:none;border-radius:8px;font-size:14px;cursor:pointer;">無料プランに戻す</button>';
       }
+      // プロプランかつ現在の場合: サブスクリプション管理ボタン
+      if (isCurrent && c.key === 'pro') {
+        html += '<button onclick="window.DaycePlan.showCancelConfirm()" style="width:100%;margin-top:10px;padding:10px;background:#f5f5f5;color:#666;border:1px solid #ddd;border-radius:8px;font-size:13px;cursor:pointer;">💳 支払い・プランを管理</button>';
+        html += '<div style="text-align:center;margin-top:6px;font-size:11px;color:#aaa;">※ Stripeの管理ページに移動します</div>';
+      }
       html += '</div>';
     });
 
@@ -18507,6 +18512,83 @@ const modal = $('qrModal');
       loading.remove();
       alert('通信エラーが発生しました。もう一度お試しください。');
     });
+  }
+
+  // --- Stripe Customer Portal 開始 ---
+  function startStripePortal() {
+    var token = localStorage.getItem('syncAuthToken');
+    if (!token) {
+      alert('ログインが必要です。\nAI相談タブの「クラウド同期」からログインしてください。');
+      return;
+    }
+
+    // 確認モーダルを閉じる
+    var confirmModal = document.getElementById('dayce-portal-confirm');
+    if (confirmModal) confirmModal.remove();
+
+    // プランモーダルも閉じる
+    var planModal = document.getElementById('dayce-plan-modal');
+    if (planModal) planModal.remove();
+
+    // ローディング表示
+    var loading = document.createElement('div');
+    loading.id = 'dayce-portal-loading';
+    loading.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;';
+    loading.innerHTML = '<div style="background:#fff;border-radius:16px;padding:32px;text-align:center;"><div style="font-size:24px;margin-bottom:12px;">⏳</div><div style="font-size:15px;font-weight:600;">管理ページに移動中...</div></div>';
+    document.body.appendChild(loading);
+
+    var currentUrl = window.location.href.split('?')[0];
+
+    fetch(BACKEND_URL + '/api/stripe/portal', {
+      method: 'POST',
+      headers: getAIHeaders(),
+      body: JSON.stringify({
+        returnUrl: currentUrl
+      })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      loading.remove();
+      if (data.error) {
+        alert('エラー: ' + data.error);
+        return;
+      }
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    })
+    .catch(function(err) {
+      loading.remove();
+      alert('通信エラーが発生しました。もう一度お試しください。');
+    });
+  }
+
+  // --- サブスクリプション管理の確認モーダル ---
+  function showCancelConfirm() {
+    var old = document.getElementById('dayce-portal-confirm');
+    if (old) old.remove();
+
+    var overlay = document.createElement('div');
+    overlay.id = 'dayce-portal-confirm';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
+
+    overlay.innerHTML = '<div style="max-width:360px;width:100%;background:#fff;border-radius:16px;padding:24px 20px;">' +
+      '<div style="font-size:18px;font-weight:700;margin-bottom:16px;">⚙️ サブスクリプション管理</div>' +
+      '<div style="font-size:14px;color:#555;line-height:1.7;margin-bottom:20px;">' +
+        'Stripeの管理ページに移動します。<br>以下の操作ができます：' +
+        '<div style="margin-top:8px;padding-left:4px;">' +
+          '・支払い方法の変更<br>' +
+          '・プランの解約' +
+        '</div>' +
+      '</div>' +
+      '<button onclick="window.DaycePlan.startStripePortal()" style="width:100%;padding:14px;background:#2196F3;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;">Stripeに移動する</button>' +
+      '<button onclick="document.getElementById(\'dayce-portal-confirm\').remove();" style="width:100%;padding:12px;background:none;border:1px solid #ddd;border-radius:10px;font-size:14px;color:#666;cursor:pointer;">キャンセル</button>' +
+    '</div>';
+
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) overlay.remove();
+    });
+    document.body.appendChild(overlay);
   }
 
   // --- サーバーからプラン状態を同期 ---
@@ -18596,6 +18678,8 @@ const modal = $('qrModal');
     renderPlanBadges: renderPlanBadges,
     getAIHeaders: getAIHeaders,
     startStripeCheckout: startStripeCheckout,
+    startStripePortal: startStripePortal,
+    showCancelConfirm: showCancelConfirm,
     syncPlanFromServer: syncPlanFromServer,
     isMonthViewable: isMonthViewable,
     isDateViewable: isDateViewable,
