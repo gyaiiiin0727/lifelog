@@ -675,9 +675,9 @@
     // キャラクター・ルールはWorker側で注入（ソースから隠蔽）
     var charHeader = '';
 
-    // 過去データのコンテキスト（初回のみ、トークン節約）
+    // 過去データのコンテキスト（初回と最終回に含める。中間ターンはトークン節約で省略）
     var userContext = '';
-    if (_state.turnCount === 0 && typeof window.buildContextSummary === 'function') {
+    if ((_state.turnCount === 0 || _state.turnCount >= _state.maxTurns - 1) && typeof window.buildContextSummary === 'function') {
       userContext = window.buildContextSummary('goals', { goalCategory: _state.category });
     }
 

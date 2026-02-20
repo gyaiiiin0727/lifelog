@@ -126,16 +126,16 @@ def obfuscate_html(html_path):
     print(f"  Done: {html_path}")
 
 
-def obfuscate_file(js_path):
-    """外部 .js ファイルを難読化"""
-    print(f"Processing {js_path}...")
+def obfuscate_file(src_path, dst_path):
+    """外部 .js ファイルを難読化（srcから読みdstに書く）"""
+    print(f"Processing {src_path} -> {dst_path}...")
 
-    with open(js_path, 'r', encoding='utf-8') as f:
+    with open(src_path, 'r', encoding='utf-8') as f:
         original = f.read()
 
     obfuscated = obfuscate_js(original)
 
-    with open(js_path, 'w', encoding='utf-8') as f:
+    with open(dst_path, 'w', encoding='utf-8') as f:
         f.write(obfuscated)
 
     ratio = len(obfuscated) / len(original) if original else 0
@@ -143,14 +143,19 @@ def obfuscate_file(js_path):
 
 
 if __name__ == '__main__':
-    # 1. index.html
-    obfuscate_html(os.path.join(BASE_DIR, 'index.html'))
+    # 1. index.html（_originalから読んでindex.htmlに書く）
+    src_html = os.path.join(BASE_DIR, 'index_original.html')
+    dst_html = os.path.join(BASE_DIR, 'index.html')
+    import shutil
+    shutil.copy2(src_html, dst_html)
+    obfuscate_html(dst_html)
 
-    # 2. 外部JSファイル（sw系は除く）
+    # 2. 外部JSファイル（_originalから読んで本体に書く。sw系は除く）
     js_files = ['cloud-sync.js', 'goals-v2.js', 'goal-ai-breakdown.js', 'voice-input-extra.js']
     for js in js_files:
-        path = os.path.join(BASE_DIR, js)
-        if os.path.exists(path):
-            obfuscate_file(path)
+        orig = os.path.join(BASE_DIR, js.replace('.js', '_original.js'))
+        dest = os.path.join(BASE_DIR, js)
+        if os.path.exists(orig):
+            obfuscate_file(orig, dest)
 
     print("\n✅ All done!")

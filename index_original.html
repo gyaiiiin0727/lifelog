@@ -4736,6 +4736,39 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 </style>
 
 <style>
+/* ===== Settings Panel ===== */
+.settings-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4); z-index: 9998;
+  opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
+}
+.settings-overlay.open { opacity: 1; visibility: visible; }
+.settings-panel {
+  position: fixed; top: 0; right: 0; width: 85%; max-width: 400px; height: 100%;
+  background: #fff; z-index: 9999; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  transform: translateX(100%); transition: transform 0.3s ease;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+}
+.settings-panel.open { transform: translateX(0); }
+.settings-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 16px 16px; border-bottom: 1px solid #eee; position: sticky; top: 0; background: #fff; z-index: 1;
+}
+.settings-panel-header h2 { font-size: 18px; font-weight: 700; color: #333; margin: 0; }
+.settings-close-btn {
+  background: none; border: none; font-size: 28px; color: #999; cursor: pointer; padding: 4px 8px; line-height: 1;
+}
+.settings-section { padding: 16px; border-bottom: 1px solid #f0f0f0; }
+.settings-section h3 { font-size: 15px; font-weight: 700; color: #333; margin: 0 0 12px; }
+.settings-section .ai-consult-data-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.settings-section .ai-data-btn {
+  flex: 1; min-width: 120px; padding: 12px; background: #f8f9fa; border: 1px solid #e0e0e0;
+  border-radius: 10px; font-size: 13px; font-weight: 600; color: #555; cursor: pointer; transition: all 0.2s;
+}
+.settings-section .ai-data-btn:hover { background: #eef0f2; border-color: #ccc; }
+</style>
+
+<style>
 /* ===== Inline Hint Cards ===== */
 .dayce-hint {
   display: flex;
@@ -4801,7 +4834,12 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 </head>
 <body>
 <div class="container">
-<h1 style="display:flex;align-items:center;justify-content:center;gap:0;margin-top:12px;"><img src="icon.jpg" alt="D" style="width:52px;height:52px;margin-right:-6px;">ayce</h1>
+<div style="display:flex;align-items:center;justify-content:center;position:relative;margin-top:12px;">
+  <h1 style="display:flex;align-items:center;gap:0;margin:0;"><img src="icon.jpg" alt="D" style="width:52px;height:52px;margin-right:-6px;">ayce</h1>
+  <button id="settingsToggleBtn" onclick="openSettingsPanel()" style="position:absolute;right:0;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:8px;color:#666;" aria-label="設定">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  </button>
+</div>
 <div class="tab-nav">
 <button class="tab-button active" data-tab="home" onclick="switchTab('home')">🏠 ホーム</button>
 <button class="tab-button" data-tab="activity" onclick="switchTab('activity')">⏱️ 行動</button>
@@ -5370,17 +5408,6 @@ body.qr-open .fab-container{ pointer-events:none !important; }
     <h2 class="section-title" style="text-align:center;">🤖 AIに相談</h2>
     <p style="text-align:center; color:#666; font-size:13px; margin:0 0 16px;">キャラクターを選んで、なんでも相談してみよう</p>
 
-    <!-- プランバッジ・残回数 -->
-    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
-      <span id="dayce-plan-badge" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#e3f2fd;color:#1976D2;">無料プラン</span>
-      <span style="font-size:12px;color:#888;">AI相談: <span id="dayce-usage-consult" style="font-weight:600;">—</span></span>
-      <span style="font-size:12px;color:#888;">心を整える: <span id="dayce-usage-journal" style="font-weight:600;">—</span></span>
-      <span style="font-size:12px;color:#888;">目標コーチ: <span id="dayce-usage-goalCoach" style="font-weight:600;">—</span></span>
-    </div>
-    <div style="text-align:center;margin-bottom:16px;">
-      <button type="button" onclick="if(window.DaycePlan)window.DaycePlan.showPlanUI();" style="font-size:13px;color:#2196F3;background:none;border:1px solid #2196F3;border-radius:20px;padding:5px 16px;cursor:pointer;">📋 プラン変更</button>
-    </div>
-
     <!-- キャラクター選択（アイコン付き） -->
     <div class="ai-consult-chars" id="aiConsultChars">
         <button type="button" class="ai-char-btn" data-ai-tone="harsh" onclick="selectAIConsultTone('harsh')">
@@ -5454,73 +5481,6 @@ body.qr-open .fab-container{ pointer-events:none !important; }
       <div id="aiConsultHistoryList"></div>
     </div>
 
-    <!-- CSVダウンロードセクション（有料会員） -->
-    <div class="ai-consult-csv-section">
-        <h3 style="font-size:15px; font-weight:700; color:#333; margin:0 0 4px;">📊 CSVダウンロード <span class="premium-badge-inline">👑 有料会員</span></h3>
-        <p style="font-size:12px; color:#888; margin:0 0 12px;">データをCSV形式でダウンロードできます</p>
-        <div class="ai-consult-csv-btns">
-            <button type="button" class="ai-csv-btn" id="csvBtnActivity" onclick="handleCSVDownload('activity')">
-                <div class="ai-csv-btn-left">
-                    <span class="ai-csv-btn-icon">⏱️</span>
-                    <span class="ai-csv-btn-text">行動データ</span>
-                </div>
-                <span class="ai-csv-btn-arrow">↓</span>
-            </button>
-            <button type="button" class="ai-csv-btn" id="csvBtnMoney" onclick="handleCSVDownload('money')">
-                <div class="ai-csv-btn-left">
-                    <span class="ai-csv-btn-icon">💰</span>
-                    <span class="ai-csv-btn-text">お金データ</span>
-                </div>
-                <span class="ai-csv-btn-arrow">↓</span>
-            </button>
-            <button type="button" class="ai-csv-btn" id="csvBtnJournal" onclick="handleCSVDownload('journal')">
-                <div class="ai-csv-btn-left">
-                    <span class="ai-csv-btn-icon">📔</span>
-                    <span class="ai-csv-btn-text">ジャーナル</span>
-                </div>
-                <span class="ai-csv-btn-arrow">↓</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- クラウド同期セクション -->
-    <div class="ai-consult-data-section" id="cloudSyncSection" data-mode="login">
-        <!-- cloud-sync.js が動的に描画 -->
-    </div>
-
-    <!-- データ管理セクション -->
-    <div class="ai-consult-data-section">
-        <h3 style="font-size:15px; font-weight:700; color:#333; margin:0 0 12px;">📁 データ管理</h3>
-        <div class="ai-consult-data-btns">
-            <button type="button" class="ai-data-btn" id="aiConsultExportJSON">
-                <span>💾</span> 全データをバックアップ
-            </button>
-            <button type="button" class="ai-data-btn" id="aiConsultImportJSON">
-                <span>📂</span> データを復元
-            </button>
-        </div>
-        <div class="ai-consult-data-btns" style="margin-top:10px;">
-            <button type="button" class="ai-data-btn" onclick="resetDayceHints()">
-                <span>💡</span> ヒントを再表示
-            </button>
-        </div>
-    </div>
-
-    <!-- 法的情報セクション -->
-    <div class="ai-consult-data-section" style="border-top:1px solid #eee;padding-top:16px;">
-        <h3 style="font-size:15px; font-weight:700; color:#333; margin:0 0 12px;">📄 法的情報</h3>
-        <div class="ai-consult-data-btns">
-            <button type="button" class="ai-data-btn" onclick="showLegalModal('terms')">
-                <span>📋</span> 利用規約
-            </button>
-            <button type="button" class="ai-data-btn" onclick="showLegalModal('privacy')">
-                <span>🔒</span> プライバシーポリシー
-            </button>
-            <button type="button" class="ai-data-btn" onclick="showLegalModal('tokushoho')">
-                <span>🏪</span> 特定商取引法に基づく表記
-            </button>
-        </div>
-    </div>
 </div>
 </div>
 
@@ -11601,7 +11561,7 @@ function setupMoneyVoice(){
                 const dateKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
                 const allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
                 const existing = allEntries[dateKey] || { date: dateKey };
-                existing.text = (existing.text ? existing.text + '\n' : '') + (text || '');
+                existing.raw = (existing.raw ? existing.raw + '\n' : '') + (text || '');
                 existing.category = category;
                 if (aiResult && aiResult.analysis) existing.aiAnalysis = aiResult.analysis;
                 allEntries[dateKey] = existing;
@@ -21269,11 +21229,13 @@ function buildContextSummary(topic, opts) {
   opts = opts || {};
   var parts = [];
 
+  // 活動データ: activity, goals, other で参照
   if (topic === 'activity' || topic === 'goals' || topic === 'other') {
     var actS = summarizeActivities();
     if (actS) parts.push(actS);
   }
-  if (topic === 'money' || topic === 'other') {
+  // 支出データ: money, goals, other で参照（目標達成にお金の使い方も重要）
+  if (topic === 'money' || topic === 'goals' || topic === 'other') {
     var monS = summarizeMoney();
     if (monS) parts.push(monS);
   }
@@ -21287,7 +21249,8 @@ function buildContextSummary(topic, opts) {
     var gapS = summarizeGoalVsReality();
     if (gapS) parts.push(gapS);
   }
-  if (topic === 'other') {
+  // ジャーナル・体重: goals, other で参照（日記の振り返りも目標フィードバックに有用）
+  if (topic === 'other' || topic === 'goals') {
     var jourS = summarizeJournal();
     if (jourS) parts.push(jourS);
     var weiS = summarizeWeight();
@@ -21978,6 +21941,107 @@ if ('serviceWorker' in navigator) {
   if (document.readyState === 'complete') { render(); }
   else { window.addEventListener('load', function() { setTimeout(render, 300); }); }
 })();
+</script>
+
+<!-- ========== 設定パネル ========== -->
+<div class="settings-overlay" id="settingsOverlay" onclick="closeSettingsPanel()"></div>
+<div class="settings-panel" id="settingsPanel">
+  <div class="settings-panel-header">
+    <h2>⚙️ 設定</h2>
+    <button class="settings-close-btn" onclick="closeSettingsPanel()">&times;</button>
+  </div>
+
+  <!-- プラン情報 -->
+  <div class="settings-section">
+    <h3>📋 プラン</h3>
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;">
+      <span id="dayce-plan-badge" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#e3f2fd;color:#1976D2;">無料プラン</span>
+      <span style="font-size:12px;color:#888;">AI相談: <span id="dayce-usage-consult" style="font-weight:600;">—</span></span>
+      <span style="font-size:12px;color:#888;">心を整える: <span id="dayce-usage-journal" style="font-weight:600;">—</span></span>
+      <span style="font-size:12px;color:#888;">目標コーチ: <span id="dayce-usage-goalCoach" style="font-weight:600;">—</span></span>
+    </div>
+    <div style="text-align:center;">
+      <button type="button" onclick="if(window.DaycePlan)window.DaycePlan.showPlanUI();" style="font-size:13px;color:#2196F3;background:none;border:1px solid #2196F3;border-radius:20px;padding:5px 16px;cursor:pointer;">📋 プラン変更</button>
+    </div>
+  </div>
+
+  <!-- クラウド同期 -->
+  <div class="settings-section">
+    <div id="cloudSyncSection" data-mode="login">
+      <!-- cloud-sync.js が動的に描画 -->
+    </div>
+  </div>
+
+  <!-- CSVダウンロード -->
+  <div class="settings-section">
+    <h3>📊 CSVダウンロード <span style="font-size:11px;color:#FF9800;font-weight:600;">👑 有料会員</span></h3>
+    <p style="font-size:12px; color:#888; margin:0 0 12px;">データをCSV形式でダウンロードできます</p>
+    <div class="ai-consult-data-btns" style="flex-direction:column;">
+      <button type="button" class="ai-data-btn" id="csvBtnActivity" onclick="handleCSVDownload('activity')">
+        <span>⏱️</span> 行動データ
+      </button>
+      <button type="button" class="ai-data-btn" id="csvBtnMoney" onclick="handleCSVDownload('money')">
+        <span>💰</span> お金データ
+      </button>
+      <button type="button" class="ai-data-btn" id="csvBtnJournal" onclick="handleCSVDownload('journal')">
+        <span>📔</span> ジャーナル
+      </button>
+    </div>
+  </div>
+
+  <!-- データ管理 -->
+  <div class="settings-section">
+    <h3>📁 データ管理</h3>
+    <div class="ai-consult-data-btns">
+      <button type="button" class="ai-data-btn" id="aiConsultExportJSON">
+        <span>💾</span> バックアップ
+      </button>
+      <button type="button" class="ai-data-btn" id="aiConsultImportJSON">
+        <span>📂</span> データ復元
+      </button>
+    </div>
+    <div class="ai-consult-data-btns" style="margin-top:10px;">
+      <button type="button" class="ai-data-btn" onclick="resetDayceHints()">
+        <span>💡</span> ヒントを再表示
+      </button>
+    </div>
+  </div>
+
+  <!-- 法的情報 -->
+  <div class="settings-section">
+    <h3>📄 法的情報</h3>
+    <div class="ai-consult-data-btns" style="flex-direction:column;">
+      <button type="button" class="ai-data-btn" onclick="showLegalModal('terms')">
+        <span>📋</span> 利用規約
+      </button>
+      <button type="button" class="ai-data-btn" onclick="showLegalModal('privacy')">
+        <span>🔒</span> プライバシーポリシー
+      </button>
+      <button type="button" class="ai-data-btn" onclick="showLegalModal('tokushoho')">
+        <span>🏪</span> 特定商取引法に基づく表記
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== 設定パネル開閉 =====
+function openSettingsPanel() {
+  document.getElementById('settingsOverlay').classList.add('open');
+  document.getElementById('settingsPanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  history.pushState({ settingsOpen: true }, '');
+}
+function closeSettingsPanel() {
+  document.getElementById('settingsOverlay').classList.remove('open');
+  document.getElementById('settingsPanel').classList.remove('open');
+  document.body.style.overflow = '';
+}
+window.addEventListener('popstate', function(e) {
+  if (document.getElementById('settingsPanel').classList.contains('open')) {
+    closeSettingsPanel();
+  }
+});
 </script>
 
 </body>
