@@ -7724,6 +7724,15 @@ function jfSubmitAI() {
         return;
     }
 
+    // プラン制限チェック（ポップアップ内で先にチェックし、制限時はここで止める）
+    if (window.DaycePlan) {
+        var limit = window.DaycePlan.checkLimit('journal');
+        if (!limit.allowed) {
+            window.DaycePlan.showUpgradeModal(limit);
+            return;
+        }
+    }
+
     // テキストをフィールドに書き込み
     _jfWriteToFields(text);
 

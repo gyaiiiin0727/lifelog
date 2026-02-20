@@ -1039,53 +1039,112 @@ AI目標チャット → distributeDates() → weeklyTasks に追加（システ
 - `journalV3TodaySummary` に `display:none !important` を追加
 - カレンダーポップアップで過去ジャーナル閲覧できるため不要
 
-## 次セッション（Session 11）での最優先タスク
+## セッション11-12の変更記録（リリース準備完了）
 
-### バグ確認・修正（大量の変更があったため）
-以下の機能が正しく動作するか確認し、バグがあれば修正する：
+### CA. 解約フロー実装（Stripe Customer Portal連携）
+**ファイル: `index.html`, `worker/src/worker.js`**
+- Stripe Customer Portal でサブスクリプション管理（解約・プラン変更）
+- `POST /api/stripe/portal` エンドポイント追加（Worker）
+- フロント: 設定パネル内に「解約・プラン変更」ボタン配置
+- Customer Portal は Stripe Dashboard で production/test 両方設定済み
 
-1. **ジャーナルフルスクリーンフロー** (`openJournalFlow`)
-   - ポップアップが正しく全画面表示されるか
-   - 気分選択が動作するか
-   - 今日のタスクが表示されるか
-   - フィードバック担当のキャラ画像が表示されるか
-   - AIで整えるボタン（青）が動作するか → journalV3Raw書込み → AI自動実行
-   - 保存のみボタンが動作するか
+### CB. 利用規約・プライバシーポリシー・特定商取引法
+**ファイル: `index.html`**
+- 利用規約（全13条）: 第8条（知的財産権）、第10条（事業譲渡）、第13条（運営者情報）を含む
+- プライバシーポリシー: 事業譲渡時の第三者提供条項追加
+- 特定商取引法に基づく表記: 11セクション（販売事業者、所在地、連絡先等）
+- 法的情報ボタン: 利用規約 / プライバシーポリシー / 特定商取引法 の3つ
+- **バイアウト対応**: 事業譲渡条項で将来のM&Aに備えた法的基盤
 
-2. **音声入力（自動再開方式）**
-   - マイクボタン押下で録音開始、もう一度で停止
-   - モバイルで止まらずに自動再開するか
-   - リアルタイム文字起こしがtextareaに反映されるか
-   - 手動テキスト編集もできるか
+### CC. Stripe本番モード切替
+**ファイル: `worker/src/worker.js`（デプロイ済み: f4a4491b）**
+- 価格ID: `price_1T2q1bCfVwTOOprV3gZAmbPC`（本番 ¥500/月）
+- Worker Secrets（本番）:
+  - `STRIPE_SECRET_KEY`: sk_live_51T2IgiCfVwTOOprV...
+  - `STRIPE_WEBHOOK_SECRET`: whsec_cM4E9i26FN7q2oB3o0h7scWWuydqrIuA
+- Stripe Business Verification 完了（2FA設定済み）
+- Customer Portal 本番設定済み
 
-3. **旧ジャーナルUI非表示**
-   - 旧UIが完全に見えなくなっているか
-   - `journalAiFeedbackBox` だけ表示されているか（AI結果用）
-   - 隠した要素（journalV2Date, journalV3Raw, journalAiBigBtn）がJS経由で正常動作するか
+### CD. コード難読化パイプライン
+**ファイル: `obfuscate.py`（新規作成）**
+- `javascript-obfuscator` ベースの自動化スクリプト
+- `_original` ファイルから読み取り → 本体ファイルに難読化出力
+- 対象: index.html（51スクリプトブロック）+ 外部JS 4ファイル
+- 設定: stringArray + base64エンコード、renameGlobals=false（HTML連携維持）
+- **二重難読化バグ修正済み**: 常に `_original` ソースから読む
 
-4. **カレンダーポップアップ**
-   - 削除ボタンが表示され、削除が動作するか
-   - ジャーナルなし日にはボタンが出ないか
-   - 今日の要約セクションが非表示になっているか
+### CE. Resend連携（パスワードリセットメール）
+**ファイル: Worker secrets**
+- `RESEND_API_KEY`: re_csy4qUXq_8EBHgsnTmZNAJ9976gtrZU78
+- `RESEND_FROM`: Dayce <onboarding@resend.dev>
 
-5. **ホーム画面タスク追加ポップアップ** (`showHomeTaskAddPopup`)
-   - 音声入力が動作するか
-   - MUST/WANT切替が動作するか
+### CF. ジャーナル保存バグ修正
+**ファイル: `index.html`**
+- **問題**: `saveJournalWithAI()` が `existing.text` に保存していたが、`renderJournalLogs()` は `existing.raw` を読む
+- **修正**: `existing.text` → `existing.raw` に変更
+- ジャーナルの保存データが消えないようになった
 
-6. **iOS Safari PWAインストールガイド**
-   - iOS Safariで正しくバナーが出るか
+### CG. AI横断データ参照の改善
+**ファイル: `index.html`, `goal-ai-breakdown.js`**
+- `buildContextSummary('goals')` がお金・ジャーナル・体重データを含むように修正
+- `buildPrompt()`: 最終ターン（計画提案時）にもユーザーコンテキストを送信するよう修正
+  - 旧: `turnCount === 0` のみ
+  - 新: `turnCount === 0 || turnCount >= maxTurns - 1`
 
-### アップロード対象ファイル
-- `index.html` ← 大量変更あり（要アップロード）
-- `goals-v2.js` ← window exports, collapse追加
-- `goal-ai-breakdown.js` ← goalCoach limit修正
+### CH. 設定パネル独立化（AI相談タブから分離）
+**ファイル: `index.html`**
+- ヘッダー右端にSVG人物アイコンボタン追加（`#settingsToggleBtn`）
+- 右からスライドインする設定パネル実装:
+  - プランバッジ・残回数 + プラン変更ボタン
+  - クラウド同期（`#cloudSyncSection` ID維持）
+  - CSVダウンロード
+  - データ管理
+  - 法的情報（利用規約・プライバシーポリシー・特定商取引法）
+- オーバーレイ背景 + タップで閉じる
+- Android戻るボタン対応（`history.pushState` + `popstate`リスナー）
+- AI相談タブはAI機能のみに簡素化
+
+### 技術的負債（確認済み・緊急度低）
+1. **レガシー `addJournal()` 関数**: 旧 `journals` localStorage キーに保存。現在は `journalEntriesV3` を使用。影響なし（呼ばれていないが残存）
+2. **バックアップファイル**: `_original`, `.backup`, `.bak` ファイルがGitHub Pagesにアップロードされないよう注意
+3. **30以上のsilent error catch**: try-catch で `console.error` のみ。将来的にエラー報告の仕組みが必要
+4. **90以上のグローバル汚染**: `window.xxx` が多数。モジュール化が将来課題
+
+---
+
+## 次セッション（Session 13）での作業
+
+### 最優先: GitHub Pagesアップロード
+以下のファイルを **GitHub Pages にアップロード** する（ローカルで変更完了済み、未アップロード）:
+- `index.html`（難読化済み） — 設定パネル、ジャーナルバグ修正、AI横断データ修正、利用規約拡充
+- `goal-ai-breakdown.js`（難読化済み） — buildPrompt コンテキスト送信タイミング修正
+
+### アップロード時の注意
+- `_original` ファイルは **アップロードしない**（ソースコード流出防止）
+- `.backup`, `.bak` ファイルも **アップロードしない**
+- `obfuscate.py` も **アップロードしない**
+- アップロード対象は難読化後のファイルのみ
+
+### レガシーコード清掃（優先度低）
+- `addJournal()` 関数の削除または `journalEntriesV3` への移行
+- バックアップファイルの整理
 
 ### 検討中
 - **ChatGPT → Claude API切替**: AI相談はClaude Sonnetの方が自然な会話向き。ジャーナル（JSON構造化）はOpenAIが安定。ハイブリッド構成も可能。Worker側の変更のみで切替可能
 
-### リリースまでの必須タスク
-1. **解約フロー**（Stripe Customer Portal連携）
-2. **利用規約・プライバシーポリシー**
-3. **本番モード切替**（Stripe本番APIキー・価格ID・Webhook）
-4. **コード難読化**（推奨）
-5. **Resend連携**（パスワードリセットメール、推奨）
+### リリースタスク完了状況
+- ✅ **解約フロー**（Stripe Customer Portal連携）
+- ✅ **利用規約・プライバシーポリシー・特定商取引法**
+- ✅ **本番モード切替**（Stripe本番APIキー・価格ID・Webhook）
+- ✅ **コード難読化**（obfuscate.py パイプライン）
+- ✅ **Resend連携**（パスワードリセットメール）
+- ⬜ **GitHub Pagesアップロード**（最新版の反映）
+
+### Stripe本番情報まとめ
+| 項目 | 値 |
+|---|---|
+| 価格ID（本番） | `price_1T2q1bCfVwTOOprV3gZAmbPC` |
+| 月額 | ¥500 |
+| Webhook URL | `https://lifelog-ai.little-limit-621c.workers.dev/api/stripe/webhook` |
+| Webhook Events | `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted` |
+| Worker Secrets | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY`, `RESEND_FROM`, `OPENAI_API_KEY`, `JWT_SECRET` |
