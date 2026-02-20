@@ -4735,6 +4735,51 @@ body.qr-open .fab-overlay{ display:none !important; pointer-events:none !importa
 body.qr-open .fab-container{ pointer-events:none !important; }
 </style>
 
+<style>
+/* ===== Inline Hint Cards ===== */
+.dayce-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #f0f7ff;
+  border: 1.5px solid #90caf9;
+  border-radius: 14px;
+  padding: 12px 38px 12px 14px;
+  margin: 12px 0 16px;
+  position: relative;
+  animation: fadeIn 0.3s;
+}
+.dayce-hint-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+.dayce-hint-text {
+  font-size: 13px;
+  line-height: 1.55;
+  color: #333;
+  flex: 1;
+}
+.dayce-hint-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #90caf9;
+  cursor: pointer;
+  padding: 2px 6px;
+  line-height: 1;
+}
+.dayce-hint-close:active {
+  color: #1976D2;
+}
+@media (max-width: 480px) {
+  .dayce-hint { padding: 10px 34px 10px 12px; margin: 8px 0 12px; }
+  .dayce-hint-text { font-size: 12px; }
+}
+</style>
 
 <script>
 // ===== Backend URL bootstrap (AI Worker) =====
@@ -5452,6 +5497,11 @@ body.qr-open .fab-container{ pointer-events:none !important; }
             </button>
             <button type="button" class="ai-data-btn" id="aiConsultImportJSON">
                 <span>📂</span> データを復元
+            </button>
+        </div>
+        <div class="ai-consult-data-btns" style="margin-top:10px;">
+            <button type="button" class="ai-data-btn" onclick="resetDayceHints()">
+                <span>💡</span> ヒントを再表示
             </button>
         </div>
     </div>
@@ -21540,6 +21590,80 @@ if ('serviceWorker' in navigator) {
 <script src="voice-input-extra.js"></script>
 <script src="goals-v2.js"></script>
 <script src="cloud-sync.js"></script>
+
+<!-- ========== インラインヒントカード ========== -->
+<script>
+(function(){
+  'use strict';
+  var PREFIX = 'dayce_hint_dismissed_';
+  var OB_KEY = 'dayce_onboarding_done';
+
+  var HINTS = [
+    { tabId:'home',           emoji:'🏠', text:'今日のタスク・行動・支出がまとまるダッシュボードです。カードをタップすると各タブへ移動します。' },
+    { tabId:'activity',       emoji:'⏱️', text:'カテゴリを選んで、やったことと時間を記録しましょう。🎤ボタンで音声入力もできます。' },
+    { tabId:'money',          emoji:'💰', text:'支出・収入を切り替えて、カテゴリを選んで金額を入力するだけ。レポートで振り返れます。' },
+    { tabId:'journal',        emoji:'📔', text:'「ジャーナルを始める」ボタンから今日を振り返り。音声入力対応＆AIが自動で整理してくれます。' },
+    { tabId:'goals',          emoji:'🎯', text:'月ごとの目標を追加して、AIコーチと一緒にタスク分解できます。毎日少しずつ進めましょう。' },
+    { tabId:'aiConsult',      emoji:'🤖', text:'キャラクターを選んで、悩みや相談を入力するだけ。AIがあなたに寄り添った回答をくれます。' },
+    { tabId:'reportActivity', emoji:'📊', text:'カレンダーの日付をタップすると、その日の行動詳細が見れます。' },
+    { tabId:'reportMoney',    emoji:'💹', text:'月の支出・収入をグラフで確認。カレンダーの日付タップで日別の詳細が見れます。' }
+  ];
+
+  function isDismissed(id){ return localStorage.getItem(PREFIX + id) === '1'; }
+
+  function dismiss(id){
+    localStorage.setItem(PREFIX + id, '1');
+    var el = document.getElementById('dayce-hint-' + id);
+    if (el){
+      el.style.transition = 'opacity 0.2s, max-height 0.3s, margin 0.3s, padding 0.3s';
+      el.style.opacity = '0';
+      el.style.maxHeight = '0';
+      el.style.overflow = 'hidden';
+      el.style.margin = '0';
+      el.style.padding = '0';
+      setTimeout(function(){ if (el.parentNode) el.remove(); }, 320);
+    }
+  }
+
+  function makeHint(h){
+    var d = document.createElement('div');
+    d.className = 'dayce-hint';
+    d.id = 'dayce-hint-' + h.tabId;
+    d.innerHTML = '<span class="dayce-hint-icon">' + h.emoji + '</span>'
+      + '<span class="dayce-hint-text">' + h.text + '</span>'
+      + '<button class="dayce-hint-close" type="button" aria-label="閉じる">&times;</button>';
+    d.querySelector('.dayce-hint-close').addEventListener('click', function(){ dismiss(h.tabId); });
+    return d;
+  }
+
+  function insertAll(){
+    if (localStorage.getItem(OB_KEY) !== '1') return;
+    HINTS.forEach(function(h){
+      if (isDismissed(h.tabId)) return;
+      var tab = document.getElementById(h.tabId);
+      if (!tab) return;
+      if (document.getElementById('dayce-hint-' + h.tabId)) return;
+      tab.insertBefore(makeHint(h), tab.firstChild);
+    });
+  }
+
+  window.resetDayceHints = function(){
+    HINTS.forEach(function(h){
+      localStorage.removeItem(PREFIX + h.tabId);
+      var ex = document.getElementById('dayce-hint-' + h.tabId);
+      if (ex) ex.remove();
+    });
+    insertAll();
+    alert('ヒントカードを再表示しました');
+  };
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive'){
+    insertAll();
+  } else {
+    window.addEventListener('DOMContentLoaded', insertAll);
+  }
+})();
+</script>
 
 <!-- ========== 初回オンボーディング ========== -->
 <script>
