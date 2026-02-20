@@ -26,6 +26,9 @@ self.addEventListener('fetch', (event) => {
     return; // ブラウザのデフォルト処理に任せる
   }
 
+  // LP はService Workerを通さない
+  if (url.pathname.endsWith('/lp.html')) return;
+
   // HTMLナビゲーション: ネットワーク優先、失敗時はキャッシュ
   if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
     event.respondWith(

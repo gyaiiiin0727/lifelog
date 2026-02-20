@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dayce - 声で記録するライフログ</title>
+<meta name="description" content="Dayce（デイス）は声で記録するライフログPWA。日記・行動・お金・目標をAIキャラクターと一緒に管理。">
+<meta property="og:title" content="Dayce - 声で記録するライフログ">
+<meta property="og:description" content="日々の行動・お金・目標・気持ちを声で記録して、AIが振り返る。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://gyaiiiin0727.github.io/lifelog/lp.html">
+<meta property="og:image" content="https://gyaiiiin0727.github.io/lifelog/icon.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="./icon.jpg">
+<style>
+:root {
+  --black: #111;
+  --white: #fff;
+  --blue: #2196F3;
+  --blue-dark: #1976D2;
+  --gray-50: #f8f9fa;
+  --gray-100: #f0f0f0;
+  --gray-400: #999;
+  --gray-600: #666;
+  --gray-800: #333;
+  --takuya: #4a90e2;
+  --hana: #27ae60;
+  --manager: #e74c3c;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: var(--black);
+  background: var(--white);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* === Header === */
+.lp-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  transition: background 0.3s;
+}
+
+.lp-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  gap: 2px;
+}
+
+.lp-logo img {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+}
+
+.lp-logo span {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--black);
+  letter-spacing: -0.5px;
+}
+
+.lp-header-cta {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 20px;
+  background: var(--black);
+  color: var(--white);
+  text-decoration: none;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.lp-header-cta:hover {
+  background: var(--gray-800);
+  transform: translateY(-1px);
+}
+
+/* === Container === */
+.lp-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* === Hero === */
+.lp-hero {
+  padding: 120px 20px 80px;
+  text-align: center;
+  background: linear-gradient(180deg, #ffffff 0%, var(--gray-50) 100%);
+}
+
+.lp-hero h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--black);
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+}
+
+.lp-hero-sub {
+  font-size: 1.05rem;
+  color: var(--gray-600);
+  line-height: 1.7;
+  max-width: 480px;
+  margin: 0 auto 36px;
+}
+
+.lp-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 48px;
+  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
+  color: var(--white);
+  text-decoration: none;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  box-shadow: 0 4px 20px rgba(33,150,243,0.3);
+  transition: all 0.3s;
+}
+
+.lp-cta-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(33,150,243,0.4);
+}
+
+.lp-hero-note {
+  margin-top: 16px;
+  font-size: 0.85rem;
+  color: var(--gray-400);
+}
+
+/* === Features === */
+.lp-features {
+  padding: 80px 20px;
+  background: var(--gray-50);
+}
+
+.lp-section-title {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--black);
+  margin-bottom: 40px;
+  letter-spacing: -0.3px;
+}
+
+.lp-features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.lp-feature-card {
+  background: var(--white);
+  border: 2px solid var(--gray-100);
+  border-radius: 16px;
+  padding: 28px 20px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.lp-feature-card:hover {
+  border-color: var(--blue);
+  box-shadow: 0 8px 24px rgba(33,150,243,0.08);
+  transform: translateY(-2px);
+}
+
+.lp-feature-icon {
+  font-size: 2.4rem;
+  margin-bottom: 12px;
+}
+
+.lp-feature-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 8px;
+}
+
+.lp-feature-desc {
+  font-size: 0.85rem;
+  color: #777;
+  line-height: 1.5;
+}
+
+/* === Steps === */
+.lp-steps {
+  padding: 80px 20px;
+  background: var(--white);
+}
+
+.lp-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.lp-steps-list::before {
+  content: '';
+  position: absolute;
+  left: 23px;
+  top: 48px;
+  bottom: 24px;
+  width: 2px;
+  border-left: 2px dashed #ddd;
+}
+
+.lp-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  position: relative;
+}
+
+.lp-step-num {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  background: var(--black);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+  z-index: 1;
+}
+
+.lp-step-text h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 4px;
+}
+
+.lp-step-text p {
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  line-height: 1.5;
+}
+
+/* === Characters === */
+.lp-characters {
+  padding: 80px 20px;
+  background: linear-gradient(180deg, var(--gray-50) 0%, var(--white) 100%);
+}
+
+.lp-char-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.lp-char-card {
+  background: var(--white);
+  border: 2px solid var(--gray-100);
+  border-radius: 20px;
+  padding: 32px 16px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.lp-char-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.06);
+}
+
+.lp-char-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 14px;
+}
+
+.lp-char-img.takuya { border: 3px solid var(--takuya); }
+.lp-char-img.hana { border: 3px solid var(--hana); }
+.lp-char-img.manager { border: 3px solid var(--manager); }
+
+.lp-char-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.lp-char-role {
+  font-size: 0.78rem;
+  color: var(--gray-400);
+  margin-bottom: 14px;
+}
+
+.lp-char-quote {
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+.lp-char-quote.takuya { background: rgba(74,144,226,0.08); }
+.lp-char-quote.hana { background: rgba(39,174,96,0.08); }
+.lp-char-quote.manager { background: rgba(231,76,60,0.08); }
+
+/* === Trust === */
+.lp-trust {
+  padding: 60px 20px;
+  background: var(--white);
+}
+
+.lp-trust-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px 36px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.lp-trust-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  font-weight: 600;
+}
+
+.lp-trust-badge span:first-child {
+  font-size: 1.4rem;
+}
+
+/* === Final CTA === */
+.lp-final-cta {
+  padding: 100px 20px;
+  background: var(--black);
+  text-align: center;
+  border-radius: 24px 24px 0 0;
+}
+
+.lp-final-cta h2 {
+  color: var(--white);
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 32px;
+  letter-spacing: -0.3px;
+}
+
+.lp-cta-inverted {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 48px;
+  background: var(--white);
+  color: var(--black);
+  text-decoration: none;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  transition: all 0.3s;
+}
+
+.lp-cta-inverted:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(255,255,255,0.2);
+}
+
+.lp-final-note {
+  margin-top: 16px;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.5);
+}
+
+/* === Footer === */
+.lp-footer {
+  padding: 40px 20px;
+  background: #0a0a0a;
+  text-align: center;
+}
+
+.lp-footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.lp-footer-logo img {
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+}
+
+.lp-footer-logo span {
+  font-size: 16px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.6);
+}
+
+.lp-footer p {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.35);
+}
+
+/* === Animations === */
+.lp-fade {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.lp-fade.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* === Responsive === */
+@media (min-width: 768px) {
+  .lp-header { height: 64px; padding: 0 32px; }
+  .lp-hero { padding: 160px 20px 100px; }
+  .lp-hero h1 { font-size: 3.2rem; }
+  .lp-hero-sub { font-size: 1.15rem; }
+  .lp-features-grid { grid-template-columns: repeat(3, 1fr); }
+  .lp-steps-list { flex-direction: row; max-width: 800px; gap: 24px; }
+  .lp-steps-list::before {
+    left: 48px;
+    right: 48px;
+    top: 23px;
+    bottom: auto;
+    height: 2px;
+    width: auto;
+    border-left: none;
+    border-top: 2px dashed #ddd;
+  }
+  .lp-step { flex-direction: column; align-items: center; text-align: center; flex: 1; }
+  .lp-final-cta h2 { font-size: 2.2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="lp-header">
+  <a href="#" class="lp-logo">
+    <img src="./icon.jpg" alt="Dayce" width="34" height="34">
+    <span>ayce</span>
+  </a>
+  <a href="./index.html" class="lp-header-cta">アプリを開く</a>
+</header>
+
+<!-- Hero -->
+<section class="lp-hero">
+  <div class="lp-container">
+    <h1 class="lp-fade">声で記録する、<br>毎日のライフログ。</h1>
+    <p class="lp-hero-sub lp-fade">日々の行動・お金・目標・気持ちを<br>声で記録して、AIが振り返る。</p>
+    <a href="./index.html" class="lp-cta-primary lp-fade">🎤 無料で始める</a>
+    <p class="lp-hero-note lp-fade">PWA対応・インストール不要・登録不要</p>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="lp-features">
+  <div class="lp-container">
+    <h2 class="lp-section-title lp-fade">Dayceでできること</h2>
+    <div class="lp-features-grid">
+      <div class="lp-feature-card lp-fade">
+        <div class="lp-feature-icon">📔</div>
+        <div class="lp-feature-title">ジャーナル</div>
+        <div class="lp-feature-desc">声で日記を記録。AIキャラクターが毎日フィードバック</div>
+      </div>
+      <div class="lp-feature-card lp-fade">
+        <div class="lp-feature-icon">⏱️</div>
+        <div class="lp-feature-title">行動記録</div>
+        <div class="lp-feature-desc">活動内容と時間を声でサクッと記録</div>
+      </div>
+      <div class="lp-feature-card lp-fade">
+        <div class="lp-feature-icon">💰</div>
+        <div class="lp-feature-title">お金管理</div>
+        <div class="lp-feature-desc">収入・支出を簡単記録。カテゴリ別に自動集計</div>
+      </div>
+      <div class="lp-feature-card lp-fade">
+        <div class="lp-feature-icon">🎯</div>
+        <div class="lp-feature-title">目標管理</div>
+        <div class="lp-feature-desc">目標を設定するとAIが週次タスクに自動分解</div>
+      </div>
+      <div class="lp-feature-card lp-fade">
+        <div class="lp-feature-icon">📊</div>
+        <div class="lp-feature-title">レポート</div>
+        <div class="lp-feature-desc">行動・お金の傾向をグラフで可視化</div>
+      </div>
+      <div class="lp-feature-card lp-fade">
+        <div class="lp-feature-icon">🤖</div>
+        <div class="lp-feature-title">AI相談</div>
+        <div class="lp-feature-desc">3人のAIキャラクターに何でも相談できる</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="lp-steps">
+  <div class="lp-container">
+    <h2 class="lp-section-title lp-fade">使い方はかんたん</h2>
+    <div class="lp-steps-list">
+      <div class="lp-step lp-fade">
+        <div class="lp-step-num">1</div>
+        <div class="lp-step-text">
+          <h3>声で話す</h3>
+          <p>マイクボタンを押して、今日あったことを話すだけ</p>
+        </div>
+      </div>
+      <div class="lp-step lp-fade">
+        <div class="lp-step-num">2</div>
+        <div class="lp-step-text">
+          <h3>AIが自動で記録</h3>
+          <p>話した内容をAIが分類・整理して保存</p>
+        </div>
+      </div>
+      <div class="lp-step lp-fade">
+        <div class="lp-step-num">3</div>
+        <div class="lp-step-text">
+          <h3>AIと振り返る</h3>
+          <p>キャラクターが毎日フィードバックをくれる</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Characters -->
+<section class="lp-characters">
+  <div class="lp-container">
+    <h2 class="lp-section-title lp-fade">あなた専属のAIメンター</h2>
+    <div class="lp-char-grid">
+      <div class="lp-char-card lp-fade">
+        <img src="./takumi_senpai.png" alt="タクヤ先輩" class="lp-char-img takuya" width="80" height="80">
+        <div class="lp-char-name">タクヤ先輩</div>
+        <div class="lp-char-role">フランクな兄貴</div>
+        <div class="lp-char-quote takuya">「今日もお疲れ！一緒に振り返ろうぜ」</div>
+      </div>
+      <div class="lp-char-card lp-fade">
+        <img src="./hana_san.png" alt="ハナさん" class="lp-char-img hana" width="80" height="80">
+        <div class="lp-char-name">ハナさん</div>
+        <div class="lp-char-role">寄り添うカウンセラー</div>
+        <div class="lp-char-quote hana">「あなたのペースで大丈夫ですよ」</div>
+      </div>
+      <div class="lp-char-card lp-fade">
+        <img src="./drill_instructor.png" alt="マネージャー" class="lp-char-img manager" width="80" height="80">
+        <div class="lp-char-name">マネージャー</div>
+        <div class="lp-char-role">厳しめの元コンサル</div>
+        <div class="lp-char-quote manager">「結果を出すための行動を始めよう」</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust -->
+<section class="lp-trust">
+  <div class="lp-container">
+    <div class="lp-trust-grid">
+      <div class="lp-trust-badge"><span>🔒</span><span>完全無料</span></div>
+      <div class="lp-trust-badge"><span>📱</span><span>PWA対応</span></div>
+      <div class="lp-trust-badge"><span>🔐</span><span>データは端末に保存</span></div>
+      <div class="lp-trust-badge"><span>⚡</span><span>登録不要・即起動</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="lp-final-cta">
+  <h2 class="lp-fade">今日から、声で記録しよう。</h2>
+  <a href="./index.html" class="lp-cta-inverted lp-fade">🎤 Dayceを使ってみる</a>
+  <p class="lp-final-note lp-fade">ブラウザで動作・登録不要</p>
+</section>
+
+<!-- Footer -->
+<footer class="lp-footer">
+  <div class="lp-footer-logo">
+    <img src="./icon.jpg" alt="Dayce" width="24" height="24">
+    <span>Dayce</span>
+  </div>
+  <p>&copy; 2025 Dayce. All rights reserved.</p>
+</footer>
+
+<script>
+// Scroll fade-in animation
+document.addEventListener('DOMContentLoaded', function() {
+  var fades = document.querySelectorAll('.lp-fade');
+  if (!('IntersectionObserver' in window)) {
+    fades.forEach(function(el) { el.classList.add('visible'); });
+    return;
+  }
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  fades.forEach(function(el) { observer.observe(el); });
+});
+</script>
+</body>
+</html>
