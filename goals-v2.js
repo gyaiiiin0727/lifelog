@@ -1,1 +1,1155 @@
-function a0_0x1ced(_0x498635,_0x21a90d){_0x498635=_0x498635-(-0xb41+-0x214e+0x2d3f);var _0x40bcdf=a0_0x1a7f();var _0x86bb64=_0x40bcdf[_0x498635];if(a0_0x1ced['KpgakS']===undefined){var _0x415232=function(_0x5635c5){var _0x4c816c='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';var _0x1fa513='',_0x598bc2='';for(var _0x21a751=0x5*-0x39a+-0x2*0x1316+-0x11*-0x34e,_0x5a1fa2,_0x491629,_0x1b3ebc=0x1*0x23dd+0x3*-0x6bc+0xfa9*-0x1;_0x491629=_0x5635c5['charAt'](_0x1b3ebc++);~_0x491629&&(_0x5a1fa2=_0x21a751%(0x5fa+-0x1383+0xd8d)?_0x5a1fa2*(0x244c+-0xde+-0x232e)+_0x491629:_0x491629,_0x21a751++%(0x25eb*-0x1+0x26dc+-0xed))?_0x1fa513+=String['fromCharCode'](-0x180*0xe+0xaa8*0x1+0xb57&_0x5a1fa2>>(-(0x20b2+-0x1200+-0xeb0)*_0x21a751&0x2599+0x24f7*-0x1+0x27*-0x4)):-0x10*-0x25+-0x2094+0x1e44){_0x491629=_0x4c816c['indexOf'](_0x491629);}for(var _0x1d581d=-0x254b*-0x1+-0x1443+-0x1108,_0x14238d=_0x1fa513['length'];_0x1d581d<_0x14238d;_0x1d581d++){_0x598bc2+='%'+('00'+_0x1fa513['charCodeAt'](_0x1d581d)['toString'](0x1*0x16b5+0x1*0x262+-0x1907))['slice'](-(0x586+-0x1427+-0xea3*-0x1));}return decodeURIComponent(_0x598bc2);};a0_0x1ced['NzWkWF']=_0x415232,a0_0x1ced['MqZOxb']={},a0_0x1ced['KpgakS']=!![];}var _0x3edc67=_0x40bcdf[0xd69+-0x1859+0x2bc*0x4],_0x376599=_0x498635+_0x3edc67,_0x54d7f9=a0_0x1ced['MqZOxb'][_0x376599];return!_0x54d7f9?(_0x86bb64=a0_0x1ced['NzWkWF'](_0x86bb64),a0_0x1ced['MqZOxb'][_0x376599]=_0x86bb64):_0x86bb64=_0x54d7f9,_0x86bb64;}(function(_0x3100f1,_0x572260){var a0_0x4fa3dc={_0x3986e7:0x18c,_0x363ec1:0x126,_0x4bc4f0:0x124,_0x141f7c:0x196,_0x110fec:0xb9},_0x18662e=a0_0x1ced,_0x18e15b=_0x3100f1();while(!![]){try{var _0x37f5b0=-parseInt(_0x18662e(0xd9))/(-0x6ab*-0x3+-0x100*-0xc+-0x2000)*(-parseInt(_0x18662e(a0_0x4fa3dc._0x3986e7))/(0x1a20+0x1ed2+-0x38f0))+-parseInt(_0x18662e(a0_0x4fa3dc._0x363ec1))/(0x1194+-0x34d+-0xe44)+parseInt(_0x18662e(0xe8))/(-0x19ad+0x1bb3+-0x1*0x202)+parseInt(_0x18662e(0x1ce))/(-0x230f*-0x1+-0x8c5+-0x1a45)+parseInt(_0x18662e(a0_0x4fa3dc._0x4bc4f0))/(0x6a4*0x5+-0x86+-0x20a8)+-parseInt(_0x18662e(a0_0x4fa3dc._0x141f7c))/(0x19ce*0x1+-0x91d+0x4f*-0x36)+-parseInt(_0x18662e(a0_0x4fa3dc._0x110fec))/(-0x107c+0x2693+-0x160f);if(_0x37f5b0===_0x572260)break;else _0x18e15b['push'](_0x18e15b['shift']());}catch(_0x112f62){_0x18e15b['push'](_0x18e15b['shift']());}}}(a0_0x1a7f,-0x8212+0x50420+-0x164c9),(function(){'use strict';var a0_0x17f80a={_0x14603b:0x17b,_0x51b901:0x1fb,_0x6232f7:0x1c3,_0x30bb3e:0x1f6,_0x4ea3c8:0x154,_0x2ba2fe:0x139,_0x54280d:0x135,_0x5a13eb:0x167,_0x10b4fd:0x11f,_0x74fa64:0x1e1,_0x5b9e80:0x19a,_0x1e2753:0x16d,_0x5cab93:0x1fa,_0x1b64b8:0x1ab,_0x1fc805:0x105,_0x58561e:0x1f2,_0x5536d9:0x1b3,_0x34f3c9:0x182,_0x55d5fe:0xff,_0x514b77:0x1c9,_0xb278eb:0xda,_0x10d7b5:0x1a5,_0x46294c:0x1bb,_0x146eb6:0x1c0,_0x414537:0x1f9,_0x1a3e57:0x171,_0x34ea29:0x1c5,_0x5f1ac2:0x1c8,_0x36cfc2:0x1ed,_0x4bdb01:0x12e,_0x411ff6:0x144,_0x111c01:0x1d4,_0x46dfc0:0x1f7,_0x31aa63:0x120,_0x420a0e:0x168,_0x3ff659:0xfa,_0x1de589:0x200,_0x2f384d:0x1ca,_0x45b39a:0x15f,_0x13f83f:0x1fc,_0x1453f4:0x100,_0x33fc03:0xe1,_0x1b0b6c:0x147,_0x28d443:0x180,_0x54cad8:0x177,_0xc6bf32:0x1b0,_0xf3df3c:0x15e,_0x43d984:0x1d3,_0x3dee8a:0x11d,_0x397a25:0x155,_0x30d950:0xcf,_0xe7a56b:0x1a8,_0x78b47f:0xca,_0x5b89b4:0x123,_0x1dfd0c:0x1db,_0x93f6e0:0x12f,_0x409982:0x188,_0x1739ab:0x131,_0x5cc5a3:0x13c,_0x1bfe20:0x185,_0x2b4d72:0x141,_0x2ee824:0x111,_0x274ac3:0x1af},a0_0x175a57={_0x3f2db6:0x1a0,_0x3339ff:0x1a0,_0x47f290:0xe4},a0_0x35c20f={_0x369605:0xc6,_0x23aee7:0xb7,_0x362805:0x18a},a0_0x2f8ff6={_0x255893:0x1b5,_0x277f85:0xdf},a0_0x3360fd={_0x512ff5:0xd0},a0_0x118685={_0x195f17:0x1e0},a0_0x23d47f={_0x39bb22:0xd0,_0x307b5b:0xc6},a0_0x161d40={_0x258df4:0x1e0},a0_0x372ff9={_0x3c479a:0x1ea,_0x43d5a1:0x1ea,_0x27744a:0xd1,_0x4b1086:0x1b7},a0_0x5c845c={_0x2e8a98:0x1a9,_0x53401b:0xd6,_0x320468:0xd6,_0x13c751:0x1aa,_0x209138:0xd6,_0x1eac64:0x19f,_0x327a01:0x116},a0_0x5191a3={_0x53bd68:0x1e8,_0x302e48:0x161,_0x373bff:0x1f1,_0x4bf49f:0x1b5,_0x547e06:0x18a,_0x38c560:0x1d8,_0x1d8096:0x1d6},a0_0xbcec8b={_0x5713ee:0x151,_0x41e473:0xf5,_0x302d45:0xdc,_0x267e50:0x1a6,_0x37526d:0xea,_0x4e6648:0x127,_0x19beca:0xd4,_0x58d0ad:0x1de},a0_0x4de647={_0x1f81a4:0x116,_0x364344:0xe6,_0x23aec1:0x1b4,_0x423bd7:0xb6},a0_0xed2a9c={_0x5c40ff:0x19e,_0x23a88a:0x136,_0x282b45:0xea,_0x30e31d:0x17b,_0xaae7a1:0x1fe},a0_0x456c21={_0x5ad896:0x13a,_0x51acef:0x15a,_0x34749f:0xcb,_0x53dca9:0xe5,_0x57592f:0xf8,_0x8731d2:0xc7,_0x434667:0x149},a0_0x193e7a={_0x59d736:0x1b5,_0x3e9b3a:0xd0,_0x28cf7a:0x1d8,_0x3b3d7d:0x12a,_0x3b84ce:0x1d6},a0_0x2dd7ca={_0x4048c9:0x1b5,_0x1c5fd3:0xce,_0x1389f1:0xef,_0x20f0ed:0x1ae,_0x2ab454:0x1a4,_0x2b5f47:0x190,_0x201377:0x19c,_0x2acb80:0xb0,_0x53e222:0xf2,_0x2fa35f:0xfd,_0x6925ea:0x11c,_0x13263c:0xc7},a0_0x360f4e={_0x34bc21:0x19f,_0x2f0dc4:0x1b5,_0x4465f1:0x1b5,_0x123976:0xc7,_0x4f9b30:0x1d5,_0x4058f0:0x1cd,_0x5241eb:0x1bf,_0xef4ed2:0x1cd,_0x49c4fb:0x175,_0x2f0810:0x15a,_0x2da7b9:0x18b,_0x4f66b1:0x175,_0x37cfec:0x116,_0x3ad21a:0x17b,_0x2c3e50:0x100,_0x37f219:0x100,_0x43e5d:0xbb,_0x3df486:0xba,_0x482bd5:0x19d,_0x403d7e:0x10f,_0x52c86f:0x10f,_0x249c33:0x101},a0_0x3e0cab={_0x1711bc:0x1b5},a0_0xf555c8={_0x47e001:0x172,_0x8d2c2e:0x1b5,_0x2b7314:0x1b1,_0x2eb19b:0x1d8,_0x49d7a6:0x12a,_0x307b5e:0x1d8},a0_0x5d521b={_0x3908ed:0x1b5,_0x39c9c7:0x108,_0x54a937:0xe1,_0x147438:0x10b,_0x31459b:0x14b,_0x5cd587:0x103,_0x3a65ba:0x1ee,_0x2c8886:0x14b,_0x106e85:0x16a,_0x19884a:0x1d0,_0x483595:0x1ba,_0x536115:0xd7,_0x6f2fd5:0x108,_0x31ac7c:0x10b,_0x55436b:0x122,_0x1a9949:0xc6,_0x1c56be:0x1d0,_0x26795a:0xd7,_0x266477:0xfe,_0x364361:0x103,_0x572c6f:0x1d8,_0x5efedb:0x12a,_0x2976df:0x1d6},a0_0x460486={_0x1aec80:0xd0,_0x3adc4e:0xc6},a0_0x2e66a3={_0x575f91:0x1e0},a0_0x301e3f={_0x340f44:0x172,_0x1271bd:0x1b5,_0x5b0eaf:0x1b5,_0x7b4d5d:0xb7},a0_0x536c50={_0x1f1910:0xe2,_0x48ce8a:0x1d8,_0x4f696c:0x12a,_0x38412c:0x1eb},a0_0x412958={_0xa4ff84:0x172},a0_0xb79cd7={_0x3fc199:0x1be,_0x4f8fd1:0x125,_0x3c9efa:0x12a,_0x4148aa:0x1d8,_0x594fd8:0x18a},a0_0x36718c={_0x10b385:0x192,_0x343bdc:0xec,_0x1d736a:0x13e,_0x147217:0x173,_0xc710b9:0x1f3,_0x39dd0c:0xc6,_0x5a667b:0xe7,_0x52e8a5:0xdf,_0x21b1d2:0x1a4,_0x1ab6b0:0xc7},a0_0x15d711={_0x3bdbbc:0x19f,_0x1ac3de:0xd0,_0x993729:0x161,_0x4bed7e:0xdf,_0x5b6931:0xdf,_0x5ed86e:0x107,_0x568763:0x1c4,_0xe8c3fa:0x1a4,_0x23a0ee:0x118,_0x1bf7ce:0x198,_0x2e90f4:0x12d},a0_0x48d634={_0x50dc5d:0xd0,_0x346e33:0xc6,_0x5446b0:0xc6,_0x5c18c4:0x158,_0x5cf61d:0x1da,_0x471dcb:0x14a,_0x3d8352:0x17d,_0x2df692:0x1bc,_0x1de50d:0x1a4},a0_0x5721a7={_0x188b31:0xdf,_0x4b838a:0x132,_0x4d4e61:0xc7,_0x203c23:0xf9,_0x138a26:0xbf,_0xf1013f:0x186,_0xf2ae7e:0x1e5,_0x397df4:0x1a4,_0x14a9d4:0x1ef,_0x175249:0x13d,_0x2468eb:0x184,_0x18bb1e:0x1a4,_0x307f76:0x1a4},a0_0x379df7={_0x8d74fc:0xb0},a0_0x143a56={_0x5dabbf:0xd0},a0_0xe461ca={_0x4929d9:0x1a1,_0x36cb35:0x142,_0x3cec12:0x1b8,_0x1e1370:0x116,_0x224e1e:0xe3,_0x2fcb90:0xb8},a0_0x2fba90={_0x28adad:0xe4,_0x1719b0:0x19f,_0x11fb90:0x114,_0x48ee8a:0x1d6,_0x4ad6b1:0xc0,_0x10836b:0x153,_0x5f17ec:0xc7,_0x5314fc:0x199,_0x5d0114:0x146,_0x30c9ea:0x195},a0_0x18a026={_0x3564bf:0x1b5},a0_0x432d26={_0x3b4cfa:0x1a9,_0x3d0462:0x108},a0_0x1cdb55={_0x88be4f:0x1e9},a0_0x410851={_0xfc4832:0x132,_0xf6204:0xd3,_0x3736ef:0x145},a0_0x4ee8a8={_0x40289c:0x10b,_0x1d2dd0:0xfc},a0_0x35fcfa={_0x5bffc9:0x1ad,_0x221c7f:0x170,_0x159eb4:0x16f,_0x2d9bb0:0x1b1},a0_0x5b52d6={_0x2bb52c:0x137,_0x254173:0x1d9},a0_0xdd0e42={_0x1ce338:0x16f,_0x15916e:0x1b1,_0x101af6:0xb7},a0_0x49cc2c={_0x24a0e0:0x1cb,_0x1d7fbb:0x170,_0x306090:0x1b1},a0_0x5cae18={_0x3aef99:0x108},a0_0x4e8a77={_0x28879c:0x13a},_0x2e878a=a0_0x1ced;var _0x8ce33c=document[_0x2e878a(0x1d5)](_0x2e878a(a0_0x17f80a._0x14603b));_0x8ce33c[_0x2e878a(0x116)]=[_0x2e878a(0x13b),_0x2e878a(0x1cc),_0x2e878a(0x187),_0x2e878a(a0_0x17f80a._0x51b901),'}','.gv2-summary-top\x20{\x20display:\x20flex;\x20justify-content:\x20space-between;\x20align-items:\x20center;\x20margin-bottom:\x2010px;\x20}',_0x2e878a(a0_0x17f80a._0x6232f7),_0x2e878a(0x18f),_0x2e878a(0xf0),_0x2e878a(a0_0x17f80a._0x30bb3e),_0x2e878a(a0_0x17f80a._0x4ea3c8),_0x2e878a(0xbe),_0x2e878a(a0_0x17f80a._0x2ba2fe),_0x2e878a(0x1e6),'.gv2-monthly\x20{\x20background:\x20#fff;\x20border-radius:\x2016px;\x20padding:\x2014px;\x20box-shadow:\x200\x202px\x2010px\x20rgba(0,0,0,0.06);\x20margin-bottom:\x2014px;\x20}','.gv2-monthly-head\x20{\x20display:\x20flex;\x20justify-content:\x20space-between;\x20align-items:\x20center;\x20margin-bottom:\x2010px;\x20}',_0x2e878a(a0_0x17f80a._0x54280d),'.gv2-add-btn-sm\x20{',_0x2e878a(0x133),_0x2e878a(a0_0x17f80a._0x5a13eb),'}',_0x2e878a(0x14c),_0x2e878a(a0_0x17f80a._0x10b4fd),_0x2e878a(a0_0x17f80a._0x74fa64),_0x2e878a(a0_0x17f80a._0x5b9e80),'.gv2-goal.done\x20.gv2-goal-text\x20{\x20text-decoration:\x20line-through;\x20color:\x20#999;\x20}',_0x2e878a(0x18e),_0x2e878a(0xeb),'.gv2-goal-text\x20{\x20font-size:\x2014px;\x20font-weight:\x20500;\x20color:\x20#333;\x20line-height:\x201.3;\x20}',_0x2e878a(0x1a3),_0x2e878a(a0_0x17f80a._0x1e2753),_0x2e878a(a0_0x17f80a._0x5cab93),'.gv2-goal-del\x20{\x20background:\x20none;\x20border:\x20none;\x20font-size:\x2014px;\x20cursor:\x20pointer;\x20opacity:\x200.25;\x20padding:\x204px;\x20transition:\x20opacity\x20.2s;\x20flex-shrink:\x200;\x20}','.gv2-goal:hover\x20.gv2-goal-del\x20{\x20opacity:\x200.6;\x20}',_0x2e878a(0x163),_0x2e878a(a0_0x17f80a._0x1b64b8),_0x2e878a(a0_0x17f80a._0x1fc805),_0x2e878a(a0_0x17f80a._0x58561e),'\x20\x20padding:6px\x2012px;\x20background:#000;\x20color:#fff;\x20border:none;','\x20\x20border-radius:10px;\x20font-size:13px;\x20font-weight:600;\x20cursor:pointer;\x20transition:all\x20.2s;','}',_0x2e878a(a0_0x17f80a._0x5536d9),'.gv2-week-display\x20{\x20flex:1;\x20text-align:center;\x20font-size:14px;\x20font-weight:600;\x20color:#333;\x20}','.gv2-week-today-btn\x20{',_0x2e878a(0x129),_0x2e878a(a0_0x17f80a._0x34f3c9),'}',_0x2e878a(a0_0x17f80a._0x55d5fe),_0x2e878a(a0_0x17f80a._0x514b77),'\x20\x20flex:1;\x20text-align:center;\x20padding:6px\x200;\x20border-radius:10px;',_0x2e878a(0xb2),'}',_0x2e878a(0x1ac),'.gv2-cal-day.today\x20.gv2-cal-dow,\x20.gv2-cal-day.today\x20.gv2-cal-num\x20{\x20color:#fff;\x20}',_0x2e878a(0x1cf),_0x2e878a(0x13f),_0x2e878a(a0_0x17f80a._0xb278eb),'.task-checkbox\x20{\x20width:22px;\x20height:22px;\x20min-width:22px;\x20cursor:pointer;\x20accent-color:#2196F3;\x20}','.task-label\x20{\x20flex:1;\x20min-width:0;\x20font-size:14px;\x20line-height:1.4;\x20color:#333;\x20word-break:break-word;\x20}','.task-edit-btn\x20{\x20background:none;\x20border:none;\x20font-size:18px;\x20cursor:pointer;\x20padding:8px;\x20min-width:36px;\x20min-height:36px;\x20display:flex;\x20align-items:center;\x20justify-content:center;\x20opacity:0.4;\x20transition:opacity\x20.2s;\x20}','.task-edit-btn:hover,\x20.task-edit-btn:active\x20{\x20opacity:1;\x20}','.task-actions\x20{\x20display:flex;\x20gap:4px;\x20flex-shrink:0;\x20align-items:center;\x20}',_0x2e878a(a0_0x17f80a._0x10d7b5),_0x2e878a(a0_0x17f80a._0x46294c),_0x2e878a(a0_0x17f80a._0x146eb6),_0x2e878a(0x179),'.task-carry-btn:active\x20{\x20background:#e5e7eb;\x20}',_0x2e878a(a0_0x17f80a._0x414537),_0x2e878a(a0_0x17f80a._0x1a3e57),_0x2e878a(0x1d7),_0x2e878a(a0_0x17f80a._0x34ea29),_0x2e878a(0x115),_0x2e878a(a0_0x17f80a._0x5f1ac2),'}',_0x2e878a(0x14d),'.task-save-btn,\x20.task-del-btn\x20{','\x20\x20border:none;\x20border-radius:8px;\x20cursor:pointer;',_0x2e878a(0x169),'\x20\x20display:flex;\x20align-items:center;\x20justify-content:center;',_0x2e878a(0x183),'}',_0x2e878a(0x11b),_0x2e878a(0x1b9),_0x2e878a(0x1c6),_0x2e878a(0x176),_0x2e878a(a0_0x17f80a._0x36cfc2),'\x20\x20flex:1;\x20min-width:0;\x20padding:10px\x2012px;\x20border:1.5px\x20solid\x20#ddd;','\x20\x20border-radius:10px;\x20font-size:14px;\x20outline:none;',_0x2e878a(a0_0x17f80a._0x4bdb01),'}',_0x2e878a(0x18d),_0x2e878a(a0_0x17f80a._0x411ff6),_0x2e878a(0x10a),'.gv2-popup-title\x20{\x20font-size:16px;\x20font-weight:700;\x20color:#333;\x20margin-bottom:16px;\x20display:flex;\x20align-items:center;\x20justify-content:space-between;\x20}',_0x2e878a(a0_0x17f80a._0x111c01),_0x2e878a(0x17c),_0x2e878a(a0_0x17f80a._0x46dfc0),_0x2e878a(0x121),_0x2e878a(a0_0x17f80a._0x31aa63),_0x2e878a(0x1ec),_0x2e878a(a0_0x17f80a._0x420a0e),_0x2e878a(a0_0x17f80a._0x3ff659),_0x2e878a(a0_0x17f80a._0x1de589),_0x2e878a(0x11e),'.gv2-popup-btn-icon\x20{\x20font-size:18px;\x20width:28px;\x20text-align:center;\x20}','.gv2-add-input-wrap\x20{\x20display:flex;\x20gap:8px;\x20align-items:center;\x20margin-bottom:12px;\x20}',_0x2e878a(a0_0x17f80a._0x2f384d),_0x2e878a(a0_0x17f80a._0x45b39a),_0x2e878a(0x1c7),_0x2e878a(0xed),_0x2e878a(0x178),_0x2e878a(a0_0x17f80a._0x13f83f),'.gv2-add-submit:active\x20{\x20background:#1976D2;\x20}'][_0x2e878a(0x16a)]('\x0a'),document[_0x2e878a(0x162)][_0x2e878a(a0_0x17f80a._0x1453f4)](_0x8ce33c);function _0x3054dd(_0x4e5baa){var _0x113e24=_0x2e878a,_0xc93e8a=document[_0x113e24(0x1d5)](_0x113e24(a0_0x4e8a77._0x28879c));return _0xc93e8a[_0x113e24(0x116)]=_0x4e5baa,_0xc93e8a[_0x113e24(0xc7)];}function _0x21d317(_0x197ef8){var _0x220322=_0x2e878a;return{'健康':'💪','仕事':'💼','勉強':'📚','学習':'📚','趣味':'🎨','人間関係':'👥','お金':'💰','家族':_0x220322(0x1a7),'その他':'📌'}[_0x197ef8]||'📌';}function _0x3f05bc(_0x70870a){var _0x3b6565=_0x2e878a;return _0x70870a[_0x3b6565(0x137)]()+'-'+String(_0x70870a[_0x3b6565(0x1a9)]()+(-0x3d8+-0x5f*-0x3d+0xd*-0x172))['padStart'](0xada*0x2+-0x1d*-0x49+-0x1df7,'0')+'-'+String(_0x70870a['getDate']())[_0x3b6565(a0_0x5cae18._0x3aef99)](-0x1*0xb45+-0x1afa+0x2641,'0');}function _0x11a214(){return _0x3f05bc(new Date());}function _0x5292be(_0x5f2431){var _0x50f8e3=_0x2e878a,_0x7f4859=new Date(_0x5f2431);_0x7f4859[_0x50f8e3(a0_0x49cc2c._0x24a0e0)](0x8*-0x1d+-0x23b*0x11+0x26d3,-0x180*0xe+0xaa8*0x1+0xa58,0x20b2+-0x1200+-0xeb2,0x2599+0x24f7*-0x1+0x36*-0x3);var _0x1e5c98=_0x7f4859[_0x50f8e3(a0_0x49cc2c._0x1d7fbb)](),_0x26bf34=_0x1e5c98===-0x10*-0x25+-0x2094+0x1e44?-(-0x254b*-0x1+-0x1443+-0x1102):0x1*0x16b5+0x1*0x262+-0x1916-_0x1e5c98;return _0x7f4859[_0x50f8e3(0x16f)](_0x7f4859[_0x50f8e3(a0_0x49cc2c._0x306090)]()+_0x26bf34),_0x7f4859;}function _0x5d749c(_0xe813b9){var _0x25ee3e=_0x2e878a,_0x5ae674=new Date(_0xe813b9);return _0x5ae674[_0x25ee3e(0x16f)](_0x5ae674[_0x25ee3e(0x1b1)]()+(0x586+-0x1427+-0xea7*-0x1)),_0x5ae674;}function _0x7981f9(_0x2d4f49){var _0x3bb8ef=_0x5292be(_0x2d4f49),_0x51dea6=_0x5d749c(_0x3bb8ef);return{'start':_0x3f05bc(_0x3bb8ef),'end':_0x3f05bc(_0x51dea6),'monday':_0x3bb8ef,'sunday':_0x51dea6};}function _0x2ddcad(_0x3e72b5){var _0x19a068=_0x2e878a,_0x434d90=_0x5292be(_0x3e72b5),_0x1cd8f=[];for(var _0x4c4316=0xd69+-0x1859+0x2bc*0x4;_0x4c4316<-0x152b*-0x1+0x2*-0x5bf+-0x4d3*0x2;_0x4c4316++){var _0x4c4e26=new Date(_0x434d90);_0x4c4e26[_0x19a068(a0_0xdd0e42._0x1ce338)](_0x434d90[_0x19a068(a0_0xdd0e42._0x15916e)]()+_0x4c4316),_0x1cd8f[_0x19a068(a0_0xdd0e42._0x101af6)](_0x4c4e26);}return _0x1cd8f;}function _0x3603a3(_0x59571b,_0x3ad291,_0x2ede30){return _0x59571b>=_0x3ad291&&_0x59571b<=_0x2ede30;}function _0x130b7a(_0x3f1f4b){var _0x345cb2=_0x2e878a,_0x55387e=new Date(_0x3f1f4b);_0x55387e[_0x345cb2(0x1cb)](0x1f90+-0x2*-0xbce+0x84*-0x6b,-0x10c0+0x3c2*-0x4+0x1fc8,0x1e95*-0x1+0x1a40+0x455,0x923+0x9cb*-0x2+0xa73*0x1),_0x55387e[_0x345cb2(0x16f)](_0x55387e[_0x345cb2(0x1b1)]()+(0x4b*-0xd+0x5*-0x28d+0x1093)-(_0x55387e[_0x345cb2(0x170)]()+(0x2dd*-0x7+0x9e1+-0xa30*-0x1))%(0x199c+0x47*-0x37+0x52a*-0x2));var _0x13546e=new Date(_0x55387e[_0x345cb2(a0_0x5b52d6._0x2bb52c)](),0x7*-0xe5+0xed5*0x2+-0x1*0x1767,-0x1606+0x3d*-0x61+0x2d27),_0x34b5d8=-0x232b+0x989+0x1*0x19a3+Math[_0x345cb2(a0_0x5b52d6._0x254173)](((_0x55387e-_0x13546e)/(-0x1c*-0x173b73+-0x86484e5+-0x1*-0xb006051)-(0x1e60+-0x5*-0x5f7+-0x3c30)+(_0x13546e[_0x345cb2(0x170)]()+(0x1681+-0xc*-0xd2+0x1*-0x2053))%(-0x2514+-0x1*0xdcd+0x32e8))/(0x60c*0x4+-0x163f+-0x1ea));return _0x55387e[_0x345cb2(a0_0x5b52d6._0x2bb52c)]()+'-W'+String(_0x34b5d8)[_0x345cb2(0x108)](0x16f*-0x7+0x1d82+-0x1377*0x1,'0');}function _0x2b71bc(_0x1889f7){var _0x24066e=_0x2e878a,_0x12013e=_0x1889f7[_0x24066e(a0_0x35fcfa._0x5bffc9)](/(\d{4})-W(\d{2})/);if(!_0x12013e)return null;var _0x134592=parseInt(_0x12013e[-0x1743+0xff3*-0x2+0x1b95*0x2]),_0x255937=parseInt(_0x12013e[-0x2109+-0x1cd4+-0x3ddf*-0x1]),_0x5d1203=new Date(_0x134592,-0x41c+0x2443+-0x2027,0x6*-0xb5+0x2*0xcc1+-0x1540),_0x4c4fe6=(_0x5d1203[_0x24066e(a0_0x35fcfa._0x221c7f)]()+(-0x1599+-0xae6+-0x39d*-0x9))%(-0x10f4+-0x16e*0xb+0x20b5),_0x1fb657=new Date(_0x5d1203[_0x24066e(0x1ea)]());return _0x1fb657[_0x24066e(a0_0x35fcfa._0x159eb4)](_0x5d1203[_0x24066e(a0_0x35fcfa._0x2d9bb0)]()-_0x4c4fe6+(_0x255937-(0x59c*-0x4+-0x2a7*-0x6+0x687))*(-0x90f+-0x2*-0xc69+-0xfbc)),_0x1fb657;}var _0x44aebf=_0x5292be(new Date()),_0x521969=new Date(_0x44aebf),_0xe74157={};try{var _0x26bb79=localStorage['getItem'](_0x2e878a(0xdb));if(_0x26bb79)_0xe74157=JSON[_0x2e878a(a0_0x17f80a._0x33fc03)](_0x26bb79);}catch(_0x40b082){}var _0x124078=_0x130b7a(new Date());window['getWeekKey']=_0x130b7a,window[_0x2e878a(a0_0x17f80a._0x1b0b6c)]=_0x124078,window[_0x2e878a(a0_0x17f80a._0x28d443)]=_0x7981f9,window[_0x2e878a(a0_0x17f80a._0x54cad8)]=_0x3f05bc;var _0x200055=['日','月','火','水','木','金','土'];function _0x239bcb(){var _0x5b8d83=_0x2e878a;try{var _0x135941=localStorage[_0x5b8d83(a0_0x4ee8a8._0x40289c)](_0x5b8d83(0xc9)),_0x2dd41e=JSON['parse'](_0x135941||'[]');return Array[_0x5b8d83(a0_0x4ee8a8._0x1d2dd0)](_0x2dd41e)?_0x2dd41e:[];}catch(_0x683aef){return[];}}function _0x444181(_0x4c6014){var _0x1bc97c=_0x2e878a;localStorage['setItem'](_0x1bc97c(0xc9),JSON['stringify'](_0x4c6014)),window[_0x1bc97c(0xc9)]=_0x4c6014;try{window['Storage']&&window[_0x1bc97c(0xd3)][_0x1bc97c(0xde)]&&window['Storage'][_0x1bc97c(a0_0x410851._0xfc4832)]&&window['Storage'][_0x1bc97c(0xde)](window[_0x1bc97c(a0_0x410851._0xf6204)][_0x1bc97c(0x132)][_0x1bc97c(a0_0x410851._0x3736ef)],_0x4c6014);}catch(_0x3279ee){}}function _0x2fd0fb(){var _0x4460d0=_0x2e878a;return window[_0x4460d0(a0_0x1cdb55._0x88be4f)]||window['goalsCurrentMonth']||_0x2fa4e2();}function _0x2fa4e2(){var _0x3fcdac=_0x2e878a,_0x376d3f=new Date();return _0x376d3f[_0x3fcdac(0x137)]()+'-'+String(_0x376d3f[_0x3fcdac(a0_0x432d26._0x3b4cfa)]()+(-0x1*0x22e9+-0x2512+0x47fc))[_0x3fcdac(a0_0x432d26._0x3d0462)](0x1e5*-0x1+0x7e7+-0x600,'0');}function _0x52eac5(){var a0_0x30ecb1={_0x9bdb01:0x1f8},_0x512d7d=_0x2e878a,_0x52382e=_0x239bcb(),_0x2a6aa2=![];_0x52382e[_0x512d7d(0xdf)](function(_0x14f3f8){var _0x41bbca=_0x512d7d;if(!_0x14f3f8||!_0x14f3f8['weeklyTasks'])return;_0x14f3f8[_0x41bbca(a0_0x18a026._0x3564bf)][_0x41bbca(0xdf)](function(_0x5dbcc2){var _0x471f98=_0x41bbca;if(_0x5dbcc2[_0x471f98(0x1f8)]&&!_0x5dbcc2['date']){var _0x5087f9=_0x2b71bc(_0x5dbcc2[_0x471f98(a0_0x30ecb1._0x9bdb01)]);_0x5087f9?_0x5dbcc2[_0x471f98(0x10e)]=_0x3f05bc(_0x5087f9):_0x5dbcc2['date']=_0x11a214(),_0x2a6aa2=!![];}});}),_0x2a6aa2&&(_0x444181(_0x52382e),console[_0x512d7d(0x1ff)]('[goals-v2]\x20weeklyTasks\x20migrated:\x20week\x20→\x20date'));}function _0x33a8e9(){var _0x3a9014=_0x2e878a,_0x539254=document['getElementById'](_0x3a9014(a0_0x2fba90._0x28adad));if(!_0x539254)return;if(document[_0x3a9014(a0_0x2fba90._0x1719b0)](_0x3a9014(0x153)))return;var _0x13c363=_0x539254[_0x3a9014(0x102)](_0x3a9014(a0_0x2fba90._0x11fb90)),_0x87631f=_0x539254[_0x3a9014(0x10c)]('.goals-section,\x20.goals-list-section,\x20.goals-progress-section');for(var _0x27221e=-0x1572+-0x571+0x1ae3;_0x27221e<_0x87631f[_0x3a9014(0xc6)];_0x27221e++){_0x87631f[_0x27221e]['style']['display']=_0x3a9014(0x1fe);}var _0x282ae4=document[_0x3a9014(a0_0x2fba90._0x1719b0)](_0x3a9014(a0_0x2fba90._0x48ee8a));if(_0x282ae4)_0x282ae4[_0x3a9014(a0_0x2fba90._0x4ad6b1)]();var _0xee2bf9=document[_0x3a9014(0x1d5)]('div');_0xee2bf9['id']=_0x3a9014(a0_0x2fba90._0x10836b),_0xee2bf9[_0x3a9014(a0_0x2fba90._0x5f17ec)]=_0x3a9014(0xc4)+'<div\x20id=\x22gv2Monthly\x22></div>'+_0x3a9014(0xd5),_0x13c363&&_0x13c363[_0x3a9014(0x195)]?_0x13c363[_0x3a9014(a0_0x2fba90._0x5314fc)][_0x3a9014(a0_0x2fba90._0x5d0114)](_0xee2bf9,_0x13c363[_0x3a9014(a0_0x2fba90._0x30c9ea)]):_0x539254[_0x3a9014(0x100)](_0xee2bf9);}function _0x145897(){var _0x45d75e=_0x2e878a,_0x45960d=_0x2fd0fb(),_0x356aeb=_0x45960d[_0x45d75e(a0_0xe461ca._0x4929d9)]('-')[_0x45d75e(a0_0xe461ca._0x36cb35)](Number),_0x58588b=document['getElementById'](_0x45d75e(a0_0xe461ca._0x3cec12));_0x58588b&&(_0x58588b[_0x45d75e(a0_0xe461ca._0x1e1370)]=_0x356aeb[0x2172+0xaa2*-0x1+-0x16d0]+'年'+_0x356aeb[0xbe5+0x19b6+0x2*-0x12cd]+'月');var _0x337410=document[_0x45d75e(0x19f)](_0x45d75e(a0_0xe461ca._0x224e1e));_0x337410&&(_0x337410[_0x45d75e(a0_0xe461ca._0x1e1370)]=_0x45960d===_0x2fa4e2()?_0x45d75e(0xb3):_0x356aeb[0x1*-0x1cae+-0x1b8f+-0x12bf*-0x3]+'年'+_0x356aeb[0xd*-0x2cf+-0x1b7+0x1*0x263b]+_0x45d75e(a0_0xe461ca._0x2fcb90));}function _0x415aa6(){var a0_0x49c6a8={_0x5075f4:0x1e0},_0x1b6d23=_0x2e878a,_0x3772f7=_0x239bcb(),_0x3c7bba=_0x2fd0fb(),_0x503d30=_0x3772f7[_0x1b6d23(a0_0x143a56._0x5dabbf)](function(_0x156b7e){var _0x2b8daa=_0x1b6d23;return _0x156b7e&&_0x156b7e[_0x2b8daa(a0_0x49c6a8._0x5075f4)]===_0x3c7bba;});_0x145897(),_0x325b7b(_0x503d30),_0x1c4cc4(_0x503d30,_0x3772f7),_0x1c7dc8(_0x503d30,_0x3772f7);}function _0x325b7b(_0x5c355d){var _0x334595=_0x2e878a,_0x2744e4=document[_0x334595(0x19f)]('gv2Summary');if(!_0x2744e4)return;if(_0x5c355d['length']===-0x1*-0x9d4+-0x149c+0xac8){_0x2744e4[_0x334595(0xc7)]='';return;}var _0x4cccbf=_0x2fd0fb(),_0x2f9e0f=0xa*0x3d+0xa*0x216+-0x173e,_0x40cfdc=0x24db+-0x1d8*-0x4+-0x2c3b;_0x5c355d[_0x334595(a0_0x5721a7._0x188b31)](function(_0x1a6386){var _0x16c835=_0x334595;(_0x1a6386['weeklyTasks']||[])[_0x16c835(0xdf)](function(_0x19895f){var _0x7fabef=_0x16c835;if(_0x19895f[_0x7fabef(0x10e)]&&_0x19895f[_0x7fabef(0x10e)]['substring'](0xe6+-0x191*-0x6+0x2*-0x526,-0xe*0x1d3+0x1277+0x1*0x71a)===_0x4cccbf){_0x2f9e0f++;if(_0x19895f[_0x7fabef(0xef)])_0x40cfdc++;}});});var _0x1b5b1c=_0x2f9e0f>0x1*0x66d+0x7a*0xe+-0xd19*0x1?Math['round'](_0x40cfdc/_0x2f9e0f*(-0x3*0xa6d+-0xf72+0x2f1d)):-0xf5+0xa*0x257+-0x1671,_0x568e86={};_0x5c355d['forEach'](function(_0x869503){_0x568e86[_0x869503['category']]=(_0x568e86[_0x869503['category']]||-0x1*0x20ff+0xb*-0xf5+0x12*0x26b)+(-0x21a3+-0x1*-0x92d+0x1877);});var _0x6f69db=Object[_0x334595(a0_0x5721a7._0x4b838a)](_0x568e86)[_0x334595(0x142)](function(_0x322c80){var _0x5b97e0=_0x334595;return'<span\x20class=\x22gv2-summary-cat\x22>'+_0x21d317(_0x322c80)+'\x20'+_0x3054dd(_0x322c80)+'\x20'+_0x568e86[_0x322c80]+_0x5b97e0(a0_0x379df7._0x8d74fc);})['join']('');_0x2744e4[_0x334595(a0_0x5721a7._0x4d4e61)]='<div\x20class=\x22gv2-summary\x22>'+_0x334595(a0_0x5721a7._0x203c23)+_0x334595(a0_0x5721a7._0x138a26)+_0x334595(0xc2)+_0x1b5b1c+_0x334595(a0_0x5721a7._0xf1013f)+_0x40cfdc+'/'+_0x2f9e0f+_0x334595(a0_0x5721a7._0xf2ae7e)+_0x334595(a0_0x5721a7._0x397df4)+_0x334595(a0_0x5721a7._0x14a9d4)+_0x1b5b1c+_0x334595(a0_0x5721a7._0x175249)+_0x334595(a0_0x5721a7._0x2468eb)+_0x6f69db+_0x334595(a0_0x5721a7._0x18bb1e)+_0x334595(a0_0x5721a7._0x307f76);}function _0x1c4cc4(_0x23ceae,_0x5b4c36){var a0_0x1b08f1={_0x1f9a4b:0x1f0,_0x27522b:0xd2,_0x5cdd47:0xbc,_0x4aa9b3:0xef,_0x465e1b:0x1d1},a0_0x51f777={_0x4a07ad:0x10e},a0_0x2034f8={_0x39d236:0x191,_0x113072:0x170},a0_0x277ef2={_0x42a19f:0x15d},_0x2632eb=_0x2e878a,_0x19b843=document[_0x2632eb(a0_0x15d711._0x3bdbbc)](_0x2632eb(0x17f));if(!_0x19b843)return;var _0x5862f4=_0x23ceae[_0x2632eb(a0_0x15d711._0x1ac3de)](function(_0x48a6f4){var _0x315605=_0x2632eb;return!_0x48a6f4[_0x315605(a0_0x277ef2._0x42a19f)];});if(_0x5862f4[_0x2632eb(0xc6)]===-0x22b3+-0x279*-0x8+0xeeb){_0x19b843[_0x2632eb(0xc7)]='';return;}var _0x366e0d=_0x7981f9(_0x521969),_0x20066a=_0x2ddcad(_0x521969),_0x551a2c=_0x11a214(),_0x3d9857=_0x366e0d[_0x2632eb(a0_0x15d711._0x993729)]===_0x3f05bc(_0x44aebf),_0x25ea2e={};_0x20066a[_0x2632eb(a0_0x15d711._0x4bed7e)](function(_0x5a143b){_0x25ea2e[_0x3f05bc(_0x5a143b)]=-0x1f6*-0xf+0x4*-0x536+-0x2*0x449;}),_0x5862f4[_0x2632eb(a0_0x15d711._0x5b6931)](function(_0x31e2aa){var a0_0x296643={_0x1da17d:0x10e,_0x105083:0x1f1},_0xac07ce=_0x2632eb;(_0x31e2aa[_0xac07ce(0x1b5)]||[])[_0xac07ce(0xdf)](function(_0x2b7e07){var _0x187d37=_0xac07ce;_0x2b7e07[_0x187d37(a0_0x296643._0x1da17d)]&&_0x3603a3(_0x2b7e07[_0x187d37(0x10e)],_0x366e0d['start'],_0x366e0d[_0x187d37(a0_0x296643._0x105083)])&&(_0x25ea2e[_0x2b7e07['date']]=(_0x25ea2e[_0x2b7e07[_0x187d37(a0_0x296643._0x1da17d)]]||0x367*0x7+0x81*0x7+-0x1*0x1b58)+(-0x1d*-0xcb+-0x1191+-0x1cf*0x3));});});var _0x57440e=_0x352dcc(),_0xcf909=_0x2632eb(0x1c1);_0xcf909+=_0x2632eb(a0_0x15d711._0x5ed86e)+_0x2632eb(0x19b)+_0x2632eb(a0_0x15d711._0x568763)+_0x57440e+(!_0x3d9857?'\x20<button\x20class=\x22gv2-week-today-btn\x22\x20onclick=\x22window._gv2GoToCurrentWeek()\x22>今週へ</button>':'')+_0x2632eb(a0_0x15d711._0xe8c3fa)+_0x2632eb(0x1c2)+_0x2632eb(0x1a4),_0xcf909+=_0x2632eb(a0_0x15d711._0x23a0ee),_0x20066a[_0x2632eb(a0_0x15d711._0x4bed7e)](function(_0x54e040){var _0x13d754=_0x2632eb,_0x538b65=_0x3f05bc(_0x54e040),_0x32fd18=_0x538b65===_0x551a2c,_0x48a080=_0x25ea2e[_0x538b65]||-0x101c+-0x19a7+0x29c3,_0x598105=_0x13d754(0x119)+(_0x32fd18?'\x20today':'');_0xcf909+=_0x13d754(a0_0x2034f8._0x39d236)+_0x598105+'\x22>'+'<span\x20class=\x22gv2-cal-dow\x22>'+_0x200055[_0x54e040[_0x13d754(a0_0x2034f8._0x113072)]()]+'</span>'+_0x13d754(0x130)+_0x54e040[_0x13d754(0x1b1)]()+_0x13d754(0xb0)+_0x13d754(0x1a4);}),_0xcf909+=_0x2632eb(0x1a4),_0xcf909+=_0x2632eb(a0_0x15d711._0x1bf7ce);var _0x45ec35=![];_0x5862f4[_0x2632eb(a0_0x15d711._0x5b6931)](function(_0x281bde){var a0_0x423acf={_0x470e6f:0x10e},_0x2caa56=_0x2632eb,_0x6dde93=(_0x281bde[_0x2caa56(0x1b5)]||[])['filter'](function(_0x5e3550){var _0x2d5e17=_0x2caa56;return _0x5e3550[_0x2d5e17(a0_0x51f777._0x4a07ad)]&&_0x3603a3(_0x5e3550['date'],_0x366e0d[_0x2d5e17(0x161)],_0x366e0d[_0x2d5e17(0x1f1)]);});if(_0x6dde93[_0x2caa56(0xc6)]>-0x1081+0x2574+-0x14f3)_0x45ec35=!![];var _0xb5fdc8=_0x21d317(_0x281bde[_0x2caa56(0xdd)]),_0x163e9f=_0xe74157[_0x281bde['id']]?!![]:![],_0xbd50b9=_0x6dde93[_0x2caa56(a0_0x48d634._0x50dc5d)](function(_0x384267){return _0x384267['done'];})[_0x2caa56(a0_0x48d634._0x346e33)],_0x3ad18e=_0x6dde93[_0x2caa56(a0_0x48d634._0x5446b0)]>0x1*0xbd3+0x507+-0x10da?_0x2caa56(a0_0x48d634._0x5c18c4)+_0xbd50b9+'/'+_0x6dde93[_0x2caa56(0xc6)]+_0x2caa56(0xf7):'',_0x1f7a0d=_0x163e9f?'▶':'▼';_0xcf909+=_0x2caa56(a0_0x48d634._0x5cf61d),_0xcf909+=_0x2caa56(0x157)+_0x281bde['id']+_0x2caa56(0x109)+_0x2caa56(0x16e)+_0x1f7a0d+'</span>\x20'+_0xb5fdc8+'\x20'+_0x3054dd(_0x281bde[_0x2caa56(0x1cd)])+_0x3ad18e+'</div>',_0xcf909+=_0x2caa56(a0_0x48d634._0x471dcb)+(_0x163e9f?'display:none;':'')+'\x22>',_0x6dde93[_0x2caa56(a0_0x48d634._0x5446b0)]===0x72*0xe+0x721+-0xd5d?_0xcf909+=_0x2caa56(a0_0x48d634._0x3d8352):(_0x6dde93['sort'](function(_0x599cde,_0x157cde){var _0x393eef=_0x2caa56;return _0x599cde[_0x393eef(0x10e)]<_0x157cde[_0x393eef(0x10e)]?-(-0x1a07+-0x20fc+-0x2*-0x1d82):_0x599cde[_0x393eef(a0_0x423acf._0x470e6f)]>_0x157cde[_0x393eef(a0_0x423acf._0x470e6f)]?0xc3b+-0x3*0x8a5+0xdb5:-0x1d*-0x137+0x2*-0x13f+-0x1ed*0x11;}),_0x6dde93['forEach'](function(_0x97944f){var _0x530d22=_0x2caa56,_0x1253a6=_0x97944f[_0x530d22(0xef)]?_0x530d22(a0_0x1b08f1._0x1f9a4b):'',_0x113d20=_0x97944f[_0x530d22(0xef)]?_0x530d22(0x160):'';_0xcf909+=_0x530d22(0xc8)+_0x281bde['id']+'_'+_0x97944f['id']+'\x22>'+_0x530d22(a0_0x1b08f1._0x27522b)+_0x1253a6+_0x530d22(a0_0x1b08f1._0x5cdd47)+_0x281bde['id']+','+_0x97944f['id']+')\x22\x20/>'+_0x530d22(0x1e4)+_0x281bde['id']+','+_0x97944f['id']+')\x22'+_0x113d20+'\x20style=\x22cursor:pointer;'+(_0x97944f[_0x530d22(a0_0x1b08f1._0x4aa9b3)]?_0x530d22(a0_0x1b08f1._0x465e1b):'')+'\x22>'+_0x3054dd(_0x97944f[_0x530d22(0x1cd)])+_0x530d22(0xf4)+'</div>';})),_0xcf909+='<button\x20type=\x22button\x22\x20class=\x22task-add-btn\x22\x20onclick=\x22window._gv2ShowAddPopup('+_0x281bde['id']+_0x2caa56(a0_0x48d634._0x2df692),_0xcf909+=_0x2caa56(a0_0x48d634._0x1de50d),_0xcf909+='</div>';}),!_0x45ec35&&(_0xcf909+=_0x2632eb(a0_0x15d711._0x2e90f4)),_0xcf909+=_0x2632eb(0x11c),_0x19b843['innerHTML']=_0xcf909;}function _0x1c7dc8(_0x54773e,_0x3e2ec4){var a0_0x3d5d84={_0x3662ef:0xd0,_0x56975f:0x1e7,_0x1fb2cf:0xc6,_0xef0fc7:0x15d,_0xb8665d:0x201,_0x5a9bcd:0x1dc,_0x1815ee:0xe9,_0x44e921:0x1a4,_0x4d7671:0xdd,_0x216333:0xdd,_0x373c52:0xb0,_0x17b2a5:0xbd,_0x58fc8b:0x1a4},a0_0x50ef53={_0x2ba2e5:0x10e,_0x3782cf:0x161},_0x104b24=_0x2e878a,_0x5f3eaf=document[_0x104b24(0x19f)](_0x104b24(0x138));if(!_0x5f3eaf)return;var _0x513c8f=_0x2fd0fb(),_0x5557d5=_0x2fa4e2(),_0x58c397=_0x513c8f===_0x5557d5?_0x104b24(0x1bd):'🎯\x20'+_0x513c8f+_0x104b24(0x1e2),_0x422c1a=_0x7981f9(_0x44aebf),_0x54aa73=_0x104b24(a0_0x36718c._0x10b385)+_0x104b24(a0_0x36718c._0x343bdc)+_0x104b24(a0_0x36718c._0x1d736a)+_0x58c397+_0x104b24(a0_0x36718c._0x147217)+_0x104b24(a0_0x36718c._0xc710b9)+'</div>';_0x54773e[_0x104b24(a0_0x36718c._0x39dd0c)]===0x1c44+0x12ff*0x2+-0x4242?_0x54aa73+=_0x104b24(a0_0x36718c._0x5a667b):_0x54773e[_0x104b24(a0_0x36718c._0x52e8a5)](function(_0x47cff0){var _0x59c4b4=_0x104b24,_0x1db516=_0x47cff0[_0x59c4b4(0x1b5)]||[],_0x2c3779=_0x1db516[_0x59c4b4(a0_0x3d5d84._0x3662ef)](function(_0x48b735){var _0x2aafe3=_0x59c4b4;return _0x48b735[_0x2aafe3(a0_0x50ef53._0x2ba2e5)]&&_0x3603a3(_0x48b735[_0x2aafe3(0x10e)],_0x422c1a[_0x2aafe3(a0_0x50ef53._0x3782cf)],_0x422c1a[_0x2aafe3(0x1f1)]);}),_0x20dbda=_0x2c3779[_0x59c4b4(a0_0x3d5d84._0x3662ef)](function(_0x26e869){return _0x26e869['done'];})[_0x59c4b4(0xc6)],_0x4710c3=_0x1db516[_0x59c4b4(0xc6)]>-0xafc*-0x2+-0x2*0xd47+0x496*0x1?_0x59c4b4(a0_0x3d5d84._0x56975f)+_0x20dbda+'/'+_0x2c3779['length']+(_0x1db516[_0x59c4b4(0xc6)]>_0x2c3779[_0x59c4b4(a0_0x3d5d84._0x1fb2cf)]?_0x59c4b4(0xcc)+_0x1db516[_0x59c4b4(a0_0x3d5d84._0x1fb2cf)]+')':''):'';_0x54aa73+='<div\x20class=\x22gv2-goal\x20'+(_0x47cff0[_0x59c4b4(a0_0x3d5d84._0xef0fc7)]?'done':'')+'\x22>'+_0x59c4b4(a0_0x3d5d84._0xb8665d)+(_0x47cff0[_0x59c4b4(0x15d)]?_0x59c4b4(a0_0x3d5d84._0x5a9bcd):'')+'\x20onchange=\x22window._gv2ToggleGoal('+_0x47cff0['id']+_0x59c4b4(0x164)+'<div\x20class=\x22gv2-goal-body\x22>'+_0x59c4b4(a0_0x3d5d84._0x1815ee)+_0x3054dd(_0x47cff0[_0x59c4b4(0x1cd)])+_0x59c4b4(a0_0x3d5d84._0x44e921)+'<div\x20class=\x22gv2-goal-meta\x22>'+'<span\x20class=\x22gv2-goal-cat\x22>'+_0x21d317(_0x47cff0[_0x59c4b4(a0_0x3d5d84._0x4d7671)])+'\x20'+_0x3054dd(_0x47cff0[_0x59c4b4(a0_0x3d5d84._0x216333)])+_0x59c4b4(a0_0x3d5d84._0x373c52)+(_0x4710c3?_0x59c4b4(a0_0x3d5d84._0x17b2a5)+_0x4710c3+_0x59c4b4(a0_0x3d5d84._0x373c52):'')+'</div>'+_0x59c4b4(a0_0x3d5d84._0x58fc8b)+_0x59c4b4(0x1f4)+_0x47cff0['id']+_0x59c4b4(0xb4)+_0x59c4b4(a0_0x3d5d84._0x44e921);}),_0x54aa73+='<div\x20class=\x22status-message\x22\x20id=\x22goalStatus\x22></div>',_0x54aa73+=_0x104b24(a0_0x36718c._0x21b1d2),_0x5f3eaf[_0x104b24(a0_0x36718c._0x1ab6b0)]=_0x54aa73;}function _0x192a15(){var _0x7561ef=_0x2e878a,_0x5c31cb=document['getElementById'](_0x7561ef(a0_0xb79cd7._0x3fc199)),_0x2666bb=document[_0x7561ef(0x19f)](_0x7561ef(0x189)),_0x54a0a1=(_0x5c31cb?_0x5c31cb['value']:'')[_0x7561ef(0x1e8)](),_0x21b98c=_0x2666bb?_0x2666bb[_0x7561ef(0x1bf)]:_0x7561ef(a0_0xb79cd7._0x4f8fd1);if(!_0x54a0a1){if(typeof window[_0x7561ef(0x1d8)]===_0x7561ef(a0_0xb79cd7._0x3c9efa))window[_0x7561ef(a0_0xb79cd7._0x4148aa)](_0x7561ef(0x1d6),_0x7561ef(0x11a));return;}var _0x646d3a=_0x239bcb(),_0x5da283={'id':Date[_0x7561ef(a0_0xb79cd7._0x594fd8)](),'text':_0x54a0a1,'category':_0x21b98c,'createdAt':new Date()['toISOString'](),'month':_0x2fd0fb(),'completed':![],'weeklyTasks':[]};_0x646d3a[_0x7561ef(0x1df)](_0x5da283),_0x444181(_0x646d3a);if(_0x5c31cb)_0x5c31cb[_0x7561ef(0x1bf)]='';_0x415aa6();if(typeof window[_0x7561ef(0x1d8)]===_0x7561ef(a0_0xb79cd7._0x3c9efa))window[_0x7561ef(0x1d8)]('goalStatus',_0x7561ef(0x1fd));}function _0x39f884(_0x44c828){var _0x20d1ca=_0x2e878a,_0x4e44ea=_0x239bcb(),_0x1357e7=_0x4e44ea[_0x20d1ca(a0_0x412958._0xa4ff84)](function(_0x5cc9a3){return _0x5cc9a3&&_0x5cc9a3['id']===_0x44c828;});if(!_0x1357e7)return;_0x1357e7['completed']=!_0x1357e7['completed'],_0x444181(_0x4e44ea),_0x415aa6();}function _0x30463e(_0x50fa26){var _0x32e830=_0x2e878a;if(!confirm(_0x32e830(a0_0x536c50._0x1f1910)))return;var _0x54cd60=_0x239bcb()[_0x32e830(0xd0)](function(_0x2ae6b4){return _0x2ae6b4&&_0x2ae6b4['id']!==_0x50fa26;});_0x444181(_0x54cd60),_0x415aa6();if(typeof window[_0x32e830(a0_0x536c50._0x48ce8a)]===_0x32e830(a0_0x536c50._0x4f696c))window[_0x32e830(a0_0x536c50._0x48ce8a)](_0x32e830(0x1d6),_0x32e830(a0_0x536c50._0x38412c));}function _0x12d55d(_0x4c81c0,_0x281f44){var _0x1fa296=_0x2e878a,_0x3573a6=_0x239bcb(),_0x188c20=_0x3573a6[_0x1fa296(a0_0x301e3f._0x340f44)](function(_0x37697f){return _0x37697f&&_0x37697f['id']===_0x4c81c0;});if(!_0x188c20)return;if(!_0x188c20[_0x1fa296(a0_0x301e3f._0x1271bd)])_0x188c20[_0x1fa296(a0_0x301e3f._0x5b0eaf)]=[];var _0x12c947=_0x281f44||_0x11a214(),_0x1957a7=_0x7981f9(_0x521969);!_0x3603a3(_0x12c947,_0x1957a7[_0x1fa296(0x161)],_0x1957a7['end'])&&(_0x12c947=_0x1957a7['start']);var _0x236efe={'id':Date[_0x1fa296(0x18a)](),'text':_0x1fa296(0xb1),'date':_0x12c947,'done':![]};_0x188c20[_0x1fa296(0x1b5)][_0x1fa296(a0_0x301e3f._0x7b4d5d)](_0x236efe),_0x444181(_0x3573a6),_0x415aa6(),setTimeout(function(){_0x585c25(_0x4c81c0,_0x236efe['id']);},0x12b7+-0x1548+0x2f5*0x1);}function _0xae9839(_0x21f9d5){var _0x4cef4f=_0x2e878a,_0x5dd8ae=_0x239bcb(),_0x161c78=_0x2fd0fb(),_0x4bb3fd=_0x5dd8ae[_0x4cef4f(a0_0x460486._0x1aec80)](function(_0x1adf6b){var _0x106c02=_0x4cef4f;return _0x1adf6b&&_0x1adf6b[_0x106c02(a0_0x2e66a3._0x575f91)]===_0x161c78&&!_0x1adf6b[_0x106c02(0x15d)];});if(_0x4bb3fd[_0x4cef4f(a0_0x460486._0x3adc4e)]===-0xe15+-0x1*-0x26ae+-0x833*0x3)return;_0x12d55d(_0x4bb3fd[0x1756+-0x1078+0x3*-0x24a]['id'],_0x21f9d5);}function _0x5d1072(_0x120d2b,_0x24ac7c,_0x3d5254){var a0_0x287aa9={_0x277448:0x1e8},_0xcfbc44=_0x2e878a,_0x5d2521=_0x239bcb(),_0x2b965a=_0x5d2521[_0xcfbc44(0x172)](function(_0xa781ad){return _0xa781ad&&_0xa781ad['id']===_0x120d2b;});if(!_0x2b965a||!_0x2b965a['weeklyTasks'])return;var _0xa71a58=_0x2b965a[_0xcfbc44(a0_0x5d521b._0x3908ed)][_0xcfbc44(0x172)](function(_0x52db55){return _0x52db55['id']===_0x24ac7c;});if(!_0xa71a58)return;try{var _0x1e3935=new Date();_0x1e3935[_0xcfbc44(0x16f)](_0x1e3935['getDate']()-(-0x23e0+-0x15e5+0x39c6));var _0x39e2d3=_0x1e3935['getFullYear']()+'-'+String(_0x1e3935[_0xcfbc44(0x1a9)]()+(-0xd70+-0x10a4+0x1e15))['padStart'](0x2*0xe5+0x1845+-0x1a0d,'0')+'-'+String(_0x1e3935[_0xcfbc44(0x1b1)]())[_0xcfbc44(a0_0x5d521b._0x39c9c7)](-0x1*-0x116+-0x5cb*0x1+0x4b7,'0'),_0x32f3d0=JSON[_0xcfbc44(a0_0x5d521b._0x54a937)](localStorage[_0xcfbc44(a0_0x5d521b._0x147438)](_0xcfbc44(0x1ba))||'{}'),_0x39a70b=_0x32f3d0[_0x39e2d3]||{'date':_0x39e2d3,'summary':{}};if(!_0x39a70b[_0xcfbc44(0x14b)])_0x39a70b[_0xcfbc44(a0_0x5d521b._0x31459b)]={};var _0x5bcf20=_0x3d5254===_0xcfbc44(0x103)?_0xcfbc44(a0_0x5d521b._0x5cd587):_0xcfbc44(a0_0x5d521b._0x3a65ba),_0x24b215=_0x39a70b[_0xcfbc44(a0_0x5d521b._0x31459b)][_0x5bcf20]||'',_0x22adcc=String(_0x24b215)['split'](/[\n・]/)['map'](function(_0x14d252){var _0x3067c3=_0xcfbc44;return _0x14d252[_0x3067c3(a0_0x287aa9._0x277448)]();})[_0xcfbc44(0xd0)](function(_0x961c7f){return _0x961c7f&&_0x961c7f!=='—';});_0x22adcc[_0xcfbc44(0xb7)](_0xa71a58[_0xcfbc44(0x1cd)]),_0x39a70b[_0xcfbc44(a0_0x5d521b._0x2c8886)][_0x5bcf20]=_0x22adcc[_0xcfbc44(a0_0x5d521b._0x106e85)]('\x0a'),_0x32f3d0[_0x39e2d3]=_0x39a70b,localStorage[_0xcfbc44(a0_0x5d521b._0x19884a)](_0xcfbc44(a0_0x5d521b._0x483595),JSON[_0xcfbc44(a0_0x5d521b._0x536115)](_0x32f3d0));var _0x862364=new Date(),_0x2deb52=_0x862364[_0xcfbc44(0x137)]()+'-'+String(_0x862364[_0xcfbc44(0x1a9)]()+(-0x1041+-0x351*-0xa+-0x10e8))[_0xcfbc44(a0_0x5d521b._0x6f2fd5)](0x1*0x4fd+-0x2b5*-0x3+-0xd1a,'0')+'-'+String(_0x862364[_0xcfbc44(0x1b1)]())[_0xcfbc44(a0_0x5d521b._0x6f2fd5)](-0x1c9b+0x1bbb+0xe2,'0'),_0x28718e='taskChecks_'+_0x2deb52,_0x1eff88=JSON[_0xcfbc44(0xe1)](localStorage[_0xcfbc44(a0_0x5d521b._0x31ac7c)](_0x28718e)||'{}'),_0xe78b0d=_0x3d5254===_0xcfbc44(0x103)?_0xcfbc44(a0_0x5d521b._0x55436b):'homeMustTask',_0x168ea1=_0x22adcc[_0xcfbc44(a0_0x5d521b._0x1a9949)]-(0x10ed+-0x1*0x1827+0x73b);_0x1eff88[_0xe78b0d+_0x168ea1]=![],localStorage[_0xcfbc44(a0_0x5d521b._0x1c56be)](_0x28718e,JSON[_0xcfbc44(a0_0x5d521b._0x26795a)](_0x1eff88));if(typeof window['renderHomeTodayTasks']==='function')window[_0xcfbc44(a0_0x5d521b._0x266477)]();}catch(_0x145afa){}var _0xf8ef67=_0x3d5254===_0xcfbc44(a0_0x5d521b._0x364361)?'WANT':'MUST';if(typeof window[_0xcfbc44(a0_0x5d521b._0x572c6f)]===_0xcfbc44(a0_0x5d521b._0x5efedb))window['showStatus'](_0xcfbc44(a0_0x5d521b._0x2976df),_0xcfbc44(0xee)+_0xf8ef67+'に追加しました');}function _0x219fc9(_0x517e86,_0x1611d8){_0x5d1072(_0x517e86,_0x1611d8,'must');}function _0x464dd2(_0xe7a9ee,_0xec2c33){var _0x25f642=_0x2e878a,_0x4eb9ab=_0x239bcb(),_0x3ea33c=_0x4eb9ab[_0x25f642(a0_0xf555c8._0x47e001)](function(_0x5ce577){return _0x5ce577&&_0x5ce577['id']===_0xe7a9ee;});if(!_0x3ea33c||!_0x3ea33c['weeklyTasks'])return;var _0x59a6fb=_0x3ea33c[_0x25f642(a0_0xf555c8._0x8d2c2e)][_0x25f642(0x172)](function(_0xd2f0fd){return _0xd2f0fd['id']===_0xec2c33;});if(!_0x59a6fb)return;var _0x235e22=new Date(_0x59a6fb[_0x25f642(0x10e)]+_0x25f642(0x194)),_0x46b702=new Date(_0x235e22);_0x46b702[_0x25f642(0x16f)](_0x46b702[_0x25f642(a0_0xf555c8._0x2b7314)]()+(0x1e19+0x5ce*-0x3+-0x12*0xb4));var _0x1828d4=_0x3f05bc(_0x46b702);_0x59a6fb[_0x25f642(0x10e)]=_0x1828d4,_0x444181(_0x4eb9ab),_0x415aa6();var _0xb516d8=new Date(_0x1828d4+_0x25f642(0x194));if(typeof window[_0x25f642(a0_0xf555c8._0x2eb19b)]===_0x25f642(a0_0xf555c8._0x49d7a6))window[_0x25f642(a0_0xf555c8._0x307b5e)]('goalStatus','✓\x20'+(_0xb516d8[_0x25f642(0x1a9)]()+(0xb*0xf7+0x191e+0x10d*-0x22))+'/'+_0xb516d8['getDate']()+'へ移動しました');}function _0xf059ba(_0x1eb8d2,_0x4fd560){var _0x51de44=_0x2e878a,_0x54a62f=_0x239bcb(),_0x481d88=_0x54a62f[_0x51de44(0x172)](function(_0x570875){return _0x570875&&_0x570875['id']===_0x1eb8d2;});if(!_0x481d88||!_0x481d88[_0x51de44(a0_0x3e0cab._0x1711bc)])return;var _0x1a1458=_0x481d88[_0x51de44(0x1b5)][_0x51de44(0x172)](function(_0x1c0001){return _0x1c0001['id']===_0x4fd560;});if(!_0x1a1458)return;_0x1a1458[_0x51de44(0xef)]=!_0x1a1458['done'],_0x444181(_0x54a62f),_0x415aa6();}function _0x585c25(_0x4bcf24,_0x2eaf28){var a0_0x45bbe7={_0x3225ed:0x12c,_0x5dc166:0x1d2},a0_0x590b8b={_0x3101eb:0xc7},a0_0xf07212={_0x5816a3:0x1e8,_0x596caa:0x1b5,_0x129b74:0x1b5,_0x5d2a48:0x1cd},_0x3749df=_0x2e878a,_0x45063f=document[_0x3749df(a0_0x360f4e._0x34bc21)]('wt_'+_0x4bcf24+'_'+_0x2eaf28);if(!_0x45063f)return;var _0x28105f=_0x239bcb(),_0x4a555a=_0x28105f[_0x3749df(0x172)](function(_0x3cb92d){return _0x3cb92d&&_0x3cb92d['id']===_0x4bcf24;});if(!_0x4a555a||!_0x4a555a[_0x3749df(a0_0x360f4e._0x2f0dc4)])return;var _0x59052a=_0x4a555a[_0x3749df(a0_0x360f4e._0x4465f1)]['find'](function(_0x44c536){return _0x44c536['id']===_0x2eaf28;});if(!_0x59052a)return;var _0x393965=_0x45063f[_0x3749df(a0_0x360f4e._0x123976)],_0x21a590=document[_0x3749df(0x1d5)](_0x3749df(0x13a));_0x21a590['style']['cssText']=_0x3749df(0x174);var _0x1189f2=document[_0x3749df(a0_0x360f4e._0x4f9b30)](_0x3749df(0x165));_0x1189f2['type']=_0x3749df(a0_0x360f4e._0x4058f0),_0x1189f2[_0x3749df(a0_0x360f4e._0x5241eb)]=_0x59052a[_0x3749df(a0_0x360f4e._0xef4ed2)],_0x1189f2['className']='task-input';var _0x4aa207=document[_0x3749df(0x1d5)](_0x3749df(0x175));_0x4aa207[_0x3749df(0x1a2)]=_0x3749df(a0_0x360f4e._0x49c4fb),_0x4aa207[_0x3749df(0x116)]='✓',_0x4aa207[_0x3749df(0x15a)]='task-save-btn';var _0x5494c5=document[_0x3749df(0x1d5)](_0x3749df(a0_0x360f4e._0x49c4fb));_0x5494c5[_0x3749df(0x1a2)]=_0x3749df(0x175),_0x5494c5[_0x3749df(0x116)]='🗑️',_0x5494c5[_0x3749df(a0_0x360f4e._0x2f0810)]=_0x3749df(a0_0x360f4e._0x2da7b9);var _0x1fcc8c=document[_0x3749df(0x1d5)](_0x3749df(a0_0x360f4e._0x4f66b1));_0x1fcc8c['type']=_0x3749df(a0_0x360f4e._0x49c4fb),_0x1fcc8c[_0x3749df(a0_0x360f4e._0x37cfec)]='✕',_0x1fcc8c[_0x3749df(0x15a)]=_0x3749df(0x18b),_0x1fcc8c[_0x3749df(a0_0x360f4e._0x3ad21a)][_0x3749df(0x110)]='#999',_0x21a590['appendChild'](_0x1189f2),_0x21a590[_0x3749df(a0_0x360f4e._0x2c3e50)](_0x4aa207),_0x21a590[_0x3749df(0x100)](_0x5494c5),_0x21a590[_0x3749df(a0_0x360f4e._0x37f219)](_0x1fcc8c),_0x45063f[_0x3749df(a0_0x360f4e._0x123976)]='',_0x45063f[_0x3749df(0x100)](_0x21a590),_0x1189f2[_0x3749df(0x12b)](),_0x1189f2[_0x3749df(a0_0x360f4e._0x43e5d)]();var _0x5a1ff5=document['getElementById'](_0x3749df(a0_0x360f4e._0x3df486));if(_0x5a1ff5)_0x5a1ff5[_0x3749df(a0_0x360f4e._0x3ad21a)][_0x3749df(a0_0x360f4e._0x482bd5)]=_0x3749df(0x1fe);function _0x5a6565(){var _0x15dd83=_0x3749df;if(_0x5a1ff5)_0x5a1ff5[_0x15dd83(0x17b)][_0x15dd83(0x19d)]='';}function _0x2f4197(){var _0x34eeae=_0x3749df,_0x44dc92=_0x1189f2['value'][_0x34eeae(a0_0xf07212._0x5816a3)]();if(!_0x44dc92){_0x2d07d2();return;}var _0x3d98f1=_0x239bcb(),_0x15595e=_0x3d98f1[_0x34eeae(0x172)](function(_0x4945cd){return _0x4945cd&&_0x4945cd['id']===_0x4bcf24;});if(_0x15595e&&_0x15595e[_0x34eeae(a0_0xf07212._0x596caa)]){var _0x36117f=_0x15595e[_0x34eeae(a0_0xf07212._0x129b74)][_0x34eeae(0x172)](function(_0x348717){return _0x348717['id']===_0x2eaf28;});if(_0x36117f)_0x36117f[_0x34eeae(a0_0xf07212._0x5d2a48)]=_0x44dc92;}_0x444181(_0x3d98f1),_0x5a6565(),_0x415aa6();}function _0x2d07d2(){var _0x1955d9=_0x3749df,_0x443e8c=_0x239bcb(),_0x313f75=_0x443e8c[_0x1955d9(0x172)](function(_0x1bf930){return _0x1bf930&&_0x1bf930['id']===_0x4bcf24;});_0x313f75&&_0x313f75[_0x1955d9(0x1b5)]&&(_0x313f75[_0x1955d9(0x1b5)]=_0x313f75['weeklyTasks'][_0x1955d9(0xd0)](function(_0x387e76){return _0x387e76['id']!==_0x2eaf28;})),_0x444181(_0x443e8c),_0x5a6565(),_0x415aa6();}function _0x3afd38(){var _0x48eb7f=_0x3749df;_0x45063f[_0x48eb7f(a0_0x590b8b._0x3101eb)]=_0x393965,_0x5a6565();}_0x4aa207[_0x3749df(a0_0x360f4e._0x403d7e)](_0x3749df(0x166),_0x2f4197),_0x5494c5[_0x3749df(0x10f)](_0x3749df(0x166),_0x2d07d2),_0x1fcc8c[_0x3749df(0x10f)]('click',_0x3afd38),_0x1189f2[_0x3749df(a0_0x360f4e._0x52c86f)](_0x3749df(a0_0x360f4e._0x249c33),function(_0x214ca8){var _0x453624=_0x3749df;if(_0x214ca8[_0x453624(0x12c)]===_0x453624(0x181))_0x2f4197();if(_0x214ca8[_0x453624(a0_0x45bbe7._0x3225ed)]===_0x453624(a0_0x45bbe7._0x5dc166))_0x3afd38();});}function _0x3372b4(_0x5ce3a8){var _0x1d672f=_0x2e878a;_0xe74157[_0x5ce3a8]=!_0xe74157[_0x5ce3a8];try{localStorage['setItem']('gv2_collapsed',JSON[_0x1d672f(0xd7)](_0xe74157));}catch(_0x31695c){}_0x415aa6();}function _0x4c9255(){var _0x49ec44=_0x2e878a,_0x2dcb1b=document['getElementById'](_0x49ec44(0x159));if(_0x2dcb1b)_0x2dcb1b['remove']();}function _0x7023ae(_0x13f897,_0x215b7e){var _0x4a4c32=_0x2e878a;_0x4c9255();var _0x3ef8d9=_0x239bcb(),_0x35b6f8=_0x3ef8d9[_0x4a4c32(0x172)](function(_0x3e52a8){return _0x3e52a8&&_0x3e52a8['id']===_0x13f897;});if(!_0x35b6f8||!_0x35b6f8[_0x4a4c32(a0_0x2dd7ca._0x4048c9)])return;var _0x41fd9b=_0x35b6f8[_0x4a4c32(a0_0x2dd7ca._0x4048c9)][_0x4a4c32(0x172)](function(_0x427c46){return _0x427c46['id']===_0x215b7e;});if(!_0x41fd9b)return;var _0x515e3a=document[_0x4a4c32(0x1d5)](_0x4a4c32(0x13a));_0x515e3a['id']=_0x4a4c32(0x159),_0x515e3a[_0x4a4c32(0x15a)]=_0x4a4c32(a0_0x2dd7ca._0x1c5fd3);var _0x3d7b00=_0x41fd9b[_0x4a4c32(a0_0x2dd7ca._0x1389f1)]?'未完了に戻す':_0x4a4c32(0x152),_0x4a9322=_0x41fd9b[_0x4a4c32(a0_0x2dd7ca._0x1389f1)]?'⬜':'✅',_0x479731=_0x4a4c32(0x17a);_0x479731+=_0x4a4c32(a0_0x2dd7ca._0x20f0ed),_0x479731+=_0x4a4c32(0x1b6)+_0x3054dd(_0x41fd9b[_0x4a4c32(0x1cd)])+_0x4a4c32(a0_0x2dd7ca._0x2ab454),_0x479731+=_0x4a4c32(0x113),_0x479731+=_0x4a4c32(a0_0x2dd7ca._0x2b5f47)+_0x13f897+','+_0x215b7e+_0x4a4c32(a0_0x2dd7ca._0x201377)+_0x4a9322+_0x4a4c32(a0_0x2dd7ca._0x2acb80)+_0x3d7b00+_0x4a4c32(0x143),!_0x41fd9b[_0x4a4c32(0xef)]&&(_0x479731+=_0x4a4c32(0xb5)+_0x13f897+','+_0x215b7e+_0x4a4c32(0xf6),_0x479731+=_0x4a4c32(a0_0x2dd7ca._0x53e222)+_0x13f897+','+_0x215b7e+',\x27want\x27);window._gv2CloseTaskPopup();\x22><span\x20class=\x22gv2-popup-btn-icon\x22>💡</span>今日のWANTに追加</button>',_0x479731+='<button\x20class=\x22gv2-popup-btn\x20gv2-popup-btn-next\x22\x20onclick=\x22window._gv2CarryToNextWeek('+_0x13f897+','+_0x215b7e+_0x4a4c32(0x15c)),_0x479731+=_0x4a4c32(0xe0)+_0x13f897+','+_0x215b7e+_0x4a4c32(0x148),_0x479731+=_0x4a4c32(a0_0x2dd7ca._0x2fa35f)+_0x13f897+','+_0x215b7e+');window._gv2CloseTaskPopup();\x22><span\x20class=\x22gv2-popup-btn-icon\x22>🗑️</span>削除</button>',_0x479731+=_0x4a4c32(a0_0x2dd7ca._0x6925ea),_0x515e3a[_0x4a4c32(a0_0x2dd7ca._0x13263c)]=_0x479731,_0x515e3a['addEventListener'](_0x4a4c32(0x166),function(_0xfe4fb0){var _0x19d510=_0x4a4c32;if(_0xfe4fb0[_0x19d510(0x1e3)]===_0x515e3a)_0x4c9255();}),document[_0x4a4c32(0x149)][_0x4a4c32(0x100)](_0x515e3a);}function _0x593666(_0x189222,_0x1f5381){var _0x5c7dbc=_0x2e878a,_0x2da3dd=_0x239bcb(),_0x498d46=_0x2da3dd[_0x5c7dbc(0x172)](function(_0x24f888){return _0x24f888&&_0x24f888['id']===_0x189222;});if(!_0x498d46||!_0x498d46['weeklyTasks'])return;_0x498d46[_0x5c7dbc(0x1b5)]=_0x498d46[_0x5c7dbc(a0_0x193e7a._0x59d736)][_0x5c7dbc(a0_0x193e7a._0x3e9b3a)](function(_0x31ca94){return _0x31ca94['id']!==_0x1f5381;}),_0x444181(_0x2da3dd),_0x415aa6();if(typeof window[_0x5c7dbc(a0_0x193e7a._0x28cf7a)]===_0x5c7dbc(a0_0x193e7a._0x3b3d7d))window['showStatus'](_0x5c7dbc(a0_0x193e7a._0x3b84ce),_0x5c7dbc(0xcd));}function _0x3191c0(_0x1fbe70){var a0_0x26cb39={_0x47cb11:0x19f},a0_0x2d2a1a={_0x40b4d0:0x1e3},_0x5fa778=_0x2e878a;_0x4c9255();var _0xa358e9=document[_0x5fa778(0x1d5)](_0x5fa778(a0_0x456c21._0x5ad896));_0xa358e9['id']=_0x5fa778(0x159),_0xa358e9[_0x5fa778(a0_0x456c21._0x51acef)]=_0x5fa778(0xce);var _0x51a837='<div\x20class=\x22gv2-popup\x22>';_0x51a837+=_0x5fa778(0xfb),_0x51a837+=_0x5fa778(a0_0x456c21._0x34749f),_0x51a837+=_0x5fa778(a0_0x456c21._0x53dca9)+_0x1fbe70+_0x5fa778(a0_0x456c21._0x57592f),_0x51a837+='<button\x20type=\x22button\x22\x20class=\x22gv2-voice-btn\x22\x20id=\x22gv2VoiceBtn\x22\x20onclick=\x22window._gv2ToggleVoice()\x22>🎤</button>',_0x51a837+='</div>',_0x51a837+='<div\x20id=\x22gv2VoiceStatus\x22\x20style=\x22font-size:12px;color:#999;margin-bottom:12px;display:none;\x22></div>',_0x51a837+=_0x5fa778(0x193)+_0x1fbe70+')\x22>追加する</button>',_0x51a837+=_0x5fa778(0x1a4),_0xa358e9[_0x5fa778(a0_0x456c21._0x8731d2)]=_0x51a837,_0xa358e9['addEventListener'](_0x5fa778(0x166),function(_0xe09c06){var _0x2fa06d=_0x5fa778;_0xe09c06[_0x2fa06d(a0_0x2d2a1a._0x40b4d0)]===_0xa358e9&&(_0x570c37(),_0x4c9255());}),document[_0x5fa778(a0_0x456c21._0x434667)]['appendChild'](_0xa358e9),setTimeout(function(){var _0x18e441=_0x5fa778,_0x3dea83=document[_0x18e441(a0_0x26cb39._0x47cb11)](_0x18e441(0x134));if(_0x3dea83)_0x3dea83[_0x18e441(0x12b)]();},-0x29*0x30+0x11*0x4f+-0x1*-0x2d5);}var _0x1834fe=null;function _0x570c37(){var _0x20e4e6=_0x2e878a;if(_0x1834fe){try{_0x1834fe[_0x20e4e6(a0_0xed2a9c._0x5c40ff)]();}catch(_0x31e9c9){}_0x1834fe=null;}var _0x417687=document[_0x20e4e6(0x19f)](_0x20e4e6(a0_0xed2a9c._0x23a88a));if(_0x417687)_0x417687[_0x20e4e6(0xc3)]['remove']('recording');var _0x18f876=document['getElementById'](_0x20e4e6(a0_0xed2a9c._0x282b45));if(_0x18f876)_0x18f876[_0x20e4e6(a0_0xed2a9c._0x30e31d)][_0x20e4e6(0x19d)]=_0x20e4e6(a0_0xed2a9c._0xaae7a1);}function _0xd1143d(){var a0_0x33815e={_0x52dcf3:0x14f,_0x2d696e:0xc1,_0x4d65a7:0xc6,_0x5c8654:0xc1,_0x5d782e:0x1bf,_0x3a33a7:0x116},_0x5054d6=_0x2e878a;if(_0x1834fe){_0x570c37();return;}var _0x31b116=window['SpeechRecognition']||window[_0x5054d6(a0_0xbcec8b._0x5713ee)];if(!_0x31b116){alert(_0x5054d6(a0_0xbcec8b._0x41e473));return;}var _0x339505=new _0x31b116();_0x339505[_0x5054d6(a0_0xbcec8b._0x302d45)]=_0x5054d6(0x197),_0x339505[_0x5054d6(0x17e)]=![],_0x339505[_0x5054d6(a0_0xbcec8b._0x267e50)]=!![],_0x1834fe=_0x339505;var _0x32c204=document[_0x5054d6(0x19f)](_0x5054d6(0x136)),_0x59e759=document[_0x5054d6(0x19f)](_0x5054d6(a0_0xbcec8b._0x37526d)),_0x18d91d=document[_0x5054d6(0x19f)]('gv2AddTaskInput');if(_0x32c204)_0x32c204['classList'][_0x5054d6(a0_0xbcec8b._0x4e6648)](_0x5054d6(a0_0xbcec8b._0x19beca));_0x59e759&&(_0x59e759['style'][_0x5054d6(0x19d)]=_0x5054d6(0x16c),_0x59e759[_0x5054d6(0x116)]='🎙️\x20聞いています...'),_0x339505[_0x5054d6(a0_0xbcec8b._0x58d0ad)]=function(_0x5f401b){var _0x24520e=_0x5054d6,_0x6f4d51='';for(var _0x47aafc=_0x5f401b[_0x24520e(a0_0x33815e._0x52dcf3)];_0x47aafc<_0x5f401b[_0x24520e(a0_0x33815e._0x2d696e)][_0x24520e(a0_0x33815e._0x4d65a7)];_0x47aafc++){_0x6f4d51+=_0x5f401b[_0x24520e(a0_0x33815e._0x5c8654)][_0x47aafc][0x8d*-0x1e+0x1129*-0x1+0x21af][_0x24520e(0x156)];}if(_0x18d91d)_0x18d91d[_0x24520e(a0_0x33815e._0x5d782e)]=_0x6f4d51;if(_0x59e759)_0x59e759[_0x24520e(a0_0x33815e._0x3a33a7)]=_0x24520e(0xc5)+_0x6f4d51;},_0x339505[_0x5054d6(0x117)]=function(){_0x570c37();},_0x339505[_0x5054d6(0x10d)]=function(_0xbbb6ce){var _0x4f58c5=_0x5054d6;if(_0x59e759)_0x59e759[_0x4f58c5(a0_0x4de647._0x1f81a4)]=_0x4f58c5(a0_0x4de647._0x364344)+(_0xbbb6ce[_0x4f58c5(0x1f5)]===_0x4f58c5(a0_0x4de647._0x23aec1)?_0x4f58c5(a0_0x4de647._0x423bd7):_0x4f58c5(0x14e)+_0xbbb6ce[_0x4f58c5(0x1f5)]);setTimeout(_0x570c37,0x2d4+0xaeb+-0x7e3);},_0x339505[_0x5054d6(0x161)]();}function _0x371dae(_0x101871){var _0x2d80a8=_0x2e878a,_0x4f0854=document[_0x2d80a8(0x19f)]('gv2AddTaskInput');if(!_0x4f0854)return;var _0x45752b=_0x4f0854[_0x2d80a8(0x1bf)][_0x2d80a8(a0_0x5191a3._0x53bd68)]();if(!_0x45752b)return;_0x570c37();var _0x8e30f3=_0x239bcb(),_0x2d01d8=_0x8e30f3[_0x2d80a8(0x172)](function(_0x3d3b6d){return _0x3d3b6d&&_0x3d3b6d['id']===_0x101871;});if(!_0x2d01d8){_0x4c9255();return;}if(!_0x2d01d8['weeklyTasks'])_0x2d01d8['weeklyTasks']=[];var _0x49d3d4=_0x11a214(),_0x285742=_0x7981f9(_0x521969);!_0x3603a3(_0x49d3d4,_0x285742[_0x2d80a8(a0_0x5191a3._0x302e48)],_0x285742[_0x2d80a8(a0_0x5191a3._0x373bff)])&&(_0x49d3d4=_0x285742[_0x2d80a8(a0_0x5191a3._0x302e48)]);_0x2d01d8[_0x2d80a8(a0_0x5191a3._0x4bf49f)][_0x2d80a8(0xb7)]({'id':Date[_0x2d80a8(a0_0x5191a3._0x547e06)](),'text':_0x45752b,'date':_0x49d3d4,'done':![]}),_0x444181(_0x8e30f3),_0x4c9255(),_0x415aa6();if(typeof window[_0x2d80a8(0x1d8)]==='function')window[_0x2d80a8(a0_0x5191a3._0x38c560)](_0x2d80a8(a0_0x5191a3._0x1d8096),'✓\x20タスクを追加しました');}function _0x9fb7f3(_0x373eca){var _0x210743=_0x2e878a,_0x362a4a=_0x2fd0fb(),_0x1a1d92=_0x362a4a[_0x210743(0x1a1)]('-')[_0x210743(0x142)](Number),_0x234b9a=new Date(_0x1a1d92[-0x34*-0x4f+0x60b+0xd*-0x1b3],_0x1a1d92[0x1*0x859+0x187f+0x4b1*-0x7]-(-0x3cc+0x478*-0x1+0x845)+_0x373eca,0x3*0x2f+-0x238a+-0xbaa*-0x3),_0x1298bf=_0x234b9a[_0x210743(0x137)]()+'-'+String(_0x234b9a[_0x210743(a0_0x5c845c._0x2e8a98)]()+(-0xfa9*0x1+-0x851+0x17fb))['padStart'](-0x506*0x5+0x16a2+-0x13f*-0x2,'0');window['selectedGoalsMonth']=_0x1298bf;window[_0x210743(a0_0x5c845c._0x53401b)]&&window[_0x210743(a0_0x5c845c._0x320468)][_0x210743(a0_0x5c845c._0x13c751)]&&window[_0x210743(a0_0x5c845c._0x53401b)][_0x210743(0x1aa)]['goals']&&(window[_0x210743(a0_0x5c845c._0x209138)]['state']['goals']['selectedMonth']=_0x1298bf);var _0x37f4fd=document[_0x210743(a0_0x5c845c._0x1eac64)]('currentGoalsMonth');_0x37f4fd&&(_0x37f4fd[_0x210743(a0_0x5c845c._0x327a01)]=_0x234b9a[_0x210743(0x137)]()+'年'+(_0x234b9a[_0x210743(0x1a9)]()+(0x175*-0x13+-0x5df+-0x218f*-0x1))+'月'),_0x415aa6();}function _0x8ff821(_0x124a1c){var _0x5a3b82=_0x2e878a;_0x521969[_0x5a3b82(0x16f)](_0x521969['getDate']()+_0x124a1c*(-0xa06*-0x2+0x134d+-0x2752)),_0x415aa6();}function _0x4e5031(){_0x521969=new Date(_0x44aebf),_0x415aa6();}function _0x352dcc(){var _0x13131c=_0x2e878a,_0x3f64c0=_0x521969[_0x13131c(a0_0x372ff9._0x3c479a)]()-_0x44aebf[_0x13131c(a0_0x372ff9._0x43d5a1)](),_0x5bd32b=Math[_0x13131c(0x1d9)](_0x3f64c0/((0x192*0xb+-0x50*-0x10+-0x1*0x163f)*(-0x1b94eb*-0x4a+0xa2c5d42+-0xcff0d30)));if(_0x5bd32b===-0x190e+-0x32*-0x14+0x1526)return _0x13131c(a0_0x372ff9._0x27744a);if(_0x5bd32b===0xaf6+-0x98f*0x1+0x166*-0x1)return _0x13131c(a0_0x372ff9._0x4b1086);if(_0x5bd32b===-(-0x942*0x4+0x1534+0xfd5))return'先週のタスク';if(_0x5bd32b>-0x1*0x12+0x7cd*-0x1+0x7df)return _0x5bd32b+'週後のタスク';return Math[_0x13131c(0xf3)](_0x5bd32b)+_0x13131c(0x112);}window['_gv2ToggleGoal']=_0x39f884,window[_0x2e878a(a0_0x17f80a._0xc6bf32)]=_0x30463e,window[_0x2e878a(0xf1)]=function(_0x4554dd){_0x12d55d(_0x4554dd);},window[_0x2e878a(a0_0x17f80a._0xf3df3c)]=_0xae9839,window[_0x2e878a(0x140)]=_0xf059ba,window[_0x2e878a(a0_0x17f80a._0x43d984)]=_0x585c25,window[_0x2e878a(0x128)]=_0x219fc9,window[_0x2e878a(0x1dd)]=_0x5d1072,window['_gv2CarryToNextWeek']=_0x464dd2,window[_0x2e878a(0x16b)]=_0x8ff821,window[_0x2e878a(0x150)]=_0x4e5031,window[_0x2e878a(a0_0x17f80a._0x3dee8a)]=_0x7023ae,window[_0x2e878a(a0_0x17f80a._0x397a25)]=_0x3191c0,window[_0x2e878a(a0_0x17f80a._0x30d950)]=_0x4c9255,window[_0x2e878a(a0_0x17f80a._0xe7a56b)]=_0xd1143d,window[_0x2e878a(a0_0x17f80a._0x78b47f)]=_0x371dae,window[_0x2e878a(0x1b2)]=_0x593666,window[_0x2e878a(a0_0x17f80a._0x5b89b4)]=_0x3372b4,window[_0x2e878a(a0_0x17f80a._0x1dfd0c)]=_0x192a15,window['changeGoalsMonth']=_0x9fb7f3,window[_0x2e878a(a0_0x17f80a._0x93f6e0)]=_0x145897,window[_0x2e878a(a0_0x17f80a._0x409982)]=_0x415aa6,window[_0x2e878a(a0_0x17f80a._0x1739ab)]=function(){},window['renderGoalsAll']=_0x415aa6,window[_0x2e878a(a0_0x17f80a._0x5cc5a3)]=_0x39f884,window['deleteGoal']=_0x30463e,window[_0x2e878a(a0_0x17f80a._0x1bfe20)]=function(){var a0_0x4665f2={_0x510724:0xef},_0x13d226=_0x2e878a,_0xbe0cb2=_0x11a214(),_0xe27fc7=_0x239bcb(),_0x2566d1=_0x2fa4e2(),_0x2e6c02=_0xe27fc7[_0x13d226(0xd0)](function(_0x52f235){var _0x83f0b7=_0x13d226;return _0x52f235&&_0x52f235[_0x83f0b7(a0_0x161d40._0x258df4)]===_0x2566d1;}),_0x2571ea=-0xec*-0xb+-0xfe6+0x5c2,_0x472a9f=-0xacb+-0x1317+0x1de2;return _0x2e6c02['forEach'](function(_0x220b30){var _0x3b9c15=_0x13d226,_0x211a2c=(_0x220b30[_0x3b9c15(0x1b5)]||[])['filter'](function(_0x183e22){return _0x183e22['date']===_0xbe0cb2;});_0x2571ea+=_0x211a2c[_0x3b9c15(0xc6)],_0x472a9f+=_0x211a2c[_0x3b9c15(a0_0x23d47f._0x39bb22)](function(_0x3febe1){var _0x32d9d1=_0x3b9c15;return _0x3febe1[_0x32d9d1(a0_0x4665f2._0x510724)];})[_0x3b9c15(a0_0x23d47f._0x307b5b)];}),{'total':_0x2571ea,'done':_0x472a9f};},window[_0x2e878a(0x106)]=function(){var a0_0x2c1e74={_0x18f091:0x1b5,_0x2163da:0xd0,_0x3d01ad:0xc6},a0_0x2948c0={_0x45b95c:0x10e,_0x34c7fa:0x1f1},_0x517a12=_0x2e878a,_0x32d32a=_0x7981f9(_0x44aebf),_0x356f7c=_0x239bcb(),_0x68a133=_0x2fa4e2(),_0x27c9ce=_0x356f7c[_0x517a12(a0_0x3360fd._0x512ff5)](function(_0x5deb76){var _0x297a4d=_0x517a12;return _0x5deb76&&_0x5deb76[_0x297a4d(a0_0x118685._0x195f17)]===_0x68a133;}),_0x496d7b=0x9d2+0x4*-0x90e+0x1a66,_0x4f87c3=0x54+0x210c+-0x20*0x10b;return _0x27c9ce['forEach'](function(_0x2b8c3d){var a0_0x5dde53={_0x19197c:0xef},_0x4b623d=_0x517a12,_0x33c9ec=(_0x2b8c3d[_0x4b623d(a0_0x2c1e74._0x18f091)]||[])[_0x4b623d(a0_0x2c1e74._0x2163da)](function(_0x5b4047){var _0x45a427=_0x4b623d;return _0x5b4047[_0x45a427(a0_0x2948c0._0x45b95c)]&&_0x3603a3(_0x5b4047[_0x45a427(0x10e)],_0x32d32a['start'],_0x32d32a[_0x45a427(a0_0x2948c0._0x34c7fa)]);});_0x496d7b+=_0x33c9ec[_0x4b623d(0xc6)],_0x4f87c3+=_0x33c9ec[_0x4b623d(a0_0x2c1e74._0x2163da)](function(_0x20b8a8){var _0x5614f8=_0x4b623d;return _0x20b8a8[_0x5614f8(a0_0x5dde53._0x19197c)];})[_0x4b623d(a0_0x2c1e74._0x3d01ad)];}),{'total':_0x496d7b,'done':_0x4f87c3};},window[_0x2e878a(a0_0x17f80a._0x2b4d72)]=function(_0x351446){var a0_0x5a5a6f={_0x3983fa:0xdf},_0x29cae9=_0x2e878a,_0x390416=_0x239bcb(),_0x4a967a=[];return _0x390416[_0x29cae9(0xdf)](function(_0x18de6a){var a0_0x1a8e10={_0x26895c:0x10e,_0x47f00e:0x1cd,_0x4afa88:0xef},_0x156119=_0x29cae9;if(!_0x18de6a||!_0x18de6a['weeklyTasks'])return;_0x18de6a[_0x156119(0x1b5)][_0x156119(a0_0x5a5a6f._0x3983fa)](function(_0x4184e6){var _0x2722fd=_0x156119;_0x4184e6[_0x2722fd(a0_0x1a8e10._0x26895c)]===_0x351446&&_0x4a967a[_0x2722fd(0xb7)]({'goalId':_0x18de6a['id'],'goalText':_0x18de6a[_0x2722fd(a0_0x1a8e10._0x47f00e)],'goalCategory':_0x18de6a['category'],'taskId':_0x4184e6['id'],'text':_0x4184e6['text'],'date':_0x4184e6[_0x2722fd(0x10e)],'done':_0x4184e6[_0x2722fd(a0_0x1a8e10._0x4afa88)]});});}),_0x4a967a;},window[_0x2e878a(a0_0x17f80a._0x2ee824)]=function(_0x100892){var a0_0x25b1b3={_0x4dd72c:0x10e},_0x36205b=_0x239bcb(),_0x187137={};return _0x36205b['forEach'](function(_0x13ddd1){var _0x3b54c4=a0_0x1ced;if(!_0x13ddd1||!_0x13ddd1[_0x3b54c4(a0_0x2f8ff6._0x255893)])return;_0x13ddd1[_0x3b54c4(a0_0x2f8ff6._0x255893)][_0x3b54c4(a0_0x2f8ff6._0x277f85)](function(_0x50b0fe){var _0x430f8a=_0x3b54c4;if(_0x50b0fe[_0x430f8a(0x10e)]&&_0x50b0fe[_0x430f8a(a0_0x25b1b3._0x4dd72c)][_0x430f8a(0xd8)](-0x21f9+-0x2*0xdfd+0x3df3*0x1,0x1*-0x637+-0x1*0x608+-0x2*-0x623)===_0x100892){if(!_0x187137[_0x50b0fe[_0x430f8a(a0_0x25b1b3._0x4dd72c)]])_0x187137[_0x50b0fe['date']]={'total':0x0,'done':0x0};_0x187137[_0x50b0fe[_0x430f8a(0x10e)]]['total']++;if(_0x50b0fe['done'])_0x187137[_0x50b0fe[_0x430f8a(0x10e)]][_0x430f8a(0xef)]++;}});}),_0x187137;},window[_0x2e878a(a0_0x17f80a._0x274ac3)]=function(_0x24f890,_0x43103d){var _0xf863ab=_0x2e878a,_0x41e245=_0x239bcb(),_0x2a079b=_0x24f890[_0xf863ab(0xd8)](0xfb6+0x231f+-0x32d5,0x243*0x1+-0xb4b+0x90f),_0x2f0fda=_0x41e245[_0xf863ab(0xd0)](function(_0x5e15cb){var _0x43b10a=_0xf863ab;return _0x5e15cb&&_0x5e15cb[_0x43b10a(0x1e0)]===_0x2a079b&&!_0x5e15cb[_0x43b10a(0x15d)];});if(_0x2f0fda[_0xf863ab(a0_0x35c20f._0x369605)]===-0xa9*-0x11+0x54c*-0x4+0x9f7)return![];var _0x3510be=_0x2f0fda[-0x1*0x199c+-0x380+0x1d1c];if(!_0x3510be['weeklyTasks'])_0x3510be[_0xf863ab(0x1b5)]=[];return _0x3510be['weeklyTasks'][_0xf863ab(a0_0x35c20f._0x23aee7)]({'id':Date[_0xf863ab(a0_0x35c20f._0x362805)](),'text':_0x43103d,'date':_0x24f890,'done':![]}),_0x444181(_0x41e245),!![];};function _0x201396(){var _0x2fc98f=_0x2e878a;_0x52eac5(),_0x33a8e9(),_0x415aa6();var _0x10053c=window[_0x2fc98f(0xd6)]=window[_0x2fc98f(0xd6)]||{};_0x10053c[_0x2fc98f(a0_0x175a57._0x3f2db6)]=_0x10053c['modules']||{},_0x10053c[_0x2fc98f(a0_0x175a57._0x3339ff)][_0x2fc98f(a0_0x175a57._0x47f290)]={'onShow':_0x415aa6};}document[_0x2e878a(0x104)]===_0x2e878a(0x15b)?document['addEventListener']('DOMContentLoaded',_0x201396):setTimeout(_0x201396,0x1d1b+0x1b1*0xd+-0x31ec);}()));function a0_0x1a7f(){var _0x446d44=['z2v0rgf5','icbKAxnWBgf5oMjSB2nRoYb3Awr0AdOXmdaLoYbWywrKAw5NoJeYChG7ig1HCMDPBI10B3a6nNb4oW','zMLUza','pc9OmZ4','zgLZCgXHEtPMBgv4o2DHCdO2ChG7ywXPz24TAxrLBxm6y2vUDgvYo2zSzxG6mtS','yNv0Dg9U','lNrHC2STzgvSlwj0BJPHy3rPDMuGEYbIywnRz3jVDw5KoInMzwu7ih0','Dg9eyxrLu3rY','qgTLEwzYyw1LCYbNDJiTChvSC2uGEYaWjsWXmdaLE3rYyw5ZzM9YBtPZy2fSzsGXktT9iduWjxT0CMfUC2zVCM06C2nHBguOms4WocK7Fsb9','lNrHC2STy2fYCNKTyNrUihSGyMfJA2DYB3vUzdOJzJnMngy2oYbJB2XVCJOJnJy2oYb9','pgrPDIbJBgfZCZ0Iz3yYlxbVChvWiJ4','C3r5Bgu','lMD2mI1WB3b1Cc10yxnRlxrLEhqGEYbMB250lxnPEMu6mtvWEdSGy29SB3i6iZmZmZSGCgfKzgLUzZOXmNb4oYbIywnRz3jVDw5KoInMogy4zJG7igjVCMrLCI1YywrPDxm6mtbWEdSGBwfYz2LUlwjVDhrVBtOXnNb4oYbSAw5LlwHLAwDODdOXlJu7ihDVCMqTyNjLywS6yNjLywSTD29YzdSGFq','pgrPDIbZDhLSzt0Iy29SB3i6iZK5otTMB250lxnPEMu6mtnWEdTWywrKAw5NoJrWEcaWidHWEdSIpUobK+obRUMaSEobRUocV+ocUEocR+obR+obVUobOoobGUocIUobVUobM+ocKZWVzgL2pG','y29UDgLUDw91CW','z3yYv2vLA2X5','z2v0v2vLA1jHBMDL','rw50zxi','icbIB3jKzxiTCMfKAxvZoJzWEdSGCgfKzgLUzZOYChGGohb4oYbJDxjZB3i6Cg9PBNrLCJSGBwfYz2LUlwXLzNq6nNb4oW','icb0CMfUC2L0Aw9UoMfSBcaUmNm7','pgrPDIbJBgfZCZ0Iz3yYlxn1Bw1HCNKTy2f0CYi+','z2v0vg9KyxLuyxnRu3rHDhm','jsa8C21HBgW+','icbIB3jKzxi6ideUnxb4ihnVBgLKicnLnwu3zwi7igjVCMrLCI1YywrPDxm6ide2ChG7ihbHzgrPBMC6ide4ChGGmJbWEdSGBwfYz2LUlwjVDhrVBtOGmtrWEdS','CMvUzgvYr29HBhm','z29HBenHDgvNB3j5','BM93','DgfZAY1KzwWTyNrU','mZe2otG0vw1pBujd','lNrHC2STAw5WDxq6zM9JDxmGEYbIB3jKzxiTy29SB3i6iZiXotzgmZSGFq','lMD2mI1NB2fSlwnIihSGD2LKDgG6idiWChG7igHLAwDODdOGmJbWEdSGBwLUlxDPzhrOoIaYmhb4oYbJDxjZB3i6ihbVAw50zxi7igfJy2vUDc1JB2XVCJOGiZiXotzgmZSGFq','lMD2mI1ZDw1Tyxj5lw51Bsb7igzVBNqTC2L6ztOGmJzWEdSGzM9UDc13zwLNAhq6idGWmdSGy29SB3i6icmZmZm7ih0','pgj1DhrVBIbJBgfZCZ0Iz3yYlxbVChvWlwj0BIbNDJiTCg9WDxaTyNrUlw5LEhqIig9Uy2XPy2S9iNDPBMrVDY5Fz3yYvg9Nz2XLv1qO','pgrPDIbJBgfZCZ0I','pgrPDIbJBgfZCZ0Iz3yYlw1VBNrOBhKIpG','pgj1DhrVBIb0ExbLpsjIDxr0B24IignSyxnZpsjNDJiTywrKlxn1yM1PDciGB25JBgLJAZ0ID2LUzg93lL9NDJjtDwjTAxrbzgruyxnRka','vdaWoJaWoJaW','BMv4DfnPyMXPBMC','mJmYmZa0oePLtMf6Da','AMeTsLa','pgrPDIbJBgfZCZ0IDg9KyxKTDgfZA3mTy29UDgvUDci+','CgfYzw50tM9Kzq','lMD2mI1NB2fSlMrVBMuGEYbVCgfJAxr5oIaWlJu1oYb9','pgj1DhrVBIbJBgfZCZ0Iz3yYlxDLzwSTBMf2lwj0BIiGB25JBgLJAZ0ID2LUzg93lL9NDJjdAgfUz2vxzwvRkc0Xksi+4PEaiowjJEMaStWVyNv0Dg9UpG','ktT3Aw5KB3CUx2D2mKnSB3nLvgfZA1bVChvWkcK7iJ48C3bHBIbJBgfZCZ0Iz3yYlxbVChvWlwj0BI1Py29UiJ4','zgLZCgXHEq','C3rVCa','z2v0rwXLBwvUDej5swq','Bw9KDwXLCW','C3bSAxq','DhLWzq','lMD2mI1NB2fSlw1LDgeGEYbKAxnWBgf5oIbMBgv4oYbHBgLNBI1PDgvTCZOGy2vUDgvYoYbNyxa6idHWEdSGBwfYz2LUlxrVCdOGm3b4oYb9','pc9KAxy+','lNrHC2STywn0Aw9Ulwj0BIb7igjVCMrLCJPUB25LoYbIB3jKzxiTCMfKAxvZoJzWEdSGy3vYC29YoNbVAw50zxi7ihbHzgrPBMC6nhb4idHWEdSGzM9UDc1ZAxPLoJeXChG7igzVBNqTD2vPz2H0oJyWmdSGBwLUlwHLAwDODdOYohb4oYbTAw4TD2LKDgG6mZzWEdSGzgLZCgXHEtPMBgv4oYbHBgLNBI1PDgvTCZPJzw50zxi7igP1C3rPzNKTy29UDgvUDdPJzw50zxi7ihrYyw5ZAxrPB246ywXSic4YCZSGFq','Aw50zxjPBvjLC3vSDhm','8j+rQokaJFcFKANIGi3WN5gN4Ocn8j+rPG','x2D2mLrVz2DSzvzVAwnL','z2v0tw9UDgG','C3rHDgu','lMD2mI1LBxb0Esb7ihrLEhqTywXPz246ignLBNrLCJSGy29SB3i6icm5otK7ihbHzgrPBMC6idiWChG7igzVBNqTC2L6ztOGmtrWEdSGFq','lMD2mI1JywWTzgf5lNrVzgf5ihSGyMfJA2DYB3vUzdOJmJe5nKyZoYb9','Bwf0y2G','pgrPDIbJBgfZCZ0Iz3yYlxbVChvWlxrPDgXLiJ48C3bHBJ7JGR/JGRNJGQ88l3nWyw4+pgj1DhrVBIbJBgfZCZ0Iz3yYlxbVChvWlwnSB3nLiIbVBMnSAwnRpsj3Aw5KB3CUx2D2mKnSB3nLvgfZA1bVChvWkcKIpUkCLtWVyNv0Dg9UpJWVzgL2pG','x2D2mKfKzfrHC2TeAxjLy3q','x2D2mKrLBgv0zuDVywW','z2v0rgf0zq','x2D2mKrLBgv0zvrHC2S','lMD2mI13zwvRlw5HDI1IDg46Ag92zxiGEYbIywnRz3jVDw5KoImZmZm7ih0','BM8TC3bLzwnO','D2vLA2X5vgfZA3m','pgrPDIbJBgfZCZ0Iz3yYlxbVChvWlxrHC2STDgv4Dci+','5P2L6ycX44ke44kl44gt44gO','y3vYCMvUDeDVywXZtw9UDgG','lNrHC2STC2f2zs1IDg46ywn0AxzLihSGyMfJA2DYB3vUzdOJmtK3nKqYoYb9','AM91CM5HBevUDhjPzxnwmW','lNrHC2STy29WEs1IDg4GEYbIywnRz3jVDw5KoInLm2yYzMq7ignVBg9YoImXotC2rdi7ih0','ksi+77YlioI/VEwkOdWVyNv0Dg9UpG','8j+oRYdKU4RMNiJJGA7NM67MQjK','z29HBeLUChv0','DMfSDwu','lNrHC2STy29WEs1IDg46ywn0AxzLihSGyMfJA2DYB3vUzdOJyMjKzwzIoYb9','pgrPDIbJBgfZCZ0IDg9KyxKTDgfZA3mTC2vJDgLVBIbNDJiTD2vLA2X5iJ4','pgj1DhrVBIbJBgfZCZ0Iz3yYlxDLzwSTBMf2lwj0BIiGB25JBgLJAZ0ID2LUzg93lL9NDJjdAgfUz2vxzwvRkdePiJ7MRkhPGleG4PA2pc9IDxr0B24+','lMD2mI1ZDw1Tyxj5lxrPDgXLihSGzM9UDc1ZAxPLoIaXnhb4oYbMB250lxDLAwDODdOGnJaWoYbJB2XVCJOGiZu1ntSGFq','pgrPDIbJBgfZCZ0Iz3yYlxDLzwSTzgLZCgXHEsi+8j+tIYa','icbMB250lxnPEMu6mtrWEdSGzM9UDc13zwLNAhq6ntaWoYbJB2XVCJOJodG4oYbJDxjZB3i6Cg9PBNrLCJS','lNrHC2STzgvSlwj0BIb7igjHy2TNCM91BMq6i2y1zJvMntSGy29SB3i6i2u1m2uZztSGFq','lMD2mI12B2LJzs1IDg4GEYb3Awr0AdO0ohb4oYbOzwLNAhq6ndHWEdSGBwLUlxDPzhrOoJq4ChG7igjVCMrLCJPUB25LoYbIB3jKzxiTCMfKAxvZoJuWjtSGyMfJA2DYB3vUzdOJzJbMmgyWoYbMB250lxnPEMu6mJjWEdSGy3vYC29YoNbVAw50zxi7igrPC3bSyxK6zMXLEdSGywXPz24TAxrLBxm6y2vUDgvYoYbQDxn0Awz5lwnVBNrLBNq6y2vUDgvYoYb0CMfUC2L0Aw9UoMfSBcaUmNm7ih0','icbTAw4TAgvPz2H0oJq0ChG7','lMD2mI1JywWTzgf5ihS','lMD2mI1HzgqTAw5WDxqGEYbMBgv4oJe7ihbHzgrPBMC6mtjWEcaXnhb4oYbIB3jKzxi6ms41ChGGC29SAwqGi2rKzdSGyM9YzgvYlxjHzgL1CZOXmhb4oYbMB250lxnPEMu6mtvWEdSGB3v0BgLUztPUB25LoYb9','C2v0sg91CNm','icbIywnRz3jVDw5KoIaJzMzMoW','Dgv4Da','mtuZmZeZnxHku0nHAa','lMD2mI1JywWTzg93ihSGzgLZCgXHEtPIBg9JAZSGzM9UDc1ZAxPLoJeWChG7ignVBg9YoIm5otK7igXPBMuTAgvPz2H0oJeUmZSGFq','C2v0sxrLBq','Dgv4Dc1KzwnVCMf0Aw9UoMXPBMuTDgHYB3vNAdTJB2XVCJOJotK5oW','rxnJyxbL','x2D2mKvKAxrxva','lMD2mI1WB3b1Cc1JBg9Zzsb7igjHy2TNCM91BMq6BM9UztSGyM9YzgvYoM5VBMu7igzVBNqTC2L6ztOYmNb4oYbJB2XVCJOJotK5oYbJDxjZB3i6Cg9PBNrLCJSGCgfKzgLUzZO0ChGGohb4oYb9','y3jLyxrLrwXLBwvUDa','z29HBfn0yxr1CW','icbIywnRz3jVDw5KoInMnwy1zJu7igjVCMrLCJOXChGGzgfZAgvKicnJy2m7igjVCMrLCI1YywrPDxm6mtbWEdS','C2HVD1n0yxr1CW','CM91BMq','pgrPDIbJBgfZCZ0IDgfZAY1NCM91Cci+','ywrKr29HBa','y2HLy2TLza','x2D2mKnVChLuB1rVzgf5qxm','B25Yzxn1Bhq','Dw5ZAgLMDa','Bw9UDgG','lMD2mI1NB2fSoMHVDMvYihSGyMfJA2DYB3vUzdOGi2yWzJbMmdSGFq','44gU55UU5QIz','DgfYz2v0','pgXHyMvSignSyxnZpsj0yxnRlwXHyMvSiIbVBMnSAwnRpsj3Aw5KB3CUx2D2mLnOB3DuyxnRug9WDxaO','ioocV+ocUEocR+MbLoAiKdWVC21HBgW+pc9KAxy+','lMD2mI13zwvRBhKGEYbTyxjNAw4TyM90Dg9ToIaXmdbWEdSGFq','8j+tIYdKU4RPGleG','DhjPBq','C2vSzwn0zwrhB2fSC01VBNrO','z2v0vgLTzq','4PYtioEBRUAOMEocKUwjIUMzPoobL+obVUobL+obNW','lMD2mI1WB3b1Cc1IDg4TBxvZDcb7igjHy2TNCM91BMq6i2uZzJjMzdSGy29SB3i6iZe1nJvJmdSGFq','lNrHC2STAw5WDxqGEW','BxvZDa','pgrPDIbJBgfZCZ0Iz3yYlxn1Bw1HCNKTyMfYiJ48zgL2ignSyxnZpsjNDJiTC3vTBwfYEs1MAwXSiIbZDhLSzt0ID2LKDgG6','ignOzwnRzwq','zw5K','lMD2mI13zwvRlw5HDI1IDg4GEW','pgj1DhrVBIbJBgfZCZ0Iz3yYlwfKzc1IDg4TC20Iig9Uy2XPy2S9iNDPBMrVDY5VCgvUr29HBefKze1VzgfSkcKIpUkELsdOV73LIQa8l2j1DhrVBJ4','pgj1DhrVBIbJBgfZCZ0Iz3yYlwDVywWTzgvSiIbVBMnSAwnRpsj3Aw5KB3CUx2D2mKrLBgv0zuDVywWO','zxjYB3i','lMD2mI1ZDw1Tyxj5lwjHCIb7ihDPzhrOoIaXmdaLoYbOzwLNAhq6idDWEdSGyMfJA2DYB3vUzdOGi2u1ztDLyJSGyM9YzgvYlxjHzgL1CZOGnhb4oYbVDMvYzMXVDZOGAgLKzgvUoYb9','lMD2mI1WB3b1Cc1Hy3rPB25ZihSGzgLZCgXHEtPMBgv4oYbMBgv4lwrPCMvJDgLVBJPJB2X1Bw47igDHCdO4ChG7ih0','D2vLAW','lNrHC2STywrKlwj0BIb7','lMD2mI1NB2fSlxDRihSGzM9UDc1ZAxPLoIaXmxb4oYbJB2XVCJOGiZiXotzgmZSGzM9UDc13zwLNAhq6iduWmdSGFq','icbJB2XVCJOGiZmZmZSGyM94lxnOywrVDZOGmcaYChGGohb4ihjNyMeOmcWWldaSmc4WnIK7','lMD2mI1HzgqTC3vIBwL0ihSGD2LKDgG6mtaWjtSGCgfKzgLUzZOXnhb4oYbIywnRz3jVDw5KoImYmtK2rJm7ignVBg9YoInMzMy7igjVCMrLCJPUB25LoYbIB3jKzxiTCMfKAxvZoJeWChG7igzVBNqTC2L6ztOXnxb4oYbMB250lxDLAwDODdO2mda7ign1CNnVCJPWB2LUDgvYoYb9','4PYtioEBRUAOMEocKUI/VEwkOoobL+obVUobL+obNW','BM9Uzq','Bg9N','lMD2mI1WB3b1Cc1IDg4TzwrPDcb7igjHy2TNCM91BMq6i2zMzJnLmdSGy29SB3i6i2u2nteWmdSGFq','pgLUChv0ihr5Cgu9iMnOzwnRyM94iIbJBgfZCZ0Iz3yYlwDVywWTy2iIia','pc9ZCgfUpG','5PAW44gx44ge44k/44k544kV','icbIywnRz3jVDw5KoInMogy4zJG7ihbVC2L0Aw9UoNjLBgf0AxzLoW','5lUk5PYi44gU55UU5QIz44oQ44k544oi','ksiGDgL0Bgu9iUwjIUMzPci+8j+xKE+4JZWVyNv0Dg9UpG','pgj1DhrVBIbJBgfZCZ0Iz3yYlxbVChvWlwj0BIbNDJiTCg9WDxaTyNrUlw11C3qIig9Uy2XPy2S9iNDPBMrVDY5Fz3yYq29WEvrVvg9KyxLbCYG','6z+Z5AoW44gm5QsC5yE644gv44km44g+44gB44kt44gN44gx44gF','ChvZAa','5PYi44gU55UU5QIz44oQ44k544oi','mtq4mJe5mKzgsLLgrG','zMfIq29UDgfPBMvY','C2vSzwn0','ig9Uy2HHBMDLpsj3Aw5KB3CUx2D2mLrVz2DSzvDuka','phnWyw4Gy2XHC3m9iMD2mI1NB2fSlxDRiJ4','lMD2mI1ZDw1Tyxj5lwnHDhmGEYbKAxnWBgf5oIbMBgv4oYbMBgv4lxDYyxa6ihDYyxa7igDHCdOGnNb4oYbTyxjNAw4TDg9WoIaXmhb4oYb9','pgrPDJ48zgL2ignSyxnZpsjNDJiTC3vTBwfYEs10AxrSzsi+8j+tIIdKU4RMNiJJGA7PGllMJzC8l2rPDJ48l2rPDJ4','CMvTB3zL','CMvZDwX0CW','pgrPDIbJBgfZCZ0Iz3yYlxn1Bw1HCNKTBNvTiJ4','y2XHC3nmAxn0','pgrPDIbPzd0Iz3yYu3vTBwfYEsi+pc9KAxy+','8j+oME+4JYa','BgvUz3rO','Aw5Uzxjive1m','pgrPDIbJBgfZCZ0IDgfZAY1PDgvTiIbPzd0ID3rF','Bw9UDgHSEuDVywXZ','x2D2mLn1yM1PDefKzfrHC2S','pgrPDIbJBgfZCZ0Iz3yYlwfKzc1PBNb1Dc13CMfWiJ4','icJLHAG','4PYtioocV+ocUEocR+ocKUwjIUMzPoobL+obVUobL+obNW','z3yYlxbVChvWlw92zxjSyxK','x2D2mKnSB3nLvgfZA1bVChvW','zMLSDgvY','5lUk6ycX44ke44kl44gt44gO','pgLUChv0ihr5Cgu9iMnOzwnRyM94iIbJBgfZCZ0IDgfZAY1JAgvJA2jVEci','u3rVCMfNzq','CMvJB3jKAw5N','pgrPDIbPzd0Iz3yYv2vLA2X5iJ48l2rPDJ4','qxbW','C3rYAw5NAwz5','C3vIC3rYAw5N','mKzUEwzpAW','lNrHC2STAxrLBsb7igrPC3bSyxK6zMXLEdSGywXPz24TAxrLBxm6y2vUDgvYoYbNyxa6ohb4oYbWywrKAw5NoJeWChGGnhb4oYbIB3jKzxiTyM90Dg9ToJfWEcbZB2XPzcaJzJbMmgyWoYbTAw4TAgvPz2H0oJq0ChG7ih0','z3yYx2nVBgXHChnLza','BgfUzW','y2f0zwDVCNK','C2v0','zM9YrwfJAa','pgj1DhrVBIbJBgfZCZ0Iz3yYlxbVChvWlwj0BIbNDJiTCg9WDxaTyNrUlwvKAxqIig9Uy2XPy2S9iNDPBMrVDY5Fz3yYq2XVC2vuyxnRug9WDxaOktTZzxruAw1LB3v0kgz1BMn0Aw9UkcL7D2LUzg93lL9NDJjfzgL0v1qO','CgfYC2u','44gt44gU55UU5QIz44ks5yMk6zMK44gx44g+44gz44gl77YF','z29HBhnmAxn0vgL0Bgu','z29HBhm','pgLUChv0ihr5Cgu9iNrLEhqIignSyxnZpsjNDJiTywrKlwLUChv0iIbPzd0Iz3yYqwrKvgfZA0LUChv0iIbWBgfJzwHVBgrLCJ0I44k/44k544kV44ks5ywL5yQBlI4UiIbVBMTLEwrVD249iMLMkgv2zw50lMTLEt09psDfBNrLCICPE2v2zw50lNbYzxzLBNrezwzHDwX0kcK7D2LUzg93lL9NDJjtDwjTAxrbzgruyxnRka','4PQG77Ipia','pgrPDIbJBgfZCZ0Iz3yYlwvTChr5iJ7NM67MQjNJGPlOV73LIQdJGzFJGABJGihJG4hJG6pJG6ZJG7pJGRJJGPlLP4VJGOhJGOJJGyBVVie8l2rPDJ4','mtq1nZm0meX6uM9XtW','pgrPDIbJBgfZCZ0Iz3yYlwDVywWTDgv4Dci+','z3yYvM9Py2vtDgf0Dxm','lMD2mI1NB2fSlwjVzhKGEYbMBgv4oIaXoYbTAw4TD2LKDgG6ida7ih0','pgrPDIbJBgfZCZ0Iz3yYlw1VBNrOBhKTAgvHzci+','lMD2mI12B2LJzs1IDg4UCMvJB3jKAw5NihSGyMfJA2DYB3vUzdOJzwy0ndq0oYbHBMLTyxrPB246z3yYlxb1BhnLidfZigLUzMLUAxrLoYb9','4PYtios7IUAxPEobRG','zg9Uzq','lMD2mI1ZDw1Tyxj5lw51BsbZBwfSBcb7igzVBNqTC2L6ztOGmtnWEdSGzM9UDc13zwLNAhq6iduWmdSGy29SB3i6icm4odG7ih0','x2D2mKfKzfDu','pgj1DhrVBIbJBgfZCZ0Iz3yYlxbVChvWlwj0BIbNDJiTCg9WDxaTyNrUlxDHBNqIig9Uy2XPy2S9iNDPBMrVDY5Fz3yYq29WEvrVvg9KyxLbCYG','ywjZ','pc9SywjLBd4','44gk5l2/44ge44gU44ow44oP44kM44k244gV6z+Z5AoW5ywL5yQB44gR5A++5B+C44gx44gM44ge44g+44gB44kt','lcDTDxn0jYK7D2LUzg93lL9NDJjdBg9ZzvrHC2TqB3b1CcGPoYi+phnWyw4Gy2XHC3m9iMD2mI1WB3b1Cc1IDg4TAwnVBIi+8j+tJdWVC3bHBJ7KU4RML6xJGA5nvvnu44gR6l+95yQGpc9IDxr0B24+','ktWVC3bHBJ4','ktT9iJ4','pgrPDIbJBgfZCZ0Iz3yYlxn1Bw1HCNKTDg9WiJ4','lMD2mI1WB3b1Cc1IDg4TBMv4Dcb7igjHy2TNCM91BMq6i2yZzJrMnJSGy29SB3i6iZu1ntSGFq','pgrPDIbJBgfZCZ0Iz3yYlxbVChvWlxrPDgXLiJ48C3bHBJ7JGR/JGRNJGQ/JGPlOV73LIQa8l3nWyw4+pgj1DhrVBIbJBgfZCZ0Iz3yYlxbVChvWlwnSB3nLiIbVBMnSAwnRpsj3Aw5KB3CUx2D2mKnSB3nLvgfZA1bVChvWkcKIpUkCLtWVyNv0Dg9UpJWVzgL2pG','AxnbCNjHEq','pgj1DhrVBIbJBgfZCZ0Iz3yYlxbVChvWlwj0BIbNDJiTCg9WDxaTyNrUlwrLBciGB25JBgLJAZ0ID2LUzg93lL9NDJjezwXLDgvuyxnRka','CMvUzgvYsg9TzvrVzgf5vgfZA3m','lMD2mI13zwvRlwnHBcb7igrPC3bSyxK6zMXLEdSGz2fWoJjWEdSGBwfYz2LUlwjVDhrVBtOXmhb4oYb9','yxbWzw5Kq2HPBgq','A2v5zg93BG','CxvLCNLtzwXLy3rVCG','D2fUDa','CMvHzhLtDgf0zq','lMD2mI13zwvRlw5HDIb7igrPC3bSyxK6zMXLEdSGywXPz24TAxrLBxm6y2vUDgvYoYbQDxn0Awz5lwnVBNrLBNq6C3bHy2uTyMv0D2vLBJSGz2fWoJHWEdSGBwfYz2LUlwjVDhrVBtOXmhb4oYb9','z2v0v2vLA2X5vgfZA1n0yxrZ','pgrPDIbJBgfZCZ0Iz3yYlxDLzwSTBMf2iJ4','CgfKu3rHCNq','ksi+','lMD2mI1WB3b1Ccb7igjHy2TNCM91BMq6i2zMzJSGyM9YzgvYlxjHzgL1CZOXnNb4ide2ChGGmcaWoYbTyxGTD2LKDgG6ndGWChG7ihDPzhrOoJeWmcu7ihbHzgrPBMC6mJbWEcaXnNb4idi4ChG7ig1HEc1OzwLNAhq6odb2AdSGB3zLCMzSB3CTEtPHDxrVoYb9','z2v0sxrLBq','CxvLCNLtzwXLy3rVCKfSBa','B25LCNjVCG','zgf0zq','ywrKrxzLBNrmAxn0zw5LCG','y29SB3i','z2v0vgfZA0rHDgvZrM9Ytw9UDgG','6ycX5yMn44gU44k/44k544kV','pgrPDIbJBgfZCZ0Iz3yYlxbVChvWlwfJDgLVBNmIpG','lMDVywXZlw1VBNrOlxnLBgvJDg9Y','icb0zxH0lwfSAwDUoMnLBNrLCJSGDhjHBNnPDgLVBJPHBgWGlJjZoW','Dgv4DenVBNrLBNq','B25LBMq','pgrPDIbJBgfZCZ0Iz3yYlxDLzwSTy2fSiJ4','z3yYlwnHBc1KyxK','4P2mioEBRUAOMEocKUwfPEwkM+obL+obPUobJ+obOoobLEobHa','lNrHC2STC2f2zs1IDg4GEYbIywnRz3jVDw5KoImYmtK2rJm7ignVBg9YoInMzMy7ih0','pc9KAxy+pc9KAxy+','x2D2mLnOB3DuyxnRug9WDxa','lMD2mI1WB3b1Cc1IDg4TzgvSihSGyMfJA2DYB3vUzdOJzMnLngvJoYbJB2XVCJOJyZyYodi4oYb9','lMD2mI1NB2fSihSGzgLZCgXHEtOGzMXLEdSGywXPz24TAxrLBxm6ignLBNrLCJSGz2fWoIaXmhb4oYbWywrKAw5NoIaXmhb4oYbTyxjNAw4TyM90Dg9ToIa2ChG7igjHy2TNCM91BMq6icnMowy5zJK7igjVCMrLCI1YywrPDxm6ideWChG7ihrYyw5ZAxrPB246igfSBcaUmNm7ih0','lMD2mI1WB3b1Cc1IDg46ywn0AxzLihSGDhjHBNnMB3jToNnJywXLkdaUotGPoYb9','lMD2mI1WB3b1Cc1IDg4GEYbKAxnWBgf5oMzSzxG7igfSAwDUlwL0zw1ZoMnLBNrLCJSGz2fWoJeWChG7ihbHzgrPBMC6mtrWEcaXnNb4oYbIB3jKzxi6BM9UztSGyM9YzgvYlxjHzgL1CZOXmNb4oYbMB250lxnPEMu6mtrWEdSGzM9UDc13zwLNAhq6nJaWoYbJDxjZB3i6Cg9PBNrLCJSGDhjHBNnPDgLVBJPHBgWGlJjZoYb3Awr0AdOXmdaLoYb0zxH0lwfSAwDUoMXLzNq7ih0','Ag9TzvDHBNruyxnR','x2D2mLrVz2DSzunVBgXHChnL','mtCZnJrksenxzMG','44gD44gU5lUw','oda4odaZu2TNq0LM','ywrK','x2D2mKnVChLuB1rVzgf5','icbMB250lxnPEMu6mtfWEdSGy29SB3i6iZiXotzgmZSGyMfJA2DYB3vUzdPUB25LoYbIB3jKzxi6mxb4ihnVBgLKicmYmtK2rJm7','zNvUy3rPB24','zM9JDxm','A2v5','pgrPDIbZDhLSzt0IDgv4Dc1HBgLNBJPJzw50zxi7y29SB3i6iZK5otTWywrKAw5NoJe2ChG7zM9UDc1ZAxPLoJeZChG7iJ7NM67MQjNJGyZJGB7JGAdJGylJGORJGB7JGzVJGPm8l2rPDJ4','icb0CMfUC2L0Aw9UoMjVCMrLCI1JB2XVCIaUmNm7','DxbKyxrLr29HBhnnB250AerPC3bSyxK','phnWyw4Gy2XHC3m9iMD2mI1JywWTBNvTiJ4','CMvUzgvYr29HBhnqCM9NCMvZCW','A2v5CW','icbWywrKAw5NoIa2ChGGmtrWEdSGyMfJA2DYB3vUzdOGi2yWzJbMmdSGyM9YzgvYoIbUB25LoYbIB3jKzxiTCMfKAxvZoIa4ChG7','z3yYqwrKvgfZA0LUChv0','lMD2mI1TB250AgX5lwHLywqGAdmGEYbTyxjNAw46ida7igzVBNqTC2L6ztOGmtzWEdSGy29SB3i6icmZmZm7ih0','z3yYvM9Py2vcDg4','z2v0rNvSBfLLyxi','z3yYtw9UDgHSEq','lMD2mI1ZDw1Tyxj5lwnHDcb7igjHy2TNCM91BMq6icnMm2y0zJy7ihbHzgrPBMC6idjWEcaXmhb4oYbIB3jKzxiTCMfKAxvZoIaXmNb4oYbMB250lxnPEMu6ideXChG7ignVBg9YoIaJntu1oYb9','zgL2','lMD2mI1ZDw1Tyxj5ihS','Dg9Nz2XLr29HBenVBxbSzxrL','jsi+pc9KAxy+pc9KAxy+','pgGZpG','lMD2mI1JywWTBNvTihSGzgLZCgXHEtPIBg9JAZSGzM9UDc1ZAxPLoJe0ChG7igzVBNqTD2vPz2H0oJCWmdSGy29SB3i6iZmZmZSGBgLUzs1OzwLNAhq6ms4ZoYb9','x2D2mLrVz2DSzvDu','z2v0vgfZA3ngB3jeyxrL','BwfW','pc9IDxr0B24+','lMD2mI1WB3b1Cc1VDMvYBgf5ihSGCg9ZAxrPB246zML4zwq7ihrVCdOWoYbSzwz0oJa7ihjPz2H0oJa7igjVDhrVBtOWoYbIywnRz3jVDw5KoNjNyMeOmcWWldaSlJuPoYb6lwLUzgv4oJK5otK5oYbKAxnWBgf5oMzSzxG7igfSAwDUlwL0zw1ZoMzSzxGTzw5KoYbQDxn0Awz5lwnVBNrLBNq6y2vUDgvYoYb9','tu9oveHmwv9ht0fmuW','Aw5Zzxj0qMvMB3jL','y3vYCMvUDfDLzwTlzxK','ktT9ldeWmcK7iJ48C3bHBIbJBgfZCZ0Iz3yYlxbVChvWlwj0BI1Py29UiJ7INi/VUi88l3nWyw4+44og44kT44k544oi44ks57EO6zUgpc9IDxr0B24+','yM9KEq','pgrPDIbJBgfZCZ0Iz3yYlxrHC2STyM9KEsiGC3r5Bgu9iG','C3vTBwfYEq','lMD2mI1HzgqTyNrUlxnToMHVDMvYihSGyMfJA2DYB3vUzdOGi2uWztbLmdSGy29SB3i6icmZmZm7ih0','lNrHC2STywrKlwj0BJPOB3zLCIWGlNrHC2STywrKlwj0BJPHy3rPDMuGEYbIywnRz3jVDw5KoInLzwu7ignVBg9YoIm1ntu7igjVCMrLCI1JB2XVCJOJywfHoYb9','44kO44oP44o8oIa','CMvZDwX0sw5KzxG','x2D2mKDVvg9dDxjYzw50v2vLAW','D2vIA2L0u3bLzwnOuMvJB2DUAxrPB24','5A6m5lQg44gR44gz44kl','z29HBhnwmKnVBNrHAw5LCG','lMD2mI1ZDw1Tyxj5lwzPBgWGEYbOzwLNAhq6ideWmcu7igjHy2TNCM91BMq6icmZmZm7igjVCMrLCI1YywrPDxm6idrWEdSGDhjHBNnPDgLVBJOGD2LKDgGGmc40CYbLyxnLoYb9','x2D2mLnOB3DbzgrqB3b1Ca','DhjHBNnJCMLWDa','pgrPDIbJBgfZCZ0IDgfZAY1NCM91Cc10AxrSzsiGC3r5Bgu9iMn1CNnVCJPWB2LUDgvYo2rPC3bSyxK6zMXLEdTHBgLNBI1PDgvTCZPJzw50zxi7z2fWoJzWEdSIig9Uy2XPy2S9iNDPBMrVDY5Fz3yYvg9Nz2XLq29SBgfWC2uO','idXZCgfUihn0EwXLpsjMB250lxnPEMu6mtjWEdTJB2XVCJOJodG4o2zVBNqTD2vPz2H0oJqWmdSIpIG','z3yYlxrHC2STCg9WDxa','y2XHC3noyw1L','Bg9HzgLUzW','ktT3Aw5KB3CUx2D2mKnSB3nLvgfZA1bVChvWkcK7iJ48C3bHBIbJBgfZCZ0Iz3yYlxbVChvWlwj0BI1Py29UiJ7WN5ofpc9ZCgfUpUADPEMaSEobQ+ENU+wlLtWVyNv0Dg9UpG','y29TCgXLDgvK','x2D2mKfKzfDurM9Yrgf0zq','lMD2mI1HzgqTAw5WDxq6zM9JDxmGEYbIB3jKzxiTy29SB3i6iZiXotzgmZSGFq','ihn0EwXLpsj0zxH0lwrLy29YyxrPB246BgLUzs10AhjVDwDOo2nVBg9YoIm5otK7iG','C3rHCNq','AgvHza','lMD2mI1NB2fSlwrLBdPOB3zLCIb7ig9WywnPDhK6ideGiwLTCg9YDgfUDdSGFq','ksiGlZ4','Aw5WDxq','y2XPy2S','icbMB250lxnPEMu6ideZChG7igzVBNqTD2vPz2H0oIa2mda7ignVBg9YoIaJntu1oYbJDxjZB3i6ihbVAw50zxi7ihrYyw5ZAxrPB246igfSBcaUmNm7','lMD2mI1WB3b1Cc1IDg4TD2fUDcb7igjHy2TNCM91BMq6i2u4zJvLotSGy29SB3i6iZjLn2qZmJSGFq','icbTAw4TD2LKDgG6ndbWEdSGBwLUlwHLAwDODdO0mhb4oYbMB250lxnPEMu6mtzWEdS','AM9PBG','x2D2mKnOyw5NzvDLzwS','yMXVy2S','lMD2mI1NB2fSlwnHDcb7igzVBNqTC2L6ztOGmtfWEdSGCgfKzgLUzZOGmNb4idHWEdSGyMfJA2DYB3vUzdOGi2u4ztHLodSGyM9YzgvYlxjHzgL1CZOGnhb4oYbJB2XVCJOGiZy2nJSGFq','phnWyw4GC3r5Bgu9iMzVBNqTC2L6ztOXmxb4o2nVBg9YoInHywe7DhjHBNnPDgLVBJP0CMfUC2zVCM0Gmc4YCZSIpG','C2v0rgf0zq'];a0_0x1a7f=function(){return _0x446d44;};return a0_0x1a7f();}
+/**
+ * goals-v2.js
+ * 目標ページ リニューアル — 外部JSで上から被せる方式
+ * v2.1: weeklyTasks を日付ベース (date: "YYYY-MM-DD") に変更
+ */
+(function(){
+  'use strict';
+
+  // ========== CSS注入 ==========
+  var style = document.createElement('style');
+  style.textContent = [
+    /* 進捗サマリーカード */
+    '.gv2-summary {',
+    '  background: #fff;',
+    '  border: 1.5px solid #e5e7eb; border-radius: 16px; padding: 18px 20px; margin-bottom: 14px;',
+    '  color: #333; box-shadow: 0 2px 8px rgba(0,0,0,0.06);',
+    '}',
+    '.gv2-summary-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }',
+    '.gv2-summary-title { font-size: 14px; font-weight: 600; color: #555; }',
+    '.gv2-summary-num { font-size: 26px; font-weight: 800; color: #333; }',
+    '.gv2-summary-num small { font-size: 13px; font-weight: 500; color: #888; }',
+    '.gv2-summary-bar { width: 100%; height: 7px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }',
+    '.gv2-summary-fill { height: 100%; background: #333; border-radius: 4px; transition: width 0.4s ease; }',
+    '.gv2-summary-cats { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }',
+    '.gv2-summary-cat { background: #f3f4f6; padding: 2px 10px; border-radius: 12px; font-size: 11px; color: #555; }',
+
+    /* 今週やること（一番下なのでFAB用の余白） */
+    '.gv2-weekly { margin-bottom: 100px; }',
+
+    /* 今月の目標セクション */
+    '.gv2-monthly { background: #fff; border-radius: 16px; padding: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 14px; }',
+    '.gv2-monthly-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }',
+    '.gv2-monthly-head h3 { margin: 0; font-size: 16px; color: #333; }',
+    '.gv2-add-btn-sm {',
+    '  padding: 6px 14px; background: #f0f0f0; border: none; border-radius: 8px;',
+    '  font-size: 13px; font-weight: 600; color: #555; cursor: pointer; transition: all .2s;',
+    '}',
+    '.gv2-add-btn-sm:hover { background: #e0e0e0; color: #333; }',
+
+    /* 目標カード */
+    '.gv2-goal { display: flex; align-items: center; gap: 10px; padding: 10px; margin-bottom: 6px; background: #f9f9f9; border-radius: 10px; transition: all .2s; }',
+    '.gv2-goal:hover { background: #f0f0f0; }',
+    '.gv2-goal.done { opacity: 0.55; }',
+    '.gv2-goal.done .gv2-goal-text { text-decoration: line-through; color: #999; }',
+    '.gv2-goal-cb { width: 20px; height: 20px; min-width: 20px; cursor: pointer; accent-color: #2196F3; }',
+    '.gv2-goal-body { flex: 1; min-width: 0; }',
+    '.gv2-goal-text { font-size: 14px; font-weight: 500; color: #333; line-height: 1.3; }',
+    '.gv2-goal-meta { display: flex; align-items: center; gap: 8px; margin-top: 3px; }',
+    '.gv2-goal-cat { font-size: 11px; padding: 2px 8px; background: #e8e8e8; border-radius: 4px; color: #666; }',
+    '.gv2-goal-wk { font-size: 11px; color: #2196F3; font-weight: 500; }',
+    '.gv2-goal-del { background: none; border: none; font-size: 14px; cursor: pointer; opacity: 0.25; padding: 4px; transition: opacity .2s; flex-shrink: 0; }',
+    '.gv2-goal:hover .gv2-goal-del { opacity: 0.6; }',
+    '.gv2-goal-del:hover { opacity: 1 !important; }',
+    '.gv2-empty { text-align: center; color: #999; padding: 20px; font-size: 14px; }',
+
+    /* 週ナビゲーション */
+    '.gv2-week-nav { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; }',
+    '.gv2-week-nav-btn {',
+    '  padding:6px 12px; background:#000; color:#fff; border:none;',
+    '  border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; transition:all .2s;',
+    '}',
+    '.gv2-week-nav-btn:hover { background:#333; }',
+    '.gv2-week-display { flex:1; text-align:center; font-size:14px; font-weight:600; color:#333; }',
+    '.gv2-week-today-btn {',
+    '  font-size:11px; color:#2196F3; background:none; border:1px solid #2196F3;',
+    '  border-radius:6px; padding:2px 8px; cursor:pointer; margin-left:6px;',
+    '}',
+
+    /* 週カレンダー（表示のみ） */
+    '.gv2-week-cal { display:flex; gap:2px; margin-bottom:10px; }',
+    '.gv2-cal-day {',
+    '  flex:1; text-align:center; padding:6px 0; border-radius:10px;',
+    '  background:#f8f8f8; position:relative;',
+    '}',
+    '.gv2-cal-day.today { background:#2196F3; }',
+    '.gv2-cal-day.today .gv2-cal-dow, .gv2-cal-day.today .gv2-cal-num { color:#fff; }',
+    '.gv2-cal-dow { display:block; font-size:10px; color:#999; line-height:1.3; }',
+    '.gv2-cal-num { display:block; font-size:14px; font-weight:700; color:#333; line-height:1.3; }',
+
+    /* タスクアイテム */
+    '.task-item { display:flex; align-items:center; gap:8px; padding:10px 4px; border-bottom:1px solid #f0f0f0; min-height:44px; }',
+    '.task-checkbox { width:22px; height:22px; min-width:22px; cursor:pointer; accent-color:#2196F3; }',
+    '.task-label { flex:1; min-width:0; font-size:14px; line-height:1.4; color:#333; word-break:break-word; }',
+    '.task-edit-btn { background:none; border:none; font-size:18px; cursor:pointer; padding:8px; min-width:36px; min-height:36px; display:flex; align-items:center; justify-content:center; opacity:0.4; transition:opacity .2s; }',
+    '.task-edit-btn:hover, .task-edit-btn:active { opacity:1; }',
+    '.task-actions { display:flex; gap:4px; flex-shrink:0; align-items:center; }',
+    '.task-action-btn { border:none; border-radius:6px; cursor:pointer; padding:4px 8px; font-size:11px; font-weight:600; min-height:28px; min-width:36px; display:flex; align-items:center; justify-content:center; transition:all .2s; }',
+    '.task-copy-btn { background:#e3f2fd; color:#1976D2; }',
+    '.task-copy-btn:active { background:#bbdefb; }',
+    '.task-carry-btn { background:#f3f4f6; color:#666; }',
+    '.task-carry-btn:active { background:#e5e7eb; }',
+
+    /* タスク追加ボタン */
+    '.task-add-btn {',
+    '  display:block; width:100%; padding:12px; margin-top:6px;',
+    '  background:#f5f5f5; border:1px dashed #ccc; border-radius:10px;',
+    '  font-size:14px; font-weight:500; color:#888; cursor:pointer;',
+    '  text-align:center; transition:all .2s;',
+    '  min-height:44px;',
+    '}',
+    '.task-add-btn:hover, .task-add-btn:active { background:#eee; color:#555; border-color:#aaa; }',
+
+    /* タスク保存・削除ボタン（インライン編集時） */
+    '.task-save-btn, .task-del-btn {',
+    '  border:none; border-radius:8px; cursor:pointer;',
+    '  min-width:40px; min-height:40px; font-size:16px;',
+    '  display:flex; align-items:center; justify-content:center;',
+    '  transition:all .2s;',
+    '}',
+    '.task-save-btn { background:#2196F3; color:#fff; }',
+    '.task-save-btn:active { background:#1976D2; }',
+    '.task-del-btn { background:#f5f5f5; color:#e53e3e; }',
+    '.task-del-btn:active { background:#fee; }',
+
+    /* タスク入力フィールド */
+    '.task-input {',
+    '  flex:1; min-width:0; padding:10px 12px; border:1.5px solid #ddd;',
+    '  border-radius:10px; font-size:14px; outline:none;',
+    '  transition:border-color .2s;',
+    '}',
+    '.task-input:focus { border-color:#2196F3; }',
+
+    /* タスクポップアップ */
+    '.gv2-popup-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.5); z-index:99999; display:flex; align-items:flex-end; justify-content:center; }',
+    '.gv2-popup { background:#fff; border-radius:16px 16px 0 0; max-width:480px; width:100%; padding:20px 16px 28px; max-height:80vh; overflow-y:auto; }',
+    '.gv2-popup-title { font-size:16px; font-weight:700; color:#333; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; }',
+    '.gv2-popup-close { background:none; border:none; font-size:22px; color:#999; cursor:pointer; padding:4px 8px; }',
+    '.gv2-popup-task-text { font-size:15px; color:#333; padding:12px; background:#f8f8f8; border-radius:10px; margin-bottom:16px; line-height:1.5; word-break:break-word; }',
+    '.gv2-popup-actions { display:flex; flex-direction:column; gap:8px; }',
+    '.gv2-popup-btn { display:flex; align-items:center; gap:10px; padding:14px 16px; border:none; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer; transition:all .2s; width:100%; text-align:left; }',
+    '.gv2-popup-btn:active { transform:scale(0.98); }',
+    '.gv2-popup-btn-must { background:#e3f2fd; color:#1565c0; }',
+    '.gv2-popup-btn-want { background:#e8f5e9; color:#2e7d32; }',
+    '.gv2-popup-btn-next { background:#f3f4f6; color:#555; }',
+    '.gv2-popup-btn-edit { background:#fff3e0; color:#e65100; }',
+    '.gv2-popup-btn-del { background:#fce4ec; color:#c62828; }',
+    '.gv2-popup-btn-icon { font-size:18px; width:28px; text-align:center; }',
+    /* タスク追加ポップアップ */
+    '.gv2-add-input-wrap { display:flex; gap:8px; align-items:center; margin-bottom:12px; }',
+    '.gv2-add-input { flex:1; padding:12px 14px; border:1.5px solid #ddd; border-radius:10px; font-size:15px; outline:none; }',
+    '.gv2-add-input:focus { border-color:#2196F3; }',
+    '.gv2-voice-btn { width:48px; height:48px; min-width:48px; border:none; border-radius:50%; background:#f0f0f0; font-size:22px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; }',
+    '.gv2-voice-btn.recording { background:#ef4444; animation:gv2-pulse 1s infinite; }',
+    '@keyframes gv2-pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.08);} }',
+    '.gv2-add-submit { width:100%; padding:14px; background:#2196F3; color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer; }',
+    '.gv2-add-submit:active { background:#1976D2; }'
+  ].join('\n');
+  document.head.appendChild(style);
+
+  // ========== ユーティリティ ==========
+  function esc(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function catEmoji(c) {
+    return {'健康':'💪','仕事':'💼','勉強':'📚','学習':'📚',
+            '趣味':'🎨','人間関係':'👥','お金':'💰','家族':'👨‍👩‍👧‍👦','その他':'📌'}[c] || '📌';
+  }
+
+  // ========== 日付ユーティリティ ==========
+  function toDateStr(d) {
+    // Date → "YYYY-MM-DD"
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+
+  function todayStr() {
+    return toDateStr(new Date());
+  }
+
+  function getMonday(d) {
+    // 指定日を含む週の月曜日を返す
+    var date = new Date(d);
+    date.setHours(0,0,0,0);
+    var day = date.getDay();
+    var diff = (day === 0 ? -6 : 1 - day); // 日曜=0 → -6, 月曜=1 → 0, ...
+    date.setDate(date.getDate() + diff);
+    return date;
+  }
+
+  function getSunday(monday) {
+    var d = new Date(monday);
+    d.setDate(d.getDate() + 6);
+    return d;
+  }
+
+  function getWeekRange(baseDate) {
+    // baseDate を含む週の月曜〜日曜を返す
+    var mon = getMonday(baseDate);
+    var sun = getSunday(mon);
+    return { start: toDateStr(mon), end: toDateStr(sun), monday: mon, sunday: sun };
+  }
+
+  function getWeekDates(baseDate) {
+    // baseDate を含む週の7日間の Date 配列を返す
+    var mon = getMonday(baseDate);
+    var dates = [];
+    for (var i = 0; i < 7; i++) {
+      var d = new Date(mon);
+      d.setDate(mon.getDate() + i);
+      dates.push(d);
+    }
+    return dates;
+  }
+
+  function isDateInRange(dateStr, start, end) {
+    return dateStr >= start && dateStr <= end;
+  }
+
+  // ISO week key (互換用)
+  function getWeekKey(date) {
+    var d = new Date(date);
+    d.setHours(0,0,0,0);
+    d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+    var week1 = new Date(d.getFullYear(), 0, 4);
+    var weekNum = 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+    return d.getFullYear() + '-W' + String(weekNum).padStart(2,'0');
+  }
+
+  // 週キー → 月曜日の日付に変換（データ移行用）
+  function weekKeyToMonday(weekKey) {
+    var parts = weekKey.match(/(\d{4})-W(\d{2})/);
+    if (!parts) return null;
+    var year = parseInt(parts[1]);
+    var week = parseInt(parts[2]);
+    var jan4 = new Date(year, 0, 4);
+    var jan4Day = (jan4.getDay() + 6) % 7;
+    var d = new Date(jan4.getTime());
+    d.setDate(jan4.getDate() - jan4Day + (week - 1) * 7);
+    return d;
+  }
+
+  // 表示中の週の月曜日（Date）
+  var currentWeekMonday = getMonday(new Date());
+  var viewingWeekMonday = new Date(currentWeekMonday);
+
+  // 目標ごとの折りたたみ状態
+  var _goalCollapsed = {};
+  try {
+    var saved = localStorage.getItem('gv2_collapsed');
+    if (saved) _goalCollapsed = JSON.parse(saved);
+  } catch(e) {}
+
+  // 互換用: window.currentWeekKey を維持（ダッシュボードが参照）
+  var currentWeekKey = getWeekKey(new Date());
+  window.getWeekKey = getWeekKey;
+  window.currentWeekKey = currentWeekKey;
+
+  // 日付ベースのヘルパーもグローバル公開
+  window.getWeekRange = getWeekRange;
+  window.toDateStr = toDateStr;
+
+  var DOW_NAMES = ['日', '月', '火', '水', '木', '金', '土'];
+
+  // ========== データアクセス ==========
+  function getGoals() {
+    try {
+      var raw = localStorage.getItem('monthlyGoals');
+      var v = JSON.parse(raw || '[]');
+      return Array.isArray(v) ? v : [];
+    } catch(e) { return []; }
+  }
+  function saveGoals(goals) {
+    localStorage.setItem('monthlyGoals', JSON.stringify(goals));
+    window.monthlyGoals = goals;
+    try {
+      if (window.Storage && window.Storage.set && window.Storage.keys) {
+        window.Storage.set(window.Storage.keys.MONTHLY_GOALS, goals);
+      }
+    } catch(e) {}
+  }
+  function getSelectedMonth() {
+    return window.selectedGoalsMonth || window.goalsCurrentMonth || monthKeyNow();
+  }
+  function monthKeyNow() {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+  }
+
+  // ========== データ移行: week → date ==========
+  function migrateWeeklyTasksToDate() {
+    var goals = getGoals();
+    var migrated = false;
+
+    goals.forEach(function(goal) {
+      if (!goal || !goal.weeklyTasks) return;
+      goal.weeklyTasks.forEach(function(task) {
+        if (task.week && !task.date) {
+          // week "YYYY-W##" → その週の月曜日の日付に変換
+          var monday = weekKeyToMonday(task.week);
+          if (monday) {
+            task.date = toDateStr(monday);
+          } else {
+            task.date = todayStr(); // フォールバック
+          }
+          migrated = true;
+        }
+      });
+    });
+
+    if (migrated) {
+      saveGoals(goals);
+      console.log('[goals-v2] weeklyTasks migrated: week → date');
+    }
+  }
+
+  // ========== DOM構築 ==========
+  function setupDOM() {
+    var goalsTab = document.getElementById('goals');
+    if (!goalsTab) return;
+
+    // 二重呼び出し防止
+    if (document.getElementById('goalsV2Container')) return;
+
+    var monthSelector = goalsTab.querySelector('.goals-month-selector');
+
+    // 既存のgoals-section, goals-list-section, goals-progress-sectionを非表示
+    var oldSections = goalsTab.querySelectorAll('.goals-section, .goals-list-section, .goals-progress-section');
+    for (var i = 0; i < oldSections.length; i++) {
+      oldSections[i].style.display = 'none';
+    }
+
+    // 旧 goalStatus 要素を削除して ID 重複を防ぐ
+    var oldGoalStatus = document.getElementById('goalStatus');
+    if (oldGoalStatus) oldGoalStatus.remove();
+
+    var container = document.createElement('div');
+    container.id = 'goalsV2Container';
+    container.innerHTML = '<div id="gv2Summary"></div>' +
+      '<div id="gv2Monthly"></div>' +
+      '<div id="gv2Weekly"></div>';
+
+    if (monthSelector && monthSelector.nextSibling) {
+      monthSelector.parentNode.insertBefore(container, monthSelector.nextSibling);
+    } else {
+      goalsTab.appendChild(container);
+    }
+  }
+
+  // ========== レンダリング ==========
+  function updateMonthDisplayV2() {
+    var month = getSelectedMonth();
+    var parts = month.split('-').map(Number);
+    var display = document.getElementById('currentGoalsMonth');
+    if (display) {
+      display.textContent = parts[0] + '年' + parts[1] + '月';
+    }
+    var title = document.getElementById('goalsListTitle');
+    if (title) {
+      title.textContent = (month === monthKeyNow()) ? '今月の目標リスト' : parts[0] + '年' + parts[1] + '月の目標リスト';
+    }
+  }
+
+  function renderAll() {
+    var goals = getGoals();
+    var month = getSelectedMonth();
+    var current = goals.filter(function(g) { return g && g.month === month; });
+
+    updateMonthDisplayV2();
+    renderSummary(current);
+    renderWeekly(current, goals);
+    renderMonthlyList(current, goals);
+  }
+
+  function renderSummary(current) {
+    var el = document.getElementById('gv2Summary');
+    if (!el) return;
+
+    if (current.length === 0) {
+      el.innerHTML = '';
+      return;
+    }
+
+    // 週タスクの完了数/総数を母数にする（進捗が実感しやすい）
+    var month = getSelectedMonth();
+    var totalTasks = 0, doneTasks = 0;
+    current.forEach(function(g) {
+      (g.weeklyTasks || []).forEach(function(t) {
+        if (t.date && t.date.substring(0, 7) === month) {
+          totalTasks++;
+          if (t.done) doneTasks++;
+        }
+      });
+    });
+    var pct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+
+    var cats = {};
+    current.forEach(function(g) { cats[g.category] = (cats[g.category]||0) + 1; });
+    var catTags = Object.keys(cats).map(function(c) {
+      return '<span class="gv2-summary-cat">' + catEmoji(c) + ' ' + esc(c) + ' ' + cats[c] + '</span>';
+    }).join('');
+
+    el.innerHTML = '<div class="gv2-summary">' +
+      '<div class="gv2-summary-top">' +
+        '<div><div class="gv2-summary-title">📊 今月の進捗</div></div>' +
+        '<div class="gv2-summary-num">' + pct + '% <small>' + doneTasks + '/' + totalTasks + ' タスク達成</small></div>' +
+      '</div>' +
+      '<div class="gv2-summary-bar"><div class="gv2-summary-fill" style="width:' + pct + '%"></div></div>' +
+      '<div class="gv2-summary-cats">' + catTags + '</div>' +
+    '</div>';
+  }
+
+  function renderWeekly(current, allGoals) {
+    var el = document.getElementById('gv2Weekly');
+    if (!el) return;
+
+    var activeGoals = current.filter(function(g) { return !g.completed; });
+
+    if (activeGoals.length === 0) {
+      el.innerHTML = '';
+      return;
+    }
+
+    // 表示中の週の範囲
+    var range = getWeekRange(viewingWeekMonday);
+    var weekDates = getWeekDates(viewingWeekMonday);
+    var today = todayStr();
+    var isCurrentWeek = (range.start === toDateStr(currentWeekMonday));
+
+    // 全タスクを日付ごとに集計（日付ヘッダー用）
+    var tasksByDate = {};
+    weekDates.forEach(function(d) { tasksByDate[toDateStr(d)] = 0; });
+    activeGoals.forEach(function(goal) {
+      (goal.weeklyTasks || []).forEach(function(t) {
+        if (t.date && isDateInRange(t.date, range.start, range.end)) {
+          tasksByDate[t.date] = (tasksByDate[t.date] || 0) + 1;
+        }
+      });
+    });
+
+    // 週ラベル
+    var weekLabel = formatWeekLabel();
+
+    var html = '<div class="today-tasks-section gv2-weekly">';
+
+    // 週ナビゲーション
+    html += '<div class="gv2-week-nav">' +
+      '<button class="gv2-week-nav-btn" onclick="window._gv2ChangeWeek(-1)">◀ 前週</button>' +
+      '<div class="gv2-week-display">📋 ' + weekLabel +
+      (!isCurrentWeek ? ' <button class="gv2-week-today-btn" onclick="window._gv2GoToCurrentWeek()">今週へ</button>' : '') +
+      '</div>' +
+      '<button class="gv2-week-nav-btn" onclick="window._gv2ChangeWeek(1)">次週 ▶</button>' +
+    '</div>';
+
+    // 1週間カレンダー（表示のみ）
+    html += '<div class="gv2-week-cal">';
+    weekDates.forEach(function(d) {
+      var ds = toDateStr(d);
+      var isToday = (ds === today);
+      var taskCount = tasksByDate[ds] || 0;
+      var cls = 'gv2-cal-day' + (isToday ? ' today' : '');
+      html += '<div class="' + cls + '">' +
+        '<span class="gv2-cal-dow">' + DOW_NAMES[d.getDay()] + '</span>' +
+        '<span class="gv2-cal-num">' + d.getDate() + '</span>' +
+      '</div>';
+    });
+    html += '</div>';
+
+    html += '<div class="today-tasks-content">';
+
+    var hasAnyTask = false;
+    activeGoals.forEach(function(goal) {
+      var tasks = (goal.weeklyTasks || []).filter(function(t) {
+        return t.date && isDateInRange(t.date, range.start, range.end);
+      });
+      if (tasks.length > 0) hasAnyTask = true;
+      var emoji = catEmoji(goal.category);
+
+      var collapsed = _goalCollapsed[goal.id] ? true : false;
+      var doneCount = tasks.filter(function(t){return t.done;}).length;
+      var badge = tasks.length > 0 ? ' <span style="font-size:12px;color:#888;font-weight:400;">(' + doneCount + '/' + tasks.length + ')</span>' : '';
+      var arrow = collapsed ? '▶' : '▼';
+
+      html += '<div class="task-group">';
+      html += '<div class="task-group-title" style="cursor:pointer;display:flex;align-items:center;gap:6px;" onclick="window._gv2ToggleCollapse(' + goal.id + ')">' +
+        '<span style="font-size:11px;color:#aaa;transition:transform 0.2s;">' + arrow + '</span> ' + emoji + ' ' + esc(goal.text) + badge + '</div>';
+
+      html += '<div class="gv2-task-body" style="' + (collapsed ? 'display:none;' : '') + '">';
+
+      if (tasks.length === 0) {
+        html += '<div style="color:#999;font-size:13px;padding:4px 0 8px;">この週のタスクはまだありません</div>';
+      } else {
+        // 日付順にソート
+        tasks.sort(function(a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+        tasks.forEach(function(task) {
+          var checked = task.done ? ' checked' : '';
+          var strike = task.done ? ' style="text-decoration:line-through;color:#999;"' : '';
+
+          html += '<div class="task-item" id="wt_' + goal.id + '_' + task.id + '">' +
+            '<input type="checkbox" class="task-checkbox"' + checked +
+            ' onchange="window._gv2ToggleWT(' + goal.id + ',' + task.id + ')" />' +
+            '<label class="task-label" onclick="window._gv2ShowTaskPopup(' + goal.id + ',' + task.id + ')"' + strike + ' style="cursor:pointer;' + (task.done ? 'text-decoration:line-through;color:#999;' : '') + '">' + esc(task.text) + '</label>' +
+          '</div>';
+        });
+      }
+
+      html += '<button type="button" class="task-add-btn" onclick="window._gv2ShowAddPopup(' + goal.id + ')">＋ 追加</button>';
+      html += '</div>'; // gv2-task-body
+      html += '</div>'; // task-group
+    });
+
+    if (!hasAnyTask) {
+      html += '<div style="text-align:center;color:#999;padding:16px;font-size:13px;">目標がまだありません</div>';
+    }
+
+    html += '</div></div>';
+    el.innerHTML = html;
+  }
+
+  function renderMonthlyList(current, allGoals) {
+    var el = document.getElementById('gv2Monthly');
+    if (!el) return;
+
+    var month = getSelectedMonth();
+    var monthNow = monthKeyNow();
+    var titleText = (month === monthNow) ? '🎯 今月の目標' : '🎯 ' + month + 'の目標';
+
+    // 今週の範囲
+    var currentRange = getWeekRange(currentWeekMonday);
+
+    var html = '<div class="gv2-monthly">' +
+      '<div class="gv2-monthly-head">' +
+        '<h3>' + titleText + '</h3>' +
+        '<button class="gv2-add-btn-sm" onclick="window.openGoalAddModal()">➕ 追加</button>' +
+      '</div>';
+
+    if (current.length === 0) {
+      html += '<div class="gv2-empty">目標を追加して、チャレンジを始めよう！</div>';
+    } else {
+      current.forEach(function(goal) {
+        var allWt = goal.weeklyTasks || [];
+        var wtThisWeek = allWt.filter(function(t) {
+          return t.date && isDateInRange(t.date, currentRange.start, currentRange.end);
+        });
+        var wtDone = wtThisWeek.filter(function(t) { return t.done; }).length;
+        var wtInfo = allWt.length > 0 ? ('📋 今週 ' + wtDone + '/' + wtThisWeek.length + (allWt.length > wtThisWeek.length ? ' (全' + allWt.length + ')' : '')) : '';
+
+        html += '<div class="gv2-goal ' + (goal.completed ? 'done' : '') + '">' +
+          '<input type="checkbox" class="gv2-goal-cb" ' + (goal.completed ? 'checked' : '') +
+          ' onchange="window._gv2ToggleGoal(' + goal.id + ')" />' +
+          '<div class="gv2-goal-body">' +
+            '<div class="gv2-goal-text">' + esc(goal.text) + '</div>' +
+            '<div class="gv2-goal-meta">' +
+              '<span class="gv2-goal-cat">' + catEmoji(goal.category) + ' ' + esc(goal.category) + '</span>' +
+              (wtInfo ? '<span class="gv2-goal-wk">' + wtInfo + '</span>' : '') +
+            '</div>' +
+          '</div>' +
+          '<button class="gv2-goal-del" onclick="window._gv2DeleteGoal(' + goal.id + ')" title="削除">🗑️</button>' +
+        '</div>';
+      });
+    }
+
+    html += '<div class="status-message" id="goalStatus"></div>';
+    html += '</div>';
+    el.innerHTML = html;
+  }
+
+  // ========== CRUD操作 ==========
+  function addGoalV2() {
+    var input = document.getElementById('goalInput');
+    var sel = document.getElementById('goalCategory');
+    var text = (input ? input.value : '').trim();
+    var cat = sel ? sel.value : 'その他';
+
+    if (!text) {
+      if (typeof window.showStatus === 'function') window.showStatus('goalStatus', '❌ 目標を入力してください');
+      return;
+    }
+
+    var goals = getGoals();
+    var goal = {
+      id: Date.now(),
+      text: text,
+      category: cat,
+      createdAt: new Date().toISOString(),
+      month: getSelectedMonth(),
+      completed: false,
+      weeklyTasks: []
+    };
+    goals.unshift(goal);
+    saveGoals(goals);
+
+    if (input) input.value = '';
+    renderAll();
+    if (typeof window.showStatus === 'function') window.showStatus('goalStatus', '✓ 目標を追加しました');
+  }
+
+  function toggleGoalV2(id) {
+    var goals = getGoals();
+    var g = goals.find(function(x) { return x && x.id === id; });
+    if (!g) return;
+    g.completed = !g.completed;
+    saveGoals(goals);
+    renderAll();
+  }
+
+  function deleteGoalV2(id) {
+    if (!confirm('この目標を削除しますか？')) return;
+    var goals = getGoals().filter(function(x) { return x && x.id !== id; });
+    saveGoals(goals);
+    renderAll();
+    if (typeof window.showStatus === 'function') window.showStatus('goalStatus', '✓ 目標を削除しました');
+  }
+
+  // ===== 週タスク CRUD =====
+  function addWeeklyTask(goalId, targetDate) {
+    var goals = getGoals();
+    var g = goals.find(function(x) { return x && x.id === goalId; });
+    if (!g) return;
+    if (!g.weeklyTasks) g.weeklyTasks = [];
+
+    // targetDate が指定されなければ今日（ただし表示中の週内に収まるよう調整）
+    var date = targetDate || todayStr();
+    var range = getWeekRange(viewingWeekMonday);
+    if (!isDateInRange(date, range.start, range.end)) {
+      date = range.start; // 表示中の週の月曜日
+    }
+
+    var newTask = { id: Date.now(), text: '新しいタスク', date: date, done: false };
+    g.weeklyTasks.push(newTask);
+    saveGoals(goals);
+    renderAll();
+
+    setTimeout(function() { editWeeklyTask(goalId, newTask.id); }, 100);
+  }
+
+  function addWeeklyTaskForDate(dateStr) {
+    // 日付チップクリック時: アクティブ目標が1つなら直接追加、複数なら最初の目標に
+    var goals = getGoals();
+    var month = getSelectedMonth();
+    var active = goals.filter(function(g) { return g && g.month === month && !g.completed; });
+    if (active.length === 0) return;
+    addWeeklyTask(active[0].id, dateStr);
+  }
+
+  // ===== 今日のMUST/WANTに追加（ホーム画面の今日のタスクへコピー） =====
+  function copyToTodayAs(goalId, taskId, taskType) {
+    // taskType: 'must' or 'want'
+    var goals = getGoals();
+    var g = goals.find(function(x) { return x && x.id === goalId; });
+    if (!g || !g.weeklyTasks) return;
+    var task = g.weeklyTasks.find(function(x) { return x.id === taskId; });
+    if (!task) return;
+
+    try {
+      var yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      var yKey = yesterday.getFullYear() + '-' + String(yesterday.getMonth()+1).padStart(2,'0') + '-' + String(yesterday.getDate()).padStart(2,'0');
+      var entries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+      var entry = entries[yKey] || { date: yKey, summary: {} };
+      if (!entry.summary) entry.summary = {};
+
+      var fieldKey = taskType === 'want' ? 'want' : 'must';
+      var existingText = entry.summary[fieldKey] || '';
+      var existingTasks = String(existingText).split(/[\n・]/).map(function(s) { return s.trim(); }).filter(function(s) { return s && s !== '—'; });
+      existingTasks.push(task.text);
+      entry.summary[fieldKey] = existingTasks.join('\n');
+      entries[yKey] = entry;
+      localStorage.setItem('journalEntriesV3', JSON.stringify(entries));
+
+      // 新タスクのチェック状態をリセット
+      var now = new Date();
+      var todayKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+      var checkKey = 'taskChecks_' + todayKey;
+      var checks = JSON.parse(localStorage.getItem(checkKey) || '{}');
+      var prefix = taskType === 'want' ? 'homeWantTask' : 'homeMustTask';
+      var newIdx = existingTasks.length - 1;
+      checks[prefix + newIdx] = false;
+      localStorage.setItem(checkKey, JSON.stringify(checks));
+
+      if (typeof window.renderHomeTodayTasks === 'function') window.renderHomeTodayTasks();
+    } catch(e) {}
+
+    var label = taskType === 'want' ? 'WANT' : 'MUST';
+    if (typeof window.showStatus === 'function') window.showStatus('goalStatus', '✓ 今日の' + label + 'に追加しました');
+  }
+
+  // 後方互換
+  function copyToToday(goalId, taskId) {
+    copyToTodayAs(goalId, taskId, 'must');
+  }
+
+  // ===== 翌週に持ち越し =====
+  function carryToNextWeek(goalId, taskId) {
+    var goals = getGoals();
+    var g = goals.find(function(x) { return x && x.id === goalId; });
+    if (!g || !g.weeklyTasks) return;
+    var task = g.weeklyTasks.find(function(x) { return x.id === taskId; });
+    if (!task) return;
+
+    // 元タスクの日付から翌週の同じ曜日を計算
+    var origDate = new Date(task.date + 'T00:00:00');
+    var nextWeekDate = new Date(origDate);
+    nextWeekDate.setDate(nextWeekDate.getDate() + 7);
+    var newDateStr = toDateStr(nextWeekDate);
+
+    // 元タスクを未完了のまま移動（コピーではなく移動）
+    task.date = newDateStr;
+    saveGoals(goals);
+    renderAll();
+    var td = new Date(newDateStr + 'T00:00:00');
+    if (typeof window.showStatus === 'function') window.showStatus('goalStatus', '✓ ' + (td.getMonth()+1) + '/' + td.getDate() + 'へ移動しました');
+  }
+
+  function toggleWeeklyTask(goalId, taskId) {
+    var goals = getGoals();
+    var g = goals.find(function(x) { return x && x.id === goalId; });
+    if (!g || !g.weeklyTasks) return;
+    var t = g.weeklyTasks.find(function(x) { return x.id === taskId; });
+    if (!t) return;
+    t.done = !t.done;
+    saveGoals(goals);
+    renderAll();
+  }
+
+  function editWeeklyTask(goalId, taskId) {
+    var item = document.getElementById('wt_' + goalId + '_' + taskId);
+    if (!item) return;
+
+    var goals = getGoals();
+    var g = goals.find(function(x) { return x && x.id === goalId; });
+    if (!g || !g.weeklyTasks) return;
+    var task = g.weeklyTasks.find(function(x) { return x.id === taskId; });
+    if (!task) return;
+
+    var origHTML = item.innerHTML;
+
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;gap:6px;align-items:center;flex:1;';
+    var inp = document.createElement('input');
+    inp.type = 'text';
+    inp.value = task.text;
+    inp.className = 'task-input';
+    var saveBtn = document.createElement('button');
+    saveBtn.type = 'button';
+    saveBtn.textContent = '✓';
+    saveBtn.className = 'task-save-btn';
+    var delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.textContent = '🗑️';
+    delBtn.className = 'task-del-btn';
+    var cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.textContent = '✕';
+    cancelBtn.className = 'task-del-btn';
+    cancelBtn.style.color = '#999';
+
+    wrap.appendChild(inp);
+    wrap.appendChild(saveBtn);
+    wrap.appendChild(delBtn);
+    wrap.appendChild(cancelBtn);
+    item.innerHTML = '';
+    item.appendChild(wrap);
+    inp.focus();
+    inp.select();
+
+    // 編集中はFABを隠す（タップ干渉防止）
+    var fab = document.getElementById('fabContainer');
+    if (fab) fab.style.display = 'none';
+
+    function showFab() {
+      if (fab) fab.style.display = '';
+    }
+    function save() {
+      var val = inp.value.trim();
+      if (!val) { del(); return; }
+      var gs = getGoals();
+      var gg = gs.find(function(x) { return x && x.id === goalId; });
+      if (gg && gg.weeklyTasks) {
+        var tt = gg.weeklyTasks.find(function(x) { return x.id === taskId; });
+        if (tt) tt.text = val;
+      }
+      saveGoals(gs);
+      showFab();
+      renderAll();
+    }
+    function del() {
+      var gs = getGoals();
+      var gg = gs.find(function(x) { return x && x.id === goalId; });
+      if (gg && gg.weeklyTasks) {
+        gg.weeklyTasks = gg.weeklyTasks.filter(function(x) { return x.id !== taskId; });
+      }
+      saveGoals(gs);
+      showFab();
+      renderAll();
+    }
+    function cancel() {
+      item.innerHTML = origHTML;
+      showFab();
+    }
+
+    saveBtn.addEventListener('click', save);
+    delBtn.addEventListener('click', del);
+    cancelBtn.addEventListener('click', cancel);
+    inp.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') save();
+      if (e.key === 'Escape') cancel();
+    });
+  }
+
+  // ===== 目標折りたたみ =====
+  function toggleCollapse(goalId) {
+    _goalCollapsed[goalId] = !_goalCollapsed[goalId];
+    try { localStorage.setItem('gv2_collapsed', JSON.stringify(_goalCollapsed)); } catch(e) {}
+    renderAll();
+  }
+
+  // ===== タスク詳細ポップアップ =====
+  function closeTaskPopup() {
+    var old = document.getElementById('gv2-task-popup');
+    if (old) old.remove();
+  }
+
+  function showTaskPopup(goalId, taskId) {
+    closeTaskPopup();
+    var goals = getGoals();
+    var g = goals.find(function(x) { return x && x.id === goalId; });
+    if (!g || !g.weeklyTasks) return;
+    var task = g.weeklyTasks.find(function(x) { return x.id === taskId; });
+    if (!task) return;
+
+    var overlay = document.createElement('div');
+    overlay.id = 'gv2-task-popup';
+    overlay.className = 'gv2-popup-overlay';
+
+    var doneLabel = task.done ? '未完了に戻す' : '完了にする';
+    var doneIcon = task.done ? '⬜' : '✅';
+
+    var html = '<div class="gv2-popup">';
+    html += '<div class="gv2-popup-title"><span>タスク</span><button class="gv2-popup-close" onclick="window._gv2CloseTaskPopup()">✕</button></div>';
+    html += '<div class="gv2-popup-task-text">' + esc(task.text) + '</div>';
+    html += '<div class="gv2-popup-actions">';
+
+    // 完了/未完了トグル
+    html += '<button class="gv2-popup-btn gv2-popup-btn-next" onclick="window._gv2ToggleWT(' + goalId + ',' + taskId + ');window._gv2CloseTaskPopup();"><span class="gv2-popup-btn-icon">' + doneIcon + '</span>' + doneLabel + '</button>';
+
+    if (!task.done) {
+      // MUST
+      html += '<button class="gv2-popup-btn gv2-popup-btn-must" onclick="window._gv2CopyToTodayAs(' + goalId + ',' + taskId + ',\'must\');window._gv2CloseTaskPopup();"><span class="gv2-popup-btn-icon">📌</span>今日のMUSTに追加</button>';
+      // WANT
+      html += '<button class="gv2-popup-btn gv2-popup-btn-want" onclick="window._gv2CopyToTodayAs(' + goalId + ',' + taskId + ',\'want\');window._gv2CloseTaskPopup();"><span class="gv2-popup-btn-icon">💡</span>今日のWANTに追加</button>';
+      // 翌週
+      html += '<button class="gv2-popup-btn gv2-popup-btn-next" onclick="window._gv2CarryToNextWeek(' + goalId + ',' + taskId + ');window._gv2CloseTaskPopup();"><span class="gv2-popup-btn-icon">📅</span>来週に移動</button>';
+    }
+
+    // 編集
+    html += '<button class="gv2-popup-btn gv2-popup-btn-edit" onclick="window._gv2CloseTaskPopup();setTimeout(function(){window._gv2EditWT(' + goalId + ',' + taskId + ');},100);"><span class="gv2-popup-btn-icon">✏️</span>テキストを編集</button>';
+    // 削除
+    html += '<button class="gv2-popup-btn gv2-popup-btn-del" onclick="window._gv2DeleteTask(' + goalId + ',' + taskId + ');window._gv2CloseTaskPopup();"><span class="gv2-popup-btn-icon">🗑️</span>削除</button>';
+
+    html += '</div></div>';
+    overlay.innerHTML = html;
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeTaskPopup();
+    });
+    document.body.appendChild(overlay);
+  }
+
+  function deleteTask(goalId, taskId) {
+    var goals = getGoals();
+    var g = goals.find(function(x) { return x && x.id === goalId; });
+    if (!g || !g.weeklyTasks) return;
+    g.weeklyTasks = g.weeklyTasks.filter(function(x) { return x.id !== taskId; });
+    saveGoals(goals);
+    renderAll();
+    if (typeof window.showStatus === 'function') window.showStatus('goalStatus', '✓ タスクを削除しました');
+  }
+
+  // ===== タスク追加ポップアップ（音声入力対応） =====
+  function showTaskAddPopup(goalId) {
+    closeTaskPopup();
+    var overlay = document.createElement('div');
+    overlay.id = 'gv2-task-popup';
+    overlay.className = 'gv2-popup-overlay';
+
+    var html = '<div class="gv2-popup">';
+    html += '<div class="gv2-popup-title"><span>タスクを追加</span><button class="gv2-popup-close" onclick="window._gv2CloseTaskPopup()">✕</button></div>';
+    html += '<div class="gv2-add-input-wrap">';
+    html += '<input type="text" class="gv2-add-input" id="gv2AddTaskInput" placeholder="タスクを入力..." onkeydown="if(event.key===\'Enter\'){event.preventDefault();window._gv2SubmitAddTask(' + goalId + ');}">';
+    html += '<button type="button" class="gv2-voice-btn" id="gv2VoiceBtn" onclick="window._gv2ToggleVoice()">🎤</button>';
+    html += '</div>';
+    html += '<div id="gv2VoiceStatus" style="font-size:12px;color:#999;margin-bottom:12px;display:none;"></div>';
+    html += '<button type="button" class="gv2-add-submit" onclick="window._gv2SubmitAddTask(' + goalId + ')">追加する</button>';
+    html += '</div>';
+
+    overlay.innerHTML = html;
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) { _stopVoice(); closeTaskPopup(); }
+    });
+    document.body.appendChild(overlay);
+    setTimeout(function() {
+      var inp = document.getElementById('gv2AddTaskInput');
+      if (inp) inp.focus();
+    }, 100);
+  }
+
+  // 音声入力
+  var _voiceRecognition = null;
+  function _stopVoice() {
+    if (_voiceRecognition) {
+      try { _voiceRecognition.stop(); } catch(e) {}
+      _voiceRecognition = null;
+    }
+    var btn = document.getElementById('gv2VoiceBtn');
+    if (btn) btn.classList.remove('recording');
+    var status = document.getElementById('gv2VoiceStatus');
+    if (status) status.style.display = 'none';
+  }
+
+  function toggleVoice() {
+    if (_voiceRecognition) {
+      _stopVoice();
+      return;
+    }
+    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('お使いのブラウザは音声入力に対応していません');
+      return;
+    }
+    var recognition = new SpeechRecognition();
+    recognition.lang = 'ja-JP';
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    _voiceRecognition = recognition;
+
+    var btn = document.getElementById('gv2VoiceBtn');
+    var status = document.getElementById('gv2VoiceStatus');
+    var input = document.getElementById('gv2AddTaskInput');
+    if (btn) btn.classList.add('recording');
+    if (status) { status.style.display = 'block'; status.textContent = '🎙️ 聞いています...'; }
+
+    recognition.onresult = function(event) {
+      var transcript = '';
+      for (var i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      if (input) input.value = transcript;
+      if (status) status.textContent = '🎙️ ' + transcript;
+    };
+    recognition.onend = function() {
+      _stopVoice();
+    };
+    recognition.onerror = function(e) {
+      if (status) status.textContent = '⚠️ ' + (e.error === 'no-speech' ? '音声が検出されませんでした' : 'エラー: ' + e.error);
+      setTimeout(_stopVoice, 1500);
+    };
+    recognition.start();
+  }
+
+  function submitAddTask(goalId) {
+    var input = document.getElementById('gv2AddTaskInput');
+    if (!input) return;
+    var text = input.value.trim();
+    if (!text) return;
+    _stopVoice();
+
+    var goals = getGoals();
+    var g = goals.find(function(x) { return x && x.id === goalId; });
+    if (!g) { closeTaskPopup(); return; }
+    if (!g.weeklyTasks) g.weeklyTasks = [];
+
+    var date = todayStr();
+    var range = getWeekRange(viewingWeekMonday);
+    if (!isDateInRange(date, range.start, range.end)) {
+      date = range.start;
+    }
+
+    g.weeklyTasks.push({ id: Date.now(), text: text, date: date, done: false });
+    saveGoals(goals);
+    closeTaskPopup();
+    renderAll();
+    if (typeof window.showStatus === 'function') window.showStatus('goalStatus', '✓ タスクを追加しました');
+  }
+
+  // ===== 月切替のフック =====
+  function changeGoalsMonthV2(offset) {
+    var month = getSelectedMonth();
+    var parts = month.split('-').map(Number);
+    var d = new Date(parts[0], parts[1] - 1 + offset, 1);
+    var newMonth = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+    window.selectedGoalsMonth = newMonth;
+
+    if (window.App && window.App.state && window.App.state.goals) {
+      window.App.state.goals.selectedMonth = newMonth;
+    }
+
+    var display = document.getElementById('currentGoalsMonth');
+    if (display) {
+      display.textContent = d.getFullYear() + '年' + (d.getMonth() + 1) + '月';
+    }
+    renderAll();
+  }
+
+  // ========== 週ナビゲーション ==========
+  function changeViewingWeek(offset) {
+    viewingWeekMonday.setDate(viewingWeekMonday.getDate() + offset * 7);
+    renderAll();
+  }
+
+  function goToCurrentWeek() {
+    viewingWeekMonday = new Date(currentWeekMonday);
+    renderAll();
+  }
+
+  function formatWeekLabel() {
+    var diffMs = viewingWeekMonday.getTime() - currentWeekMonday.getTime();
+    var diffWeeks = Math.round(diffMs / (7 * 86400000));
+    if (diffWeeks === 0) return '今週やること';
+    if (diffWeeks === 1) return '来週やること';
+    if (diffWeeks === -1) return '先週のタスク';
+    if (diffWeeks > 0) return diffWeeks + '週後のタスク';
+    return Math.abs(diffWeeks) + '週前のタスク';
+  }
+
+  // ========== グローバル公開（既存の関数を上書き） ==========
+  window._gv2ToggleGoal = toggleGoalV2;
+  window._gv2DeleteGoal = deleteGoalV2;
+  window._gv2AddWT = function(goalId) { addWeeklyTask(goalId); };
+  window._gv2AddWTForDate = addWeeklyTaskForDate;
+  window._gv2ToggleWT = toggleWeeklyTask;
+  window._gv2EditWT = editWeeklyTask;
+  window._gv2CopyToToday = copyToToday;
+  window._gv2CopyToTodayAs = copyToTodayAs;
+  window._gv2CarryToNextWeek = carryToNextWeek;
+  window._gv2ChangeWeek = changeViewingWeek;
+  window._gv2GoToCurrentWeek = goToCurrentWeek;
+  window._gv2ShowTaskPopup = showTaskPopup;
+  window._gv2ShowAddPopup = showTaskAddPopup;
+  window._gv2CloseTaskPopup = closeTaskPopup;
+  window._gv2ToggleVoice = toggleVoice;
+  window._gv2SubmitAddTask = submitAddTask;
+  window._gv2DeleteTask = deleteTask;
+  window._gv2ToggleCollapse = toggleCollapse;
+
+  // 既存の window.* を上書きして全体の整合性を保つ
+  window.addGoal = addGoalV2;
+  window.changeGoalsMonth = changeGoalsMonthV2;
+  window.updateGoalsMonthDisplay = updateMonthDisplayV2;
+  window.renderGoals = renderAll;
+  window.renderGoalsProgress = function() {}; // 不要化（サマリーに統合）
+  window.renderGoalsAll = renderAll;
+  window.toggleGoalComplete = toggleGoalV2;
+  window.deleteGoal = deleteGoalV2;
+
+  // ダッシュボード用: 今日のタスク達成度を取得するヘルパー
+  window.getTodayTaskStats = function() {
+    var today = todayStr();
+    var goals = getGoals();
+    var month = monthKeyNow();
+    var monthGoals = goals.filter(function(g) { return g && g.month === month; });
+    var total = 0, done = 0;
+    monthGoals.forEach(function(g) {
+      var wt = (g.weeklyTasks || []).filter(function(t) {
+        return t.date === today;
+      });
+      total += wt.length;
+      done += wt.filter(function(t) { return t.done; }).length;
+    });
+    return { total: total, done: done };
+  };
+
+  // 後方互換: getWeeklyTaskStats も残す
+  window.getWeeklyTaskStats = function() {
+    var range = getWeekRange(currentWeekMonday);
+    var goals = getGoals();
+    var month = monthKeyNow();
+    var monthGoals = goals.filter(function(g) { return g && g.month === month; });
+    var total = 0, done = 0;
+    monthGoals.forEach(function(g) {
+      var wt = (g.weeklyTasks || []).filter(function(t) {
+        return t.date && isDateInRange(t.date, range.start, range.end);
+      });
+      total += wt.length;
+      done += wt.filter(function(t) { return t.done; }).length;
+    });
+    return { total: total, done: done };
+  };
+
+  // ========== カレンダー連動用ヘルパー ==========
+
+  // カレンダー用: 指定日のタスク一覧を取得
+  window.getTasksForDate = function(dateStr) {
+    var goals = getGoals();
+    var result = [];
+    goals.forEach(function(g) {
+      if (!g || !g.weeklyTasks) return;
+      g.weeklyTasks.forEach(function(t) {
+        if (t.date === dateStr) {
+          result.push({
+            goalId: g.id,
+            goalText: g.text,
+            goalCategory: g.category,
+            taskId: t.id,
+            text: t.text,
+            date: t.date,
+            done: t.done
+          });
+        }
+      });
+    });
+    return result;
+  };
+
+  // カレンダー用: 指定月の全タスク日付セットを取得（高速描画用）
+  window.getTaskDatesForMonth = function(yearMonth) {
+    var goals = getGoals();
+    var dates = {};
+    goals.forEach(function(g) {
+      if (!g || !g.weeklyTasks) return;
+      g.weeklyTasks.forEach(function(t) {
+        if (t.date && t.date.substring(0, 7) === yearMonth) {
+          if (!dates[t.date]) dates[t.date] = { total: 0, done: 0 };
+          dates[t.date].total++;
+          if (t.done) dates[t.date].done++;
+        }
+      });
+    });
+    return dates;
+  };
+
+  // カレンダー用: 指定日にタスクを直接追加
+  window._gv2AddTaskDirect = function(dateStr, taskText) {
+    var goals = getGoals();
+    var month = dateStr.substring(0, 7);
+    var active = goals.filter(function(g) { return g && g.month === month && !g.completed; });
+    if (active.length === 0) return false;
+    var goal = active[0];
+    if (!goal.weeklyTasks) goal.weeklyTasks = [];
+    goal.weeklyTasks.push({ id: Date.now(), text: taskText, date: dateStr, done: false });
+    saveGoals(goals);
+    return true;
+  };
+
+  // ========== 初期化 ==========
+  function init() {
+    // データ移行（week → date）
+    migrateWeeklyTasksToDate();
+
+    setupDOM();
+    renderAll();
+
+    // App.modules.goals に onShow を登録（Level 2 scaffold が switchTab 時に呼ぶ）
+    var App = window.App = window.App || {};
+    App.modules = App.modules || {};
+    App.modules.goals = { onShow: renderAll };
+  }
+
+  // DOMContentLoadedが既に発火していたらすぐ実行
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    setTimeout(init, 300);
+  }
+})();

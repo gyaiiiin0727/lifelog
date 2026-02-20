@@ -1,1 +1,295 @@
-function a0_0x593c(_0xe883c7,_0x53c85b){_0xe883c7=_0xe883c7-(0xab5*0x1+-0x2ce+-0x663);var _0xb7f2c2=a0_0x325b();var _0x4aa400=_0xb7f2c2[_0xe883c7];if(a0_0x593c['ewVDLx']===undefined){var _0xd0a84c=function(_0x5e880d){var _0x25da08='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';var _0xec2330='',_0x2fe979='';for(var _0x1e0abc=0x9*-0x6+-0xe9b+-0x1*-0xed1,_0x1d200b,_0x58fa64,_0x2998b0=-0xe3*-0xd+-0x4*-0x3a3+-0x1a13;_0x58fa64=_0x5e880d['charAt'](_0x2998b0++);~_0x58fa64&&(_0x1d200b=_0x1e0abc%(-0x2327+0xfa*-0x13+-0x329*-0x11)?_0x1d200b*(0xd*0x205+-0xc43+-0xdbe)+_0x58fa64:_0x58fa64,_0x1e0abc++%(0x683*-0x1+0x78*-0x1e+0x1497))?_0xec2330+=String['fromCharCode'](-0x1dee+0x19c9+0x524*0x1&_0x1d200b>>(-(-0x1*-0x1d1d+-0x2*0x3c1+-0x1599)*_0x1e0abc&0x1c0d+-0x44e*-0x2+-0x24a3)):-0x69d+-0x2c2*0x4+0x11a5){_0x58fa64=_0x25da08['indexOf'](_0x58fa64);}for(var _0x20e02a=-0x35d*-0x1+-0x1d8+-0x185,_0x49a3fa=_0xec2330['length'];_0x20e02a<_0x49a3fa;_0x20e02a++){_0x2fe979+='%'+('00'+_0xec2330['charCodeAt'](_0x20e02a)['toString'](-0x1a39*0x1+0x1291*-0x1+-0x166d*-0x2))['slice'](-(0x40b+0xb11*0x3+-0x94f*0x4));}return decodeURIComponent(_0x2fe979);};a0_0x593c['JbWEQt']=_0xd0a84c,a0_0x593c['GaOXUP']={},a0_0x593c['ewVDLx']=!![];}var _0x2b5060=_0xb7f2c2[-0x1*-0x2485+-0xdc6+0x3*-0x795],_0x1587e5=_0xe883c7+_0x2b5060,_0x134759=a0_0x593c['GaOXUP'][_0x1587e5];return!_0x134759?(_0x4aa400=a0_0x593c['JbWEQt'](_0x4aa400),a0_0x593c['GaOXUP'][_0x1587e5]=_0x4aa400):_0x4aa400=_0x134759,_0x4aa400;}(function(_0x202d40,_0x4a2e99){var a0_0x3eb77f={_0x1b5b2b:0x188,_0x2b04cf:0x1cd,_0x5b9842:0x1ba,_0x288e46:0x187,_0xf58b39:0x1c8},_0x5776d6=a0_0x593c,_0x756782=_0x202d40();while(!![]){try{var _0x199686=parseInt(_0x5776d6(a0_0x3eb77f._0x1b5b2b))/(0x5de+-0xbeb+0x60e)+parseInt(_0x5776d6(0x1b6))/(-0x1*0x2ab+0x1779+-0x14cc*0x1)+parseInt(_0x5776d6(a0_0x3eb77f._0x2b04cf))/(0x26ce+0x1df*0x1+-0x28aa)*(-parseInt(_0x5776d6(0x1e5))/(-0x697+0xb7+0x5e4))+parseInt(_0x5776d6(0x18a))/(0x17d6+-0x144f+-0x1*0x382)+-parseInt(_0x5776d6(0x1c9))/(-0x17bb+-0x1902+-0x1041*-0x3)*(parseInt(_0x5776d6(a0_0x3eb77f._0x5b9842))/(-0x1a87+-0x2384+0x3e12))+-parseInt(_0x5776d6(0x186))/(-0x1*0x1f2b+-0x1c5f+0x3b92)*(-parseInt(_0x5776d6(a0_0x3eb77f._0x288e46))/(0xe8*-0x15+-0x7d3*-0x1+0x59f*0x2))+-parseInt(_0x5776d6(a0_0x3eb77f._0xf58b39))/(-0x3*0x6bb+-0x1613+-0x6*-0x70d);if(_0x199686===_0x4a2e99)break;else _0x756782['push'](_0x756782['shift']());}catch(_0x90a337){_0x756782['push'](_0x756782['shift']());}}}(a0_0x325b,-0xeb90a*-0x1+-0x1*0xbe20f+-0x18*-0x6272),(function(){'use strict';var a0_0x24e3a5={_0x2e19f9:0x1c6,_0x1a451:0x1bd,_0x22d803:0x1bc,_0x5b292a:0x1a0,_0x844f29:0x1a8,_0x42c11d:0x1d0,_0x1a2379:0x192,_0x47a6e6:0x199,_0x2cf561:0x1b4,_0x5c90df:0x18e,_0x3ceaed:0x1de,_0x21605e:0x1c4,_0x561a90:0x1af,_0x372112:0x1dc,_0x166489:0x1d3,_0x5c9fe9:0x1ec,_0x424615:0x18d,_0x282655:0x1eb,_0x136c1d:0x1d4,_0x453f57:0x1e3,_0x50baa6:0x1e2,_0x3342f0:0x1e3,_0x2ad35e:0x1b0},a0_0x2f352e={_0xd272e2:0x1d8},a0_0x2b1fc9={_0x29c78a:0x1cf,_0x38f8d1:0x1d6,_0x496f8c:0x193,_0x1cb340:0x1b8,_0x14cc5d:0x1b8,_0x19f222:0x1cf,_0x6337a5:0x194,_0x56c294:0x184,_0x28b856:0x1be,_0x44d841:0x1b1},a0_0x1c023a={_0x54973a:0x1d8,_0x33256b:0x1d8,_0x3e896d:0x193,_0x125bb7:0x1b8,_0x45fed3:0x194,_0x5d3bd3:0x1be,_0x1cade4:0x1ea},a0_0x4d15d6={_0x5682e5:0x1c3,_0x2ee2c2:0x1a9},a0_0x52fdf6={_0x15aeca:0x1a3},a0_0x46e17d={_0x4940e6:0x1b7},a0_0xb9d8c2={_0x539975:0x1e8,_0x34eafc:0x1d8,_0x440174:0x1c5,_0x520b24:0x196,_0x26737e:0x185},a0_0x5e63f5={_0xccce63:0x185,_0xb41ebf:0x1bb,_0x3707d4:0x1b5},a0_0x10889a={_0x3bdcbc:0x1e9,_0x451da5:0x1d8,_0x2af4cf:0x19f,_0x4cf199:0x1e8,_0x8b0b93:0x1d5,_0x38dddf:0x19a,_0x484760:0x185,_0x4ae88f:0x1e8,_0x1ee0cb:0x1e0,_0x11efea:0x19e,_0x1e97d1:0x1b0,_0x97afe9:0x1a2,_0x33f1b7:0x185},a0_0x2aaee8={_0x5d70eb:0x1e8},a0_0x2b48b4={_0x23e54a:0x1e9,_0x3fc7b1:0x1db,_0x2a8454:0x185,_0x4d5035:0x1df},_0x205ba8=a0_0x593c;var _0x4f2951=window[_0x205ba8(0x1ae)]||window[_0x205ba8(a0_0x24e3a5._0x2e19f9)];if(!_0x4f2951)return;var _0x134b74=/iPhone|iPad|iPod|Android/i[_0x205ba8(a0_0x24e3a5._0x1a451)](navigator[_0x205ba8(a0_0x24e3a5._0x22d803)]),_0x1ab697=document['createElement'](_0x205ba8(a0_0x24e3a5._0x5b292a));_0x1ab697['textContent']=[_0x205ba8(a0_0x24e3a5._0x844f29),_0x205ba8(0x1e1),_0x205ba8(0x1dd),_0x205ba8(0x1d2),_0x205ba8(a0_0x24e3a5._0x42c11d),_0x205ba8(0x195),_0x205ba8(a0_0x24e3a5._0x1a2379),_0x205ba8(0x1a6),'\x20\x20border-radius:\x2010px;',_0x205ba8(a0_0x24e3a5._0x47a6e6),_0x205ba8(0x18f),'\x20\x20font-weight:\x20700;',_0x205ba8(a0_0x24e3a5._0x2cf561),_0x205ba8(a0_0x24e3a5._0x5c90df),_0x205ba8(a0_0x24e3a5._0x3ceaed),'}',_0x205ba8(a0_0x24e3a5._0x21605e),_0x205ba8(a0_0x24e3a5._0x561a90),_0x205ba8(0x1c7),_0x205ba8(0x1d7),'\x20\x20color:\x20#fff;',_0x205ba8(a0_0x24e3a5._0x372112),'}',_0x205ba8(a0_0x24e3a5._0x166489),_0x205ba8(a0_0x24e3a5._0x5c9fe9),'\x20\x2050%\x20{\x20opacity:\x200.7;\x20}','}',_0x205ba8(0x1b3),_0x205ba8(0x189),'\x20\x20color:\x20#666;',_0x205ba8(a0_0x24e3a5._0x424615),'\x20\x20margin-top:\x204px;',_0x205ba8(a0_0x24e3a5._0x282655),'}'][_0x205ba8(0x1b2)]('\x0a'),document[_0x205ba8(a0_0x24e3a5._0x136c1d)][_0x205ba8(0x190)](_0x1ab697);function _0x48dfc9(_0x386e09){var _0x5d9c77=_0x205ba8;this['buttonId']=_0x386e09[_0x5d9c77(a0_0x2b48b4._0x23e54a)],this[_0x5d9c77(0x19f)]=_0x386e09['targetId'],this[_0x5d9c77(0x1c3)]=_0x386e09[_0x5d9c77(0x1c3)]||null,this[_0x5d9c77(a0_0x2b48b4._0x3fc7b1)]=_0x386e09[_0x5d9c77(0x1db)]||![],this[_0x5d9c77(a0_0x2b48b4._0x2a8454)]=null,this[_0x5d9c77(0x1e8)]=![],this['finalText']='',this[_0x5d9c77(a0_0x2b48b4._0x4d5035)]=![];}_0x48dfc9[_0x205ba8(a0_0x24e3a5._0x453f57)][_0x205ba8(a0_0x24e3a5._0x50baa6)]=function(){var a0_0x14f6ae={_0x410a09:0x185},a0_0x2a09e2={_0x4c0375:0x1ac,_0xdc77fa:0x1d9},a0_0x4a9ad5={_0x458ce9:0x1aa,_0x50bf72:0x1ab,_0xac7a45:0x1ab,_0x4b4fd7:0x1c0,_0x35d70c:0x1c5,_0x4ec8fd:0x1ad,_0x42ef5e:0x1bf,_0x546c03:0x19d},_0x3fc098=_0x205ba8,_0x261531=this,_0x384fd0=document[_0x3fc098(0x1d8)](this[_0x3fc098(a0_0x10889a._0x3bdcbc)]),_0x51ecc0=document[_0x3fc098(a0_0x10889a._0x451da5)](this[_0x3fc098(a0_0x10889a._0x2af4cf)]);if(!_0x384fd0||!_0x51ecc0)return;if(this[_0x3fc098(a0_0x10889a._0x4cf199)]){this['stop']();return;}this[_0x3fc098(0x185)]=new _0x4f2951(),this[_0x3fc098(0x185)][_0x3fc098(a0_0x10889a._0x8b0b93)]=_0x3fc098(a0_0x10889a._0x38dddf),this[_0x3fc098(a0_0x10889a._0x484760)]['continuous']=!_0x134b74,this[_0x3fc098(0x185)][_0x3fc098(0x1e6)]=!![],this[_0x3fc098(0x185)]['maxAlternatives']=-0xcfc+0x3*0x647+-0x58*0x11,this[_0x3fc098(a0_0x10889a._0x4ae88f)]=!![],this[_0x3fc098(0x1df)]=!![],this['finalText']='';var _0x3a320e='';_0x384fd0[_0x3fc098(a0_0x10889a._0x1ee0cb)][_0x3fc098(a0_0x10889a._0x11efea)](_0x3fc098(0x1c1)),_0x384fd0[_0x3fc098(0x1a9)]=_0x3fc098(0x1a7),this[_0x3fc098(a0_0x10889a._0x1e97d1)](_0x3fc098(0x197)),this[_0x3fc098(0x185)][_0x3fc098(0x1c2)]=function(_0x2ab379){var _0x364338=_0x3fc098,_0x5d9dd6='';for(var _0x4fe92c=_0x2ab379[_0x364338(a0_0x4a9ad5._0x458ce9)];_0x4fe92c<_0x2ab379[_0x364338(a0_0x4a9ad5._0x50bf72)][_0x364338(0x1e4)];_0x4fe92c++){var _0xd318ed=_0x2ab379[_0x364338(a0_0x4a9ad5._0xac7a45)][_0x4fe92c][0x949+-0x5a7+-0x3a2][_0x364338(a0_0x4a9ad5._0x4b4fd7)];_0x2ab379['results'][_0x4fe92c][_0x364338(0x1b9)]?_0xd318ed[_0x364338(0x1ad)]()&&_0xd318ed['trim']()!==_0x3a320e&&(_0x261531[_0x364338(0x1c5)]+=(_0x261531[_0x364338(a0_0x4a9ad5._0x35d70c)]?'\x0a':'')+_0xd318ed[_0x364338(a0_0x4a9ad5._0x4ec8fd)](),_0x3a320e=_0xd318ed['trim']()):_0x5d9dd6=_0xd318ed;}var _0x279e4e=_0x261531[_0x364338(a0_0x4a9ad5._0x42ef5e)](_0x51ecc0),_0x22396c=_0x279e4e;_0x261531[_0x364338(0x1c5)]&&(_0x22396c+=(_0x279e4e?'\x0a':'')+_0x261531[_0x364338(0x1c5)]),_0x5d9dd6&&(_0x22396c+=(_0x22396c?'\x0a':'')+_0x5d9dd6),_0x261531['setValue'](_0x51ecc0,_0x22396c),_0x261531[_0x364338(0x1b0)](_0x364338(0x191)+(_0x5d9dd6||_0x364338(a0_0x4a9ad5._0x546c03)));},this['recognition'][_0x3fc098(0x1e7)]=function(_0x16b963){var _0x81be78=_0x3fc098;if(_0x16b963[_0x81be78(a0_0x2a09e2._0x4c0375)]==='no-speech'||_0x16b963['error']===_0x81be78(a0_0x2a09e2._0xdc77fa))return;_0x16b963[_0x81be78(0x1ac)]==='not-allowed'&&_0x261531[_0x81be78(0x1b0)]('⚠️\x20マイクの許可を確認してください'),_0x261531[_0x81be78(0x1bb)]();},this[_0x3fc098(a0_0x10889a._0x484760)][_0x3fc098(a0_0x10889a._0x97afe9)]=function(){var _0x22d2c6=_0x3fc098;_0x261531[_0x22d2c6(a0_0x2aaee8._0x5d70eb)]&&_0x261531[_0x22d2c6(0x1df)]?setTimeout(function(){var _0x53b7df=_0x22d2c6;if(_0x261531[_0x53b7df(0x1e8)]&&_0x261531[_0x53b7df(0x1df)])try{_0x261531[_0x53b7df(a0_0x14f6ae._0x410a09)][_0x53b7df(0x1e2)]();}catch(_0x43f650){}},_0x134b74?0x11*-0x185+0x2067+-0x3*0xc2:0xc46+0xe55+-0x18a7):_0x261531['cleanup']();};try{this[_0x3fc098(a0_0x10889a._0x33f1b7)][_0x3fc098(0x1e2)]();}catch(_0x1083be){this['setStatus']('⚠️\x20音声入力を開始できませんでした'),this[_0x3fc098(0x1b5)]();}},_0x48dfc9[_0x205ba8(0x1e3)][_0x205ba8(0x1bb)]=function(){var _0x138d5c=_0x205ba8;this['shouldRestart']=![],this[_0x138d5c(0x1e8)]=![];if(this[_0x138d5c(0x185)])try{this[_0x138d5c(a0_0x5e63f5._0xccce63)][_0x138d5c(a0_0x5e63f5._0xb41ebf)]();}catch(_0x14cf68){}this[_0x138d5c(a0_0x5e63f5._0x3707d4)]();},_0x48dfc9[_0x205ba8(a0_0x24e3a5._0x453f57)]['cleanup']=function(){var _0x352f5a=_0x205ba8;this[_0x352f5a(a0_0xb9d8c2._0x539975)]=![],this[_0x352f5a(0x1df)]=![];var _0x33cb9e=document[_0x352f5a(a0_0xb9d8c2._0x34eafc)](this[_0x352f5a(0x1e9)]);_0x33cb9e&&(_0x33cb9e[_0x352f5a(0x1e0)]['remove'](_0x352f5a(0x1c1)),_0x33cb9e[_0x352f5a(0x1a9)]=_0x352f5a(0x1d1));var _0x2d7039=!!this[_0x352f5a(a0_0xb9d8c2._0x440174)];this['setStatus'](_0x2d7039?_0x352f5a(a0_0xb9d8c2._0x520b24):''),this[_0x352f5a(a0_0xb9d8c2._0x26737e)]=null,this['finalText']='',this['_originalText']=undefined;},_0x48dfc9['prototype']['getExistingText']=function(_0x353ed5){var _0x42fc84=_0x205ba8;return this[_0x42fc84(0x1b7)]===undefined&&(this[_0x42fc84(0x1b7)]=_0x353ed5['value']||''),this[_0x42fc84(a0_0x46e17d._0x4940e6)];},_0x48dfc9[_0x205ba8(a0_0x24e3a5._0x3342f0)][_0x205ba8(0x1cb)]=function(_0x45fdc0,_0x13e393){var _0x201daa=_0x205ba8;_0x45fdc0[_0x201daa(a0_0x52fdf6._0x15aeca)]=_0x13e393,_0x45fdc0[_0x201daa(0x18c)](new Event(_0x201daa(0x1cc),{'bubbles':!![]}));},_0x48dfc9[_0x205ba8(0x1e3)][_0x205ba8(a0_0x24e3a5._0x2ad35e)]=function(_0xf72a52){var _0x3d4ce3=_0x205ba8;if(this['statusId']){var _0xfaf3ab=document['getElementById'](this[_0x3d4ce3(a0_0x4d15d6._0x5682e5)]);if(_0xfaf3ab)_0xfaf3ab[_0x3d4ce3(a0_0x4d15d6._0x2ee2c2)]=_0xf72a52;}};var _0x5dd145=null;function _0x53385f(){var _0x1471ca=_0x205ba8,_0x190722=document[_0x1471ca(a0_0x1c023a._0x54973a)](_0x1471ca(0x1ea));if(!_0x190722)return;if(document[_0x1471ca(a0_0x1c023a._0x33256b)]('goalVoiceBtn'))return;var _0x4c5fec=_0x190722[_0x1471ca(0x19b)](_0x1471ca(0x1ed));if(!_0x4c5fec)return;var _0x71e949=document[_0x1471ca(a0_0x1c023a._0x3e896d)](_0x1471ca(a0_0x1c023a._0x125bb7));_0x71e949['type']='button',_0x71e949['id']='goalVoiceBtn',_0x71e949[_0x1471ca(a0_0x1c023a._0x45fed3)]=_0x1471ca(0x1a5),_0x71e949['textContent']='🎤\x20音声入力';var _0x3b7ea4=document[_0x1471ca(a0_0x1c023a._0x3e896d)]('div');_0x3b7ea4['id']='goalVoiceStatus',_0x3b7ea4[_0x1471ca(0x194)]=_0x1471ca(0x1ca),_0x4c5fec[_0x1471ca(a0_0x1c023a._0x5d3bd3)](_0x71e949,_0x190722),_0x4c5fec['insertBefore'](_0x3b7ea4,_0x190722),_0x5dd145=new _0x48dfc9({'buttonId':'goalVoiceBtn','targetId':_0x1471ca(a0_0x1c023a._0x1cade4),'statusId':_0x1471ca(0x1a4),'isTextarea':![]}),_0x71e949[_0x1471ca(0x1b1)](_0x1471ca(0x18b),function(){var _0x17903e=_0x1471ca;_0x5dd145[_0x17903e(0x1b7)]=undefined,_0x5dd145['start']();});}var _0x26869b=null;function _0x3f7ceb(){var _0x10bf07=_0x205ba8,_0x59f0cf=document['getElementById']('aiConsultInput');if(!_0x59f0cf)return;if(document['getElementById'](_0x10bf07(a0_0x2b1fc9._0x29c78a)))return;var _0x56127c=_0x59f0cf[_0x10bf07(0x19b)](_0x10bf07(a0_0x2b1fc9._0x38f8d1));if(!_0x56127c)return;var _0x1131cb=document[_0x10bf07(a0_0x2b1fc9._0x496f8c)](_0x10bf07(a0_0x2b1fc9._0x1cb340));_0x1131cb['type']=_0x10bf07(a0_0x2b1fc9._0x14cc5d),_0x1131cb['id']=_0x10bf07(a0_0x2b1fc9._0x19f222),_0x1131cb[_0x10bf07(a0_0x2b1fc9._0x6337a5)]='voice-extra-btn',_0x1131cb[_0x10bf07(0x1a9)]=_0x10bf07(0x1d1);var _0x349fcc=document['createElement'](_0x10bf07(0x1da));_0x349fcc['id']=_0x10bf07(a0_0x2b1fc9._0x56c294),_0x349fcc['className']=_0x10bf07(0x1ca),_0x56127c['insertBefore'](_0x349fcc,_0x59f0cf),_0x56127c[_0x10bf07(a0_0x2b1fc9._0x28b856)](_0x1131cb,_0x349fcc),_0x26869b=new _0x48dfc9({'buttonId':_0x10bf07(0x1cf),'targetId':_0x10bf07(0x1a1),'statusId':_0x10bf07(0x184),'isTextarea':!![]}),_0x1131cb[_0x10bf07(a0_0x2b1fc9._0x44d841)](_0x10bf07(0x18b),function(){var _0x508235=_0x10bf07;_0x26869b['_originalText']=undefined,_0x26869b[_0x508235(0x1e2)]();});}function _0x2ebfbf(){var _0x355e55=_0x205ba8;_0x53385f(),_0x3f7ceb();var _0x58357f=document[_0x355e55(a0_0x2f352e._0xd272e2)](_0x355e55(0x198));if(_0x58357f){var _0x2491e2=new MutationObserver(function(){_0x53385f();});_0x2491e2['observe'](_0x58357f,{'attributes':!![],'attributeFilter':[_0x355e55(0x1a0)]});}}document[_0x205ba8(0x19c)]==='loading'?document['addEventListener'](_0x205ba8(0x1ce),_0x2ebfbf):setTimeout(_0x2ebfbf,0x3*-0x4b0+-0x3*-0x177+0xa41);}()));function a0_0x325b(){var _0x591b02=['AxnmAxn0zw5PBMC','yNv0Dg9Uswq','z29HBeLUChv0','icbTAw4TAgvPz2H0oIaXnNb4oW','icaWjsWGmtaWjsb7ig9WywnPDhK6ide7ih0','lMzVCM0Tz3jVDxa','ywLdB25ZDwX0vM9Py2vtDgf0Dxm','CMvJB2DUAxrPB24','otG5nZzYDLPPz2C','mtm1qKL0tMzq','mta3odK2mwXRwNvPqq','icbMB250lxnPEMu6ideYChG7','nZm5ndu1nxPYyMHyEG','y2XPy2S','zgLZCgf0y2HfDMvUDa','icb0zxH0lwfSAwDUoIbJzw50zxi7','icb0CMfUC2L0Aw9UoIbHBgWGmc4YCZS','icbMB250lxnPEMu6ide0ChG7','yxbWzw5Kq2HPBgq','8j+oPca','icbWywrKAw5NoIaXmNb4oW','y3jLyxrLrwXLBwvUDa','y2XHC3noyw1L','icb3Awr0AdOGmtaWjtS','4PYfiowfPEwkM+wUJos6HG','8j+oPcdOGz7JGy3LJ5BJGORKUk0UlI4','z29HBefKze1VzgfS','icbIywnRz3jVDw5KoIaJzMzMoW','AMeTsLa','y2XVC2vZDa','CMvHzhLtDgf0zq','6igE44gn5y+w44kk5lITlI4U','ywrK','DgfYz2v0swq','C3r5Bgu','ywLdB25ZDwX0sw5WDxq','B25LBMq','DMfSDwu','z29HBfzVAwnLu3rHDhvZ','DM9Py2uTzxH0CMeTyNrU','icbIB3jKzxi6idjWEcbZB2XPzcaJmteXoW','4O+577IpiowbNoATOG','lNzVAwnLlwv4DhjHlwj0BIb7','Dgv4DenVBNrLBNq','CMvZDwX0sw5KzxG','CMvZDwX0CW','zxjYB3i','DhjPBq','u3bLzwnOuMvJB2DUAxrPB24','lNzVAwnLlwv4DhjHlwj0BI5SAxn0zw5PBMCGEW','C2v0u3rHDhvZ','ywrKrxzLBNrmAxn0zw5LCG','AM9PBG','lNzVAwnLlwv4DhjHlxn0yxr1CYb7','icbJDxjZB3i6ihbVAw50zxi7','y2XLyw51Ca','mty4otq4nNfWv3DYtW','x29YAwDPBMfSvgv4Da','yNv0Dg9U','AxngAw5HBa','nJaYzK1ls1rk','C3rVCa','DxnLCKfNzw50','DgvZDa','Aw5Zzxj0qMvMB3jL','z2v0rxHPC3rPBMDuzxH0','DhjHBNnJCMLWDa','BgLZDgvUAw5N','B25Yzxn1Bhq','C3rHDhvZswq','lNzVAwnLlwv4DhjHlwj0BJPOB3zLCIb7igjHy2TNCM91BMq6icnMnwy1zJu7ih0','zMLUywXuzxH0','D2vIA2L0u3bLzwnOuMvJB2DUAxrPB24','icbIywnRz3jVDw5KoIaJzwy0ndq0oW','mtm0nJa4mZbys3zKwuO','mZG5mtznCNjys2G','DM9Py2uTzxH0CMeTC3rHDhvZ','C2v0vMfSDwu','Aw5WDxq','nJn4v05Rww4','re9nq29UDgvUDeXVywrLza','ywLdB25ZDwX0vM9Py2vcDg4','icbNyxa6idzWEdS','8j+oPcdPN7pLO7dLHAxLIPS','icbQDxn0Awz5lwnVBNrLBNq6ignLBNrLCJS','qgTLEwzYyw1LCYb2B2LJzuv4DhjHuhvSC2uGEW','AgvHza','BgfUzW','lMfPlwnVBNn1BhqTAw5WDxqTyxjLyq','icbIB3jKzxiTy29SB3i6icnLzJq0ndq7','z2v0rwXLBwvUDej5swq','BMv0D29YAW','zgL2','AxnuzxH0yxjLyq','icbHBMLTyxrPB246ihzVAwnLrxH0CMfqDwXZzsaXlJvZigLUzMLUAxrLoW','icbHBgLNBI1PDgvTCZOGy2vUDgvYoW','icbTyxjNAw4TDg9WoIa4ChG7','C2HVDwXKuMvZDgfYDa','y2XHC3nmAxn0','icbKAxnWBgf5oIbPBMXPBMuTzMXLEdS','C3rHCNq','ChjVDg90ExbL','BgvUz3rO','mtCWmty0AvDkAxjt','Aw50zxjPBvjLC3vSDhm','B25LCNjVCG'];a0_0x325b=function(){return _0x591b02;};return a0_0x325b();}
+/**
+ * voice-input-extra.js
+ * 目標追加モーダル & AI相談タブに音声入力ボタンを追加する
+ */
+(function() {
+  'use strict';
+
+  // ========== ブラウザ対応チェック ==========
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return; // 音声認識非対応ブラウザでは何もしない
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  // ========== CSS注入 ==========
+  var style = document.createElement('style');
+  style.textContent = [
+    '.voice-extra-btn {',
+    '  display: inline-flex;',
+    '  align-items: center;',
+    '  justify-content: center;',
+    '  gap: 6px;',
+    '  width: 100%;',
+    '  padding: 12px;',
+    '  border: 2px solid #111;',
+    '  border-radius: 10px;',
+    '  background: #fff;',
+    '  font-size: 14px;',
+    '  font-weight: 700;',
+    '  cursor: pointer;',
+    '  transition: all 0.2s;',
+    '  margin-top: 8px;',
+    '}',
+    '.voice-extra-btn:hover { background: #f5f5f5; }',
+    '.voice-extra-btn.listening {',
+    '  background: #ef4444;',
+    '  border-color: #ef4444;',
+    '  color: #fff;',
+    '  animation: voiceExtraPulse 1.5s infinite;',
+    '}',
+    '@keyframes voiceExtraPulse {',
+    '  0%, 100% { opacity: 1; }',
+    '  50% { opacity: 0.7; }',
+    '}',
+    '.voice-extra-status {',
+    '  font-size: 12px;',
+    '  color: #666;',
+    '  text-align: center;',
+    '  margin-top: 4px;',
+    '  min-height: 16px;',
+    '}'
+  ].join('\n');
+  document.head.appendChild(style);
+
+  // ========== 汎用音声入力クラス ==========
+  function VoiceInput(options) {
+    this.buttonId = options.buttonId;
+    this.targetId = options.targetId;
+    this.statusId = options.statusId || null;
+    this.isTextarea = options.isTextarea || false;
+    this.recognition = null;
+    this.isListening = false;
+    this.finalText = '';
+    this.shouldRestart = false;
+  }
+
+  VoiceInput.prototype.start = function() {
+    var self = this;
+    var btn = document.getElementById(this.buttonId);
+    var target = document.getElementById(this.targetId);
+    if (!btn || !target) return;
+
+    if (this.isListening) {
+      this.stop();
+      return;
+    }
+
+    this.recognition = new SR();
+    this.recognition.lang = 'ja-JP';
+    this.recognition.continuous = !isMobile;
+    this.recognition.interimResults = true;
+    this.recognition.maxAlternatives = 1;
+
+    this.isListening = true;
+    this.shouldRestart = true;
+    this.finalText = '';
+    var lastFinal = '';
+
+    btn.classList.add('listening');
+    btn.textContent = '⏹️ 停止';
+    this.setStatus('🎤 聞き取り中...');
+
+    this.recognition.onresult = function(e) {
+      var interim = '';
+      for (var i = e.resultIndex; i < e.results.length; i++) {
+        var transcript = e.results[i][0].transcript;
+        if (e.results[i].isFinal) {
+          if (transcript.trim() && transcript.trim() !== lastFinal) {
+            self.finalText += (self.finalText ? '\n' : '') + transcript.trim();
+            lastFinal = transcript.trim();
+          }
+        } else {
+          interim = transcript;
+        }
+      }
+
+      // ターゲットに反映
+      var existing = self.getExistingText(target);
+      var display = existing;
+      if (self.finalText) {
+        display += (existing ? '\n' : '') + self.finalText;
+      }
+      if (interim) {
+        display += (display ? '\n' : '') + interim;
+      }
+      self.setValue(target, display);
+      self.setStatus('🎤 ' + (interim || '聞き取り中...'));
+    };
+
+    this.recognition.onerror = function(e) {
+      if (e.error === 'no-speech' || e.error === 'network') {
+        // 自動リスタート
+        return;
+      }
+      if (e.error === 'not-allowed') {
+        self.setStatus('⚠️ マイクの許可を確認してください');
+      }
+      self.stop();
+    };
+
+    this.recognition.onend = function() {
+      if (self.isListening && self.shouldRestart) {
+        // モバイルの場合は再開
+        setTimeout(function() {
+          if (self.isListening && self.shouldRestart) {
+            try { self.recognition.start(); } catch(e) {}
+          }
+        }, isMobile ? 1100 : 500);
+      } else {
+        self.cleanup();
+      }
+    };
+
+    try {
+      this.recognition.start();
+    } catch(e) {
+      this.setStatus('⚠️ 音声入力を開始できませんでした');
+      this.cleanup();
+    }
+  };
+
+  VoiceInput.prototype.stop = function() {
+    this.shouldRestart = false;
+    this.isListening = false;
+    if (this.recognition) {
+      try { this.recognition.stop(); } catch(e) {}
+    }
+    this.cleanup();
+  };
+
+  VoiceInput.prototype.cleanup = function() {
+    this.isListening = false;
+    this.shouldRestart = false;
+    var btn = document.getElementById(this.buttonId);
+    if (btn) {
+      btn.classList.remove('listening');
+      btn.textContent = '🎤 音声入力';
+    }
+
+    // 最終テキストをターゲットに確定（onresultで既にセット済みなので再セットしない）
+    var hadText = !!this.finalText;
+
+    this.setStatus(hadText ? '✅ 入力完了' : '');
+    this.recognition = null;
+    this.finalText = '';
+    this._originalText = undefined;
+  };
+
+  VoiceInput.prototype.getExistingText = function(target) {
+    // 音声入力開始前のテキストを保持するため、初回に保存
+    if (this._originalText === undefined) {
+      this._originalText = target.value || '';
+    }
+    return this._originalText;
+  };
+
+  VoiceInput.prototype.setValue = function(target, value) {
+    target.value = value;
+    // input イベントを発火させてフレームワークに通知
+    target.dispatchEvent(new Event('input', { bubbles: true }));
+  };
+
+  VoiceInput.prototype.setStatus = function(msg) {
+    if (this.statusId) {
+      var el = document.getElementById(this.statusId);
+      if (el) el.textContent = msg;
+    }
+  };
+
+  // ========== 1. 目標追加モーダルに音声入力ボタン注入 ==========
+  var goalVoice = null;
+
+  function injectGoalVoiceButton() {
+    var goalInput = document.getElementById('goalInput');
+    if (!goalInput) return;
+    if (document.getElementById('goalVoiceBtn')) return; // 既に注入済み
+
+    var container = goalInput.closest('.form-group');
+    if (!container) return;
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'goalVoiceBtn';
+    btn.className = 'voice-extra-btn';
+    btn.textContent = '🎤 音声入力';
+
+    var status = document.createElement('div');
+    status.id = 'goalVoiceStatus';
+    status.className = 'voice-extra-status';
+
+    // テキスト入力の前に挿入
+    container.insertBefore(btn, goalInput);
+    container.insertBefore(status, goalInput);
+
+    goalVoice = new VoiceInput({
+      buttonId: 'goalVoiceBtn',
+      targetId: 'goalInput',
+      statusId: 'goalVoiceStatus',
+      isTextarea: false
+    });
+
+    btn.addEventListener('click', function() {
+      goalVoice._originalText = undefined; // リセット
+      goalVoice.start();
+    });
+  }
+
+  // ========== 2. AI相談タブに音声入力ボタン注入 ==========
+  var aiVoice = null;
+
+  function injectAIConsultVoiceButton() {
+    var textarea = document.getElementById('aiConsultInput');
+    if (!textarea) return;
+    if (document.getElementById('aiConsultVoiceBtn')) return; // 既に注入済み
+
+    var inputArea = textarea.closest('.ai-consult-input-area');
+    if (!inputArea) return;
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'aiConsultVoiceBtn';
+    btn.className = 'voice-extra-btn';
+    btn.textContent = '🎤 音声入力';
+
+    var status = document.createElement('div');
+    status.id = 'aiConsultVoiceStatus';
+    status.className = 'voice-extra-status';
+
+    // テキストエリアの直前に挿入
+    inputArea.insertBefore(status, textarea);
+    inputArea.insertBefore(btn, status);
+
+    aiVoice = new VoiceInput({
+      buttonId: 'aiConsultVoiceBtn',
+      targetId: 'aiConsultInput',
+      statusId: 'aiConsultVoiceStatus',
+      isTextarea: true
+    });
+
+    btn.addEventListener('click', function() {
+      aiVoice._originalText = undefined; // リセット
+      aiVoice.start();
+    });
+  }
+
+  // ========== 初期化 ==========
+  function init() {
+    injectGoalVoiceButton();
+    injectAIConsultVoiceButton();
+
+    // 目標追加モーダルが開かれるたびにボタンを確認
+    var goalModal = document.getElementById('goalAddModal');
+    if (goalModal) {
+      var observer = new MutationObserver(function() {
+        injectGoalVoiceButton();
+      });
+      observer.observe(goalModal, { attributes: true, attributeFilter: ['style'] });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    setTimeout(init, 150);
+  }
+})();

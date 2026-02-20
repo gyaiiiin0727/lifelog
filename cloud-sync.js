@@ -1,1 +1,495 @@
-function a0_0x5834(_0xb25b53,_0x1a3655){_0xb25b53=_0xb25b53-(0x14a2+0x1*-0x262d+0x1325);var _0x51616e=a0_0x611b();var _0x4262fe=_0x51616e[_0xb25b53];if(a0_0x5834['UGEZnl']===undefined){var _0x2338df=function(_0xa8f5c9){var _0x4af399='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';var _0x4291c9='',_0x2e5c32='';for(var _0x268d67=-0x269+0x1*-0x1261+0x14ca,_0x18bbc9,_0x3e35e2,_0x259649=0x42+-0x2f*-0x38+-0xa8a;_0x3e35e2=_0xa8f5c9['charAt'](_0x259649++);~_0x3e35e2&&(_0x18bbc9=_0x268d67%(0x4f7+-0x123e+0xd4b)?_0x18bbc9*(-0x1dbd+-0x3a8+0x21a5)+_0x3e35e2:_0x3e35e2,_0x268d67++%(-0x20c3+0x448*-0x8+0x4307*0x1))?_0x4291c9+=String['fromCharCode'](-0x1c85+0x9*-0x1b0+0x2cb4&_0x18bbc9>>(-(0x10af*-0x2+-0x1593+0x36f3)*_0x268d67&-0x1c83+0x1d30+0xa7*-0x1)):-0x14c2+-0x2f*-0x8c+-0x4f2){_0x3e35e2=_0x4af399['indexOf'](_0x3e35e2);}for(var _0x211636=-0x1f*-0xab+0x30c*0x5+-0x23f1*0x1,_0x109e82=_0x4291c9['length'];_0x211636<_0x109e82;_0x211636++){_0x2e5c32+='%'+('00'+_0x4291c9['charCodeAt'](_0x211636)['toString'](0x2e*-0x14+0x379*0x8+-0x1820))['slice'](-(-0x1a2+-0x6e2*0x5+0x240e));}return decodeURIComponent(_0x2e5c32);};a0_0x5834['hUKwdf']=_0x2338df,a0_0x5834['yxkrWV']={},a0_0x5834['UGEZnl']=!![];}var _0x3994ea=_0x51616e[0x1a2f*-0x1+-0x42d+0x1e5c],_0x4aa472=_0xb25b53+_0x3994ea,_0x4952b8=a0_0x5834['yxkrWV'][_0x4aa472];return!_0x4952b8?(_0x4262fe=a0_0x5834['hUKwdf'](_0x4262fe),a0_0x5834['yxkrWV'][_0x4aa472]=_0x4262fe):_0x4262fe=_0x4952b8,_0x4262fe;}(function(_0xb2828e,_0x2637b7){var a0_0x441109={_0x3b7bbf:0x1d8,_0x2dad37:0x22c,_0x36527d:0x1a5},_0x5c36a2=a0_0x5834,_0x1f4c4b=_0xb2828e();while(!![]){try{var _0x24f166=parseInt(_0x5c36a2(0x228))/(-0x3e7+-0x1*0x2059+0x2441)+parseInt(_0x5c36a2(0x1f2))/(-0x284+0x9b*0x4+0x2*0xd)+parseInt(_0x5c36a2(a0_0x441109._0x3b7bbf))/(-0x1d*0x12e+-0x5*0x30d+0x317a)+-parseInt(_0x5c36a2(0x1df))/(-0x35+-0x16e4+0x171d)*(-parseInt(_0x5c36a2(0x202))/(-0x40*-0x33+-0x1416+0x75b))+parseInt(_0x5c36a2(a0_0x441109._0x2dad37))/(0x8*-0x12+-0x626+0x6bc)*(parseInt(_0x5c36a2(0x1e5))/(0xcc*-0x1d+0x16f0+0x33))+-parseInt(_0x5c36a2(a0_0x441109._0x36527d))/(-0x1*0x5de+0x48d*0x1+-0xf*-0x17)*(-parseInt(_0x5c36a2(0x1b5))/(0x18b7+-0x16b7+-0x1f7*0x1))+-parseInt(_0x5c36a2(0x1c7))/(-0x66f+0x10fa+-0xa81);if(_0x24f166===_0x2637b7)break;else _0x1f4c4b['push'](_0x1f4c4b['shift']());}catch(_0x472abc){_0x1f4c4b['push'](_0x1f4c4b['shift']());}}}(a0_0x611b,-0x9b4b6+0x2e5c7+0xd82ea*0x1),(function(){'use strict';var a0_0x4d8a6a={_0x41d708:0x1c3,_0x191bc8:0x1a3,_0x48493d:0x1d2,_0x35171c:0x226,_0x193384:0x1e0,_0x18159d:0x1de,_0xac4e83:0x1f5},a0_0x47dcbe={_0x518937:0x21d,_0x5d6a3b:0x1c8,_0x4cc572:0x232,_0x184bcf:0x1f1,_0x3e3f8f:0x1b2,_0x1089a4:0x21a,_0x3946d7:0x1b3,_0x3fde7b:0x1b9,_0x1de722:0x208,_0x2eb8e8:0x1ac,_0x1a6e39:0x20e,_0x542bd4:0x1a0,_0x57c0b7:0x1dc,_0x4ecd1f:0x1d6},a0_0x572821={_0x493ff7:0x19a,_0x9e3c44:0x1c8},a0_0x115889={_0x3afa85:0x1f3,_0x2dccaf:0x1f4,_0x361e25:0x1e9,_0x2cd091:0x213},a0_0x1d616d={_0x25c7e1:0x1b7,_0x2ca4b7:0x1c8,_0x148612:0x1bf},a0_0x1cbf1b={_0x574172:0x1b7,_0x41aa1c:0x1a9,_0x2edf7c:0x1b7,_0x2d9d38:0x23e,_0x3bb0ad:0x230,_0x2c1253:0x1ae,_0xd31904:0x20b,_0x4422b2:0x1f6},a0_0x907007={_0xa60d42:0x1b7,_0x269a77:0x234,_0x1cc183:0x1e2,_0x4b086d:0x1ae,_0x26e37d:0x1ae,_0x425e44:0x1a9,_0x54b621:0x1f0},a0_0x168634={_0x2f0ea6:0x1ea,_0x1c8693:0x1e2,_0xcccf0d:0x1b7,_0x19c1e7:0x1e8,_0x486d07:0x1ea,_0x96875:0x213},a0_0x5cc837={_0x186588:0x233,_0x7628dd:0x1ea,_0x2f94ff:0x1e2,_0x272a89:0x21b,_0x1c3309:0x213},a0_0x2ad1cf={_0x289921:0x1be,_0x2178e4:0x1ae,_0x1bec38:0x20d,_0x2d4dfb:0x1c8,_0xececcc:0x240,_0x26e0cb:0x1ce},a0_0x65fd59={_0x38d427:0x1b7,_0x17276a:0x1cb,_0x38ac67:0x21e},a0_0x36afac={_0x1679f9:0x204},a0_0x41d985={_0x21bf3a:0x1b7,_0x2f0b1a:0x20a,_0x41a20f:0x21e},a0_0x25b294={_0x508429:0x22d,_0x1e966f:0x22e,_0x1179eb:0x227,_0x131f92:0x1ca,_0x3f41c1:0x1d5,_0x49679d:0x22a,_0xf45337:0x1e1,_0x420a0b:0x216,_0x4275f2:0x216,_0x3b50e0:0x205,_0x5575fc:0x1de},a0_0x222c98={_0x45e4e9:0x1ce,_0x3b69e3:0x20b,_0xabbc4d:0x1c6,_0x932c3:0x215,_0x9d188e:0x21f,_0xc2e0b2:0x22a,_0x144a51:0x1a7,_0x7df48a:0x216,_0x16350b:0x1de,_0x156205:0x200,_0x52d6ce:0x22a,_0x4622b2:0x1ec,_0x89c9f9:0x216,_0x33f58a:0x1c5,_0x5b79da:0x1b4,_0x55be99:0x214,_0x5e3a20:0x235,_0x2155e9:0x216,_0x579023:0x1de,_0x3f8e67:0x1ec,_0x1e3916:0x23f,_0x151721:0x1ec,_0x80c605:0x22e,_0x29fbf8:0x229,_0x4c832b:0x1e6,_0x469438:0x211,_0x2a136c:0x19b,_0x53c48e:0x1c0,_0x4a3928:0x1de,_0x2bd89b:0x22f,_0x1552a3:0x1de},a0_0x3ec462={_0x89ef0d:0x20b,_0x3ce5ea:0x200,_0x59a541:0x1ae},a0_0x2b5830={_0x338118:0x1ae,_0x419b9:0x19e,_0x38efea:0x1f6},a0_0x38db95={_0x2d7ebf:0x1ae,_0x4f6537:0x20b,_0x54fbc3:0x19e,_0x1d234c:0x1cc,_0xe298f1:0x1f6},a0_0x62fa41={_0x46cf58:0x19e},a0_0x4a98fd={_0x304967:0x1b7},a0_0x54e3ed={_0x14611f:0x1c4,_0x115971:0x1f4,_0x3992af:0x1f4,_0x439744:0x1bf},a0_0x3c8049={_0x2fb072:0x225,_0x3d73c7:0x1a8,_0x5bfa1a:0x1fd},a0_0x12113a={_0x444adc:0x1fe},a0_0x32d034={_0x4c95ad:0x1d0,_0xbb6985:0x20f},a0_0x4bd784={_0x32b164:0x1fc,_0x3e2b7a:0x1fd},a0_0x450d91={_0xbf76f7:0x1d0,_0xa0a9c3:0x20f},a0_0x5d4340={_0x3f45d1:0x1fd},a0_0x2c8021={_0x235b09:0x1bd,_0x1ab011:0x221,_0xd985bd:0x1a2,_0x2eb274:0x218,_0x152f78:0x236,_0x11af9d:0x207,_0x1918b4:0x237},a0_0x2dff0a={_0x2560b4:0x22b},a0_0x45b9dc={_0x4f03c3:0x1cf},_0x5b35c2=a0_0x5834;var _0x344ecc=window['BACKEND_URL']||window[_0x5b35c2(0x1f9)]||_0x5b35c2(a0_0x4d8a6a._0x41d708),_0x4d7da8=[_0x5b35c2(0x201),'moneyRecords',_0x5b35c2(0x1d1),_0x5b35c2(a0_0x4d8a6a._0x191bc8),_0x5b35c2(0x222),'activityCategories',_0x5b35c2(0x1e4),_0x5b35c2(0x1f7),_0x5b35c2(a0_0x4d8a6a._0x48493d),_0x5b35c2(a0_0x4d8a6a._0x35171c),'aiConsultHistory'],_0xce167a=_0x5b35c2(a0_0x4d8a6a._0x193384),_0x1d2680=_0x5b35c2(0x1f8),_0x161d67=_0x5b35c2(0x20c);function _0x4def49(){var _0x5f5897=_0x5b35c2;return localStorage[_0x5f5897(0x1cf)](_0xce167a);}function _0x39e976(){var _0x67b45d=_0x5b35c2;return localStorage[_0x67b45d(0x1cf)](_0x1d2680);}function _0x1ca8d4(){var _0xd7eb7=_0x5b35c2;return localStorage[_0xd7eb7(a0_0x45b9dc._0x4f03c3)](_0x161d67);}function _0x6f701b(_0x51f4c8,_0x191691){var _0xf78034=_0x5b35c2;localStorage[_0xf78034(a0_0x2dff0a._0x2560b4)](_0xce167a,_0x51f4c8),localStorage[_0xf78034(0x22b)](_0x1d2680,_0x191691);}function _0x155b58(){var _0x57ed86=_0x5b35c2;localStorage[_0x57ed86(0x203)](_0xce167a),localStorage['removeItem'](_0x1d2680);}function _0x32ea23(){return!!_0x4def49();}async function _0x491d52(_0x2db278,_0x5b00cc){var _0x136a6f=_0x5b35c2;_0x5b00cc=_0x5b00cc||{};var _0x2f0c33={'Content-Type':'application/json'},_0x37a73e=_0x4def49();if(_0x37a73e)_0x2f0c33['Authorization']=_0x136a6f(a0_0x2c8021._0x235b09)+_0x37a73e;var _0x1045b1={'method':_0x5b00cc[_0x136a6f(a0_0x2c8021._0x1ab011)]||'GET','headers':_0x2f0c33};if(_0x5b00cc[_0x136a6f(0x1a2)])_0x1045b1[_0x136a6f(a0_0x2c8021._0xd985bd)]=JSON[_0x136a6f(0x224)](_0x5b00cc[_0x136a6f(a0_0x2c8021._0xd985bd)]);var _0xbfbb17=await fetch(_0x344ecc+_0x2db278,_0x1045b1),_0xfbb445=await _0xbfbb17[_0x136a6f(a0_0x2c8021._0x2eb274)]();if(!_0xbfbb17['ok']){_0xbfbb17['status']===0x9*0x73+-0x29b+-0x3*-0xb&&_0x2db278[_0x136a6f(0x1dd)](_0x136a6f(a0_0x2c8021._0x152f78))&&(_0x155b58(),CloudSync[_0x136a6f(0x1b6)]());throw new Error(_0xfbb445[_0x136a6f(a0_0x2c8021._0x11af9d)]||_0x136a6f(a0_0x2c8021._0x1918b4));}return _0xfbb445;}async function _0x154b41(_0x2a981d,_0x4b7d6e){var _0x303ca7=_0x5b35c2,_0x5cb33c=await _0x491d52(_0x303ca7(0x1d7),{'method':_0x303ca7(a0_0x5d4340._0x3f45d1),'body':{'email':_0x2a981d,'password':_0x4b7d6e}});return _0x6f701b(_0x5cb33c['token'],_0x5cb33c[_0x303ca7(0x20f)]),_0x5cb33c;}async function _0x201767(_0xdf53dd,_0x1e1579){var _0x575c86=_0x5b35c2,_0xb25b53=await _0x491d52(_0x575c86(0x1bc),{'method':_0x575c86(0x1fd),'body':{'email':_0xdf53dd,'password':_0x1e1579}});return _0x6f701b(_0xb25b53[_0x575c86(a0_0x450d91._0xbf76f7)],_0xb25b53[_0x575c86(a0_0x450d91._0xa0a9c3)]),_0xb25b53;}function _0xce31e4(){_0x155b58(),localStorage['removeItem'](_0x161d67);}async function _0x53502d(_0x1a3655){var _0x149c75=_0x5b35c2;return _0x491d52(_0x149c75(a0_0x4bd784._0x32b164),{'method':_0x149c75(a0_0x4bd784._0x3e2b7a),'body':{'email':_0x1a3655}});}async function _0x1d9389(_0x51616e,_0x4262fe,_0x2338df){var _0x34241c=_0x5b35c2,_0x3994ea=await _0x491d52(_0x34241c(0x223),{'method':'POST','body':{'email':_0x51616e,'code':_0x4262fe,'newPassword':_0x2338df}});return _0x6f701b(_0x3994ea[_0x34241c(a0_0x32d034._0x4c95ad)],_0x3994ea[_0x34241c(a0_0x32d034._0xbb6985)]),_0x3994ea;}function _0x81fa9a(){var _0x3a220a=_0x5b35c2,_0x4aa472={};return _0x4d7da8[_0x3a220a(0x1ab)](function(_0x4952b8){var _0xa8f5c9=localStorage['getItem'](_0x4952b8);if(_0xa8f5c9!==null)_0x4aa472[_0x4952b8]=_0xa8f5c9;}),_0x4aa472;}function _0x3bd305(_0x4af399){var _0x451281=_0x5b35c2;if(!_0x4af399||typeof _0x4af399!=='object')return;Object[_0x451281(a0_0x12113a._0x444adc)](_0x4af399)['forEach'](function(_0x4291c9){var _0xcbeb07=_0x451281;_0x4d7da8['indexOf'](_0x4291c9)!==-(-0x7e4+0x4f7+0x2ee)&&_0x4af399[_0x4291c9]!==undefined&&localStorage[_0xcbeb07(0x22b)](_0x4291c9,_0x4af399[_0x4291c9]);});}async function _0x53285c(){var _0x48ed69=_0x5b35c2,_0x2e5c32=_0x81fa9a(),_0x268d67=window[_0x48ed69(0x225)]?window[_0x48ed69(a0_0x3c8049._0x2fb072)][_0x48ed69(a0_0x3c8049._0x3d73c7)]():localStorage['getItem']('planLevel')||_0x48ed69(0x212),_0x18bbc9=await _0x491d52(_0x48ed69(0x206),{'method':_0x48ed69(a0_0x3c8049._0x5bfa1a),'body':{'data':_0x2e5c32,'planLevel':_0x268d67}});return localStorage['setItem'](_0x161d67,_0x18bbc9['syncedAt']),_0x18bbc9;}async function _0x1659f8(){var _0x52ea85=_0x5b35c2,_0x3e35e2=await _0x491d52(_0x52ea85(a0_0x54e3ed._0x14611f));if(_0x3e35e2[_0x52ea85(a0_0x54e3ed._0x115971)]){_0x3bd305(_0x3e35e2[_0x52ea85(a0_0x54e3ed._0x3992af)]);if(_0x3e35e2[_0x52ea85(a0_0x54e3ed._0x439744)])localStorage[_0x52ea85(0x22b)](_0x161d67,_0x3e35e2[_0x52ea85(0x1bf)]);}return _0x3e35e2;}async function _0x4f0f75(){var _0x2cd8da=_0x5b35c2;return _0x491d52(_0x2cd8da(0x1a4));}function _0xcac2e5(){var _0x31f7a0=_0x5b35c2,_0x259649=document[_0x31f7a0(a0_0x4a98fd._0x304967)]('cloudSyncSection');if(!_0x259649)return;!_0x32ea23()?_0x4e676f(_0x259649):_0x1a5773(_0x259649);}function _0x4e676f(_0x211636){var a0_0x12dd73={_0x6bdd5a:0x1ae,_0x4c90a3:0x20b},_0x58ed35=_0x5b35c2,_0x109e82=_0x211636[_0x58ed35(a0_0x222c98._0x45e4e9)](_0x58ed35(a0_0x222c98._0x3b69e3))||_0x58ed35(0x19e);if(_0x109e82===_0x58ed35(0x1ba))_0x211636[_0x58ed35(a0_0x222c98._0xabbc4d)]=_0x58ed35(0x22e)+'<p\x20class=\x22cs-desc\x22>アカウントを作成してデータをクラウドに保存</p>'+_0x58ed35(0x1fb)+_0x58ed35(a0_0x222c98._0x932c3)+_0x58ed35(0x1b8)+_0x58ed35(a0_0x222c98._0x9d188e)+_0x58ed35(a0_0x222c98._0xc2e0b2)+_0x58ed35(0x1ed)+_0x58ed35(0x1ee)+_0x58ed35(a0_0x222c98._0x144a51)+'</div>',_0x211636[_0x58ed35(a0_0x222c98._0x7df48a)](_0x58ed35(0x220))[_0x58ed35(a0_0x222c98._0x16350b)](_0x58ed35(0x1ec),_0x1c1930),_0x211636[_0x58ed35(0x216)]('#csToLogin')[_0x58ed35(0x1de)](_0x58ed35(0x1ec),function(){var _0x5236ab=_0x58ed35;_0x211636[_0x5236ab(0x1ae)]('data-mode',_0x5236ab(a0_0x62fa41._0x46cf58)),_0xcac2e5();});else{if(_0x109e82===_0x58ed35(a0_0x222c98._0x156205)){var _0x2c0227=_0x211636['getAttribute']('data-reset-step')||'1';_0x2c0227==='1'?(_0x211636['innerHTML']=_0x58ed35(0x1b4)+_0x58ed35(0x210)+_0x58ed35(0x1fb)+'<input\x20type=\x22email\x22\x20id=\x22csResetEmail\x22\x20class=\x22cs-input\x22\x20placeholder=\x22メールアドレス\x22\x20autocomplete=\x22email\x22>'+_0x58ed35(a0_0x222c98._0x52d6ce)+_0x58ed35(0x1aa)+'<button\x20type=\x22button\x22\x20id=\x22csBackToLogin\x22\x20class=\x22cs-btn\x20cs-btn-link\x22>ログインに戻る</button>'+'</div>',_0x211636['querySelector'](_0x58ed35(0x19f))[_0x58ed35(a0_0x222c98._0x16350b)](_0x58ed35(a0_0x222c98._0x4622b2),_0x59b3b2),_0x211636[_0x58ed35(a0_0x222c98._0x89c9f9)](_0x58ed35(a0_0x222c98._0x33f58a))['addEventListener']('click',function(){var _0x30c00e=_0x58ed35;_0x211636[_0x30c00e(a0_0x38db95._0x2d7ebf)](_0x30c00e(a0_0x38db95._0x4f6537),_0x30c00e(a0_0x38db95._0x54fbc3)),_0x211636[_0x30c00e(0x1f6)](_0x30c00e(a0_0x38db95._0x1d234c)),_0x211636[_0x30c00e(a0_0x38db95._0xe298f1)]('data-reset-email'),_0xcac2e5();})):(_0x211636[_0x58ed35(a0_0x222c98._0xabbc4d)]=_0x58ed35(a0_0x222c98._0x5b79da)+_0x58ed35(a0_0x222c98._0x55be99)+'<div\x20class=\x22cs-form\x22>'+'<input\x20type=\x22text\x22\x20id=\x22csResetCode\x22\x20class=\x22cs-input\x22\x20placeholder=\x226桁のコード\x22\x20maxlength=\x226\x22\x20inputmode=\x22numeric\x22>'+_0x58ed35(a0_0x222c98._0x5e3a20)+'<div\x20id=\x22csError\x22\x20class=\x22cs-error\x22\x20style=\x22display:none;\x22></div>'+_0x58ed35(0x1d9)+_0x58ed35(0x1a1)+_0x58ed35(0x19b),_0x211636[_0x58ed35(a0_0x222c98._0x2155e9)](_0x58ed35(0x19d))[_0x58ed35(a0_0x222c98._0x579023)](_0x58ed35(a0_0x222c98._0x3f8e67),_0x4a6223),_0x211636[_0x58ed35(0x216)](_0x58ed35(a0_0x222c98._0x1e3916))[_0x58ed35(a0_0x222c98._0x16350b)](_0x58ed35(a0_0x222c98._0x151721),function(){var _0x38722c=_0x58ed35;_0x211636[_0x38722c(a0_0x2b5830._0x338118)]('data-mode',_0x38722c(a0_0x2b5830._0x419b9)),_0x211636['removeAttribute']('data-reset-step'),_0x211636[_0x38722c(a0_0x2b5830._0x38efea)](_0x38722c(0x1a9)),_0xcac2e5();}));}else _0x211636['innerHTML']=_0x58ed35(a0_0x222c98._0x80c605)+_0x58ed35(0x1b1)+_0x58ed35(0x1fb)+'<input\x20type=\x22email\x22\x20id=\x22csEmail\x22\x20class=\x22cs-input\x22\x20placeholder=\x22メールアドレス\x22\x20autocomplete=\x22email\x22>'+_0x58ed35(a0_0x222c98._0x29fbf8)+_0x58ed35(0x22a)+'<button\x20type=\x22button\x22\x20id=\x22csLoginBtn\x22\x20class=\x22cs-btn\x20cs-btn-primary\x22>ログイン</button>'+'<div\x20class=\x22cs-links\x22>'+_0x58ed35(a0_0x222c98._0x4c832b)+_0x58ed35(a0_0x222c98._0x469438)+_0x58ed35(0x19b)+_0x58ed35(a0_0x222c98._0x2a136c),_0x211636['querySelector'](_0x58ed35(a0_0x222c98._0x53c48e))[_0x58ed35(a0_0x222c98._0x4a3928)](_0x58ed35(0x1ec),_0x3c25e0),_0x211636[_0x58ed35(a0_0x222c98._0x7df48a)]('#csToRegister')[_0x58ed35(0x1de)](_0x58ed35(0x1ec),function(){var _0x32b8c9=_0x58ed35;_0x211636[_0x32b8c9(a0_0x12dd73._0x6bdd5a)](_0x32b8c9(a0_0x12dd73._0x4c90a3),'register'),_0xcac2e5();}),_0x211636['querySelector'](_0x58ed35(a0_0x222c98._0x2bd89b))[_0x58ed35(a0_0x222c98._0x1552a3)]('click',function(){var _0x4e1a93=_0x58ed35;_0x211636[_0x4e1a93(0x1ae)](_0x4e1a93(a0_0x3ec462._0x89ef0d),_0x4e1a93(a0_0x3ec462._0x3ce5ea)),_0x211636[_0x4e1a93(a0_0x3ec462._0x59a541)]('data-reset-step','1'),_0xcac2e5();});}}function _0x1a5773(_0x5dad8e){var _0x50051e=_0x5b35c2,_0x1f7439=_0x39e976()||'',_0x3cbede=_0x1ca8d4(),_0x1a05d9=_0x3cbede?new Date(_0x3cbede)['toLocaleString'](_0x50051e(0x1af)):_0x50051e(a0_0x25b294._0x508429);_0x5dad8e[_0x50051e(0x1c6)]=_0x50051e(a0_0x25b294._0x1e966f)+_0x50051e(0x1c9)+_0x50051e(a0_0x25b294._0x1179eb)+_0x4bfcc5(_0x1f7439)+_0x50051e(a0_0x25b294._0x131f92)+_0x50051e(a0_0x25b294._0x3f41c1)+_0x4bfcc5(_0x1a05d9)+_0x50051e(0x1ca)+_0x50051e(0x19b)+_0x50051e(a0_0x25b294._0x49679d)+_0x50051e(0x209)+'<div\x20class=\x22cs-sync-btns\x22>'+'<button\x20type=\x22button\x22\x20id=\x22csUploadBtn\x22\x20class=\x22cs-btn\x20cs-btn-upload\x22>アップロード</button>'+'<button\x20type=\x22button\x22\x20id=\x22csDownloadBtn\x22\x20class=\x22cs-btn\x20cs-btn-download\x22>ダウンロード</button>'+'</div>'+_0x50051e(a0_0x25b294._0xf45337),_0x5dad8e[_0x50051e(a0_0x25b294._0x420a0b)]('#csUploadBtn')['addEventListener']('click',_0x5387af),_0x5dad8e[_0x50051e(a0_0x25b294._0x4275f2)](_0x50051e(a0_0x25b294._0x3b50e0))[_0x50051e(0x1de)]('click',_0x2b4d2a),_0x5dad8e[_0x50051e(a0_0x25b294._0x4275f2)](_0x50051e(0x19c))[_0x50051e(a0_0x25b294._0x5575fc)](_0x50051e(0x1ec),_0x519897);}function _0x8b8bd3(_0x1c469d){var _0x39a37b=_0x5b35c2,_0xaca6cf=document[_0x39a37b(a0_0x41d985._0x21bf3a)](_0x39a37b(a0_0x41d985._0x2f0b1a));_0xaca6cf&&(_0xaca6cf[_0x39a37b(0x1c8)]=_0x1c469d,_0xaca6cf[_0x39a37b(0x21d)][_0x39a37b(0x1cb)]=_0x39a37b(a0_0x41d985._0x41a20f));}function _0x48f5ab(){var _0x59930c=_0x5b35c2,_0x504558=document['getElementById'](_0x59930c(0x20a));if(_0x504558)_0x504558[_0x59930c(0x21d)]['display']=_0x59930c(a0_0x36afac._0x1679f9);}function _0x42487c(_0x5cb2f3){var _0x4c62d3=_0x5b35c2,_0x387f0e=document[_0x4c62d3(a0_0x65fd59._0x38d427)](_0x4c62d3(0x1da));_0x387f0e&&(_0x387f0e[_0x4c62d3(0x1c8)]=_0x5cb2f3,_0x387f0e[_0x4c62d3(0x21d)][_0x4c62d3(a0_0x65fd59._0x17276a)]=_0x4c62d3(a0_0x65fd59._0x38ac67));}function _0x31f08c(_0x24ec78,_0x258899){var _0x25902f=_0x5b35c2,_0x57c4c1=document[_0x25902f(0x1b7)](_0x24ec78);if(!_0x57c4c1)return;_0x57c4c1[_0x25902f(a0_0x2ad1cf._0x289921)]=_0x258899,_0x258899?(_0x57c4c1[_0x25902f(a0_0x2ad1cf._0x2178e4)](_0x25902f(a0_0x2ad1cf._0x1bec38),_0x57c4c1[_0x25902f(a0_0x2ad1cf._0x2d4dfb)]),_0x57c4c1[_0x25902f(0x1c8)]=_0x25902f(a0_0x2ad1cf._0xececcc)):_0x57c4c1['textContent']=_0x57c4c1[_0x25902f(a0_0x2ad1cf._0x26e0cb)](_0x25902f(0x20d))||_0x57c4c1['textContent'];}async function _0x1c1930(){var _0x1a373d=_0x5b35c2;_0x48f5ab();var _0x5aefec=(document[_0x1a373d(0x1b7)](_0x1a373d(a0_0x5cc837._0x186588))[_0x1a373d(a0_0x5cc837._0x7628dd)]||'')[_0x1a373d(a0_0x5cc837._0x2f94ff)](),_0x413399=document['getElementById'](_0x1a373d(0x1e8))[_0x1a373d(0x1ea)]||'',_0x20dd71=document['getElementById'](_0x1a373d(0x23a))[_0x1a373d(a0_0x5cc837._0x7628dd)]||'';if(!_0x5aefec||!_0x413399){_0x8b8bd3('メールアドレスとパスワードを入力してください');return;}if(_0x413399!==_0x20dd71){_0x8b8bd3(_0x1a373d(0x1cd));return;}if(_0x413399['length']<-0x126a+-0x1dbd+0x302d){_0x8b8bd3(_0x1a373d(a0_0x5cc837._0x272a89));return;}_0x31f08c('csRegisterBtn',!![]);try{await _0x154b41(_0x5aefec,_0x413399),_0xcac2e5();}catch(_0x435024){_0x8b8bd3(_0x435024[_0x1a373d(a0_0x5cc837._0x1c3309)]);}_0x31f08c(_0x1a373d(0x238),![]);}async function _0x3c25e0(){var _0x38b539=_0x5b35c2;_0x48f5ab();var _0x5b7fd4=(document[_0x38b539(0x1b7)](_0x38b539(0x233))[_0x38b539(a0_0x168634._0x2f0ea6)]||'')[_0x38b539(a0_0x168634._0x1c8693)](),_0xde4839=document[_0x38b539(a0_0x168634._0xcccf0d)](_0x38b539(a0_0x168634._0x19c1e7))[_0x38b539(a0_0x168634._0x486d07)]||'';if(!_0x5b7fd4||!_0xde4839){_0x8b8bd3(_0x38b539(0x1b0));return;}_0x31f08c('csLoginBtn',!![]);try{await _0x201767(_0x5b7fd4,_0xde4839),_0xcac2e5();}catch(_0xb211c){_0x8b8bd3(_0xb211c[_0x38b539(a0_0x168634._0x96875)]);}_0x31f08c(_0x38b539(0x1eb),![]);}async function _0x59b3b2(){var _0x399a02=_0x5b35c2;_0x48f5ab();var _0x5144fb=document[_0x399a02(a0_0x907007._0xa60d42)](_0x399a02(0x23b)),_0x511598=(document['getElementById'](_0x399a02(a0_0x907007._0x269a77))[_0x399a02(0x1ea)]||'')[_0x399a02(a0_0x907007._0x1cc183)]();if(!_0x511598){_0x8b8bd3('メールアドレスを入力してください');return;}_0x31f08c('csSendResetBtn',!![]);try{await _0x53502d(_0x511598),_0x5144fb[_0x399a02(a0_0x907007._0x4b086d)]('data-reset-step','2'),_0x5144fb[_0x399a02(a0_0x907007._0x26e37d)](_0x399a02(a0_0x907007._0x425e44),_0x511598),_0xcac2e5();}catch(_0x37a82c){_0x8b8bd3(_0x37a82c[_0x399a02(0x213)]);}_0x31f08c(_0x399a02(a0_0x907007._0x54b621),![]);}async function _0x4a6223(){var _0x450589=_0x5b35c2;_0x48f5ab();var _0x24d50b=document[_0x450589(a0_0x1cbf1b._0x574172)](_0x450589(0x23b)),_0x420a21=_0x24d50b['getAttribute'](_0x450589(a0_0x1cbf1b._0x41aa1c))||'',_0x155044=(document[_0x450589(a0_0x1cbf1b._0x574172)](_0x450589(0x1ef))['value']||'')['trim'](),_0x5c405d=document[_0x450589(a0_0x1cbf1b._0x2edf7c)](_0x450589(a0_0x1cbf1b._0x2d9d38))[_0x450589(0x1ea)]||'';if(!_0x155044||!_0x5c405d){_0x8b8bd3('コードと新しいパスワードを入力してください');return;}_0x31f08c(_0x450589(a0_0x1cbf1b._0x3bb0ad),!![]);try{await _0x1d9389(_0x420a21,_0x155044,_0x5c405d),_0x24d50b[_0x450589(a0_0x1cbf1b._0x2c1253)](_0x450589(a0_0x1cbf1b._0xd31904),'login'),_0x24d50b[_0x450589(a0_0x1cbf1b._0x4422b2)]('data-reset-step'),_0x24d50b[_0x450589(0x1f6)]('data-reset-email'),_0xcac2e5();}catch(_0x922ed0){_0x8b8bd3(_0x922ed0[_0x450589(0x213)]);}_0x31f08c(_0x450589(a0_0x1cbf1b._0x3bb0ad),![]);}async function _0x5387af(){var _0x2f451e=_0x5b35c2;_0x48f5ab();if(!confirm(_0x2f451e(0x1ff)))return;_0x31f08c(_0x2f451e(0x1e7),!![]);try{var _0x26f5b2=await _0x53285c();document[_0x2f451e(a0_0x1d616d._0x25c7e1)](_0x2f451e(0x1c1))[_0x2f451e(a0_0x1d616d._0x2ca4b7)]=new Date(_0x26f5b2[_0x2f451e(a0_0x1d616d._0x148612)])[_0x2f451e(0x1a6)]('ja-JP'),_0x42487c(_0x2f451e(0x1d3));}catch(_0x18211e){_0x8b8bd3(_0x18211e[_0x2f451e(0x213)]);}_0x31f08c(_0x2f451e(0x1e7),![]);}async function _0x2b4d2a(){var _0x486138=_0x5b35c2;_0x48f5ab();if(!confirm(_0x486138(a0_0x115889._0x3afa85)))return;_0x31f08c(_0x486138(0x231),!![]);try{var _0x3d6d30=await _0x1659f8();!_0x3d6d30[_0x486138(a0_0x115889._0x2dccaf)]?_0x8b8bd3(_0x486138(a0_0x115889._0x361e25)):(document[_0x486138(0x1b7)](_0x486138(0x1c1))['textContent']=new Date(_0x3d6d30['syncedAt'])[_0x486138(0x1a6)](_0x486138(0x1af)),_0x42487c(_0x486138(0x1db)),setTimeout(function(){location['reload']();},-0x218c+-0x20c3+0xe6f*0x5));}catch(_0x28c73f){_0x8b8bd3(_0x28c73f[_0x486138(a0_0x115889._0x2cd091)]);}_0x31f08c(_0x486138(0x231),![]);}function _0x519897(){var _0x9df0bc=_0x5b35c2;if(!confirm(_0x9df0bc(0x23d)))return;_0xce31e4(),_0xcac2e5();}function _0x4bfcc5(_0x275354){var _0xe3ff69=_0x5b35c2,_0x2396ee=document[_0xe3ff69(a0_0x572821._0x493ff7)](_0xe3ff69(0x239));return _0x2396ee[_0xe3ff69(a0_0x572821._0x9e3c44)]=_0x275354,_0x2396ee['innerHTML'];}function _0x4b1af1(){var _0xe7e0cf=_0x5b35c2;if(document['getElementById'](_0xe7e0cf(0x21c)))return;var _0x44479d=document[_0xe7e0cf(0x19a)](_0xe7e0cf(a0_0x47dcbe._0x518937));_0x44479d['id']='cloud-sync-css',_0x44479d[_0xe7e0cf(a0_0x47dcbe._0x5d6a3b)]=_0xe7e0cf(a0_0x47dcbe._0x4cc572)+_0xe7e0cf(0x1c2)+'.cs-input{width:100%;padding:10px\x2012px;border:1.5px\x20solid\x20#ddd;border-radius:8px;font-size:14px;box-sizing:border-box;outline:none;transition:border\x20.2s;}'+_0xe7e0cf(0x1ad)+_0xe7e0cf(a0_0x47dcbe._0x184bcf)+_0xe7e0cf(0x1e3)+_0xe7e0cf(a0_0x47dcbe._0x3e3f8f)+_0xe7e0cf(0x23c)+_0xe7e0cf(a0_0x47dcbe._0x1089a4)+'.cs-btn-primary:active{background:#1976D2;}'+_0xe7e0cf(a0_0x47dcbe._0x3946d7)+_0xe7e0cf(a0_0x47dcbe._0x3fde7b)+_0xe7e0cf(a0_0x47dcbe._0x1de722)+_0xe7e0cf(0x219)+'.cs-label{font-size:12px;color:#888;}'+_0xe7e0cf(0x1fa)+_0xe7e0cf(a0_0x47dcbe._0x2eb8e8)+'.cs-btn-upload{flex:1;background:#2196F3;color:#fff;}'+_0xe7e0cf(a0_0x47dcbe._0x1a6e39)+'.cs-btn-download{flex:1;background:#fff;color:#2196F3;border:1.5px\x20solid\x20#2196F3;}'+_0xe7e0cf(0x217)+_0xe7e0cf(a0_0x47dcbe._0x542bd4),document[_0xe7e0cf(a0_0x47dcbe._0x57c0b7)][_0xe7e0cf(a0_0x47dcbe._0x4ecd1f)](_0x44479d);}function _0x340a38(){_0x4b1af1(),_0xcac2e5();}document['readyState']===_0x5b35c2(0x1bb)?document[_0x5b35c2(a0_0x4d8a6a._0x18159d)](_0x5b35c2(0x1d4),_0x340a38):_0x340a38(),window[_0x5b35c2(a0_0x4d8a6a._0xac4e83)]={'isLoggedIn':_0x32ea23,'getEmail':_0x39e976,'getLastSynced':_0x1ca8d4,'register':_0x154b41,'login':_0x201767,'logout':_0xce31e4,'upload':_0x53285c,'download':_0x1659f8,'getStatus':_0x4f0f75,'renderUI':_0xcac2e5};}()));function a0_0x611b(){var _0x465295=['lMnZlwLUChv0oMzVy3vZE2jVCMrLCI1JB2XVCJOJmJe5nKyZo30','C2v0qxr0CMLIDxrL','AMeTsLa','44oH44o844oR44kI44oj44oS44k544gO44or44k544oV44o844oj44ks5ywL5yQB44gx44gM44gp44gG44gv44ge','phaGy2XHC3m9iMnZlwrLC2mIpUodREocSoocPoodS+obL+obPUodH+odVoocV+ocKUocR+odQEocPUodIEobQ+wqJoACNZWVCd4','lMnZlwj0BNTWywrKAw5NoJeWChG7yM9YzgvYoM5VBMu7yM9YzgvYlxjHzgL1CZO4ChG7zM9UDc1ZAxPLoJe0ChG7zM9UDc13zwLNAhq6nJaWo2n1CNnVCJPWB2LUDgvYo3rYyw5ZAxrPB246yMfJA2DYB3vUzcaUmNmSB3bHy2L0EsaUmNm7Fq','lMnZlwj0BI1SAw5RE2jHy2TNCM91BMq6BM9UztTJB2XVCJOJmJe5nKyZo2zVBNqTC2L6ztOXm3b4o3bHzgrPBMC6nhb4ida7Dgv4Dc1HBgLNBJPJzw50zxi7Fq','pgGZihn0EwXLpsjMB250lxnPEMu6mtvWEdTMB250lxDLAwDODdO3mda7y29SB3i6iZmZmZTTyxjNAw46mcaWideYChG7iJ7IMihVUi8G44or44k544oV44o844oj44oQ44k744od44oipc9OmZ4','mJC5Dujvz2fd','CMvUzgvYvuK','z2v0rwXLBwvUDej5swq','pgLUChv0ihr5Cgu9iNbHC3n3B3jKiIbPzd0Iy3nqyxnZD29YzciGy2XHC3m9iMnZlwLUChv0iIbWBgfJzwHVBgrLCJ0I44or44k544oV44o844oj77YinUAwH+wTL+s7PEs4IU+8IsiGyxv0B2nVBxbSzxrLpsjUzxCTCgfZC3DVCMqIpG','lMnZlwXPBMTZE2rPC3bSyxK6zMXLEdTQDxn0Awz5lwnVBNrLBNq6C3bHy2uTyMv0D2vLBJTTyxjNAw4TDg9WoJrWEdT9','CMvNAxn0zxi','Bg9HzgLUzW','l2fWAs9HDxrOl2XVz2LU','qMvHCMvYia','zgLZywjSzwq','C3LUy2vKqxq','i2nZtg9NAw5cDg4','y3nmyxn0u3LUy2vKvgv4Da','lMnZlwzVCM17zgLZCgXHEtPMBgv4o2zSzxGTzgLYzwn0Aw9UoMnVBhvTBJTNyxa6ohb4o30','Ahr0Chm6lY9SAwzLBg9NlwfPlMXPDhrSzs1SAw1PDc02mJfJlNDVCMTLCNmUzgv2','l2fWAs9ZEw5Jl2rVD25SB2fK','i2nZqMfJA1rVtg9NAw4','Aw5Uzxjive1m','mtKXndGYodbgyKLrB3u','Dgv4DenVBNrLBNq','pgrPDIbJBgfZCZ0Iy3mTC3rHDhvZiJ4','pc9ZCgfUpJWVzgL2pG','zgLZCgXHEq','zgf0ys1YzxnLDc1ZDgvW','44or44k544oV44o844oj44gm5lIa6iE044gx44g+44gB44kt','z2v0qxr0CMLIDxrL','z2v0sxrLBq','Dg9Rzw4','AM91CM5HBevUDhjPzxnwmW','AM91CM5HBezLzwrIywnRvg9Uzq','44kI44od44ox44oT44o844oj5A6m5lQg','re9nq29UDgvUDeXVywrLza','pgrPDIbJBgfZCZ0Iy3mTC3rHDhvZlxjVDYi+phnWyw4Gy2XHC3m9iMnZlwXHyMvSiJ7MNidNTylLKiZMNj88l3nWyw4+phnWyw4Gy2XHC3m9iMnZlxzHBhvLiIbPzd0Iy3nmyxn0u3LUy2vKvgv4Dci+','yxbWzw5Kq2HPBgq','l2fWAs9HDxrOl3jLz2LZDgvY','mtuWndK1nMPKsvP2vq','pgj1DhrVBIb0ExbLpsjIDxr0B24IigLKpsjJC0nVBMzPCM1szxnLDej0BIiGy2XHC3m9iMnZlwj0BIbJCY1IDg4TChjPBwfYEsi+44or44k544oV44o844oj44ks5Asj5PU0pc9IDxr0B24+','y3ntDwnJzxnZ','44oa44kM44oZ44oT44o844oj5A6m5lQgiokaLcdJG5RJG7ZJGRJJGPlLHO3OQQ3JGB/OVRZJGB/JGzFJGABLJ43MMkdJGzFJGB7JGzK','AgvHza','C3rHCNrZv2L0Aa','ywrKrxzLBNrmAxn0zw5LCG','ngLmzKL5qq','C3LUy0f1DgHuB2TLBG','pgj1DhrVBIb0ExbLpsjIDxr0B24IigLKpsjJC0XVz291Dej0BIiGy2XHC3m9iMnZlwj0BIbJCY1IDg4TBgLUAYbJCY1SB2DVDxqIpUodREocSoocOUocPUodIdWVyNv0Dg9UpG','DhjPBq','lMnZlxn1y2nLC3n7y29SB3i6iZi3ywu2mdTMB250lxnPEMu6mtjWEdTWywrKAw5NoJzWEca4ChG7yMfJA2DYB3vUzdOJzwfMywyXo2jVCMrLCI1YywrPDxm6nNb4o30','zxHWzw5ZzunHDgvNB3jPzxm','nZu0nJD6q3bQBMm','pgj1DhrVBIb0ExbLpsjIDxr0B24IigLKpsjJC1rVuMvNAxn0zxiIignSyxnZpsjJCY1IDg4Gy3mTyNrUlwXPBMSIpUAwSoIMJ+EzU+MmSJWVyNv0Dg9UpG','y3nvCgXVywrcDg4','y3nqyxnZD29Yza','44kV44oP44kM44oj44gR44oh44o844k/44gm44gc44kk44g+44gB44kt44cc5ywi44gR44kI44od44ox44oT44o844oj44gx44gM44gp44gG44gv44ge44cc','DMfSDwu','y3nmB2DPBKj0BG','y2XPy2S','pgrPDIbZDhLSzt0IzM9UDc1ZAxPLoJeXChG7y29SB3i6iZG4odTSAw5LlwHLAwDODdOXlJu7BwfYz2LUoJHWEcaWidrWEdT0zxH0lwfSAwDUoMnLBNrLCJSIpUocOUocQ+ocPUodS+odIos9NoAiKoobQ+ocIoocIJXHigHYzwy9iMPHDMfZy3jPChq6DM9PzcGWksiGB25JBgLJAZ0IC2HVD0XLz2fStw9KywWOj3rLCM1ZjYKIihn0EwXLpsjJB2XVCJOJnee5meq5o3rLEhqTzgvJB3jHDgLVBJP1BMrLCMXPBMu7iJ7LIkNNLkJOPO/NTiq8l2e+44gOpgeGAhjLzJ0IAMf2yxnJCMLWDdP2B2LKkdaPiIbVBMnSAwnRpsjZAg93tgvNywXnB2rHBcGNChjPDMfJEsCPiIbZDhLSzt0Iy29SB3i6iZrbotbeotT0zxH0lwrLy29YyxrPB246Dw5KzxjSAw5LoYi+44ox44oP44kK44oq44k344o844oD44oQ44k344o8pc9HpUobQ+wqJoAeJ+obL+obVUobMtWVzgL2pG','pgj1DhrVBIb0ExbLpsjIDxr0B24IigLKpsjJC1jLz2LZDgvYqNrUiIbJBgfZCZ0Iy3mTyNrUignZlwj0BI1WCMLTyxj5iJ7JGQlJGQVJGQBJG7pJG4JKVzZMIja8l2j1DhrVBJ4','y3nszxnLDenVzgu','y3ntzw5KuMvZzxrcDg4','lMnZlwvYCM9YE2nVBg9YoInLnZrJm2m7zM9UDc1ZAxPLoJeYChG7CgfKzgLUzZO2ChGGohb4o2jHy2TNCM91BMq6i2zMzwfLytTIB3jKzxiTCMfKAxvZoJzWEdT9','mtqZnteYofjjEMn0vG','44kV44oP44kM44oj44gU44oh44o844k/44ks44gt44gU44oh44oq44kK44k544gR44oa44kM44oZ44oT44o844oj44gx44g+44gz44gl77YFcUobK+obRUodH+odKoocPoocUEobRUodH+odVoocV+obR+s4IUABUoobJEobLEocJoobVUobMEoaGG','zgf0yq','q2XVDwrtEw5J','CMvTB3zLqxr0CMLIDxrL','Aw5JB21Lq2f0zwDVCMLLCW','C3LUy0f1DgHfBwfPBa','x19cqunlru5ex1vstf9F','lMnZlxzHBhvLE2zVBNqTC2L6ztOXm3b4o2nVBg9YoImZmZm7zM9UDc13zwLNAhq6nJaWo30','pgrPDIbJBgfZCZ0Iy3mTzM9YBsi+','l2fWAs9HDxrOl3jLC2v0lxbHC3n3B3jK','ue9tva','A2v5CW','54++5zYO44gU44oh44o844k/44ks44kV44oP44kM44oj44gR44kI44od44ox44oT44o844oj44gx44g+44gz44gl77YFcUocR+odQEocPUodIEs4IUobRUodH+odVoocV+obR+s4IUABUoobJEobLEocJoobVUobMEoaGG','CMvZzxq','ywn0AxzPDgLLCW','mZaZntiXnvf6vvP5Dq','CMvTB3zLsxrLBq','BM9Uzq','i2nZrg93BMXVywrcDg4','l2fWAs9ZEw5Jl3vWBg9Hza','zxjYB3i','lMnZlxn0yxr1C3TIywnRz3jVDw5KoInMogy5zMe7yM9YzgvYlxjHzgL1CZO4ChG7CgfKzgLUzZOXmhb4ideYChG7BwfYz2LUlwjVDhrVBtOXmhb4o30','pgrPDIbPzd0Iy3ntDwnJzxnZiIbJBgfZCZ0Iy3mTC3vJy2vZCYiGC3r5Bgu9iMrPC3bSyxK6BM9UztSIpJWVzgL2pG','y3nfCNjVCG','zgf0ys1TB2rL','C3LUy0XHC3rtEw5Jzwq','zgf0ys1VCMLN','lMnZlwj0BI11CgXVywq6ywn0AxzLE2jHy2TNCM91BMq6iZe5nZzemJT9','zw1HAwW','phaGy2XHC3m9iMnZlwrLC2mIpUEzU+MmSUodOEodVoodQ+ocOUodIEodRoocUEobQ+odQUocU+odG+odIoocS+odVoodIEocKUMaGEs/OEobL+obVUobMtWVCd4','pgj1DhrVBIb0ExbLpsjIDxr0B24IigLKpsjJC1rVuMvZzxqIignSyxnZpsjJCY1IDg4Gy3mTyNrUlwXPBMSIpUodKEocUEodR+odVoodIEocKUw/MoocJoobNZWVyNv0Dg9UpG','zNjLzq','BwvZC2fNzq','phaGy2XHC3m9iMnZlwrLC2mIpUodOEodVoodQ+obQ+wXIUobHoobNZBMOyhJGA7JGRpJG7ZJG4NJGPlLHAxLIPVJGzFJGABJGy/JGAdJGzxJGyq8l3a+','pgLUChv0ihr5Cgu9iMvTywLSiIbPzd0Iy3nfBwfPBciGy2XHC3m9iMnZlwLUChv0iIbWBgfJzwHVBgrLCJ0I44oH44o844oR44kI44oj44oS44k5iIbHDxrVy29TCgXLDgu9iMvTywLSiJ4','CxvLCNLtzwXLy3rVCG','lMnZlwj0BI1KB3DUBg9HzdPHy3rPDMv7yMfJA2DYB3vUzdOJztnMmMzKo30','ANnVBG','lMnZlxn0yxr1CY1YB3D7zgLZCgXHEtPMBgv4o2P1C3rPzNKTy29UDgvUDdPZCgfJzs1Izxr3zwvUo2fSAwDUlwL0zw1ZoMnLBNrLCJTWywrKAw5NoJnWEcaWo30','lMnZlwj0BI1WCMLTyxj5E2jHy2TNCM91BMq6iZiXotzgmZTJB2XVCJOJzMzMo30','44or44k544oV44o844oj44gVnUAwH+wTL+s7PEs4IUobP+IOREwUMUobL+obPUobJ+obOoobLEobHa','y2XVDwqTC3LUyY1JC3m','C3r5Bgu','yMXVy2S','pgLUChv0ihr5Cgu9iNbHC3n3B3jKiIbPzd0Iy3nqyxnZD29YzenVBMzPCM0IignSyxnZpsjJCY1PBNb1DciGCgXHy2vOB2XKzxi9iUodKEocUEodR+odVoodIE+8IoEIUUIQJE+8IsiGyxv0B2nVBxbSzxrLpsjUzxCTCgfZC3DVCMqIpG','i2nZuMvNAxn0zxjcDg4','Bwv0Ag9K','D2vPz2H0uMvJB3jKCW','l2fWAs9HDxrOl3jLC2v0lwnVBMzPCM0','C3rYAw5NAwz5','rgf5y2vqBgfU','ywLdB25ZDwX0vg9Uzq','pgrPDIbJBgfZCZ0Iy3mTC3rHDhvZlxjVDYi+phnWyw4Gy2XHC3m9iMnZlwXHyMvSiJ7JGQlJGQVJGQBJG7pJG4G8l3nWyw4+phnWyw4Gy2XHC3m9iMnZlxzHBhvLiJ4','mtq3mtK3yuXgBhbt','pgLUChv0ihr5Cgu9iNbHC3n3B3jKiIbPzd0Iy3nqyxnZD29YzciGy2XHC3m9iMnZlwLUChv0iIbWBgfJzwHVBgrLCJ0I44or44k544oV44o844ojiIbHDxrVy29TCgXLDgu9iMn1CNjLBNqTCgfZC3DVCMqIpG','pgrPDIbPzd0Iy3nfCNjVCIiGy2XHC3m9iMnZlwvYCM9YiIbZDhLSzt0IzgLZCgXHEtPUB25LoYi+pc9KAxy+','C2v0sxrLBq','mtC0ExL6Cw5f','5PYQ5zcm5PYF','pgGZihn0EwXLpsjMB250lxnPEMu6mtvWEdTMB250lxDLAwDODdO3mda7y29SB3i6iZmZmZTTyxjNAw46mcaWideYChG7iJ7IMihVUi8G44kV44oP44kM44oj5zcm5PYFpc9OmZ4','i2nZvg9szxnLDa','y3ndB25MAxjTuMvZzxrcDg4','y3neB3DUBg9Hzej0BG','lMnZlwrLC2n7zM9UDc1ZAxPLoJeZChG7y29SB3i6iZy2nJTTyxjNAw46mcaWideYChG7Fq','y3nfBwfPBa','y3nszxnLDevTywLS','pgLUChv0ihr5Cgu9iNbHC3n3B3jKiIbPzd0Iy3nozxDqyxnZD29YzciGy2XHC3m9iMnZlwLUChv0iIbWBgfJzwHVBgrLCJ0I5PAW44gx44ge44or44k544oV44o844oj77YinUAwH+wTL+s7PEs4IU+8IsiGyxv0B2nVBxbSzxrLpsjUzxCTCgfZC3DVCMqIpG','l2fWAs9ZEw5JlW','qvbjigvYCM9Y','y3nszwDPC3rLCKj0BG','zgL2','y3nqyxnZD29YzenVBMzPCM0','y2XVDwrtEw5Ju2vJDgLVBG','lMnZlwj0BJPKAxnHyMXLzhTVCgfJAxr5oI41o2n1CNnVCJPKzwzHDwX0o30','44oT44kW44kI44kM44oi44gx44g+44gz44gl77YF','y3nozxDqyxnZD29Yza','i2nZqMfJA1rVtg9NAw4Y','5yEM55cg5lITlI4U','y3jLyxrLrwXLBwvUDa','pc9KAxy+','i2nZtg9NB3v0qNrU','i2nZq29UzMLYBvjLC2v0qNrU','Bg9NAw4','i2nZu2vUzfjLC2v0qNrU','lMnZlwXVz291DhTTyxjNAw4TDg9WoJHWEdTJB2XVCJOJotK5o2zVBNqTC2L6ztOXmNb4o30','pgj1DhrVBIb0ExbLpsjIDxr0B24IigLKpsjJC0jHy2TuB0XVz2LUmIiGy2XHC3m9iMnZlwj0BIbJCY1IDg4TBgLUAYi+44oT44kW44kK44oZ44gR5OI744klpc9IDxr0B24+','yM9KEq','Bw9UDgHSEuDVywXZ','l2fWAs9ZEw5Jl3n0yxr1CW','mtC1ntjzAKvwA0u','Dg9mB2nHBgvtDhjPBMC','pgj1DhrVBIb0ExbLpsjIDxr0B24IigLKpsjJC1rVtg9NAw4IignSyxnZpsjJCY1IDg4Gy3mTyNrUlwXPBMSIpUodREocSoocPoodS+obR+obK+obOEocItWVyNv0Dg9UpG','z2v0ugXHBG','zgf0ys1YzxnLDc1LBwfPBa','pgj1DhrVBIb0ExbLpsjIDxr0B24IigLKpsjJC1nLBMrszxnLDej0BIiGy2XHC3m9iMnZlwj0BIbJCY1IDg4TChjPBwfYEsi+44oQ44k744od44oi44kZ44o844oj44ks6ycb5l+Hpc9IDxr0B24+','zM9YrwfJAa','lMnZlxn5BMmTyNrUC3TKAxnWBgf5oMzSzxG7z2fWoJHWEdT9'];a0_0x611b=function(){return _0x465295;};return a0_0x611b();}
+// ============================================================
+// Dayce Cloud Sync — 認証 + クラウド同期
+// window.CloudSync として公開
+// ============================================================
+(function () {
+  'use strict';
+
+  var API_BASE = (window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-ai.little-limit-621c.workers.dev');
+
+  // --- 同期対象の localStorage キー ---
+  var SYNC_KEYS = [
+    'activities',
+    'moneyRecords',
+    'journalEntriesV3',
+    'monthlyGoals',
+    'weightRecords',
+    'activityCategories',
+    'expenseCategories',
+    'incomeCategories',
+    'journalFeedbackTone',
+    'aiConsultTone',
+    'aiConsultHistory'
+  ];
+
+  // --- localStorage キー (認証用) ---
+  var LS_TOKEN = 'syncAuthToken';
+  var LS_EMAIL = 'syncAuthEmail';
+  var LS_LAST_SYNCED = 'syncLastSynced';
+
+  // === ヘルパー ===
+  function getToken() { return localStorage.getItem(LS_TOKEN); }
+  function getEmail() { return localStorage.getItem(LS_EMAIL); }
+  function getLastSynced() { return localStorage.getItem(LS_LAST_SYNCED); }
+
+  function saveAuth(token, email) {
+    localStorage.setItem(LS_TOKEN, token);
+    localStorage.setItem(LS_EMAIL, email);
+  }
+  function clearAuth() {
+    localStorage.removeItem(LS_TOKEN);
+    localStorage.removeItem(LS_EMAIL);
+  }
+
+  function isLoggedIn() {
+    return !!getToken();
+  }
+
+  // --- API call helper ---
+  async function apiCall(path, options) {
+    options = options || {};
+    var headers = { 'Content-Type': 'application/json' };
+    var token = getToken();
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+
+    var fetchOpts = {
+      method: options.method || 'GET',
+      headers: headers,
+    };
+    if (options.body) fetchOpts.body = JSON.stringify(options.body);
+
+    var resp = await fetch(API_BASE + path, fetchOpts);
+    var data = await resp.json();
+
+    if (!resp.ok) {
+      // Handle expired token
+      if (resp.status === 401 && path.startsWith('/api/sync/')) {
+        clearAuth();
+        CloudSync.renderUI();
+      }
+      throw new Error(data.error || 'API error');
+    }
+    return data;
+  }
+
+  // === 認証 ===
+  async function register(email, password) {
+    var res = await apiCall('/api/auth/register', {
+      method: 'POST',
+      body: { email: email, password: password }
+    });
+    saveAuth(res.token, res.email);
+    return res;
+  }
+
+  async function login(email, password) {
+    var res = await apiCall('/api/auth/login', {
+      method: 'POST',
+      body: { email: email, password: password }
+    });
+    saveAuth(res.token, res.email);
+    return res;
+  }
+
+  function logout() {
+    clearAuth();
+    localStorage.removeItem(LS_LAST_SYNCED);
+  }
+
+  async function resetPassword(email) {
+    return apiCall('/api/auth/reset-password', {
+      method: 'POST',
+      body: { email: email }
+    });
+  }
+
+  async function resetConfirm(email, code, newPassword) {
+    var res = await apiCall('/api/auth/reset-confirm', {
+      method: 'POST',
+      body: { email: email, code: code, newPassword: newPassword }
+    });
+    saveAuth(res.token, res.email);
+    return res;
+  }
+
+  // === 同期 ===
+  function collectSyncData() {
+    var data = {};
+    SYNC_KEYS.forEach(function (key) {
+      var val = localStorage.getItem(key);
+      if (val !== null) data[key] = val;
+    });
+    return data;
+  }
+
+  function applySyncData(data) {
+    if (!data || typeof data !== 'object') return;
+    Object.keys(data).forEach(function (key) {
+      if (SYNC_KEYS.indexOf(key) !== -1 && data[key] !== undefined) {
+        localStorage.setItem(key, data[key]);
+      }
+    });
+  }
+
+  async function upload() {
+    var data = collectSyncData();
+    var planLevel = (window.DaycePlan) ? window.DaycePlan.getPlan() : (localStorage.getItem('planLevel') || 'free');
+    var res = await apiCall('/api/sync/upload', {
+      method: 'POST',
+      body: { data: data, planLevel: planLevel }
+    });
+    localStorage.setItem(LS_LAST_SYNCED, res.syncedAt);
+    return res;
+  }
+
+  async function download() {
+    var res = await apiCall('/api/sync/download');
+    if (res.data) {
+      applySyncData(res.data);
+      if (res.syncedAt) localStorage.setItem(LS_LAST_SYNCED, res.syncedAt);
+    }
+    return res;
+  }
+
+  async function getStatus() {
+    return apiCall('/api/sync/status');
+  }
+
+  // === UI レンダリング ===
+  function renderUI() {
+    var container = document.getElementById('cloudSyncSection');
+    if (!container) return;
+
+    if (!isLoggedIn()) {
+      renderLoginUI(container);
+    } else {
+      renderSyncUI(container);
+    }
+  }
+
+  function renderLoginUI(container) {
+    var mode = container.getAttribute('data-mode') || 'login';
+
+    if (mode === 'register') {
+      container.innerHTML =
+        '<h3 style="font-size:15px;font-weight:700;color:#333;margin:0 0 12px;">☁️ クラウド同期</h3>' +
+        '<p class="cs-desc">アカウントを作成してデータをクラウドに保存</p>' +
+        '<div class="cs-form">' +
+          '<input type="email" id="csEmail" class="cs-input" placeholder="メールアドレス" autocomplete="email">' +
+          '<input type="password" id="csPassword" class="cs-input" placeholder="パスワード（6文字以上）" autocomplete="new-password">' +
+          '<input type="password" id="csPasswordConfirm" class="cs-input" placeholder="パスワード（確認）" autocomplete="new-password">' +
+          '<div id="csError" class="cs-error" style="display:none;"></div>' +
+          '<div style="font-size:11px;color:#888;line-height:1.5;margin:8px 0 4px;text-align:center;">アカウント作成により<a href="javascript:void(0)" onclick="showLegalModal(\'terms\')" style="color:#4A90D9;text-decoration:underline;">利用規約</a>と<a href="javascript:void(0)" onclick="showLegalModal(\'privacy\')" style="color:#4A90D9;text-decoration:underline;">プライバシーポリシー</a>に同意します</div>' +
+          '<button type="button" id="csRegisterBtn" class="cs-btn cs-btn-primary">アカウント作成</button>' +
+          '<button type="button" id="csToLogin" class="cs-btn cs-btn-link">ログインはこちら</button>' +
+        '</div>';
+
+      container.querySelector('#csRegisterBtn').addEventListener('click', handleRegister);
+      container.querySelector('#csToLogin').addEventListener('click', function () {
+        container.setAttribute('data-mode', 'login');
+        renderUI();
+      });
+
+    } else if (mode === 'reset') {
+      var step = container.getAttribute('data-reset-step') || '1';
+      if (step === '1') {
+        container.innerHTML =
+          '<h3 style="font-size:15px;font-weight:700;color:#333;margin:0 0 12px;">☁️ パスワードリセット</h3>' +
+          '<p class="cs-desc">登録メールアドレスにリセットコードを送信します</p>' +
+          '<div class="cs-form">' +
+            '<input type="email" id="csResetEmail" class="cs-input" placeholder="メールアドレス" autocomplete="email">' +
+            '<div id="csError" class="cs-error" style="display:none;"></div>' +
+            '<button type="button" id="csSendResetBtn" class="cs-btn cs-btn-primary">リセットコードを送信</button>' +
+            '<button type="button" id="csBackToLogin" class="cs-btn cs-btn-link">ログインに戻る</button>' +
+          '</div>';
+
+        container.querySelector('#csSendResetBtn').addEventListener('click', handleSendReset);
+        container.querySelector('#csBackToLogin').addEventListener('click', function () {
+          container.setAttribute('data-mode', 'login');
+          container.removeAttribute('data-reset-step');
+          container.removeAttribute('data-reset-email');
+          renderUI();
+        });
+      } else {
+        container.innerHTML =
+          '<h3 style="font-size:15px;font-weight:700;color:#333;margin:0 0 12px;">☁️ パスワードリセット</h3>' +
+          '<p class="cs-desc">メールに届いた6桁のコードを入力してください</p>' +
+          '<div class="cs-form">' +
+            '<input type="text" id="csResetCode" class="cs-input" placeholder="6桁のコード" maxlength="6" inputmode="numeric">' +
+            '<input type="password" id="csNewPassword" class="cs-input" placeholder="新しいパスワード（6文字以上）" autocomplete="new-password">' +
+            '<div id="csError" class="cs-error" style="display:none;"></div>' +
+            '<button type="button" id="csConfirmResetBtn" class="cs-btn cs-btn-primary">パスワードを変更</button>' +
+            '<button type="button" id="csBackToLogin2" class="cs-btn cs-btn-link">ログインに戻る</button>' +
+          '</div>';
+
+        container.querySelector('#csConfirmResetBtn').addEventListener('click', handleConfirmReset);
+        container.querySelector('#csBackToLogin2').addEventListener('click', function () {
+          container.setAttribute('data-mode', 'login');
+          container.removeAttribute('data-reset-step');
+          container.removeAttribute('data-reset-email');
+          renderUI();
+        });
+      }
+
+    } else {
+      // login mode
+      container.innerHTML =
+        '<h3 style="font-size:15px;font-weight:700;color:#333;margin:0 0 12px;">☁️ クラウド同期</h3>' +
+        '<p class="cs-desc">ログインしてデータをクラウドに同期</p>' +
+        '<div class="cs-form">' +
+          '<input type="email" id="csEmail" class="cs-input" placeholder="メールアドレス" autocomplete="email">' +
+          '<input type="password" id="csPassword" class="cs-input" placeholder="パスワード" autocomplete="current-password">' +
+          '<div id="csError" class="cs-error" style="display:none;"></div>' +
+          '<button type="button" id="csLoginBtn" class="cs-btn cs-btn-primary">ログイン</button>' +
+          '<div class="cs-links">' +
+            '<button type="button" id="csToRegister" class="cs-btn cs-btn-link">新規登録</button>' +
+            '<button type="button" id="csToReset" class="cs-btn cs-btn-link">パスワードを忘れた</button>' +
+          '</div>' +
+        '</div>';
+
+      container.querySelector('#csLoginBtn').addEventListener('click', handleLogin);
+      container.querySelector('#csToRegister').addEventListener('click', function () {
+        container.setAttribute('data-mode', 'register');
+        renderUI();
+      });
+      container.querySelector('#csToReset').addEventListener('click', function () {
+        container.setAttribute('data-mode', 'reset');
+        container.setAttribute('data-reset-step', '1');
+        renderUI();
+      });
+    }
+  }
+
+  function renderSyncUI(container) {
+    var email = getEmail() || '';
+    var lastSynced = getLastSynced();
+    var lastStr = lastSynced ? new Date(lastSynced).toLocaleString('ja-JP') : '未同期';
+
+    container.innerHTML =
+      '<h3 style="font-size:15px;font-weight:700;color:#333;margin:0 0 12px;">☁️ クラウド同期</h3>' +
+      '<div class="cs-status">' +
+        '<div class="cs-status-row"><span class="cs-label">アカウント</span><span class="cs-value">' + escHTML(email) + '</span></div>' +
+        '<div class="cs-status-row"><span class="cs-label">最終同期</span><span class="cs-value" id="csLastSyncedText">' + escHTML(lastStr) + '</span></div>' +
+      '</div>' +
+      '<div id="csError" class="cs-error" style="display:none;"></div>' +
+      '<div id="csSuccess" class="cs-success" style="display:none;"></div>' +
+      '<div class="cs-sync-btns">' +
+        '<button type="button" id="csUploadBtn" class="cs-btn cs-btn-upload">アップロード</button>' +
+        '<button type="button" id="csDownloadBtn" class="cs-btn cs-btn-download">ダウンロード</button>' +
+      '</div>' +
+      '<button type="button" id="csLogoutBtn" class="cs-btn cs-btn-link cs-logout">ログアウト</button>';
+
+    container.querySelector('#csUploadBtn').addEventListener('click', handleUpload);
+    container.querySelector('#csDownloadBtn').addEventListener('click', handleDownload);
+    container.querySelector('#csLogoutBtn').addEventListener('click', handleLogout);
+  }
+
+  // === イベントハンドラ ===
+  function showError(msg) {
+    var el = document.getElementById('csError');
+    if (el) { el.textContent = msg; el.style.display = 'block'; }
+  }
+  function hideError() {
+    var el = document.getElementById('csError');
+    if (el) el.style.display = 'none';
+  }
+  function showSuccess(msg) {
+    var el = document.getElementById('csSuccess');
+    if (el) { el.textContent = msg; el.style.display = 'block'; }
+  }
+
+  function setLoading(btnId, loading) {
+    var btn = document.getElementById(btnId);
+    if (!btn) return;
+    btn.disabled = loading;
+    if (loading) {
+      btn.setAttribute('data-orig', btn.textContent);
+      btn.textContent = '処理中...';
+    } else {
+      btn.textContent = btn.getAttribute('data-orig') || btn.textContent;
+    }
+  }
+
+  async function handleRegister() {
+    hideError();
+    var email = (document.getElementById('csEmail').value || '').trim();
+    var pw = document.getElementById('csPassword').value || '';
+    var pw2 = document.getElementById('csPasswordConfirm').value || '';
+
+    if (!email || !pw) { showError('メールアドレスとパスワードを入力してください'); return; }
+    if (pw !== pw2) { showError('パスワードが一致しません'); return; }
+    if (pw.length < 6) { showError('パスワードは6文字以上で設定してください'); return; }
+
+    setLoading('csRegisterBtn', true);
+    try {
+      await register(email, pw);
+      renderUI();
+    } catch (e) {
+      showError(e.message);
+    }
+    setLoading('csRegisterBtn', false);
+  }
+
+  async function handleLogin() {
+    hideError();
+    var email = (document.getElementById('csEmail').value || '').trim();
+    var pw = document.getElementById('csPassword').value || '';
+
+    if (!email || !pw) { showError('メールアドレスとパスワードを入力してください'); return; }
+
+    setLoading('csLoginBtn', true);
+    try {
+      await login(email, pw);
+      renderUI();
+    } catch (e) {
+      showError(e.message);
+    }
+    setLoading('csLoginBtn', false);
+  }
+
+  async function handleSendReset() {
+    hideError();
+    var container = document.getElementById('cloudSyncSection');
+    var email = (document.getElementById('csResetEmail').value || '').trim();
+    if (!email) { showError('メールアドレスを入力してください'); return; }
+
+    setLoading('csSendResetBtn', true);
+    try {
+      await resetPassword(email);
+      container.setAttribute('data-reset-step', '2');
+      container.setAttribute('data-reset-email', email);
+      renderUI();
+    } catch (e) {
+      showError(e.message);
+    }
+    setLoading('csSendResetBtn', false);
+  }
+
+  async function handleConfirmReset() {
+    hideError();
+    var container = document.getElementById('cloudSyncSection');
+    var email = container.getAttribute('data-reset-email') || '';
+    var code = (document.getElementById('csResetCode').value || '').trim();
+    var newPw = document.getElementById('csNewPassword').value || '';
+
+    if (!code || !newPw) { showError('コードと新しいパスワードを入力してください'); return; }
+
+    setLoading('csConfirmResetBtn', true);
+    try {
+      await resetConfirm(email, code, newPw);
+      container.setAttribute('data-mode', 'login');
+      container.removeAttribute('data-reset-step');
+      container.removeAttribute('data-reset-email');
+      renderUI();
+    } catch (e) {
+      showError(e.message);
+    }
+    setLoading('csConfirmResetBtn', false);
+  }
+
+  async function handleUpload() {
+    hideError();
+    if (!confirm('現在のデータをクラウドにアップロードしますか？\nクラウド上のデータは上書きされます。')) return;
+
+    setLoading('csUploadBtn', true);
+    try {
+      var res = await upload();
+      document.getElementById('csLastSyncedText').textContent = new Date(res.syncedAt).toLocaleString('ja-JP');
+      showSuccess('アップロード完了');
+    } catch (e) {
+      showError(e.message);
+    }
+    setLoading('csUploadBtn', false);
+  }
+
+  async function handleDownload() {
+    hideError();
+    if (!confirm('クラウドのデータをこのデバイスにダウンロードしますか？\nこのデバイスのデータは上書きされます。')) return;
+
+    setLoading('csDownloadBtn', true);
+    try {
+      var res = await download();
+      if (!res.data) {
+        showError('クラウドにデータがありません。先にアップロードしてください。');
+      } else {
+        document.getElementById('csLastSyncedText').textContent = new Date(res.syncedAt).toLocaleString('ja-JP');
+        showSuccess('ダウンロード完了 — ページを再読み込みして反映します');
+        setTimeout(function () { location.reload(); }, 1500);
+      }
+    } catch (e) {
+      showError(e.message);
+    }
+    setLoading('csDownloadBtn', false);
+  }
+
+  function handleLogout() {
+    if (!confirm('ログアウトしますか？')) return;
+    logout();
+    renderUI();
+  }
+
+  function escHTML(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  // === CSS 注入 ===
+  function injectCSS() {
+    if (document.getElementById('cloud-sync-css')) return;
+    var style = document.createElement('style');
+    style.id = 'cloud-sync-css';
+    style.textContent =
+      '.cs-desc{font-size:13px;color:#666;margin:0 0 12px;}' +
+      '.cs-form{display:flex;flex-direction:column;gap:8px;}' +
+      '.cs-input{width:100%;padding:10px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;outline:none;transition:border .2s;}' +
+      '.cs-input:focus{border-color:#2196F3;}' +
+      '.cs-error{color:#e74c3c;font-size:12px;padding:6px 8px;background:#ffeaea;border-radius:6px;}' +
+      '.cs-success{color:#27ae60;font-size:12px;padding:6px 8px;background:#eafaf1;border-radius:6px;}' +
+      '.cs-btn{padding:10px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s,opacity .2s;}' +
+      '.cs-btn:disabled{opacity:.5;cursor:default;}' +
+      '.cs-btn-primary{background:#2196F3;color:#fff;}' +
+      '.cs-btn-primary:active{background:#1976D2;}' +
+      '.cs-btn-link{background:none;color:#2196F3;font-size:13px;padding:4px 0;text-align:center;}' +
+      '.cs-links{display:flex;justify-content:space-between;margin-top:4px;}' +
+      '.cs-status{background:#f8f9fa;border-radius:8px;padding:10px 12px;margin-bottom:10px;}' +
+      '.cs-status-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;}' +
+      '.cs-label{font-size:12px;color:#888;}' +
+      '.cs-value{font-size:13px;color:#333;font-weight:600;}' +
+      '.cs-sync-btns{display:flex;gap:8px;}' +
+      '.cs-btn-upload{flex:1;background:#2196F3;color:#fff;}' +
+      '.cs-btn-upload:active{background:#1976D2;}' +
+      '.cs-btn-download{flex:1;background:#fff;color:#2196F3;border:1.5px solid #2196F3;}' +
+      '.cs-btn-download:active{background:#e3f2fd;}' +
+      '.cs-logout{margin-top:8px;color:#999;font-size:12px;}';
+    document.head.appendChild(style);
+  }
+
+  // === 初期化 ===
+  function init() {
+    injectCSS();
+    renderUI();
+  }
+
+  // DOMContentLoaded or immediate
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // === Public API ===
+  window.CloudSync = {
+    isLoggedIn: isLoggedIn,
+    getEmail: getEmail,
+    getLastSynced: getLastSynced,
+    register: register,
+    login: login,
+    logout: logout,
+    upload: upload,
+    download: download,
+    getStatus: getStatus,
+    renderUI: renderUI,
+  };
+
+})();

@@ -1,1 +1,1285 @@
-(function(_0x1b48a0,_0x5e98b8){var a0_0x2de05a={_0x4d3535:0x238,_0x2f8c37:0x131,_0x38d794:0x21e,_0x3b598e:0x1c7,_0x562d1f:0x11d,_0x207955:0x281,_0x1b9fde:0x1a2},_0x9f803d=a0_0x3810,_0x502394=_0x1b48a0();while(!![]){try{var _0x540d2e=parseInt(_0x9f803d(0x1a3))/(-0xc*0xd1+0x1a6*0x2+0x681*0x1)*(parseInt(_0x9f803d(0x187))/(0x79d+0x3*0x296+-0x45*0x39))+-parseInt(_0x9f803d(a0_0x2de05a._0x4d3535))/(0xba8+-0x179e+-0x265*-0x5)*(-parseInt(_0x9f803d(a0_0x2de05a._0x2f8c37))/(-0xb3c+0x24af+0x17f*-0x11))+-parseInt(_0x9f803d(0x232))/(-0x1*-0xf05+-0x1820*0x1+0x920)+parseInt(_0x9f803d(a0_0x2de05a._0x38d794))/(-0x3*-0x2a6+0x236c*0x1+-0x2b58)*(-parseInt(_0x9f803d(a0_0x2de05a._0x3b598e))/(-0xb37+-0x11ec+0x1d2a))+-parseInt(_0x9f803d(a0_0x2de05a._0x562d1f))/(-0x1dbc+-0x1*-0x19ca+-0x2*-0x1fd)+-parseInt(_0x9f803d(a0_0x2de05a._0x207955))/(-0x331+-0x365*0x5+0x1*0x1433)*(-parseInt(_0x9f803d(a0_0x2de05a._0x1b9fde))/(-0x9*0x2dd+-0x3*0x29+0x1a4a))+parseInt(_0x9f803d(0x275))/(-0x1a51+-0x1cb*0x6+-0x251e*-0x1);if(_0x540d2e===_0x5e98b8)break;else _0x502394['push'](_0x502394['shift']());}catch(_0x226a4a){_0x502394['push'](_0x502394['shift']());}}}(a0_0x3ff1,0x1*0x938f+-0x2b194+-0xe*-0x90bd),(function(){'use strict';var a0_0x2fe75f={_0x289898:0x240,_0x46f26e:0x1ce,_0x28cc9c:0x129,_0x3d26d1:0x1d7,_0x5f9b25:0x1aa,_0x1ec094:0x248,_0x3811f5:0x241,_0x2c8f97:0x183,_0x1b369d:0x14f,_0x1acc94:0x124,_0x2c0f9f:0x237,_0x7e5507:0x206,_0x5e0a8f:0x154,_0xca966e:0x1fe,_0x162a84:0x166,_0x5d2712:0x230,_0x122dfd:0x221,_0x4b5d18:0x1a6,_0x21c586:0x26b,_0x2e8f83:0x1ff,_0x2bea2d:0x22a,_0x58bd57:0x22b,_0x3115bf:0x1ca,_0x56b665:0x210,_0x398c92:0x24d,_0x37b6eb:0x26e,_0xcfae09:0x159,_0x362996:0x13d,_0x42c43c:0x197,_0x960c48:0x13a,_0x134c79:0x27e,_0x178c98:0x251,_0x5b8e74:0x247,_0x4c17e5:0x25f,_0x529e90:0x1f1,_0x4cffc3:0x1fa,_0x573f99:0x17a,_0x561305:0x288,_0x481911:0x1fb,_0x1beec0:0x21b,_0x345a68:0x158,_0x26ea77:0x139,_0x3fa41e:0x141,_0x213720:0x151,_0x80791c:0x160,_0x3473e5:0x12a,_0x110e39:0x169,_0x19d3d4:0x278,_0x18ac4f:0x126,_0x399548:0x126,_0x1b0405:0x209,_0x266729:0x195,_0x4c4444:0x1f5,_0x3c258f:0x283,_0x56f5e7:0x1ac,_0x92b47d:0x286},a0_0x16644b={_0x1130ea:0x226,_0x2da21e:0x169,_0x476c1c:0x240,_0x1d06d5:0x138,_0x178f06:0x167,_0x570f39:0x18e,_0x3ba202:0x16e},a0_0x10edc5={_0x525204:0x26d},a0_0x2416aa={_0x475ff4:0x234},a0_0x5f2a34={_0x5de4e8:0x147,_0x53e51a:0x18e,_0x46dfbb:0x21f,_0x23a6dd:0x193,_0x3457fd:0x15f,_0x465ae8:0x1dc,_0xdd2e39:0x234,_0x9a046d:0x11e,_0x1867f1:0x12d,_0x14b212:0x254},a0_0x456274={_0x13e46e:0x176,_0x2e022d:0x1dc},a0_0x3f0820={_0x2af0cd:0x169},a0_0x4da24f={_0x37a8a4:0x211,_0x274a9e:0x1ae,_0x59046b:0x207,_0x55eccd:0x12c},a0_0x54f2cd={_0x5b6c6e:0x15a,_0x2244e7:0x163,_0x504e16:0x135,_0x20ab3e:0x200,_0x503031:0x17e,_0x136dd4:0x250,_0xf93d5f:0x1b8,_0x3b187f:0x233,_0x42ec21:0x25b,_0x35ab77:0x15e,_0x4a3e03:0x282,_0x169c8e:0x21d},a0_0x23cdf5={_0x3f4997:0x215},a0_0x45c1bb={_0x47b0b4:0x12c,_0x4dacbd:0x1d1,_0x3cbfd4:0x234},a0_0x302deb={_0x3dde2f:0x1d2,_0x1a1eda:0x130,_0x4d6680:0x224},a0_0xdd2071={_0xec768c:0x177},a0_0x45b59a={_0x48a78a:0x1de,_0x125aa4:0x240,_0x20bde5:0x153,_0x47b03:0x135,_0x20f0ec:0x1ea,_0x452198:0x200,_0x4b7dcf:0x200,_0x3eeb75:0x138,_0x27a71b:0x214,_0xfa6b2b:0x123,_0x209214:0x12c,_0x3bd147:0x1ae,_0x474b93:0x160,_0x4dce85:0x264,_0x2bc361:0x284,_0x58a3a3:0x274,_0x3e5bbc:0x269,_0x5530cf:0x16d,_0x530f3b:0x234,_0x2b019c:0x280,_0x561155:0x289},a0_0x54bfe5={_0x23410b:0x21f,_0x4cfa8f:0x1de,_0x138d3b:0x240,_0x2873c2:0x189,_0x13da71:0x169,_0x36e33f:0x195,_0x58828d:0x123,_0x4904ed:0x12c,_0x2568ee:0x160,_0x5c51fa:0x1cc,_0x5b83af:0x276,_0x587261:0x269,_0xeb6d13:0x289},a0_0x43c5f7={_0x14e95e:0x144,_0x53ed86:0x11c},a0_0x5524ab={_0x33b680:0x184,_0x285100:0x1da,_0x3d9b2c:0x20a},a0_0x24b695={_0x3e6d94:0x259,_0x169e01:0x19d},a0_0x3f3724={_0x2cbb13:0x1f5,_0x33cab6:0x19d,_0x3586bf:0x19d,_0x2781e2:0x259},a0_0x21043d={_0x125273:0x12e,_0x519b28:0x1ea,_0x4c5c4e:0x11f,_0x1eda03:0x25b,_0x41831b:0x164,_0x26403a:0x16b,_0x3d649c:0x214,_0x291a59:0x1da,_0x16d51a:0x1d9,_0x789877:0x1b5,_0x6b1efb:0x201,_0x483c72:0x25e,_0x55e97b:0x180,_0x4bdb7a:0x1c8,_0x4c4f45:0x19a,_0x3a949b:0x28e,_0x56fedc:0x15b,_0x579fed:0x1f4,_0x5cd333:0x14c,_0x4c5fdd:0x1e2,_0x582843:0x1cb,_0x108560:0x175,_0x2cbaae:0x17b,_0x1026b9:0x20c,_0xba8cad:0x1c1,_0x21e435:0x267},a0_0x134a1e={_0xed7101:0x271,_0x290644:0x12e,_0x5aa3ee:0x1da,_0x50acc0:0x203,_0xdf10a6:0x1a9,_0x59a078:0x1bf,_0x26aa4c:0x228,_0x13a578:0x155,_0x536baa:0x185,_0x32a552:0x20c,_0x2f1a4d:0x14b,_0x61e7aa:0x1d4,_0x1d6fb2:0x204,_0x595a1e:0x24a,_0x33c805:0x179,_0x5ce526:0x1b6,_0x840207:0x14e,_0xffee0b:0x20a,_0x5e7593:0x23c},a0_0x3b01e6={_0x57fe7d:0x178},a0_0x572795={_0x55c2d5:0x18d,_0xc71b29:0x25d,_0x4b5402:0x27b,_0x452632:0x1ab,_0x19b9de:0x14b,_0x8d3f1b:0x19b,_0x569c68:0x190,_0x56bb04:0x204,_0x27ec3f:0x22c,_0x2f3e6b:0x17d,_0x3ba942:0x216,_0x25aac2:0x179,_0x124c01:0x192,_0x525a61:0x1ed,_0x2c97fc:0x135,_0x2f47d9:0x174,_0x3c97f7:0x259,_0x516714:0x11f,_0x1ebdcd:0x21f,_0x1968f8:0x1de,_0x46db97:0x240,_0x422471:0x153,_0x37e4d5:0x23c,_0x46dfc6:0x21f,_0x273fa5:0x18e,_0x2d4afc:0x1b1},a0_0x556cd1={_0x4f2af4:0x1dc,_0x233403:0x1dc,_0x363b74:0x240,_0xce593b:0x23e,_0x55aafa:0x236},a0_0x1692f3={_0x3ec5b2:0x264,_0x15fa76:0x22f,_0x1abeda:0x161,_0x371201:0x1dd,_0x374a42:0x289,_0x25a46c:0x148},a0_0x34c79f={_0x2169fb:0x21f,_0x3a6927:0x172,_0x48bb9e:0x120,_0x488c77:0x160,_0x360719:0x1cc,_0x28d3d9:0x264,_0xe832b1:0x133,_0x572c35:0x234,_0x327e5:0x264,_0x325aaa:0x22f,_0x58d85e:0x161,_0x527b66:0x1cc,_0x4284af:0x1bc,_0x52a6db:0x1db,_0x377f0d:0x264},a0_0x17bd5c={_0x1b70dc:0x14b,_0x7bc5f3:0x1b4,_0x130454:0x1c4,_0x33fe2b:0x21f,_0x55d411:0x1dc,_0x1ae61f:0x1b5,_0x932e91:0x16b,_0x2c6d31:0x11f,_0x2006eb:0x19c,_0x4009c6:0x1c2,_0x2c43e5:0x1b4,_0x1457ed:0x14b,_0x58af79:0x22e,_0x8bdec9:0x11b,_0x3e95bd:0x214,_0x4ef3bc:0x25b,_0xcc751a:0x287,_0x19eb57:0x12a,_0x530034:0x138,_0x472a65:0x240,_0xf2ff:0x27c,_0x5de277:0x120,_0x39a451:0x12e,_0x18fe55:0x20a},a0_0x4906d5={_0x55925b:0x177},a0_0x42ba24={_0x570019:0x12c,_0x390810:0x160,_0x266c70:0x1cc,_0x347870:0x25c,_0x124d6a:0x264,_0x220bcf:0x169,_0x209351:0x202,_0x325a80:0x1d3,_0x577e51:0x1cf,_0x3d6faf:0x24e,_0xb811f3:0x200,_0x4486d6:0x223,_0x31a7c0:0x1c3,_0x38e91c:0x138,_0x39fbbf:0x240,_0x2ea663:0x1c0,_0x292a95:0x26c,_0x3878c0:0x1a1,_0x35444e:0x15d,_0x261948:0x152,_0x1a2755:0x25a,_0x32534f:0x157,_0x364dca:0x157,_0x517d62:0x171,_0x1d5515:0x188},a0_0x4e8f1b={_0x2a337e:0x229,_0x234f4c:0x1c4,_0x34ea82:0x14b,_0x2983e6:0x165,_0x282122:0x142,_0xe75d0c:0x19c,_0x44a898:0x1ec,_0x10d700:0x200},a0_0x25182a={_0x198c22:0x13b,_0x5ca3ff:0x1b3,_0x3cc60e:0x1c2},a0_0x44ef20={_0x4e5784:0x18e,_0x1287a7:0x26d,_0x46d577:0x20f,_0x2078d0:0x1e1},a0_0x533984={_0x476c82:0x173},_0x5bd20d=a0_0x3810;var _0x15eca3=document['createElement'](_0x5bd20d(a0_0x2fe75f._0x289898));_0x15eca3[_0x5bd20d(0x234)]=[_0x5bd20d(a0_0x2fe75f._0x46f26e),'\x20\x20display:\x20block;\x20width:\x20100%;\x20margin-top:\x208px;\x20padding:\x2012px;','\x20\x20border:\x202px\x20dashed\x20#2196F3;\x20border-radius:\x208px;\x20background:\x20#e8f4fd;',_0x5bd20d(0x150),_0x5bd20d(0x24c),'}',_0x5bd20d(0x24b),_0x5bd20d(a0_0x2fe75f._0x28cc9c),_0x5bd20d(0x122),_0x5bd20d(0x1f6),_0x5bd20d(a0_0x2fe75f._0x3d26d1),'}','#goalAIChatModal\x20{',_0x5bd20d(a0_0x2fe75f._0x5f9b25),_0x5bd20d(a0_0x2fe75f._0x1ec094),'}',_0x5bd20d(0x268),_0x5bd20d(a0_0x2fe75f._0x3811f5),_0x5bd20d(0x26a),_0x5bd20d(0x194),_0x5bd20d(a0_0x2fe75f._0x2c8f97),_0x5bd20d(a0_0x2fe75f._0x1b369d),_0x5bd20d(a0_0x2fe75f._0x1acc94),'}','.gai-handle\x20{\x20width:36px;\x20height:4px;\x20background:#d1d5db;\x20border-radius:2px;\x20margin:10px\x20auto\x200;\x20}','.gai-header\x20{',_0x5bd20d(a0_0x2fe75f._0x2c0f9f),_0x5bd20d(a0_0x2fe75f._0x7e5507),'}','.gai-header\x20h2\x20{\x20font-size:17px;\x20margin:0;\x20font-weight:700;\x20}',_0x5bd20d(0x242),_0x5bd20d(0x219),_0x5bd20d(a0_0x2fe75f._0x5e0a8f),'}',_0x5bd20d(0x23d),_0x5bd20d(0x28f),_0x5bd20d(0x270),_0x5bd20d(0x134),'\x20\x20transition:all\x20.2s;\x20line-height:1.3;','}','.gai-char-btn:hover\x20{\x20border-color:#90caf9;\x20background:#e8f4fd;\x20}','.gai-char-btn.active\x20{\x20border-color:#2196F3;\x20background:#e8f4fd;\x20box-shadow:0\x200\x200\x202px\x20#2196F3;\x20}',_0x5bd20d(a0_0x2fe75f._0xca966e),_0x5bd20d(0x246),_0x5bd20d(0x249),_0x5bd20d(a0_0x2fe75f._0x162a84),_0x5bd20d(a0_0x2fe75f._0x5d2712),_0x5bd20d(a0_0x2fe75f._0x122dfd),'}','.gai-msg-row\x20{','\x20\x20display:flex;\x20align-items:flex-start;\x20gap:8px;\x20margin:10px\x200;','}',_0x5bd20d(0x181),_0x5bd20d(0x217),_0x5bd20d(a0_0x2fe75f._0x4b5d18),'\x20\x20flex-shrink:0;\x20margin-top:2px;','}',_0x5bd20d(a0_0x2fe75f._0x21c586),'\x20\x20padding:12px\x2014px;\x20border-radius:16px;',_0x5bd20d(0x260),'}',_0x5bd20d(a0_0x2fe75f._0x2e8f83),'.gai-msg-user\x20{\x20background:#2196F3;\x20color:#fff;\x20border-bottom-right-radius:4px;\x20}',_0x5bd20d(0x12f),_0x5bd20d(a0_0x2fe75f._0x2bea2d),'\x20\x20background:#e3f2fd;\x20color:#1976D2;\x20font-size:13px;\x20text-align:center;',_0x5bd20d(a0_0x2fe75f._0x58bd57),_0x5bd20d(a0_0x2fe75f._0x3115bf),'}',_0x5bd20d(0x213),_0x5bd20d(0x1b7),'\x20\x20display:flex;\x20align-items:flex-start;\x20gap:10px;\x20padding:12px\x2014px;',_0x5bd20d(a0_0x2fe75f._0x56b665),_0x5bd20d(0x1f3),'}','.gai-task-item:hover\x20{\x20border-color:#2196F3;\x20background:#e8f4fd;\x20}',_0x5bd20d(0x1a4),_0x5bd20d(a0_0x2fe75f._0x398c92),_0x5bd20d(0x279),_0x5bd20d(0x266),_0x5bd20d(0x205),_0x5bd20d(a0_0x2fe75f._0x37b6eb),_0x5bd20d(0x168),'.gai-cancel-btn:hover\x20{\x20background:#e0e0e0;\x20}',_0x5bd20d(a0_0x2fe75f._0xcfae09),'\x20\x20display:block;\x20width:calc(100%\x20-\x2032px);\x20margin:4px\x2016px\x208px;\x20padding:10px;','\x20\x20border:1.5px\x20dashed\x20#2196F3;\x20border-radius:10px;\x20background:#e8f4fd;',_0x5bd20d(a0_0x2fe75f._0x362996),'\x20\x20transition:background\x20.2s;\x20flex-shrink:0;','}',_0x5bd20d(0x1ee),_0x5bd20d(0x1be),_0x5bd20d(a0_0x2fe75f._0x42c43c),'\x20\x20flex-shrink:0;\x20border-top:1px\x20solid\x20#f0f0f0;\x20background:#fff;','}','.gai-input\x20{','\x20\x20flex:1;\x20padding:10px\x2012px;\x20border:1.5px\x20solid\x20#d1d5db;\x20border-radius:10px;',_0x5bd20d(a0_0x2fe75f._0x960c48),'\x20\x20line-height:1.4;\x20font-family:inherit;\x20overflow-y:auto;','}',_0x5bd20d(0x19f),_0x5bd20d(a0_0x2fe75f._0x134c79),_0x5bd20d(a0_0x2fe75f._0x178c98),_0x5bd20d(a0_0x2fe75f._0x5b8e74),'}',_0x5bd20d(0x27f),_0x5bd20d(0x1f7),_0x5bd20d(a0_0x2fe75f._0x4c17e5),_0x5bd20d(a0_0x2fe75f._0x529e90),_0x5bd20d(a0_0x2fe75f._0x4cffc3),_0x5bd20d(a0_0x2fe75f._0x573f99),'}',_0x5bd20d(a0_0x2fe75f._0x561305),_0x5bd20d(a0_0x2fe75f._0x481911),'.gai-dots::after\x20{\x20content:\x22\x22;\x20animation:gaiDots\x201.2s\x20steps(4,end)\x20infinite;\x20}',_0x5bd20d(a0_0x2fe75f._0x1beec0),_0x5bd20d(a0_0x2fe75f._0x345a68),_0x5bd20d(a0_0x2fe75f._0x26ea77),_0x5bd20d(0x258),'\x20\x20margin-top:10px;\x20border-bottom:1.5px\x20solid\x20#e5e7eb;','}',_0x5bd20d(a0_0x2fe75f._0x3fa41e)][_0x5bd20d(0x195)]('\x0a'),document[_0x5bd20d(a0_0x2fe75f._0x213720)]['appendChild'](_0x15eca3);var _0x44ff37=document[_0x5bd20d(a0_0x2fe75f._0x80791c)](_0x5bd20d(0x1cc));_0x44ff37['id']=_0x5bd20d(a0_0x2fe75f._0x3473e5),_0x44ff37[_0x5bd20d(a0_0x2fe75f._0x110e39)]=[_0x5bd20d(0x1ba),'\x20\x20<div\x20class=\x22gai-handle\x22></div>','\x20\x20<div\x20class=\x22gai-header\x22>',_0x5bd20d(a0_0x2fe75f._0x19d3d4),_0x5bd20d(0x15c),_0x5bd20d(a0_0x2fe75f._0x18ac4f),'\x20\x20<div\x20class=\x22gai-messages\x22\x20id=\x22gaiMessages\x22></div>','\x20\x20<div\x20class=\x22gai-tasks\x22\x20id=\x22gaiTasks\x22\x20style=\x22display:none;\x22></div>','\x20\x20<div\x20class=\x22gai-input-area\x20gai-safe-bottom\x22\x20id=\x22gaiInputArea\x22>',_0x5bd20d(0x1af),'\x20\x20\x20\x20<button\x20class=\x22gai-voice\x22\x20id=\x22gaiVoice\x22\x20type=\x22button\x22\x20title=\x22音声入力\x22>🎤</button>','\x20\x20\x20\x20<button\x20class=\x22gai-send\x22\x20id=\x22gaiSend\x22\x20onclick=\x22window._gaiSendMessage()\x22>送信</button>',_0x5bd20d(a0_0x2fe75f._0x399548),_0x5bd20d(a0_0x2fe75f._0x1b0405)][_0x5bd20d(a0_0x2fe75f._0x266729)]('\x0a'),document['body'][_0x5bd20d(0x289)](_0x44ff37),_0x44ff37['addEventListener']('click',function(_0x6cabab){var _0x819524=_0x5bd20d;if(_0x6cabab[_0x819524(a0_0x533984._0x476c82)]===_0x44ff37)_0x46e0f0();}),setTimeout(function(){var a0_0x2c190c={_0x10a058:0x240,_0x1905a2:0x23e},_0x1e600f=_0x5bd20d,_0x41103a=document['getElementById'](_0x1e600f(a0_0x44ef20._0x4e5784));_0x41103a&&(_0x41103a[_0x1e600f(a0_0x44ef20._0x1287a7)](_0x1e600f(a0_0x44ef20._0x46d577),function(_0x4a7b01){var _0x253f77=_0x1e600f;_0x4a7b01['key']==='Enter'&&!_0x4a7b01[_0x253f77(0x273)]&&(_0x4a7b01['preventDefault'](),window[_0x253f77(0x1e0)]());}),_0x41103a[_0x1e600f(0x26d)](_0x1e600f(a0_0x44ef20._0x2078d0),function(){var _0x501f72=_0x1e600f;this[_0x501f72(a0_0x2c190c._0x10a058)][_0x501f72(0x23e)]=_0x501f72(0x1f9),this['style'][_0x501f72(a0_0x2c190c._0x1905a2)]=Math['min'](this[_0x501f72(0x148)],-0xd6*-0x6+0x32*-0x27+0x312)+'px';}));},0xd3b*0x1+0x17e1+-0x2454);var _0x5b9b43={'goalText':'','category':'','goalId':null,'chatHistory':[],'turnCount':0x0,'maxTurns':0x5,'tone':_0x5bd20d(0x25d),'isWaiting':![]};function _0x48c29c(_0xdcb7cd){var _0x189ca9=_0x5bd20d;if(window['DaycePlan']){var _0xff584b=window[_0x189ca9(0x14b)][_0x189ca9(a0_0x4e8f1b._0x2a337e)](_0xdcb7cd);if(!_0xff584b[_0x189ca9(a0_0x4e8f1b._0x234f4c)]){window[_0x189ca9(a0_0x4e8f1b._0x34ea82)][_0x189ca9(a0_0x4e8f1b._0x2983e6)]({'type':'goalCoach','plan':window['DaycePlan'][_0x189ca9(0x1b9)](),'current':0x0,'limit':0x0,'reason':_0xff584b[_0x189ca9(a0_0x4e8f1b._0x282122)]});return;}}_0x5b9b43[_0x189ca9(a0_0x4e8f1b._0xe75d0c)]=_0xdcb7cd;var _0x49262b=document[_0x189ca9(a0_0x4e8f1b._0x44a898)](_0x189ca9(0x231));_0x49262b[_0x189ca9(a0_0x4e8f1b._0x10d700)](function(_0x49b082){var _0x187535=_0x189ca9;_0x49b082[_0x187535(0x211)][_0x187535(0x1b2)](_0x187535(a0_0x25182a._0x198c22),_0x49b082[_0x187535(a0_0x25182a._0x5ca3ff)](_0x187535(a0_0x25182a._0x3cc60e))===_0xdcb7cd);});}function _0x40c516(){var a0_0x31160b={_0x51ba2b:0x1c4,_0x431fcb:0x14b,_0xccc6e4:0x165,_0x1d14be:0x167,_0x28a7c6:0x240,_0x421eb6:0x138,_0x399690:0x257,_0x3cb1b2:0x138},a0_0x22c6ea={_0x1ebd5d:0x1c2,_0x3670ba:0x19c},_0x22dc40=_0x5bd20d,_0x57a0c4=document[_0x22dc40(a0_0x42ba24._0x570019)]('#goalAddModal\x20.add-button');if(!_0x57a0c4)return;if(document[_0x22dc40(0x21f)](_0x22dc40(0x17f)))return;var _0x49f735=document[_0x22dc40(a0_0x42ba24._0x390810)](_0x22dc40(a0_0x42ba24._0x266c70));_0x49f735['id']=_0x22dc40(a0_0x42ba24._0x347870),_0x49f735[_0x22dc40(a0_0x42ba24._0x124d6a)]='gai-char-selector',_0x49f735['style'][_0x22dc40(0x138)]=_0x22dc40(0x153),_0x49f735['style'][_0x22dc40(0x18a)]=_0x22dc40(0x1a5),_0x49f735[_0x22dc40(a0_0x42ba24._0x220bcf)]=[_0x22dc40(a0_0x42ba24._0x209351),_0x22dc40(0x252),_0x22dc40(0x272),_0x22dc40(a0_0x42ba24._0x325a80),_0x22dc40(a0_0x42ba24._0x577e51),_0x22dc40(0x23a),'\x20\x20<img\x20class=\x22char-img\x22\x20src=\x22takumi_senpai.png\x22\x20alt=\x22タクヤ先輩\x22\x20/>','\x20\x20<span\x20class=\x22char-name\x22>タクヤ先輩</span>',_0x22dc40(0x132),_0x22dc40(0x1cf),_0x22dc40(a0_0x42ba24._0x3d6faf),'\x20\x20<img\x20class=\x22char-img\x22\x20src=\x22hana_san.png\x22\x20alt=\x22ハナさん\x22\x20/>','\x20\x20<span\x20class=\x22char-name\x22>ハナさん</span>',_0x22dc40(0x186),_0x22dc40(0x1cf)][_0x22dc40(0x195)](''),_0x49f735['querySelectorAll'](_0x22dc40(0x231))[_0x22dc40(a0_0x42ba24._0xb811f3)](function(_0x24f9ad){var a0_0x88c8be={_0x2de5e2:0x211},_0x4b8059=_0x22dc40;_0x24f9ad['addEventListener'](_0x4b8059(0x28a),function(){var _0x42ff9c=_0x4b8059,_0x409496=_0x24f9ad[_0x42ff9c(0x1b3)](_0x42ff9c(a0_0x22c6ea._0x1ebd5d));_0x5b9b43[_0x42ff9c(a0_0x22c6ea._0x3670ba)]=_0x409496,_0x49f735['querySelectorAll'](_0x42ff9c(0x231))['forEach'](function(_0x3551e2){var _0x61f720=_0x42ff9c;_0x3551e2[_0x61f720(a0_0x88c8be._0x2de5e2)][_0x61f720(0x1b2)]('active',_0x3551e2['getAttribute'](_0x61f720(0x1c2))===_0x409496);});});});var _0x4d4aca=document[_0x22dc40(a0_0x42ba24._0x390810)]('button');_0x4d4aca[_0x22dc40(0x196)]=_0x22dc40(a0_0x42ba24._0x4486d6),_0x4d4aca['id']=_0x22dc40(a0_0x42ba24._0x31a7c0),_0x4d4aca[_0x22dc40(0x264)]=_0x22dc40(0x145),_0x4d4aca[_0x22dc40(0x240)][_0x22dc40(a0_0x42ba24._0x38e91c)]=_0x22dc40(0x153),_0x4d4aca[_0x22dc40(a0_0x42ba24._0x39fbbf)][_0x22dc40(a0_0x42ba24._0x2ea663)]=_0x22dc40(0x1c9),_0x4d4aca[_0x22dc40(0x240)][_0x22dc40(a0_0x42ba24._0x292a95)]=_0x22dc40(a0_0x42ba24._0x3878c0),_0x4d4aca[_0x22dc40(0x240)][_0x22dc40(a0_0x42ba24._0x35444e)]=_0x22dc40(0x239),_0x4d4aca['textContent']=_0x22dc40(a0_0x42ba24._0x261948),_0x4d4aca[_0x22dc40(0x16d)]=function(){_0x22be6e();};var _0x389085=document[_0x22dc40(0x160)](_0x22dc40(a0_0x42ba24._0x4486d6));_0x389085[_0x22dc40(0x196)]=_0x22dc40(0x223),_0x389085['id']='goalAIBreakdownBtn',_0x389085[_0x22dc40(0x264)]='goal-ai-btn',_0x389085['innerHTML']=_0x22dc40(a0_0x42ba24._0x1a2755),_0x389085[_0x22dc40(0x16d)]=function(){var _0xe3e351=_0x22dc40;if(window[_0xe3e351(0x14b)]){var _0x389a1e=window[_0xe3e351(0x14b)][_0xe3e351(0x1fd)](_0xe3e351(0x1b4));if(!_0x389a1e[_0xe3e351(a0_0x31160b._0x51ba2b)]){window[_0xe3e351(a0_0x31160b._0x431fcb)][_0xe3e351(a0_0x31160b._0xccc6e4)](_0x389a1e);return;}}_0x49f735[_0xe3e351(0x240)][_0xe3e351(0x138)]=_0xe3e351(a0_0x31160b._0x1d14be),_0x4d4aca[_0xe3e351(a0_0x31160b._0x28a7c6)][_0xe3e351(a0_0x31160b._0x421eb6)]=_0xe3e351(a0_0x31160b._0x399690),_0x389085[_0xe3e351(0x240)][_0xe3e351(a0_0x31160b._0x3cb1b2)]=_0xe3e351(0x153);},_0x57a0c4[_0x22dc40(0x171)][_0x22dc40(0x188)](_0x389085,_0x57a0c4[_0x22dc40(a0_0x42ba24._0x32534f)]),_0x389085[_0x22dc40(0x171)]['insertBefore'](_0x49f735,_0x389085[_0x22dc40(a0_0x42ba24._0x364dca)]),_0x49f735[_0x22dc40(a0_0x42ba24._0x517d62)][_0x22dc40(a0_0x42ba24._0x1d5515)](_0x4d4aca,_0x49f735[_0x22dc40(a0_0x42ba24._0x32534f)]);}function _0x282fce(){var _0x335476=_0x5bd20d;try{var _0x41ff3a=localStorage[_0x335476(a0_0x4906d5._0x55925b)]('isPremium');return _0x41ff3a==='true'||_0x41ff3a==='1'||_0x41ff3a==='yes';}catch(_0x5cad61){return![];}}async function _0x22be6e(){var _0x1d0538=_0x5bd20d;if(window[_0x1d0538(0x14b)]){var _0x5b2442=window[_0x1d0538(a0_0x17bd5c._0x1b70dc)][_0x1d0538(0x1fd)](_0x1d0538(a0_0x17bd5c._0x7bc5f3));if(!_0x5b2442[_0x1d0538(a0_0x17bd5c._0x130454)]){window[_0x1d0538(a0_0x17bd5c._0x1b70dc)][_0x1d0538(0x165)](_0x5b2442);return;}}var _0x107450=document['getElementById']('goalInput'),_0x1e4af1=document[_0x1d0538(a0_0x17bd5c._0x33fe2b)](_0x1d0538(0x23b)),_0x43cbbf=_0x107450?_0x107450[_0x1d0538(a0_0x17bd5c._0x55d411)]['trim']():'',_0xcd1e2=_0x1e4af1?_0x1e4af1['value']:_0x1d0538(a0_0x17bd5c._0x1ae61f);if(!_0x43cbbf){alert(_0x1d0538(0x27a));return;}_0x5b9b43[_0x1d0538(0x20b)]=_0x43cbbf,_0x5b9b43[_0x1d0538(a0_0x17bd5c._0x932e91)]=_0xcd1e2,_0x5b9b43[_0x1d0538(0x18c)]=null,_0x5b9b43[_0x1d0538(0x12e)]=[],_0x5b9b43[_0x1d0538(0x189)]=0xb78+0x1e5a+0x1*-0x29d2,_0x5b9b43[_0x1d0538(a0_0x17bd5c._0x2c6d31)]=0x1*-0x904+0x1afb*0x1+-0x8f9*0x2,_0x5b9b43[_0x1d0538(0x19c)]=_0x1d0538(0x25d),_0x5b9b43[_0x1d0538(0x271)]=![];var _0x57b1ee=document['querySelector'](_0x1d0538(0x143));if(_0x57b1ee)_0x5b9b43[_0x1d0538(a0_0x17bd5c._0x2006eb)]=_0x57b1ee['getAttribute'](_0x1d0538(a0_0x17bd5c._0x4009c6))||_0x1d0538(0x25d);window['DaycePlan']&&(window['DaycePlan'][_0x1d0538(0x277)](_0x1d0538(a0_0x17bd5c._0x2c43e5)),window[_0x1d0538(a0_0x17bd5c._0x1457ed)][_0x1d0538(a0_0x17bd5c._0x58af79)]());var _0x2ffd7e=Date[_0x1d0538(a0_0x17bd5c._0x8bdec9)](),_0x4d4165=new Date(),_0x422046=window['selectedGoalsMonth']||window['goalsCurrentMonth']||_0x4d4165[_0x1d0538(0x1b8)]()+'-'+String(_0x4d4165[_0x1d0538(a0_0x17bd5c._0x3e95bd)]()+(-0x2*0x49d+-0x2066+-0x29a1*-0x1))[_0x1d0538(0x233)](0xa47*0x3+0x16c3+-0x3596,'0'),_0x24e015={'id':_0x2ffd7e,'text':_0x43cbbf,'category':_0xcd1e2,'createdAt':_0x4d4165[_0x1d0538(0x13e)](),'month':_0x422046,'completed':![],'weeklyTasks':[]},_0x1f7201=_0x7e7dee();_0x1f7201[_0x1d0538(0x1a7)](_0x24e015),_0x1ee82f(_0x1f7201),_0x5b9b43[_0x1d0538(0x18c)]=_0x2ffd7e;if(typeof window[_0x1d0538(0x287)]===_0x1d0538(a0_0x17bd5c._0x4ef3bc))window[_0x1d0538(a0_0x17bd5c._0xcc751a)]();var _0xa559b6=document['getElementById'](_0x1d0538(a0_0x17bd5c._0x19eb57)),_0x468c2c=document[_0x1d0538(0x21f)]('gaiMessages'),_0x5e5dbe=document[_0x1d0538(a0_0x17bd5c._0x33fe2b)]('gaiTasks'),_0x91c729=document[_0x1d0538(a0_0x17bd5c._0x33fe2b)]('gaiInputArea');if(_0x468c2c)_0x468c2c['innerHTML']='';_0x5e5dbe&&(_0x5e5dbe[_0x1d0538(0x169)]='',_0x5e5dbe[_0x1d0538(0x240)][_0x1d0538(a0_0x17bd5c._0x530034)]=_0x1d0538(0x153));if(_0x91c729)_0x91c729[_0x1d0538(a0_0x17bd5c._0x472a65)][_0x1d0538(0x138)]=_0x1d0538(0x167);_0xa559b6&&(_0xa559b6[_0x1d0538(0x240)]['display']='',_0xa559b6[_0x1d0538(0x211)][_0x1d0538(0x1ad)]('gai-open'));var _0x16925c={'harsh':'マネージャー','normal':'タクヤ先輩','gentle':_0x1d0538(a0_0x17bd5c._0xf2ff)},_0x51189b=_0x16925c[_0x5b9b43[_0x1d0538(0x19c)]]||_0x1d0538(0x1e7);_0x5b69cb(_0x1d0538(a0_0x17bd5c._0x5de277),_0x51189b+'に目標設定の相談をする'),_0x5b69cb(_0x1d0538(0x236),'「'+_0x43cbbf+'」を達成したい（'+_0xcd1e2+'）'),_0x5b9b43[_0x1d0538(a0_0x17bd5c._0x39a451)][_0x1d0538(a0_0x17bd5c._0x18fe55)]({'role':'user','text':_0x43cbbf+_0x1d0538(0x149)+_0xcd1e2+'）'}),await _0x322877();}var _0x578dde={'harsh':'drill_instructor.png','normal':_0x5bd20d(0x198),'gentle':_0x5bd20d(0x218)};function _0x1169ab(){var _0x89610a=_0x5bd20d;return _0x578dde[_0x5b9b43['tone']]||_0x578dde[_0x89610a(0x25d)];}function _0x5b69cb(_0x20a02f,_0x4a6266){var _0x21fa33=_0x5bd20d,_0x4fd779=document[_0x21fa33(a0_0x34c79f._0x2169fb)](_0x21fa33(a0_0x34c79f._0x3a6927));if(!_0x4fd779)return;if(_0x20a02f===_0x21fa33(a0_0x34c79f._0x48bb9e)){var _0xf446e6=document[_0x21fa33(a0_0x34c79f._0x488c77)](_0x21fa33(a0_0x34c79f._0x360719));_0xf446e6[_0x21fa33(a0_0x34c79f._0x28d3d9)]=_0x21fa33(a0_0x34c79f._0xe832b1),_0xf446e6[_0x21fa33(a0_0x34c79f._0x572c35)]=_0x4a6266,_0x4fd779[_0x21fa33(0x289)](_0xf446e6);}else{if(_0x20a02f==='ai'){var _0x58742e=document['createElement']('div');_0x58742e[_0x21fa33(a0_0x34c79f._0x327e5)]='gai-msg-row';var _0x3ecd3f=document[_0x21fa33(a0_0x34c79f._0x488c77)](_0x21fa33(0x1b0));_0x3ecd3f['className']=_0x21fa33(a0_0x34c79f._0x325aaa),_0x3ecd3f[_0x21fa33(a0_0x34c79f._0x58d85e)]=_0x1169ab(),_0x3ecd3f['alt']='';var _0x168618=document[_0x21fa33(a0_0x34c79f._0x488c77)](_0x21fa33(a0_0x34c79f._0x527b66));_0x168618[_0x21fa33(0x264)]=_0x21fa33(a0_0x34c79f._0x4284af),_0x168618[_0x21fa33(0x234)]=_0x4a6266,_0x58742e[_0x21fa33(0x289)](_0x3ecd3f),_0x58742e['appendChild'](_0x168618),_0x4fd779[_0x21fa33(0x289)](_0x58742e);}else{var _0x374afe=document[_0x21fa33(a0_0x34c79f._0x488c77)](_0x21fa33(a0_0x34c79f._0x360719));_0x374afe['className']=_0x21fa33(a0_0x34c79f._0x52a6db);var _0x56dc7b=document[_0x21fa33(0x160)]('div');_0x56dc7b[_0x21fa33(a0_0x34c79f._0x377f0d)]=_0x21fa33(0x14a),_0x56dc7b[_0x21fa33(0x234)]=_0x4a6266,_0x374afe[_0x21fa33(0x289)](_0x56dc7b),_0x4fd779['appendChild'](_0x374afe);}}_0x4fd779['scrollTop']=_0x4fd779['scrollHeight'];}function _0x4ada1f(){var _0x179241=_0x5bd20d,_0x213ec3=document['getElementById']('gaiMessages');if(!_0x213ec3)return;var _0x553e58=document['createElement'](_0x179241(0x1cc));_0x553e58[_0x179241(0x264)]=_0x179241(0x1f0),_0x553e58['id']='gaiLoadingMsg';var _0x2fbe36=document[_0x179241(0x160)](_0x179241(0x1b0));_0x2fbe36[_0x179241(a0_0x1692f3._0x3ec5b2)]=_0x179241(a0_0x1692f3._0x15fa76),_0x2fbe36[_0x179241(a0_0x1692f3._0x1abeda)]=_0x1169ab(),_0x2fbe36[_0x179241(0x19e)]='';var _0x151032=document['createElement']('div');_0x151032[_0x179241(a0_0x1692f3._0x3ec5b2)]='gai-msg\x20gai-msg-loading',_0x151032[_0x179241(0x169)]=_0x179241(a0_0x1692f3._0x371201),_0x553e58[_0x179241(a0_0x1692f3._0x374a42)](_0x2fbe36),_0x553e58[_0x179241(a0_0x1692f3._0x374a42)](_0x151032),_0x213ec3[_0x179241(0x289)](_0x553e58),_0x213ec3[_0x179241(0x17c)]=_0x213ec3[_0x179241(a0_0x1692f3._0x25a46c)];}function _0x29ddbc(){var _0x4afb32=_0x5bd20d,_0x21e440=document['getElementById']('gaiLoadingMsg');if(_0x21e440)_0x21e440[_0x4afb32(0x1ae)]();}async function _0x27e57a(){var _0x3e33ce=_0x5bd20d;if(_0x5b9b43['isWaiting'])return;var _0x45b240=document['getElementById'](_0x3e33ce(0x18e)),_0x4b35c3=_0x45b240?_0x45b240[_0x3e33ce(a0_0x556cd1._0x4f2af4)]['trim']():'';if(!_0x4b35c3)return;_0x45b240&&(_0x45b240[_0x3e33ce(a0_0x556cd1._0x233403)]='',_0x45b240[_0x3e33ce(a0_0x556cd1._0x363b74)][_0x3e33ce(a0_0x556cd1._0xce593b)]='auto'),_0x5b69cb(_0x3e33ce(a0_0x556cd1._0x55aafa),_0x4b35c3),_0x5b9b43[_0x3e33ce(0x12e)]['push']({'role':_0x3e33ce(0x236),'text':_0x4b35c3}),await _0x322877();}async function _0x322877(){var _0x18791b=_0x5bd20d;_0x5b9b43['isWaiting']=!![];var _0x5be36b=document[_0x18791b(0x21f)](_0x18791b(a0_0x572795._0x55c2d5));if(_0x5be36b)_0x5be36b['disabled']=!![];_0x4ada1f();try{var _0x3672d4=_0x5b9b43['tone']||_0x18791b(a0_0x572795._0xc71b29),_0x570263=_0x4addbe(),_0x3e95fa=window[_0x18791b(a0_0x572795._0x4b5402)]||window[_0x18791b(a0_0x572795._0x452632)]||'https://lifelog-ai.little-limit-621c.workers.dev',_0x9d06d1=window[_0x18791b(a0_0x572795._0x19b9de)]&&window[_0x18791b(0x14b)]['getAIHeaders']?window[_0x18791b(0x14b)][_0x18791b(a0_0x572795._0x8d3f1b)]():{'Content-Type':_0x18791b(0x1d4)},_0x3e0d43=await fetch(_0x3e95fa+_0x18791b(a0_0x572795._0x569c68),{'method':_0x18791b(a0_0x572795._0x56bb04),'headers':_0x9d06d1,'body':JSON['stringify']({'text':_0x570263,'tone':_0x3672d4,'type':_0x18791b(0x208)})});if(!_0x3e0d43['ok'])throw new Error(_0x18791b(a0_0x572795._0x27ec3f)+_0x3e0d43['status']);var _0xd18152=await _0x3e0d43[_0x18791b(a0_0x572795._0x2f3e6b)](),_0x3398de='';if(typeof _0xd18152===_0x18791b(0x14e))_0x3398de=_0xd18152;else _0xd18152&&typeof _0xd18152===_0x18791b(0x261)&&(_0x3398de=_0xd18152[_0x18791b(a0_0x572795._0x3ba942)]||_0xd18152[_0x18791b(0x13c)]||_0xd18152[_0x18791b(a0_0x572795._0x25aac2)]||_0xd18152[_0x18791b(a0_0x572795._0x124c01)]||_0xd18152['response']||'');if(!_0x3398de)throw new Error(_0x18791b(a0_0x572795._0x525a61));_0x29ddbc(),_0x5b9b43[_0x18791b(0x189)]++,_0x5b9b43[_0x18791b(0x12e)][_0x18791b(0x20a)]({'role':'ai','text':_0x3398de});if(_0x5b9b43['turnCount']>=0x1c10+0x2609+-0x4217){var _0x25b2ad=_0x3a7219(_0x3398de),_0x4bb957=Object[_0x18791b(a0_0x572795._0x2c97fc)](_0x25b2ad)[_0x18791b(a0_0x572795._0x2f47d9)](function(_0xf5e4d3,_0x15cea6){var _0x4d2b77=_0x18791b;return _0xf5e4d3+_0x25b2ad[_0x15cea6][_0x4d2b77(0x259)];},-0x1*0x1154+-0x2631*0x1+-0x3d*-0xe9);if(_0x4bb957>=0x21fc+-0x1e49*0x1+0x3b0*-0x1)_0x5b69cb('ai',_0x3398de),_0x34ab35(_0x25b2ad);else{var _0x147be9=_0x4b53b5(_0x3398de);if(_0x147be9[_0x18791b(a0_0x572795._0x3c97f7)]>=-0x2337+-0xa*-0xfb+-0x196c*-0x1)_0x5b69cb('ai',_0x3398de),_0x14aa2c(_0x147be9);else{_0x5b69cb('ai',_0x3398de);if(_0x5b9b43[_0x18791b(0x189)]>=_0x5b9b43[_0x18791b(a0_0x572795._0x516714)]){var _0x3d9012=document[_0x18791b(a0_0x572795._0x1ebdcd)](_0x18791b(a0_0x572795._0x1968f8));if(_0x3d9012)_0x3d9012[_0x18791b(a0_0x572795._0x46db97)][_0x18791b(0x138)]=_0x18791b(a0_0x572795._0x422471);_0x5b69cb('ai',_0x18791b(0x227)+(new Date()[_0x18791b(0x214)]()+(-0x505*0x3+0x4*-0x2c5+0x1a24))+_0x18791b(0x1d6)),await _0x3ce0c5();}}}}else _0x5b69cb('ai',_0x3398de);}catch(_0x5bed70){_0x29ddbc(),_0x5b69cb('ai',_0x18791b(a0_0x572795._0x37e4d5)+_0x5bed70['message']),console['error'](_0x18791b(0x28c),_0x5bed70);}finally{_0x5b9b43[_0x18791b(0x271)]=![];var _0x45ad33=document[_0x18791b(0x21f)](_0x18791b(a0_0x572795._0x55c2d5));if(_0x45ad33)_0x45ad33['disabled']=![];var _0x125e99=document[_0x18791b(a0_0x572795._0x46dfc6)](_0x18791b(a0_0x572795._0x273fa5));if(_0x125e99)_0x125e99[_0x18791b(a0_0x572795._0x2d4afc)]();}}async function _0x3ce0c5(){var _0x31a209=_0x5bd20d;_0x5b9b43[_0x31a209(a0_0x134a1e._0xed7101)]=!![],_0x4ada1f();try{var _0x3eaa73=_0x5b9b43['tone']||_0x31a209(0x25d),_0x463798=_0x5b9b43[_0x31a209(a0_0x134a1e._0x290644)]['map'](function(_0x3c762f){var _0x4d0f99=_0x31a209;return(_0x3c762f['role']===_0x4d0f99(0x236)?'ユーザー':'AI')+':\x20'+_0x3c762f[_0x4d0f99(a0_0x3b01e6._0x57fe7d)];})['join']('\x0a'),_0x424dee=new Date(),_0x268f89=new Date(_0x424dee['getFullYear'](),_0x424dee['getMonth']()+(-0x2206+-0x2*-0x1da+-0x7*-0x455),-0x1*0x9aa+-0x2*0x69b+0x16e0),_0x82323c=Math[_0x31a209(a0_0x134a1e._0x5aa3ee)](0x7d8+0x1f74+0x15*-0x1df,Math[_0x31a209(a0_0x134a1e._0x50acc0)]((_0x268f89-_0x424dee)/(-0x589b7b5*0x1+0x1*0xf724c1+0x9b8eef4))+(-0x1b4f+-0x668+0x21b8)),_0x5df8ce=_0x424dee['getMonth']()+(-0x224f+-0x1*-0x2191+0x1*0xbf)+'月',_0x2a0582;if(_0x82323c<=0x6f6+-0x21ff+0x4*0x6c4)_0x2a0582=_0x31a209(0x1bb);else{if(_0x82323c<=-0x6*0x5f4+0x1013*0x1+0x13b3)_0x2a0582=_0x31a209(a0_0x134a1e._0xdf10a6);else _0x82323c<=0x1d0+-0x10*-0x1dc+0x1*-0x1f7b?_0x2a0582=_0x31a209(a0_0x134a1e._0x59a078):_0x2a0582=_0x31a209(a0_0x134a1e._0x26aa4c);}var _0x47d781='【指示】以下の会話を踏まえて、'+_0x5df8ce+_0x31a209(0x225)+_0x82323c+_0x31a209(0x125)+_0x31a209(a0_0x134a1e._0x13a578)+_0x2a0582+'\x0a'+_0x31a209(0x137)+_0x31a209(0x199)+_0x31a209(0x20d)+_0x31a209(a0_0x134a1e._0x536baa)+_0x31a209(a0_0x134a1e._0x32a552)+_0x463798,_0xf24fd6=window[_0x31a209(0x27b)]||window[_0x31a209(0x1ab)]||'https://lifelog-ai.little-limit-621c.workers.dev',_0x1ea3e7=window[_0x31a209(a0_0x134a1e._0x2f1a4d)]&&window[_0x31a209(a0_0x134a1e._0x2f1a4d)]['getAIHeaders']?window[_0x31a209(a0_0x134a1e._0x2f1a4d)][_0x31a209(0x19b)]():{'Content-Type':_0x31a209(a0_0x134a1e._0x61e7aa)},_0x239bcf=await fetch(_0xf24fd6+'/api/analyze',{'method':_0x31a209(a0_0x134a1e._0x1d6fb2),'headers':_0x1ea3e7,'body':JSON[_0x31a209(a0_0x134a1e._0x595a1e)]({'text':_0x47d781,'tone':_0x3eaa73,'type':'consult'})});if(!_0x239bcf['ok'])throw new Error(_0x31a209(0x22c)+_0x239bcf['status']);var _0x37a2eb=await _0x239bcf['json'](),_0x234806=_0x37a2eb[_0x31a209(0x216)]||_0x37a2eb[_0x31a209(0x13c)]||_0x37a2eb[_0x31a209(a0_0x134a1e._0x33c805)]||_0x37a2eb['result']||_0x37a2eb[_0x31a209(a0_0x134a1e._0x5ce526)]||'';if(!_0x234806&&typeof _0x37a2eb===_0x31a209(a0_0x134a1e._0x840207))_0x234806=_0x37a2eb;_0x29ddbc();if(_0x234806){_0x5b9b43[_0x31a209(0x12e)][_0x31a209(a0_0x134a1e._0xffee0b)]({'role':'ai','text':_0x234806}),_0x5b69cb('ai',_0x234806);var _0x261f57=_0x3a7219(_0x234806),_0x56561f=Object['keys'](_0x261f57)[_0x31a209(0x174)](function(_0x3fd5cd,_0x10d1c9){return _0x3fd5cd+_0x261f57[_0x10d1c9]['length'];},-0x3*0x2c1+-0x611+-0x1*-0xe54);if(_0x56561f>=0xae*0x31+0x1799+-0x1*0x38e4)_0x34ab35(_0x261f57);else{var _0x47c07a=_0x4b53b5(_0x234806);_0x47c07a['length']>-0x202a+0x1*0xf71+0x10b9&&_0x14aa2c(_0x47c07a);}}}catch(_0x857f3c){_0x29ddbc(),_0x5b69cb('ai',_0x31a209(a0_0x134a1e._0x5e7593)+_0x857f3c[_0x31a209(0x16f)]);}finally{_0x5b9b43['isWaiting']=![];}}function _0x4addbe(){var _0x1a777a=_0x5bd20d,_0x3613a0=_0x5b9b43[_0x1a777a(a0_0x21043d._0x125273)][_0x1a777a(a0_0x21043d._0x519b28)](function(_0x50c5e5){var _0x3243ba=_0x1a777a;return(_0x50c5e5[_0x3243ba(0x1e8)]==='user'?_0x3243ba(0x1c5):'AI')+':\x20'+_0x50c5e5[_0x3243ba(0x178)];})[_0x1a777a(0x195)]('\x0a'),_0x51255f='',_0x564227='';(_0x5b9b43['turnCount']===-0x24f2+0x121d+0x12d5||_0x5b9b43[_0x1a777a(0x189)]>=_0x5b9b43[_0x1a777a(a0_0x21043d._0x4c5c4e)]-(0x114b+-0x25b4+-0x3*-0x6ce))&&typeof window[_0x1a777a(0x164)]===_0x1a777a(a0_0x21043d._0x1eda03)&&(_0x564227=window[_0x1a777a(a0_0x21043d._0x41831b)](_0x1a777a(0x243),{'goalCategory':_0x5b9b43[_0x1a777a(a0_0x21043d._0x26403a)]}));var _0x2ab832=new Date(),_0xf7cdb7=new Date(_0x2ab832[_0x1a777a(0x1b8)](),_0x2ab832[_0x1a777a(a0_0x21043d._0x3d649c)]()+(0x88a*0x3+-0xb4b+-0x11a*0xd),0x5b6+-0x1ee6+-0x64c*-0x4),_0x383ae2=Math[_0x1a777a(a0_0x21043d._0x291a59)](0x2*-0x79d+-0x2681*-0x1+0x12*-0x14b,Math[_0x1a777a(0x203)]((_0xf7cdb7-_0x2ab832)/(0x331a95a+-0x2*0x3886b73+0x905898c))+(-0x233*-0x7+0x1a66+0x1*-0x29ca)),_0x28dd70=_0x2ab832['getMonth']()+(0x221*0x2+-0x1e69+0x6*0x45c)+'月'+_0x2ab832['getDate']()+'日〜'+(_0xf7cdb7['getMonth']()+(-0x1529+0x223*0x8+-0x412*-0x1))+'月'+_0xf7cdb7[_0x1a777a(a0_0x21043d._0x16d51a)]()+'日',_0x2ad508=_0x2ab832[_0x1a777a(0x214)]()+(-0x1*-0x20cd+-0x4de*0x1+-0x6e*0x41)+'月',_0x11ed89,_0x46156d;if(_0x383ae2<=-0x23e6+-0x1e23+-0x1*-0x4210)_0x11ed89=0xb*-0x2e3+-0x89f*-0x4+-0x2ba,_0x46156d=_0x1a777a(0x1ef);else{if(_0x383ae2<=0x1*-0x8e7+0x3f5*-0x2+0x10df)_0x11ed89=-0x1820+-0xb57+0x2379,_0x46156d='【前半】\x0a1.\x20タスクA\x0a【後半】\x0a1.\x20タスクB';else _0x383ae2<=0x347*0x3+0x1*-0x7a5+0xb*-0x31?(_0x11ed89=0x6a1+-0xa90+-0x65*-0xa,_0x46156d=_0x1a777a(0x21a)):(_0x11ed89=0x460*-0x3+0x3ab*0x1+-0x19*-0x61,_0x46156d=_0x1a777a(0x245));}var _0x4693e3=_0x5b9b43[_0x1a777a(a0_0x21043d._0x26403a)]||_0x1a777a(a0_0x21043d._0x789877),_0x3007e7;_0x4693e3==='健康'?_0x3007e7=_0x1a777a(a0_0x21043d._0x6b1efb)+'-\x20例:\x20ダイエット\x20→\x20前半「週2回ジムに行く」→\x20後半「週3回ジム+自宅筋トレ1回」\x0a':_0x3007e7=_0x1a777a(a0_0x21043d._0x483c72)+'-\x20頻度（週○回等）は、運動や反復練習など回数が重要な場合のみ付けてください\x0a'+'-\x20創作・学習・計画系のタスクは回数より「何をするか」を明確に書いてください\x0a';var _0x4256cd=_0x1a777a(a0_0x21043d._0x55e97b)+'-\x20'+_0x2ad508+'末（'+_0x28dd70+_0x1a777a(0x1eb)+_0x383ae2+'日間）の計画を提案してください\x0a'+_0x1a777a(0x235)+_0x46156d+'\x0a'+_0x1a777a(0x170)+_0x1a777a(a0_0x21043d._0x4bdb7a)+_0x3007e7+_0x1a777a(a0_0x21043d._0x4c4f45);if(_0x5b9b43[_0x1a777a(0x189)]===-0x297+0xd98+-0xb01)return _0x51255f+_0x564227+_0x1a777a(0x140)+_0x1a777a(a0_0x21043d._0x3a949b)+_0x5b9b43['goalText']+_0x1a777a(a0_0x21043d._0x56fedc)+_0x5b9b43[_0x1a777a(a0_0x21043d._0x26403a)]+_0x1a777a(a0_0x21043d._0x579fed)+_0x1a777a(0x262)+_0x2ad508+_0x1a777a(0x18f)+_0x1a777a(a0_0x21043d._0x5cd333)+'-\x20'+(_0x4693e3==='健康'?_0x1a777a(a0_0x21043d._0x4c5fdd):_0x1a777a(0x1c6))+_0x2ad508+'末にどうなりたいかを聞く質問が望ましい\x0a'+'-\x20質問は1〜2文で簡潔に\x0a'+_0x1a777a(a0_0x21043d._0x582843)+'-\x20タスクリストや分析結果は出力しないでください\x0a'+'-\x20普通の会話として質問だけ返してください\x0a';if(_0x5b9b43[_0x1a777a(0x189)]<-0x3*0x90e+-0x13*-0x8e+0x10a2)return _0x51255f+'【指示】あなたは目標設定のコーチです。\x0a'+_0x1a777a(0x1f2)+_0x1a777a(0x28b)+_0x2ad508+'末にはどうなっていたい？」など、'+_0x2ad508+_0x1a777a(a0_0x21043d._0x108560)+'-\x20質問は1〜2文で簡潔に\x0a'+_0x1a777a(0x191)+_0x1a777a(0x128)+'【会話履歴】\x0a'+_0x3613a0;if(_0x5b9b43[_0x1a777a(0x189)]<_0x5b9b43[_0x1a777a(0x11f)]-(-0x1*-0x58c+-0x527*0x6+0x195f))return _0x51255f+'【指示】あなたは目標設定のコーチです。\x0a'+_0x1a777a(a0_0x21043d._0x2cbaae)+_0x1a777a(0x24f)+_0x1a777a(0x1d8)+_0x2ad508+_0x1a777a(0x255)+_0x4256cd+_0x1a777a(0x1a0)+_0x1a777a(a0_0x21043d._0x1026b9)+_0x3613a0;return _0x51255f+_0x1a777a(a0_0x21043d._0xba8cad)+_0x2ad508+_0x1a777a(a0_0x21043d._0x21e435)+_0x4256cd+'\x0a'+_0x1a777a(a0_0x21043d._0x1026b9)+_0x3613a0;}function _0x4b53b5(_0x2e6223){var _0x4011e8=_0x5bd20d,_0x23f943=_0x2e6223[_0x4011e8(0x1fc)]('\x0a'),_0x1d42fa=[];for(var _0x513594=-0x10ae+-0x1e37+-0x7*-0x6b3;_0x513594<_0x23f943['length'];_0x513594++){var _0x3dd72c=_0x23f943[_0x513594][_0x4011e8(0x1df)](),_0x1fbaf7=/^[\d①②③④⑤⑥⑦⑧⑨⑩]+[\.\)）]/[_0x4011e8(0x1f5)](_0x3dd72c),_0x4dcd5c=/^[-・●▪▸]\s/[_0x4011e8(a0_0x3f3724._0x2cbb13)](_0x3dd72c);if(!_0x1fbaf7&&!_0x4dcd5c)continue;var _0xcd5b29=_0x3dd72c[_0x4011e8(a0_0x3f3724._0x33cab6)](/^[\d①②③④⑤⑥⑦⑧⑨⑩]+[\.\)）]\s*/,'')[_0x4011e8(a0_0x3f3724._0x3586bf)](/^[-・●▪▸]\s*/,'')[_0x4011e8(0x1df)]();_0xcd5b29[_0x4011e8(0x259)]>-0xb40+0x1d4e+-0x120c&&_0xcd5b29[_0x4011e8(a0_0x3f3724._0x2781e2)]<-0x1d61+-0x5c*-0x16+0x1d*0xc1&&_0x1d42fa['push'](_0xcd5b29);}return _0x1d42fa[_0x4011e8(0x146)](-0x22d*0x8+0x2*0x11f5+-0x1282,-0xa17+0xdea+0x3cb*-0x1);}function _0x3a7219(_0x159e1c){var _0x589dd6=_0x5bd20d,_0x4e389c={},_0x4eece9=0x47*0x8a+-0x10b9+-0x158d,_0xa2a140=_0x159e1c[_0x589dd6(0x1fc)]('\x0a'),_0x23a08b={'前半':0x1,'後半':0x2,'今月中':0x1};for(var _0x48db9b=-0x2*-0xe5d+-0x90+-0x1c2a;_0x48db9b<_0xa2a140[_0x589dd6(a0_0x24b695._0x3e6d94)];_0x48db9b++){var _0x24b09a=_0xa2a140[_0x48db9b][_0x589dd6(0x1df)](),_0xe600df=_0x24b09a[_0x589dd6(0x1a8)](/[【\[]*\s*第?\s*(\d)\s*週目?\s*[】\]:]*/);if(_0xe600df){_0x4eece9=parseInt(_0xe600df[-0xc8c*0x3+-0x89b*0x2+0x1f*0x1c5]);if(!_0x4e389c[_0x4eece9])_0x4e389c[_0x4eece9]=[];continue;}var _0x4d58a1=_0x24b09a[_0x589dd6(0x1a8)](/[【\[]*\s*(前半|後半|今月中)\s*[】\]:]*/);if(_0x4d58a1){_0x4eece9=_0x23a08b[_0x4d58a1[0x127*0x1d+0x1a3f*0x1+-0x3ba9]]||-0x83*-0x7+-0x26b*-0x9+-0x1957;if(!_0x4e389c[_0x4eece9])_0x4e389c[_0x4eece9]=[];continue;}if(_0x4eece9===-0x15*0x80+0x373*-0x8+0x4c3*0x8)continue;var _0x5c5ff5=/^[\d①②③④⑤⑥⑦⑧⑨⑩]+[\.\)）]/['test'](_0x24b09a),_0x1f9c29=/^[-・●▪▸]\s/[_0x589dd6(0x1f5)](_0x24b09a);if(!_0x5c5ff5&&!_0x1f9c29)continue;var _0x544a5f=_0x24b09a['replace'](/^[\d①②③④⑤⑥⑦⑧⑨⑩]+[\.\)）]\s*/,'')[_0x589dd6(a0_0x24b695._0x169e01)](/^[-・●▪▸]\s*/,'')['trim']();_0x544a5f[_0x589dd6(a0_0x24b695._0x3e6d94)]>0x1305+0x1e1a*-0x1+0x11*0xa7&&_0x544a5f['length']<0xd94+-0x8cd*-0x1+-0x1b1*0xd&&_0x4e389c[_0x4eece9]['push'](_0x544a5f);}return _0x4e389c;}function _0x59db92(_0x3c29a7){var _0x1b8fe0=_0x5bd20d;return _0x3c29a7[_0x1b8fe0(0x1b8)]()+'-'+String(_0x3c29a7[_0x1b8fe0(0x214)]()+(0x121c*0x1+0x1285+-0x24a0))[_0x1b8fe0(0x233)](-0x26b2+0x352+0x2362,'0')+'-'+String(_0x3c29a7['getDate']())[_0x1b8fe0(0x233)](-0x9e3*0x3+0xac9*0x3+-0x2b0,'0');}function _0x4108ae(_0xb7aeec,_0x1a601b){var _0x1ab13b=_0x5bd20d;if(_0xb7aeec<=-0x66a+-0x1a0*-0x1+0x4ca)return[];var _0x5597b7=new Date();_0x5597b7[_0x1ab13b(0x12b)](-0x67*0x17+0x4*0x851+-0x1*0x1803,-0x195b+0x17fe*-0x1+0x1073*0x3,0x229f+0x195c+-0x53*0xb9,0x1*0xbe1+0x1731*-0x1+-0x2d4*-0x4);var _0x4c9548=new Date(_0x5597b7);_0x4c9548[_0x1ab13b(a0_0x5524ab._0x33b680)](_0x4c9548[_0x1ab13b(0x1d9)]()+_0x1a601b*(0x203a+0x1*0x37b+-0x23ae*0x1));var _0x45ddc9=new Date(_0x4c9548[_0x1ab13b(0x1b8)](),_0x4c9548[_0x1ab13b(0x214)]()+(-0x1760+-0x174+0x18d5),0x1*0xbb7+0x3e*0x59+-0x2145),_0x61bd45=Math[_0x1ab13b(a0_0x5524ab._0x285100)](-0x1*0x22be+-0xda2+0x5*0x9ad,Math['floor']((_0x45ddc9-_0x4c9548)/(-0x4ff083f+0x8ab*-0xd575+0x115fa166))+(0x4*-0x8a7+0x12ba+0x53*0x31)),_0x269a78=[],_0x20bd31=Math['max'](0xc99*0x3+-0xed*-0x21+-0x4457,Math[_0x1ab13b(0x203)](_0x61bd45/_0xb7aeec));for(var _0x586fbe=0x4c*-0x16+0x1a2a+-0x13a2;_0x586fbe<_0xb7aeec;_0x586fbe++){var _0x2f663e=new Date(_0x4c9548);_0x2f663e['setDate'](_0x2f663e['getDate']()+_0x586fbe*_0x20bd31);if(_0x2f663e>_0x45ddc9)_0x2f663e=new Date(_0x45ddc9);_0x269a78[_0x1ab13b(a0_0x5524ab._0x3d9b2c)](_0x59db92(_0x2f663e));}return _0x269a78;}function _0x14aa2c(_0x476d18){var _0x366b96=_0x5bd20d,_0x3860d2=document[_0x366b96(a0_0x54bfe5._0x23410b)]('gaiTasks'),_0x4f0c96=document['getElementById'](_0x366b96(a0_0x54bfe5._0x4cfa8f));if(!_0x3860d2)return;if(_0x4f0c96)_0x4f0c96[_0x366b96(a0_0x54bfe5._0x138d3b)]['display']='none';var _0x3a7de9=_0x5b9b43[_0x366b96(a0_0x54bfe5._0x2873c2)]<_0x5b9b43[_0x366b96(0x11f)];_0x3860d2[_0x366b96(a0_0x54bfe5._0x13da71)]=_0x476d18[_0x366b96(0x1ea)](function(_0x1d660f,_0x578a65){var _0x3add48=_0x366b96;return _0x3add48(a0_0x43c5f7._0x14e95e)+_0x3add48(0x256)+_0x578a65+'\x22\x20/>'+'<span\x20class=\x22gai-task-text\x22>'+_0x2357de(_0x1d660f)+_0x3add48(a0_0x43c5f7._0x53ed86)+_0x3add48(0x156);})[_0x366b96(a0_0x54bfe5._0x36e33f)](''),_0x3860d2[_0x366b96(0x240)][_0x366b96(0x138)]=_0x366b96(0x257);var _0x340b88=_0x3860d2[_0x366b96(a0_0x54bfe5._0x58828d)](_0x366b96(0x207));if(_0x340b88){var _0x5722ee=_0x340b88[_0x366b96(a0_0x54bfe5._0x4904ed)]('.gai-task-actions');if(_0x5722ee)_0x5722ee['remove']();var _0x4ee1fe=_0x340b88[_0x366b96(a0_0x54bfe5._0x4904ed)](_0x366b96(0x222));if(_0x4ee1fe)_0x4ee1fe[_0x366b96(0x1ae)]();var _0x2426c0=document[_0x366b96(a0_0x54bfe5._0x2568ee)](_0x366b96(a0_0x54bfe5._0x5c51fa));_0x2426c0[_0x366b96(0x264)]='gai-task-actions',_0x2426c0[_0x366b96(0x169)]=_0x366b96(a0_0x54bfe5._0x5b83af)+_0x366b96(0x274),_0x340b88['appendChild'](_0x2426c0);if(_0x3a7de9){var _0x1f742a=document[_0x366b96(0x160)]('button');_0x1f742a[_0x366b96(0x264)]=_0x366b96(a0_0x54bfe5._0x587261),_0x1f742a[_0x366b96(0x16d)]=function(){window['_gaiContinueChat']();},_0x1f742a['textContent']='💬\x20もっと話してから決める',_0x340b88[_0x366b96(a0_0x54bfe5._0xeb6d13)](_0x1f742a);}}}function _0x34ab35(_0x455302){var a0_0x399b48={_0x5f3e5c:0x286},a0_0x48b665={_0x11fdf6:0x200},a0_0x4c55bb={_0x65d33b:0x144,_0x3c1922:0x1e5,_0xb5817a:0x16c},_0x327a4a=_0x5bd20d,_0x1099fa=document[_0x327a4a(0x21f)](_0x327a4a(0x226)),_0x1d0132=document['getElementById'](_0x327a4a(a0_0x45b59a._0x48a78a));if(!_0x1099fa)return;if(_0x1d0132)_0x1d0132[_0x327a4a(a0_0x45b59a._0x125aa4)][_0x327a4a(0x138)]=_0x327a4a(a0_0x45b59a._0x20bde5);var _0x52c35f=_0x5b9b43['turnCount']<_0x5b9b43[_0x327a4a(0x11f)],_0x234245=Object[_0x327a4a(a0_0x45b59a._0x47b03)](_0x455302)[_0x327a4a(a0_0x45b59a._0x20f0ec)](Number)[_0x327a4a(0x220)](function(_0xd57260,_0x282914){return _0xd57260-_0x282914;}),_0x312cf1=_0x234245[_0x327a4a(0x259)],_0x2034bc={};if(_0x312cf1<=-0xe4b*-0x1+0x782*-0x4+-0x2*-0x7df)_0x2034bc[_0x234245[0x1e1e+0xc5*-0x4+-0x1b0a]||-0x455+0x387*-0x1+0x1*0x7dd]=_0x327a4a(0x265);else _0x312cf1===-0x168c+0x9aa*-0x4+-0xa*-0x61f?(_0x2034bc[_0x234245[-0x1a*-0x30+-0x23a7*-0x1+-0x2887]]='前半',_0x2034bc[_0x234245[-0x25ba+0x238+0x2383]]='後半'):_0x234245[_0x327a4a(a0_0x45b59a._0x452198)](function(_0x29f2c1,_0x6f3697){_0x2034bc[_0x29f2c1]='第'+(_0x6f3697+(0x4*0x3a+-0x1a*-0x162+-0x24db))+'週';});var _0x52f881='';_0x234245[_0x327a4a(a0_0x45b59a._0x4b7dcf)](function(_0x368f26){var _0x4f31e6=_0x327a4a,_0xf6cac1=_0x455302[_0x368f26];if(!_0xf6cac1||_0xf6cac1[_0x4f31e6(0x259)]===0xe90+0x2093*0x1+0x449*-0xb)return;_0x52f881+=_0x4f31e6(0x244)+(_0x2034bc[_0x368f26]||'第'+_0x368f26+'週')+'</div>',_0xf6cac1[_0x4f31e6(a0_0x48b665._0x11fdf6)](function(_0x1d35d5,_0x2ce83){var _0x5616e2=_0x4f31e6;_0x52f881+=_0x5616e2(a0_0x4c55bb._0x65d33b)+_0x5616e2(0x13f)+_0x368f26+_0x5616e2(a0_0x4c55bb._0x3c1922)+_0x2ce83+_0x5616e2(0x263)+_0x5616e2(a0_0x4c55bb._0xb5817a)+_0x2357de(_0x1d35d5)+'</span>'+'</label>';});}),_0x1099fa[_0x327a4a(0x169)]=_0x52f881,_0x1099fa[_0x327a4a(0x240)][_0x327a4a(a0_0x45b59a._0x3eeb75)]='block';var _0x57dbb3=new Date(),_0x17c437=_0x57dbb3[_0x327a4a(a0_0x45b59a._0x27a71b)]()+(0x746+0x2*0xeb+-0x91b)+'月',_0x217372=_0x1099fa[_0x327a4a(a0_0x45b59a._0xfa6b2b)]('.gai-sheet');if(_0x217372){var _0x507585=_0x217372[_0x327a4a(a0_0x45b59a._0x209214)]('.gai-task-actions');if(_0x507585)_0x507585[_0x327a4a(a0_0x45b59a._0x3bd147)]();var _0xa3105a=_0x217372[_0x327a4a(0x12c)](_0x327a4a(0x222));if(_0xa3105a)_0xa3105a['remove']();var _0x2a2cb2=document[_0x327a4a(a0_0x45b59a._0x474b93)]('div');_0x2a2cb2[_0x327a4a(a0_0x45b59a._0x4dce85)]=_0x327a4a(0x26f),_0x2a2cb2[_0x327a4a(0x169)]='<button\x20class=\x22gai-add-btn\x22\x20onclick=\x22window._gaiAddTasks()\x22>✅\x20'+_0x17c437+_0x327a4a(a0_0x45b59a._0x2bc361)+_0x327a4a(a0_0x45b59a._0x58a3a3),_0x217372['appendChild'](_0x2a2cb2);if(_0x52c35f){var _0x57ff04=document[_0x327a4a(0x160)]('button');_0x57ff04['className']=_0x327a4a(a0_0x45b59a._0x3e5bbc),_0x57ff04[_0x327a4a(a0_0x45b59a._0x5530cf)]=function(){var _0x304171=_0x327a4a;window[_0x304171(a0_0x399b48._0x5f3e5c)]();},_0x57ff04[_0x327a4a(a0_0x45b59a._0x530f3b)]=_0x327a4a(a0_0x45b59a._0x2b019c),_0x217372[_0x327a4a(a0_0x45b59a._0x561155)](_0x57ff04);}}}function _0x7e7dee(){var _0x1ab9a3=_0x5bd20d;try{var _0x1b4769=localStorage[_0x1ab9a3(a0_0xdd2071._0xec768c)]('monthlyGoals'),_0x369569=JSON[_0x1ab9a3(0x285)](_0x1b4769||'[]');return Array[_0x1ab9a3(0x182)](_0x369569)?_0x369569:[];}catch(_0x2412eb){return[];}}function _0x1ee82f(_0x22ae50){var _0x1eb366=_0x5bd20d;try{localStorage[_0x1eb366(a0_0x302deb._0x3dde2f)](_0x1eb366(a0_0x302deb._0x1a1eda),JSON[_0x1eb366(0x24a)](_0x22ae50));}catch(_0x30d754){console[_0x1eb366(0x136)](_0x1eb366(0x22d),_0x30d754),alert(_0x1eb366(0x14d));return;}window[_0x1eb366(0x130)]=_0x22ae50;try{window['Storage']&&window['Storage'][_0x1eb366(0x16a)]&&window[_0x1eb366(0x224)][_0x1eb366(0x135)]&&window[_0x1eb366(a0_0x302deb._0x4d6680)][_0x1eb366(0x16a)](window[_0x1eb366(0x224)]['keys'][_0x1eb366(0x1e4)],_0x22ae50);}catch(_0x215a1d){}}function _0x1b018d(){var a0_0x392e63={_0x5b9190:0x123,_0x35085c:0x12c,_0x408ad2:0x20a},_0x180981=_0x5bd20d,_0x16efc0=document[_0x180981(0x1ec)](_0x180981(a0_0x54f2cd._0x5b6c6e));if(_0x16efc0['length']===0x8ed+-0x1fa0+-0x3*-0x791){alert('追加するタスクを選択してください');return;}var _0x3b1340=_0x7e7dee(),_0x44aaaf=null;_0x5b9b43['goalId']&&(_0x44aaaf=_0x3b1340[_0x180981(a0_0x54f2cd._0x2244e7)](function(_0x1fddc6){return _0x1fddc6&&_0x1fddc6['id']===_0x5b9b43['goalId'];}));var _0x266b4a=_0x59db92(new Date()),_0x3aa679=-0x1481*-0x1+-0xb92+-0x8ef*0x1;if(_0x44aaaf){if(!_0x44aaaf[_0x180981(0x18b)])_0x44aaaf[_0x180981(0x18b)]=[];var _0xe19ad={};_0x16efc0['forEach'](function(_0x3913fe){var _0x1b1fe5=_0x180981,_0x4d6325=_0x3913fe[_0x1b1fe5(0x1b3)](_0x1b1fe5(0x215)),_0x522990=_0x4d6325?parseInt(_0x4d6325)-(-0x1b6+0x2*0x1b2+-0x27*0xb):-0x1e24+0xb0a+0x6*0x32f;if(!_0xe19ad[_0x522990])_0xe19ad[_0x522990]=[];_0xe19ad[_0x522990][_0x1b1fe5(0x20a)](_0x3913fe);}),Object[_0x180981(a0_0x54f2cd._0x504e16)](_0xe19ad)[_0x180981(a0_0x54f2cd._0x20ab3e)](function(_0x287a3f){var _0x5a325b=_0x180981,_0xa305=parseInt(_0x287a3f),_0x160f1c=_0xe19ad[_0xa305],_0x37ae0a=_0x4108ae(_0x160f1c['length'],_0xa305);_0x160f1c[_0x5a325b(0x200)](function(_0x42d9ae,_0x26b3d7){var _0x25da38=_0x5a325b,_0x373799=_0x42d9ae[_0x25da38(a0_0x392e63._0x5b9190)](_0x25da38(0x1e3)),_0x319553=_0x373799?_0x373799[_0x25da38(a0_0x392e63._0x35085c)](_0x25da38(0x1d1)):null,_0x5d4c0e=_0x319553?_0x319553['textContent'][_0x25da38(0x1df)]():'';if(!_0x5d4c0e)return;var _0x40ae33=_0x37ae0a[_0x26b3d7]||_0x266b4a;_0x44aaaf['weeklyTasks'][_0x25da38(a0_0x392e63._0x408ad2)]({'id':Date['now']()+_0x3aa679,'text':_0x5d4c0e,'date':_0x40ae33,'done':![]}),_0x3aa679++;});});}else{var _0x4b5fd2=_0x5b9b43['category']||_0x180981(0x1b5),_0x111e2a=new Date(),_0x19df61=window[_0x180981(a0_0x54f2cd._0x503031)]||window[_0x180981(a0_0x54f2cd._0x136dd4)]||_0x111e2a[_0x180981(a0_0x54f2cd._0xf93d5f)]()+'-'+String(_0x111e2a[_0x180981(0x214)]()+(-0xa0d*0x2+0x50*-0x21+0x1e6b))[_0x180981(a0_0x54f2cd._0x3b187f)](0x2002+0x10fd*-0x1+0x3f*-0x3d,'0');_0x16efc0[_0x180981(a0_0x54f2cd._0x20ab3e)](function(_0x9929df){var _0x5c6ca5=_0x180981,_0x52e65f=_0x9929df[_0x5c6ca5(0x123)](_0x5c6ca5(0x1e3)),_0x504d12=_0x52e65f?_0x52e65f[_0x5c6ca5(a0_0x45c1bb._0x47b0b4)](_0x5c6ca5(a0_0x45c1bb._0x4dacbd)):null,_0x36fba7=_0x504d12?_0x504d12[_0x5c6ca5(a0_0x45c1bb._0x3cbfd4)]['trim']():'';if(!_0x36fba7)return;_0x3b1340[_0x5c6ca5(0x1a7)]({'id':Date['now']()+_0x3aa679,'text':_0x36fba7,'category':_0x4b5fd2,'createdAt':_0x111e2a[_0x5c6ca5(0x13e)](),'month':_0x19df61,'completed':![],'weeklyTasks':[]}),_0x3aa679++;});}_0x3aa679>-0x10f1*0x1+0x22d4+-0x11e3&&_0x1ee82f(_0x3b1340);if(typeof window[_0x180981(0x23f)]===_0x180981(a0_0x54f2cd._0x42ec21))window[_0x180981(0x23f)]();else{if(typeof window[_0x180981(0x253)]===_0x180981(a0_0x54f2cd._0x42ec21))window[_0x180981(0x253)]();}if(typeof window[_0x180981(a0_0x54f2cd._0x35ab77)]===_0x180981(0x25b)){var _0x70d5be=![];_0x16efc0[_0x180981(0x200)](function(_0x4ba301){var _0x53244b=_0x180981,_0x5f134b=_0x4ba301['getAttribute'](_0x53244b(a0_0x23cdf5._0x3f4997));if(_0x5f134b&&parseInt(_0x5f134b)>-0x579+0x1bbd+-0x1643)_0x70d5be=!![];});var _0xa2d67f=_0x70d5be?'✅\x20'+_0x3aa679+_0x180981(0x1e9):'✅\x20'+_0x3aa679+_0x180981(a0_0x54f2cd._0x4a3e03);window['showStatus'](_0x180981(a0_0x54f2cd._0x169c8e),_0xa2d67f);}_0x46e0f0();}function _0x46e0f0(){var _0x118cfa=_0x5bd20d,_0x23a171=document[_0x118cfa(0x21f)](_0x118cfa(0x12a));if(_0x23a171){_0x23a171[_0x118cfa(a0_0x4da24f._0x37a8a4)][_0x118cfa(a0_0x4da24f._0x274a9e)]('gai-open');var _0x39c22a=_0x23a171['querySelector'](_0x118cfa(a0_0x4da24f._0x59046b));if(_0x39c22a){var _0x2cdcab=_0x39c22a['querySelector']('.gai-task-actions');if(_0x2cdcab)_0x2cdcab[_0x118cfa(a0_0x4da24f._0x274a9e)]();var _0x2d8ca4=_0x39c22a[_0x118cfa(a0_0x4da24f._0x55eccd)](_0x118cfa(0x222));if(_0x2d8ca4)_0x2d8ca4[_0x118cfa(0x1ae)]();}}}function _0x2357de(_0x2c52bf){var _0x2d3bbd=_0x5bd20d,_0xcb8206=document[_0x2d3bbd(0x160)]('div');return _0xcb8206[_0x2d3bbd(0x234)]=_0x2c52bf,_0xcb8206[_0x2d3bbd(a0_0x3f0820._0x2af0cd)];}var _0x444c93=window['SpeechRecognition']||window[_0x5bd20d(0x27d)],_0x477a18=null,_0x297729=![],_0x5ad41e=![],_0x2da2a6='',_0x6e39fd=/iPhone|iPad|iPod|Android/i[_0x5bd20d(a0_0x2fe75f._0x4c4444)](navigator[_0x5bd20d(0x1cd)]);function _0x3b2263(){_0x297729?_0x48c6a0():_0x52312c();}function _0x52312c(){var a0_0x2cc148={_0x8283ce:0x136,_0x21177f:0x212},_0x25da06=_0x5bd20d;if(!_0x444c93){alert(_0x25da06(a0_0x5f2a34._0x5de4e8));return;}var _0x9d4c0a=document[_0x25da06(0x21f)](_0x25da06(a0_0x5f2a34._0x53e51a)),_0x38987f=document[_0x25da06(a0_0x5f2a34._0x46dfbb)](_0x25da06(a0_0x5f2a34._0x23a6dd));if(!_0x9d4c0a||!_0x38987f)return;_0x477a18=new _0x444c93(),_0x477a18[_0x25da06(0x28d)]=_0x25da06(a0_0x5f2a34._0x3457fd),_0x477a18[_0x25da06(0x1d5)]=!_0x6e39fd,_0x477a18['interimResults']=!![],_0x477a18[_0x25da06(0x162)]=0xf92*0x2+-0x14*0xfc+-0xb73,_0x297729=!![],_0x5ad41e=!![],_0x2da2a6='';var _0x20f6f2=_0x9d4c0a[_0x25da06(a0_0x5f2a34._0x465ae8)];_0x38987f[_0x25da06(0x211)]['add']('listening'),_0x38987f[_0x25da06(a0_0x5f2a34._0xdd2e39)]='⏹️',_0x477a18[_0x25da06(0x1e6)]=function(_0x236e73){var _0x13f7bc=_0x25da06,_0x5726ca='';for(var _0xdab078=_0x236e73['resultIndex'];_0xdab078<_0x236e73['results']['length'];_0xdab078++){var _0x4d6083=_0x236e73[_0x13f7bc(0x127)][_0xdab078][-0x26a0+0x1*0x259e+0x56*0x3]['transcript'];_0x236e73['results'][_0xdab078][_0x13f7bc(a0_0x456274._0x13e46e)]?_0x2da2a6+=_0x4d6083:_0x5726ca=_0x4d6083;}_0x9d4c0a[_0x13f7bc(a0_0x456274._0x2e022d)]=_0x20f6f2+_0x2da2a6+_0x5726ca;},_0x477a18[_0x25da06(a0_0x5f2a34._0x9a046d)]=function(_0x39e01f){var _0x2a432b=_0x25da06;if(_0x39e01f[_0x2a432b(0x136)]==='no-speech'||_0x39e01f[_0x2a432b(a0_0x2cc148._0x8283ce)]===_0x2a432b(a0_0x2cc148._0x21177f))return;_0x48c6a0();},_0x477a18[_0x25da06(a0_0x5f2a34._0x1867f1)]=function(){var a0_0x3ba602={_0xe23975:0x254};_0x297729&&_0x5ad41e?setTimeout(function(){var _0x1acdff=a0_0x3810;if(_0x297729&&_0x5ad41e)try{_0x477a18[_0x1acdff(a0_0x3ba602._0xe23975)]();}catch(_0xefd11){}},_0x6e39fd?-0x9d*-0x1f+0x81*-0x1d+-0x2*0xd:-0x6*0x227+0x1*0x28f+0x89*0x17):_0xd9bfcd();};try{_0x477a18[_0x25da06(a0_0x5f2a34._0x14b212)]();}catch(_0x33aa32){_0xd9bfcd();}}function _0x48c6a0(){var _0x16c20f=_0x5bd20d;_0x5ad41e=![],_0x297729=![];if(_0x477a18)try{_0x477a18[_0x16c20f(0x1d0)]();}catch(_0x347b98){}_0xd9bfcd();}function _0xd9bfcd(){var _0x196f43=_0x5bd20d;_0x297729=![],_0x5ad41e=![];var _0x3aded9=document[_0x196f43(0x21f)](_0x196f43(0x193));_0x3aded9&&(_0x3aded9[_0x196f43(0x211)][_0x196f43(0x1ae)]('listening'),_0x3aded9[_0x196f43(a0_0x2416aa._0x475ff4)]='🎤');var _0x3467d8=document[_0x196f43(0x21f)](_0x196f43(0x18e));if(_0x3467d8&&_0x2da2a6){var _0x5c15f9=_0x3467d8[_0x196f43(0x1dc)];_0x3467d8[_0x196f43(0x20e)](new Event(_0x196f43(0x1e1),{'bubbles':!![]}));}_0x477a18=null,_0x2da2a6='';}setTimeout(function(){var _0x21bfc2=_0x5bd20d,_0x5110d0=document['getElementById'](_0x21bfc2(0x193));_0x5110d0&&_0x5110d0[_0x21bfc2(a0_0x10edc5._0x525204)]('click',_0x3b2263);},0x485*0x1+-0x10ef+-0x2*-0x6b2);var _0xd18d0d=_0x46e0f0;_0x46e0f0=function(){if(_0x297729)_0x48c6a0();_0xd18d0d();},window[_0x5bd20d(a0_0x2fe75f._0x3c258f)]=_0x46e0f0;function _0x5d91de(){var _0x5ebcca=_0x5bd20d,_0x4221c1=document['getElementById'](_0x5ebcca(a0_0x16644b._0x1130ea)),_0x39c943=document[_0x5ebcca(0x21f)]('gaiInputArea');_0x4221c1&&(_0x4221c1[_0x5ebcca(a0_0x16644b._0x2da21e)]='',_0x4221c1[_0x5ebcca(0x240)]['display']='none');if(_0x39c943)_0x39c943[_0x5ebcca(a0_0x16644b._0x476c1c)][_0x5ebcca(a0_0x16644b._0x1d06d5)]=_0x5ebcca(a0_0x16644b._0x178f06);var _0x32773d=document[_0x5ebcca(0x21f)](_0x5ebcca(a0_0x16644b._0x570f39));if(_0x32773d)_0x32773d[_0x5ebcca(0x1b1)]();_0x5b69cb('ai',_0x5ebcca(a0_0x16644b._0x3ba202));}window[_0x5bd20d(0x283)]=_0x46e0f0,window[_0x5bd20d(0x1e0)]=_0x27e57a,window[_0x5bd20d(0x1f8)]=_0x1b018d,window[_0x5bd20d(a0_0x2fe75f._0x56f5e7)]=_0x48c29c,window[_0x5bd20d(a0_0x2fe75f._0x92b47d)]=_0x5d91de;function _0x1781f1(){var _0x2b061=_0x5bd20d;_0x40c516();var _0x3bbfa2=new MutationObserver(function(){_0x40c516();}),_0x407132=document['getElementById'](_0x2b061(0x121));_0x407132&&_0x3bbfa2[_0x2b061(0x1bd)](_0x407132,{'attributes':!![],'attributeFilter':['style']});}document['readyState']==='loading'?document[_0x5bd20d(0x26d)](_0x5bd20d(0x21c),_0x1781f1):setTimeout(_0x1781f1,-0x389*0x5+0x1*0xa99+0x4*0x1de);}()));function a0_0x3810(_0x23e4fd,_0x1f902a){_0x23e4fd=_0x23e4fd-(0x1*-0x2377+0x1*-0x2487+0x4919);var _0x51bb4a=a0_0x3ff1();var _0x24a309=_0x51bb4a[_0x23e4fd];if(a0_0x3810['WPrxKF']===undefined){var _0x3d1522=function(_0x561375){var _0x705803='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';var _0x1cf595='',_0x2ff27b='';for(var _0x44a8ff=0x1*0x797+-0x1f15+-0x61*-0x3e,_0x160d66,_0x342852,_0x46817d=0x912+0x515*0x4+0xeb3*-0x2;_0x342852=_0x561375['charAt'](_0x46817d++);~_0x342852&&(_0x160d66=_0x44a8ff%(0x175f*-0x1+-0x69e+0x1e01)?_0x160d66*(0x2187+0x2*0x65+0x1b*-0x143)+_0x342852:_0x342852,_0x44a8ff++%(0x2058+0x651+-0x26a5))?_0x1cf595+=String['fromCharCode'](0x1f18+-0x5d9*0x2+0x2a1*-0x7&_0x160d66>>(-(0x42a+0x1b73+0x1f9b*-0x1)*_0x44a8ff&-0x858+-0x1db2+0x2610)):-0x179*-0x5+-0xb*0x8b+-0xb2*0x2){_0x342852=_0x705803['indexOf'](_0x342852);}for(var _0x13b4bf=-0x204+0x23f8*0x1+-0x21f4,_0x3bfe6c=_0x1cf595['length'];_0x13b4bf<_0x3bfe6c;_0x13b4bf++){_0x2ff27b+='%'+('00'+_0x1cf595['charCodeAt'](_0x13b4bf)['toString'](-0xa*-0xfb+-0x17a6*0x1+0xde8))['slice'](-(-0xb14+0x11*0x23+0x8c3));}return decodeURIComponent(_0x2ff27b);};a0_0x3810['XSXQYS']=_0x3d1522,a0_0x3810['GedpnZ']={},a0_0x3810['WPrxKF']=!![];}var _0x25111d=_0x51bb4a[-0x2206+-0x2*-0x1da+-0x2*-0xf29],_0x177993=_0x23e4fd+_0x25111d,_0x394356=a0_0x3810['GedpnZ'][_0x177993];return!_0x394356?(_0x24a309=a0_0x3810['XSXQYS'](_0x24a309),a0_0x3810['GedpnZ'][_0x177993]=_0x24a309):_0x24a309=_0x394356,_0x24a309;}function a0_0x3ff1(){var _0x16a875=['z29HBc1HAs1IDg4','C2XPy2u','44gk5l2/44ge44gU44ow44oP44kM44k244gV6z+Z5AoW5ywL5yQB44gR5A++5B+C44gx44gM44ge44g+44gB44kt','C2nYB2XSsgvPz2H0','77Yi44kR44og44k044oQoIa','z2fPlw1ZzYbNywKTBxnNlxvZzxi','rgf5y2vqBgfU','lsdJG6BJG7ZJGRBJG7ZJGA7PGy7LJRVJG4FJG7ZJGR/JGyZJGylJGOZJGBdJGihJGz3JGOZJGPlOUi/JGB7JGyJJGz/OS6RLLy/JGPlJGzFJGABJGy/JGAdJGzxJGyqk','44oh44o844k/44gU5l+D5A2y44gR5AsX5Pwx44gx44g+44gx44gF44cc44k544oi44oS44o844k45A656yEp44ks56k66kQn44gx44gM44gp44gG44gv44ge44cc','C3rYAw5N','icbKAxnWBgf5oMzSzxG7igzSzxGTzgLYzwn0Aw9UoMnVBhvTBJSGB3zLCMzSB3C6AgLKzgvUoW','icbJB2XVCJOGiZiXotzgmZSGzM9UDc1ZAxPLoIaXnhb4oYbMB250lxDLAwDODdOGnJaWoYbJDxjZB3i6ihbVAw50zxi7','AgvHza','8j+AGcdJGzpJGA7NM7JMIyVJGAFJG4hJG6pJG4pJG4JPLOVLP4S','BM9Uzq','icbWywrKAw5NoJrWEca4ChG7igXPBMuTAgvPz2H0oJe7','5B+f44gA5lUL5lIl44gU44ov44kP44o844oE44od44oi44gN5yE65yQB44gx44gM44gp44gG44gv44ge77YAcG','pc9SywjLBd4','BMv4DfnPyMXPBMC','lMDHAs1ZywzLlwjVDhrVBsb7ihbHzgrPBMCTyM90Dg9ToMvUDIHZywzLlwfYzweTAw5ZzxqTyM90Dg9Tlca4ChGPoYb9','lMDHAs1TB3jLlwj0BIb7','i2DHAvrHC2TZigLUChv0w3r5Cgu9iMnOzwnRyM94iL06y2HLy2TLza','44cn77Yi44kR44og44k044oQoIa','icaGidXIDxr0B24Gy2XHC3m9iMDHAs1JBg9ZzsiGB25JBgLJAZ0ID2LUzg93lL9JBg9ZzuDVywXbsunOyxqOksi+jNrPBwvZoZWVyNv0Dg9UpG','y29SB3i','C2HVD1n0yxr1CW','AMeTsLa','y3jLyxrLrwXLBwvUDa','C3jJ','Bwf4qwX0zxjUyxrPDMvZ','zMLUza','yNvPBgrdB250zxH0u3vTBwfYEq','C2HVD1vWz3jHzgvnB2rHBa','lMDHAs1TzxnZywDLCYb7','zMXLEa','lMDHAs1Jyw5JzwWTyNrUihSGyMfJA2DYB3vUzdOJzJbMmgyWoYbJB2XVCJOJnJy2oYb9','Aw5Uzxjive1m','C2v0','y2f0zwDVCNK','phnWyw4Gy2XHC3m9iMDHAs10yxnRlxrLEhqIpG','B25JBgLJAW','5lQg6kEJ77Yb44kc44gg5Bcr44gx6kMZ44gx44gp5Pwz44gi44gM44gp44gG44gv44ge44cc5l2v44gN44kc6igE44ge44gM44gp44gG44gv44ge44gTipcFMiO','BwvZC2fNzq','lsdLKitJG5xJGQFJG7ZJGROY44cCm+waI+oaGEwfQos9K+obPZBJGjWXmUwaI+obRUocV+ocUEocR+obQ+obL+obPUobJ+obOoobLEobHaO','CgfYzw50tM9Kzq','z2fPtwvZC2fNzxm','DgfYz2v0','CMvKDwnL','5PYR44g+44gN44gU6kIi55s744ks5l2C44kl44gF44kb44gU6loQ5zwp44ks44gx44gM44gp44gG44gv44gecG','AxngAw5HBa','z2v0sxrLBq','Dgv4Da','yw5HBhLZAxm','icbIB3jKzxiTCMfKAxvZoJeWChG7igzVBNqTC2L6ztOXnhb4oYbMB250lxDLAwDODdO2mda7ign1CNnVCJPWB2LUDgvYoYb3AgL0zs1ZCgfJztPUB3DYyxa7','5lUL5lIl44gU5lYA6kMX44ks6lIp44g+44gi44gM44cb5QYH44gU44gP44gH44kj44gl44ks6kgm44gJ44gM44gp44gG44gv44ge77YAcG','C2nYB2XSvg9W','ANnVBG','C2vSzwn0zwrhB2fSC01VBNrO','z29HBefjqNjLywTKB3DUqNrU','44cq44k/44k544kV5O+q5Qgi44gU44oR44o844oR44crcG','lMDHAs1TC2CTCM93lNjVDY11C2vYihSGANvZDgLMEs1JB250zw50oMzSzxGTzw5KoYb9','AxnbCNjHEq','icbIB3GTC2HHzg93oJaGltrWEcaYnhb4ihjNyMeOmcWWldaSmc4XocK7','C2v0rgf0zq','lsdMUPBLGPNJGOruAxbZ44gN44gV44gQ44gp6kgm5yUv44gD44gU44kc44gUcGO','ica8C3bHBIbJBgfZCZ0Iy2HHCI1KzxnJiJ7JGOtJGzxJGzFJGyq8l3nWyw4+','mJjzEw1qvgi','Aw5Zzxj0qMvMB3jL','DhvYBKnVDw50','CgfKzgLUzW','D2vLA2X5vgfZA3m','z29HBeLK','z2fPu2vUza','z2fPsw5WDxq','5PYR44g+44gN44gU6kIi55s744gR6jc944gO44gx6l6844ka44gF44kb44gR44cbmEobPoobOoobKEEFREobHoIZQUwvJ+ocKUobL+obPUobJ+obOoobLEobHooaGGO','l2fWAs9HBMfSExPL','lsdJGQ3JG6pJG6NJGQ/JGR/JG7ZOQk3LRPRJGA7LJ6pOQR/JGAVLVPpJGApJGABJGy/JGAdJGzxJGyqk','CMvZDwX0','z2fPvM9Py2u','icbIywnRz3jVDw5KoInMzMy7igjVCMrLCI1YywrPDxm6mJbWEcaYmhb4idaGmdS','AM9PBG','DhLWzq','icbKAxnWBgf5oMzSzxG7igDHCdO4ChG7ihbHzgrPBMC6mtbWEcaXnNb4oYbHBgLNBI1PDgvTCZPMBgv4lwvUzdS','DgfRDw1Px3nLBNbHAs5WBMC','lsdMNidLIj3JGA/LJ5BJGORNTytJGB/JGOtJGzNJGy/JGihLVOZLJyRJGA/JGRNJG4BJG4pJG5FJGQlJG4pJG5Ck','lsdMUPBLGPNJGOruAxbZ77Yi44cm44oq44od44kW44ks55sO5Osp44gz44kl44cn562j77Yj44gN44gV44gQ44gp44cb55UU5QIz6ygu5OIq44gR55U057wq44gz44kl6kgm5yUv44gD44gU44kc44gU44gR44gx44gM44gp44gG44gv44gecG','z2v0quLizwfKzxjZ','Dg9Uzq','CMvWBgfJzq','ywX0','lMDHAs1PBNb1DdPMB2n1CYb7igjVCMrLCI1JB2XVCJOJmJe5nKyZoYb9','lsdJGQ3JG6pJG6NJGQ/JGR/JG7ZOQk3LRPRJGA7LJ6pOQR/JGAVLVPpJGApJGABJGy/JGAdJGzxJGyqkcG','iZiXotzgmW','mtblBMHhu3O','nZiZog5ysgzyEa','lMDHAs10yxnRlwL0zw0GAw5WDxrBDhLWzt0Iy2HLy2TIB3GIxsb7ig1HCMDPBI10B3a6m3b4oYb3Awr0AdOYmhb4oYbOzwLNAhq6mJbWEdSGywnJzw50lwnVBg9YoImYmtK2rJm7igzSzxGTC2HYAw5RoJa7ih0','mtbWEcaWidHWEa','icb3Awr0AdOZmNb4oYbOzwLNAhq6mZjWEdSGyM9YzgvYlxjHzgL1CZO1mcu7ig9IAMvJDc1MAxq6y292zxi7','Dw5ZAgLMDa','Bwf0y2G','44cq5yMn5y2k44crcJeUioocV+ocUEocRWRJGjdLVOZLJyRJGjekms4G44k/44k544kV','icbKAxnWBgf5oM5VBMu7ihbVC2L0Aw9UoMzPEgvKoYbPBNnLDdOWoYbIywnRz3jVDw5KoNjNyMeOmcWWldaSmc40nsK7','x19cqunlru5ex1vstf9F','x2DHAvnLBgvJDenOyxi','ywrK','CMvTB3zL','icaGidX0zxH0yxjLysbJBgfZCZ0Iz2fPlwLUChv0iIbPzd0Iz2fPsw5WDxqIihjVD3m9iJiIihbSywnLAg9SzgvYpslLM57NRztJGPlLHAxLIPSUlI4IpJWVDgv4DgfYzwe+','Aw1N','zM9JDxm','Dg9Nz2XL','z2v0qxr0CMLIDxrL','z29HBenVywnO','44gD44gU5lUw','CMvZCg9UC2u','lMDHAs10yxnRlwL0zw0GEW','z2v0rNvSBfLLyxi','z2v0ugXHBG','pgrPDIbJBgfZCZ0Iz2fPlxnOzwv0iJ4','44cq5lUk5PYi5lIT44crcJeUioocV+ocUEocRW','z2fPlw1ZzYbNywKTBxnNlwfP','B2jZzxj2zq','lMDHAs1PBNb1Dc1HCMvHihS','44cq56YSmEMaSEoaKqOXlIdJGR/JGRNJGQ8k44cq56YSmUMaSEoaKqOXlIdJGR/JGRNJGQ8k44cq56YSm+MaSEoaKqOXlIdJGR/JGRNJGQ8','yM9YzgvYu3r5Bgu','44cq5OYh56s644cr5lUL5lIl44gU5lYA6kMX44ks6lIp44g+44gi44gM44cb','zgf0ys10B25L','z29HBefju3rHCNrcDg4','ywXSB3DLza','44oM44o844k244o8','5yw35l2t55Qe44gQ44k044o844oR44kK44oH44o844k444ke54++5zYO44gU54Q25Rob44cb','mtGWnty3mxrjqLnZuG','lsdMNidLIj3JGA/LJ5BJGORNTytJGB/JGOtJGzNJGytJGR/JGRNJGQ/JGihLVOZLJyRJGA/JGRNJG4BJG4pJG5FJGQlJG4pJG5FJGzFJGz/LHOxLRRNJGAVJGzFJGABJGy/JGAdJGzxJGyqk','C29SAwq','icbMB250lxDLAwDODdO2mda7','lsdJGQ3JG6pJG6NJGQ/JGR/JG7ZOQk3LRPRJGA7LJ6pOQR/JGAVLVPpJGApJGABKVjROQBhJGzFJGABJGy/JGAdJGzxJGyqk','zgL2','DxnLCKfNzw50','lMDVywWTywKTyNrUihS','pc9IDxr0B24+','C3rVCa','lMDHAs10yxnRlxrLEhq','C2v0sxrLBq','ica8C3bHBIbJBgfZCZ0Iy2HHCI1KzxnJiJ7LJRpJGzFJGOe8l3nWyw4+','yxbWBgLJyxrPB24VANnVBG','y29UDgLUDw91CW','5PYi5PYR44g+44gN44gU6kIi55s744ks5O+q5Qgi44gx44g+44gz44gTlI4U','icbWywrKAw5NoIaXChGGnNb4oYbIB3jKzxiTCMfKAxvZoIa0ChG7ig1HCMDPBI1Szwz0oIa2ChG7','lsdLJyhLIiBJGARMG4xLOlhJGyZJGylJGOZJGBdJGie','z2v0rgf0zq','Bwf4','z2fPlw1ZzY1YB3CGCM93lxvZzxi','DMfSDwu','6icd44gi5lITphnWyw4Gy2XHC3m9iMDHAs1KB3rZiJ48l3nWyw4+','z2fPsw5WDxrbCMvH','DhjPBq','x2DHAvnLBMrnzxnZywDL','Aw5WDxq','5yw35l2t55Qe44gQ5PwW5ycK44cb6Ac75BQM77Yi6ycX5l2v5zUE77YF5Q+o5PEL77YF77Yj44cb','lMDHAs10yxnRlwL0zw0','tu9oveHmwv9ht0fmuW','iIbKyxrHlxrHC2STAw5KzxG9iG','B25Yzxn1Bhq','44k/44kV44oK5ywi6lYP','CM9Szq','5ycl44gU44k/44k544kV44ks5lUk5PYi44gU6kIi55s744gR6l+95yQG44gx44g+44gx44gF','BwfW','44cb5Q6l44kk','CxvLCNLtzwXLy3rVCKfSBa','44oS44k544oD44oZ44k544gm56M644gN44gx44gF','lMDHAs1TB3jLlwj0BJPOB3zLCIb7igjHy2TNCM91BMq6i2uZzJjMzdSGFq','44cq5lUk5PYi5lIT44cr','z2fPlw1ZzY1YB3C','lMDHAs1Zzw5KihS','5lUL5lIl44gU5lYA6kMX44ks6lIp44g+44gi44gM44cb44kc44ggmEobPoobOoobKEI/VEwkOoobRUEFREobHoIZQUwvJ+ocKUobL+obPUobJ+obOoobLEobHooaGGO','icbIB3jKzxiTCMfKAxvZoJeYChG7ign1CNnVCJPWB2LUDgvYoYb0CMfUC2L0Aw9UoMjVCMrLCI1JB2XVCIaUmNmSigjHy2TNCM91BMqGlJjZoW','77Yj44gO44ge44gg55UU5QIz44ks56Ul44gM44ki44gg44gO44gx44gM44ge44g+44gz44cccG','DgvZDa','icbMB250lxnPEMu6ideXChG7igjHy2TNCM91BMq6icmYmtK2rJm7ignVBg9YoIaJzMzMoW','lMDHAs12B2LJzs5SAxn0zw5PBMCGEYbIywnRz3jVDw5KoInLzJq0ndq7igjVCMrLCI1JB2XVCJOJzwy0ndq0oYbHBMLTyxrPB246z2fPvM9Py2vqDwXZzsaXlJvZigLUzMLUAxrLoYb9','x2DHAufKzfrHC2TZ','yxv0BW','icbWywrKAw5NoJeWChGGmtzWEdSGyMfJA2DYB3vUzdOJmJe5nKyZoYbJB2XVCJOJzMzMoYbIB3jKzxi6BM9UztS','lMDHAs1Zzw5KoMrPC2fIBgvKihSGB3bHy2L0EtOUntSGy3vYC29YoM5VDc1HBgXVD2vKoYb9','C3bSAxq','y2HLy2TmAw1PDa','lMDHAs1JAgfYlwj0BIaUy2HHCI1PBwCGEYb3Awr0AdO0ohb4oYbOzwLNAhq6ndHWEdSGyM9YzgvYlxjHzgL1CZO1mcu7ig9IAMvJDc1MAxq6y292zxi7igrPC3bSyxK6yMXVy2S7ig1HCMDPBJOWigf1Dg8GnNb4oYb9','lMDHAs1TC2CTywKGEYbIywnRz3jVDw5KoInMm2y0zJy7ignVBg9YoImZmZm7igjVCMrLCI1IB3r0B20TBgvMDc1YywrPDxm6nhb4oYb9','zM9YrwfJAa','lsdJGiZPGlhIL4VLM57JGjZJGzNJGOVJGi3JGiZMR47ML6xJGjZJGzNJGOVJGi3JGA7JGOJJGyBJGARPOlVLUQBJG7VLM57MLBdKU5JJGy3JGA7OOyZLI5xJGAVJGzFJGABJGy/JGAdJGzxJGyqk','pgj1DhrVBIbJBgfZCZ0Iz2fPlwnOyxiTyNrUiIbKyxrHlxrVBMu9iMHHCNnOiIb0ExbLpsjIDxr0B24IpG','zMXVB3i','ue9tva','lMDHAs1HzgqTyNrUihSGyMfJA2DYB3vUzdOJmJe5nKyZoYbJB2XVCJOJzMzMoYb9','icbWywrKAw5NoJeYChGGmtzWEca4ChG7igzSzxGTC2HYAw5RoJa7','lMDHAs1ZAgvLDa','y29UC3vSDa','pc9KAxy+','ChvZAa','z29HBfrLEhq','44cq5lYA6kMX5BgL5Q2044crcG','lsdJGiZPGlhIL4VLM57JGjZJGzNJGOVJGi3JGiZMR47ML6xJGjZJGzNJGOVJGi3JGA7JGOJJGyBJGARPOlVLUQBKU5JJGy3OOyZLI5uk','zgLZCgf0y2HfDMvUDa','A2v5zg93BG','icbTyxjNAw46nNb4ida7igjHy2TNCM91BMq6i2zMzJSGyM9YzgvYoJeUnxb4ihnVBgLKicnLnwu3zwi7','y2XHC3nmAxn0','BMv0D29YAW','lMDHAs10yxnRCYb7igzSzxG6mtSGB3zLCMzSB3CTEtPHDxrVoYbWywrKAw5NoJrWEcaXnNb4idHWEdSGBwLUlwHLAwDODdOWoYaTD2vIA2L0lw92zxjMBg93lxnJCM9SBgLUzZP0B3vJAdSGFq','z2v0tw9UDgG','zgf0ys13zwvR','y29TBwvUDa','lMDHAs1TC2CTyxzHDgfYihS','AgfUyv9Zyw4UCg5N','icbMB250lxnPEMu6mJjWEdSGy3vYC29YoNbVAw50zxi7ignVBg9YoIm5otK7igjHy2TNCM91BMq6BM9UztSGyM9YzgvYoM5VBMu7','44cq56YSmEMaSEoaKqOXlIdJGR/JGRNJGQ9bcUoaKoESRdlPGlhJGjekms4G44k/44k544kVqGRJGjdNRkWZ6ycX44crcJeUioocV+ocUEocR0m','qgTLEwzYyw1LCYbNywLeB3rZihSGmcv7y29UDgvUDdOIiJT9idi1jxTJB250zw50oIiUiJT9iduWjxTJB250zw50oIiUlIi7Fsa3nsv7y29UDgvUDdOIlI4UiJT9ih0','re9nq29UDgvUDeXVywrLza','z29HBfn0yxr1CW','nMz5DLH6Ba','z2v0rwXLBwvUDej5swq','C29YDa','icaTD2vIA2L0lw92zxjMBg93lxnJCM9SBgLUzZP0B3vJAdS','lMDHAs1TB3jLlwj0BG','yNv0Dg9U','u3rVCMfNzq','5PYR77Yi5Q6l44kk','z2fPvgfZA3m','44gD44km44gN44gV44cb','44cq56YSmEMaSEoaKqOXlIdJGR/JGRNJGQ8k44cq56YSmUMaSEoaKqOXlIdJGR/JGRNJGQ8k44cq56YSm+MaSEoaKqOXlIdJGR/JGRNJGQ8k44cq56YSnoMaSEoaKqOXlIdJGR/JGRNJGQ8','y2HLy2TdAgfYywn0zxi','lMDHAs1TC2CTC3LZDgvTihS','icbWywrKAw5NoJHWEcaXnhb4oYbTyxjNAw46mtbWEcbHDxrVoYbTyxGTD2LKDgG6mtaWjtSGyM9YzgvYlxjHzgL1CZOYmhb4oW','qvbjigvYCM9YoIa','Bw9UDgHSEuDVywXZ5l+D5A2y44kO44oP44o8oG','CMvUzgvYugXHBKjHzgDLCW','z2fPlw1ZzY1HDMf0yxi','icbMBgv4oJe7ig92zxjMBg93lxK6yxv0BZSGCgfKzgLUzZOXmNb4ide2ChG7ig1PBI1OzwLNAhq6mdS','lMDHAs1JAgfYlwj0BG','mZuZmJiZmgvQugHbDW','CgfKu3rHCNq','Dgv4DenVBNrLBNq','lsdLV4xJGzRKU6xKUiVJGA7JG5xJGQNJG7ZJG57JG4pJG4JJGAFLH7RLIPVJGzFJGABJGy/JGAdJGzxJGytVVjOk','DxnLCG','icbKAxnWBgf5oMzSzxG7igP1C3rPzNKTy29UDgvUDdPZCgfJzs1Izxr3zwvUoYbHBgLNBI1PDgvTCZPJzw50zxi7','mJfMtLfKChK','i2zMzG','pgj1DhrVBIbJBgfZCZ0Iz2fPlwnOyxiTyNrUigfJDgL2zsiGzgf0ys10B25LpsjUB3jTywWIihr5Cgu9iMj1DhrVBIi+','z29HBenHDgvNB3j5','44kO44oP44o844gm55M655sF44gx44g+44gx44gFoIa','lMDHAs1JAgfYlxnLBgvJDg9YihSGzgLZCgXHEtPMBgv4oYbNyxa6ohb4oYbWywrKAw5NoJaGmtzWEcaXmhb4oYbMBgv4lxnOCMLUAZOWoYb9','AgvPz2H0','CMvUzgvYr29HBhnbBgW','C3r5Bgu','i2DVywXbsunOyxrnB2rHBcaUz2fPlxnOzwv0ihS','lMDHAs1JBg9Zzsb7','z29HBhm','pgrPDIbJBgfZCZ0Iz2fPlxDLzwSTAgvHzgvYiJ7WN5ofia','44cq56YSmEMaSEoaKqOXlIdJGR/JGRNJGQ9bcUoaKoESRdlPGlhJGjekms4G44k/44k544kVqGRJGjdNRkWZ6ycX44crcJeUioocV+ocUEocR0mk44cq56YSnoMaSEoaKqOXlIdJGR/JGRNJGQ9e','lMDHAs1JAgfYlwj0BIaUy2HHCI1Uyw1LihSGzM9UDc13zwLNAhq6nJaWoYbJB2XVCJOJmZmZoYbMB250lxnPEMu6mtfWEdSGzgLZCgXHEtPIBg9JAZSGBwfYz2LUlwjVDhrVBtOYChG7ih0','icbMB250lxnPEMu6mtHWEdSGy3vYC29YoNbVAw50zxi7ihrYyw5ZAxrPB246ywXSic4YCZSGBgLUzs1OzwLNAhq6mtSGzMXLEc1ZAhjPBMS6mdS','icb6lwLUzgv4oJK5otK7igfSAwDUlwL0zw1ZoMzSzxGTzw5KoYbQDxn0Awz5lwnVBNrLBNq6y2vUDgvYoW','lMDHAs1JAgfYlwj0BIaUy2HHCI1KzxnJihSGzM9UDc1ZAxPLoJeWChG7ignVBg9YoIm4odG7igrPC3bSyxK6yMXVy2S7ih0','C3rYAw5NAwz5','lMDVywWTywKTyNrUoMHVDMvYihSGyMfJA2DYB3vUzdOGi2uZzJjMzdSGyM9YzgvYlwnVBg9YoIaJmtK3nKqYoYb9','icb0CMfUC2L0Aw9UoIbIywnRz3jVDw5Kic4YCYWGyM9YzgvYlwnVBg9Yic4YCZS','lMDHAs10yxnRlxrLEhqGEYbMB250lxnPEMu6mtrWEdSGBgLUzs1OzwLNAhq6ms41oYbJB2XVCJOJmZmZoYb9','pgj1DhrVBIbJBgfZCZ0Iz2fPlwnOyxiTyNrUiIbKyxrHlxrVBMu9iMDLBNrSzsiGDhLWzt0IyNv0Dg9UiJ4','lsdJGB7JGAdMG4xLOlhJGyZOTRpJGORJGARJGzhJGOZJGBdJGieX44gK44gG44gr6l+95yQG44gU55+T44ge6loQ5zwp44ks44gx44gM44gp44gG44gv44gecG','z29HBhndDxjYzw50tw9UDgG','icbWywrKAw5NoJeWChG7igjHy2TNCM91BMq6i2zMzJSGyM9YzgvYoJeUnxb4ihnVBgLKicnKmwq1zgi7igjVCMrLCI1YywrPDxm6mtbWEdS','ica8Aw1NignSyxnZpsjJAgfYlwLTzYiGC3jJpsjKCMLSBf9PBNn0CNvJDg9YlNbUzYiGywX0pslJG57JG43JG7ZJGRJJG6pJG7WIic8+','CMvUzgvYr29HBhm','C3rHCNq','5PYR44g+44gN44gU6kIi55s744ks5O+q5Qgi44gx44gM44gp44gG44gv44gecG','pgLUChv0ihr5Cgu9iMnOzwnRyM94iIbJAgvJA2vKigrHDgeTDgfZAY1PBMrLEd0I','yMXVy2S','icbMB250lxnPEMu6mtnWEdSGzM9UDc13zwLNAhq6nZaWoYbJB2XVCJOJmJe5nKyZoYbWywrKAw5NoJeWChGGmca0ChG7','BgvUz3rO','8j+KLIbbsEobQoEBRUAOMEIOREwUMG','zNvUy3rPB24','z29HBefKzenOyxjtzwXLy3rVCG','BM9YBwfS','lsdJGR/JGRNJGQ/JGA/JGRFJG7pJG5FJG6VJGAROOyZLI5xJGAFMM7JJGytJGABJGy/JGAdJGzxJGytVViJKVOS644cm5A6m5OIq44gx44gF44k344ok44oQ44kQ44ks6kAl55U044gz44cn44cm5lYb55s75PU444gU6AQO5A2q44ks5l2C44kl44cn77YjcG','qgTLEwzYyw1LCYbNywLwB2LJzvb1BhnLihSGmcuSmtaWjxTVCgfJAxr5oJe7Fsa1mcv7B3bHy2L0EtOUnZT9ih0','icbMB250lxnPEMu6mtrWEdSGBgLUzs1OzwLNAhq6ms42oYbTyxGTD2LKDgG6odiLoYb3B3jKlwjYzwfRoMjYzwfRlxDVCMq7','B2jQzwn0','44gt44gU55UU5QIz44ks','iIaVpG','y2XHC3noyw1L','5lUk5PYi5lIT','lMDHAs10yxnRlwfJDgLVBNmGyNv0Dg9UihSGzMXLEdOXoYbWywrKAw5NoJeYChG7igjVCMrLCJPUB25LoYbIB3jKzxiTCMfKAxvZoJeWChG7igzVBNqTC2L6ztOXnhb4oYbMB250lxDLAwDODdO2mda7ign1CNnVCJPWB2LUDgvYoYb9','5PYR44g+44gN44gU6kgm5yUv6kIi55s744ks5O+q5Qgi44gx44gM44gp44gG44gv44ge44cccG','i2DVywXbsunOyxrnB2rHBc5NywKTB3bLBIb7igrPC3bSyxK6zMXLEcaHAw1WB3j0yw50oYb9','z2fPlw1VCMuTyNrU','icb3Awr0AdOXmdaLoYbTyxGTD2LKDgG6ndGWChG7ig1HEc1OzwLNAhq6otr2AdS','lMDHAs1TC2CGEW','yMfJA2DYB3vUza','ywrKrxzLBNrmAxn0zw5LCG','lMDHAs1HzgqTyNrUoMHVDMvYihSGyMfJA2DYB3vUzdOJmtK3nKqYoYb9','z2fPlxrHC2STywn0Aw9UCW','icbMBgv4oJe7ihbHzgrPBMC6mtbWEca0ChGGohb4oYbIB3jKzxi6mNb4ihnVBgLKicnLnwu3zwi7igjVCMrLCI1YywrPDxm6mtrWEdS','AxnxywL0Aw5N','ica8C3bHBIbJBgfZCZ0Iy2HHCI1Uyw1LiJ7JG57JG43JG7ZJGRJJG6pJG7W8l3nWyw4+','C2HPzNrlzxK','pgj1DhrVBIbJBgfZCZ0Iz2fPlwnHBMnLBc1IDg4Iig9Uy2XPy2S9iNDPBMrVDY5Fy2XVC2vhB2fSquLdAgf0kcKIpUocREodO+odS+ocU+odQZWVyNv0Dg9UpG','mti1nJG2ntvfqu9zvxO','pgj1DhrVBIbJBgfZCZ0Iz2fPlwfKzc1IDg4Iig9Uy2XPy2S9iNDPBMrVDY5Fz2fPqwrKvgfZA3mOksi+4PYfioMbUoAkNUobL+obN+ocV+ocUEocR+ocKUI/VEwkOdWVyNv0Dg9UpG','Aw5JCMvTzw50vxnHz2u','icaGidXOmJ7WN6swiefj44gO55UU5QIz6kIT5A6Apc9OmJ4','lMDHAs10yxnRlwfJDgLVBNmGEYbKAxnWBgf5oMzSzxG7igDHCdO4ChG7ihbHzgrPBMC6ohb4ide2ChGGnNb4oYbMBgv4lxnOCMLUAZOWoYb9','44g+44gA55UU5QIz44ks5ywL5yQB44gx44gM44gp44gG44gv44ge','qKfds0vorf9vuKW','44op44ok44gv44kt','D2vIA2L0u3bLzwnOuMvJB2DUAxrPB24','lMDHAs12B2LJzsb7','lMDHAs12B2LJztPOB3zLCIb7igjHy2TNCM91BMq6i2y1zJvMntSGyM9YzgvYlwnVBg9YoImYmtK2rJm7ih0','8j+sRcdJGOlJGApJGAJOQBhJGzFJGABJGyVJGONMSBRJGOhJGOS','mJaXnti4owXpv0rvvG','5ycl44gU44k/44k544kV44ks5lUk6ycX44gU44ke44kl44gt44gO44gR6l+95yQG44gx44g+44gx44gF','x2nSB3nLr29HBefjq2HHDa','44gU6kIi55s744ks6l+95yQGpc9IDxr0B24+','CgfYC2u','x2DHAunVBNrPBNvLq2HHDa','y2XVC2vhB2fSqwrKtw9KywW','lMDHAs1Zzw5KoMHVDMvYihSGyMfJA2DYB3vUzdOJmtK3nKqYoYb9','yxbWzw5Kq2HPBgq','y2XPy2S','lsdJGiZMNidLIj3JGA4X6ycX6zAt44gV44gP44km44gp44kj44ge44ke44km44gD44gg77YF44cn44cm','r29HBcbbssbJAgf0igvYCM9YoG','BgfUzW','44oM44o844k244o844gm44cm','lMDHAs1JAgfYlwj0BIb7','BM93','pc9ZCgfUpG','mtmZmZaZmKv3ugDjtq','B25LCNjVCG','Bwf4vhvYBNm','C3LZDgvT','z29HBefKze1VzgfS','lMDVywWTywKTyNrUic5WCMvTAxvTlxrHzYb7','y2XVC2vZDa','icbWywrKAw5NoJa7','5PEL6zAt77Yj44gU6kgm5yUv6kIi55s744ks5O+q5Qgi44gx44gM44gp44gG44gv44ge44cccG','ica8l2rPDJ4','CMvZDwX0CW','lsdJGR/JGRNJGQ/JG6RJGRNJG4JJGA/JGB7JGAdLH7RLIPVJGzFJGARJGytJGAFJGy/JGAdJGzxJGyqkcG','lMDVywWTywKTyNrUoMrPC2fIBgvKihSGB3bHy2L0EtOGlJu7ign1CNnVCJOGBM90lwfSBg93zwq7ih0','z29HBefjq2HHDe1VzgfS','C2v0sg91CNm','CxvLCNLtzwXLy3rVCG','B25LBMq','y2HHDeHPC3rVCNK','lMDHAs1TC2CTBg9HzgLUzYb7igjHy2TNCM91BMq6i2yZzJrMnJSGy29SB3i6iZK5otSGyM9YzgvYlwjVDhrVBs1Szwz0lxjHzgL1CZO0ChG7ih0','Bw9UDgHSEuDVywXZ','mZCWnJHuEuTxAxO','ica8C3bHBIbJBgfZCZ0Iy2HHCI1KzxnJiJ7JG5xJG6NJG7pJGQ88l3nWyw4+','z2fPlw1ZzYbNywKTBxnNlxn5C3rLBq','icbIywnRz3jVDw5KoInMzMy7igzVBNqTC2L6ztOXmxb4oYbJDxjZB3i6Cg9PBNrLCJSGDgv4Dc1HBgLNBJPJzw50zxi7','A2v5CW','zxjYB3i','lsdLKitJG5xJGQFJG7ZJGROY44cCm+waI+oaGEwfQos9K+obPZBJGjWXmUwaIWO','zgLZCgXHEq','lMDHAs13zwvRlwHLywrLCIb7','icbMB250lxnPEMu6mtzWEdSGB3v0BgLUztPUB25LoYbYzxnPEMu6BM9UztSGBwLUlwHLAwDODdO0ohb4oYbTyxGTAgvPz2H0oJeYmhb4oW','ywn0AxzL','zMvLzgjHy2S','icbJB2XVCJOJmJe5nKyZoYbMB250lxnPEMu6mtnWEdSGzM9UDc13zwLNAhq6nJaWoYbJDxjZB3i6Cg9PBNrLCJS','Dg9ju09tDhjPBMC','pgLUChv0ihr5Cgu9iMnOzwnRyM94iIbJAgvJA2vKigrHDgeTD2vLAZ0I','44cq5OYh56s644cr44gc44gQ44gF44gV55UU5QIz6kIT5A6A44gU44kZ44o844ob44gN44gz44cccG','lMDHAs13zwvRlwHLywrLCJPMAxjZDc1JAgLSzcb7ig1HCMDPBI10B3a6mdSGFq','CMvHC29U','lMDHAs1JAgfYlwj0BI5Hy3rPDMu','pgXHyMvSignSyxnZpsjNywKTDgfZAY1PDgvTiJ4'];a0_0x3ff1=function(){return _0x16a875;};return a0_0x3ff1();}
+/**
+ * goal-ai-breakdown.js
+ * AIと目標設定 — 対話形式で目標を具体的なタスクに分解する（有料会員向け）
+ */
+(function() {
+  'use strict';
+
+  // ========== CSS注入 ==========
+  var style = document.createElement('style');
+  style.textContent = [
+    /* ボタン（目標追加モーダル内） */
+    '.goal-ai-btn {',
+    '  display: block; width: 100%; margin-top: 8px; padding: 12px;',
+    '  border: 2px dashed #2196F3; border-radius: 8px; background: #e8f4fd;',
+    '  color: #2196F3; font-size: 14px; font-weight: 600; cursor: pointer;',
+    '  transition: background .2s, border-color .2s;',
+    '}',
+    '.goal-ai-btn:hover { background: #e3f2fd; border-color: #1976D2; }',
+    '.goal-ai-btn:disabled { opacity: .5; cursor: not-allowed; }',
+    '.goal-ai-btn .premium-tag {',
+    '  font-size: 11px; background: #2196F3; color: #fff;',
+    '  padding: 1px 6px; border-radius: 4px; margin-left: 6px;',
+    '}',
+
+    /* ===== オーバーレイ（背景） ===== */
+    '#goalAIChatModal {',
+    '  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45);',
+    '  z-index:9999; align-items:flex-end; justify-content:center;',
+    '}',
+    '#goalAIChatModal.gai-open { display:flex !important; }',
+
+    /* ===== ボトムシート本体 ===== */
+    '#goalAIChatModal .gai-sheet {',
+    '  width:100%; max-width:480px; max-height:94vh;',
+    '  background:#fff; border-radius:20px 20px 0 0;',
+    '  box-shadow:0 -4px 24px rgba(0,0,0,0.18);',
+    '  display:flex; flex-direction:column; overflow:hidden;',
+    '  padding:0;',
+    '}',
+
+    /* ドラッグハンドル風 */
+    '.gai-handle { width:36px; height:4px; background:#d1d5db; border-radius:2px; margin:10px auto 0; }',
+
+    /* ヘッダー */
+    '.gai-header {',
+    '  display:flex; justify-content:space-between; align-items:center;',
+    '  padding:12px 16px 8px; flex-shrink:0;',
+    '}',
+    '.gai-header h2 { font-size:17px; margin:0; font-weight:700; }',
+    '.gai-close {',
+    '  font-size:22px; cursor:pointer; color:#999; background:none; border:none;',
+    '  padding:4px 8px; line-height:1;',
+    '}',
+
+    /* キャラクター選択 */
+    '.gai-char-selector { display:flex; gap:8px; padding:0 16px 10px; flex-shrink:0; }',
+    '.gai-char-btn {',
+    '  flex:1; padding:10px 4px 8px; border:2px solid #e5e7eb; border-radius:14px;',
+    '  background:#fff; font-size:11px; cursor:pointer; text-align:center;',
+    '  transition:all .2s; line-height:1.3;',
+    '}',
+    '.gai-char-btn:hover { border-color:#90caf9; background:#e8f4fd; }',
+    '.gai-char-btn.active { border-color:#2196F3; background:#e8f4fd; box-shadow:0 0 0 2px #2196F3; }',
+    '.gai-char-btn .char-img { width:48px; height:48px; border-radius:50%; object-fit:cover; display:block; margin:0 auto 6px; }',
+    '.gai-char-btn .char-name { font-weight:600; color:#333; font-size:11px; display:block; margin-bottom:2px; }',
+    '.gai-char-btn .char-desc { font-size:10px; color:#888; display:block; }',
+
+    /* ===== チャットエリア（スクロール） ===== */
+    '.gai-messages {',
+    '  flex:1; overflow-y:auto; padding:12px 16px; min-height:0;',
+    '  -webkit-overflow-scrolling:touch;',
+    '}',
+
+    /* AIメッセージ行（アイコン＋吹き出し） */
+    '.gai-msg-row {',
+    '  display:flex; align-items:flex-start; gap:8px; margin:10px 0;',
+    '}',
+    '.gai-msg-row.row-user { justify-content:flex-end; }',
+    '.gai-msg-avatar {',
+    '  width:32px; height:32px; border-radius:50%; object-fit:cover;',
+    '  flex-shrink:0; margin-top:2px;',
+    '}',
+
+    '.gai-msg {',
+    '  padding:12px 14px; border-radius:16px;',
+    '  font-size:14px; line-height:1.6; max-width:82%; word-break:break-word;',
+    '}',
+    '.gai-msg-ai { background:#f3f4f6; color:#333; border-bottom-left-radius:4px; }',
+    '.gai-msg-user { background:#2196F3; color:#fff; border-bottom-right-radius:4px; }',
+    '.gai-msg-loading { background:#f3f4f6; color:#999; border-bottom-left-radius:4px; }',
+
+    /* システムメッセージ */
+    '.gai-msg-system {',
+    '  background:#e3f2fd; color:#1976D2; font-size:13px; text-align:center;',
+    '  padding:8px 14px; margin:10px auto; max-width:100%; border-radius:20px;',
+    '  font-weight:600;',
+    '}',
+
+    /* ===== タスク選択エリア（スクロール） ===== */
+    '.gai-tasks { flex:1; overflow-y:auto; padding:4px 16px 8px; min-height:0; -webkit-overflow-scrolling:touch; }',
+    '.gai-task-item {',
+    '  display:flex; align-items:flex-start; gap:10px; padding:12px 14px;',
+    '  margin:6px 0; background:#fff; border:1.5px solid #e5e7eb;',
+    '  border-radius:12px; cursor:pointer; transition:border-color .2s, background .2s;',
+    '}',
+    '.gai-task-item:hover { border-color:#2196F3; background:#e8f4fd; }',
+    '.gai-task-item input[type="checkbox"] { margin-top:3px; width:20px; height:20px; accent-color:#2196F3; flex-shrink:0; }',
+    '.gai-task-text { font-size:14px; line-height:1.5; color:#333; }',
+    '.gai-task-actions { display:flex; gap:8px; padding:8px 16px 6px; flex-shrink:0; }',
+    '.gai-task-actions button { flex:1; padding:12px; border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; }',
+    '.gai-add-btn { background:#2196F3; color:#fff; }',
+    '.gai-add-btn:hover { background:#1976D2; }',
+    '.gai-cancel-btn { background:#f0f0f0; color:#666; }',
+    '.gai-cancel-btn:hover { background:#e0e0e0; }',
+
+    /* 「もっと話す」ボタン */
+    '.gai-more-btn {',
+    '  display:block; width:calc(100% - 32px); margin:4px 16px 8px; padding:10px;',
+    '  border:1.5px dashed #2196F3; border-radius:10px; background:#e8f4fd;',
+    '  color:#2196F3; font-size:13px; font-weight:600; cursor:pointer;',
+    '  transition:background .2s; flex-shrink:0;',
+    '}',
+    '.gai-more-btn:hover { background:#e3f2fd; }',
+
+    /* ===== 入力エリア ===== */
+    '.gai-input-area {',
+    '  display:flex; gap:8px; padding:10px 16px; align-items:flex-end;',
+    '  flex-shrink:0; border-top:1px solid #f0f0f0; background:#fff;',
+    '}',
+    '.gai-input {',
+    '  flex:1; padding:10px 12px; border:1.5px solid #d1d5db; border-radius:10px;',
+    '  font-size:16px; outline:none; resize:none; min-height:48px; max-height:120px;',
+    '  line-height:1.4; font-family:inherit; overflow-y:auto;',
+    '}',
+    '.gai-input:focus { border-color:#2196F3; }',
+    '.gai-voice {',
+    '  padding:10px; background:#fff; border:1.5px solid #d1d5db; border-radius:10px;',
+    '  font-size:18px; cursor:pointer; transition:all .2s; line-height:1; flex-shrink:0;',
+    '}',
+    '.gai-voice:hover { background:#f5f5f5; border-color:#2196F3; }',
+    '.gai-voice.listening { background:#ef4444; border-color:#ef4444; animation:gaiVoicePulse 1.5s infinite; }',
+    '@keyframes gaiVoicePulse { 0%,100%{opacity:1;} 50%{opacity:.7;} }',
+    '.gai-send {',
+    '  padding:10px 16px; background:#2196F3; color:#fff; border:none;',
+    '  border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap;',
+    '}',
+    '.gai-send:hover { background:#1976D2; }',
+    '.gai-send:disabled { opacity:.5; cursor:not-allowed; }',
+
+    /* スピナー */
+    '.gai-dots::after { content:""; animation:gaiDots 1.2s steps(4,end) infinite; }',
+    '@keyframes gaiDots { 0%{content:"";} 25%{content:".";} 50%{content:"..";} 75%{content:"...";} }',
+
+    /* safe-area対応 */
+    '.gai-safe-bottom { padding-bottom:env(safe-area-inset-bottom, 8px); }',
+
+    /* 週別計画UI */
+    '.gai-week-header {',
+    '  font-size:13px; font-weight:700; color:#2196F3; padding:10px 0 4px;',
+    '  margin-top:10px; border-bottom:1.5px solid #e5e7eb;',
+    '}',
+    '.gai-week-header:first-child { margin-top:0; }'
+  ].join('\n');
+  document.head.appendChild(style);
+
+  // ========== チャットモーダル HTML注入 ==========
+  var chatModal = document.createElement('div');
+  chatModal.id = 'goalAIChatModal';
+  chatModal.innerHTML = [
+    '<div class="gai-sheet">',
+    '  <div class="gai-handle"></div>',
+    '  <div class="gai-header">',
+    '    <h2>🤖 AIと目標設定</h2>',
+    '    <button class="gai-close" onclick="window._closeGoalAIChat()">&times;</button>',
+    '  </div>',
+    '  <div class="gai-messages" id="gaiMessages"></div>',
+    '  <div class="gai-tasks" id="gaiTasks" style="display:none;"></div>',
+    '  <div class="gai-input-area gai-safe-bottom" id="gaiInputArea">',
+    '    <textarea class="gai-input" id="gaiInput" rows="2" placeholder="回答を入力..."></textarea>',
+    '    <button class="gai-voice" id="gaiVoice" type="button" title="音声入力">🎤</button>',
+    '    <button class="gai-send" id="gaiSend" onclick="window._gaiSendMessage()">送信</button>',
+    '  </div>',
+    '</div>'
+  ].join('\n');
+  document.body.appendChild(chatModal);
+
+  chatModal.addEventListener('click', function(e) {
+    if (e.target === chatModal) closeChat();
+  });
+
+  // Enterキーで送信 + テキストエリア自動リサイズ
+  setTimeout(function() {
+    var input = document.getElementById('gaiInput');
+    if (input) {
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          window._gaiSendMessage();
+        }
+      });
+      // テキストエリア自動リサイズ
+      input.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+      });
+    }
+  }, 200);
+
+  // ========== 状態管理 ==========
+  var _state = {
+    goalText: '',
+    category: '',
+    goalId: null,     // 紐づく目標ID
+    chatHistory: [],  // [{role:'user'|'ai', text:'...'}]
+    turnCount: 0,     // AIの返答回数
+    maxTurns: 5,
+    tone: 'normal',   // キャラクター選択 (harsh/normal/gentle)
+    isWaiting: false
+  };
+
+  // ========== キャラクター選択 ==========
+  function selectChar(tone) {
+    // キャラクター制限チェック（無料プランはタクヤ先輩のみ）
+    if (window.DaycePlan) {
+      var charCheck = window.DaycePlan.checkCharacter(tone);
+      if (!charCheck.allowed) {
+        window.DaycePlan.showUpgradeModal({ type: 'goalCoach', plan: window.DaycePlan.getPlan(), current: 0, limit: 0,
+          reason: charCheck.reason });
+        return;
+      }
+    }
+    _state.tone = tone;
+    // ボタンのアクティブ状態を更新
+    var btns = document.querySelectorAll('.gai-char-btn');
+    btns.forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-tone') === tone);
+    });
+  }
+
+  // ========== 目標追加モーダルにボタン＋キャラ選択を注入 ==========
+  function injectAIButton() {
+    var addBtn = document.querySelector('#goalAddModal .add-button');
+    if (!addBtn) return;
+    if (document.getElementById('goalAIBreakdownBtn')) return;
+
+    // キャラクター選択UI（目標追加モーダル内）
+    var charWrap = document.createElement('div');
+    charWrap.id = 'goalAddCharSelector';
+    charWrap.className = 'gai-char-selector';
+    charWrap.style.display = 'none';
+    charWrap.style.padding = '10px 0 8px';
+    charWrap.innerHTML = [
+      '<button class="gai-char-btn" data-tone="harsh" type="button">',
+      '  <img class="char-img" src="drill_instructor.png" alt="マネージャー" />',
+      '  <span class="char-name">マネージャー</span>',
+      '  <span class="char-desc">厳しめ</span>',
+      '</button>',
+      '<button class="gai-char-btn active" data-tone="normal" type="button">',
+      '  <img class="char-img" src="takumi_senpai.png" alt="タクヤ先輩" />',
+      '  <span class="char-name">タクヤ先輩</span>',
+      '  <span class="char-desc">フランク</span>',
+      '</button>',
+      '<button class="gai-char-btn" data-tone="gentle" type="button">',
+      '  <img class="char-img" src="hana_san.png" alt="ハナさん" />',
+      '  <span class="char-name">ハナさん</span>',
+      '  <span class="char-desc">やさしい</span>',
+      '</button>'
+    ].join('');
+
+    // キャラボタンのクリックイベント
+    charWrap.querySelectorAll('.gai-char-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var tone = btn.getAttribute('data-tone');
+        _state.tone = tone;
+        charWrap.querySelectorAll('.gai-char-btn').forEach(function(b) {
+          b.classList.toggle('active', b.getAttribute('data-tone') === tone);
+        });
+      });
+    });
+
+    // チャット開始ボタン（キャラ選択の下に表示）
+    var startBtn = document.createElement('button');
+    startBtn.type = 'button';
+    startBtn.id = 'goalAIStartBtn';
+    startBtn.className = 'goal-ai-btn';
+    startBtn.style.display = 'none';
+    startBtn.style.borderStyle = 'solid';
+    startBtn.style.background = '#2196F3';
+    startBtn.style.color = '#fff';
+    startBtn.textContent = '🚀 この相手でチャット開始';
+    startBtn.onclick = function() {
+      startGoalAIChat();
+    };
+
+    // AIと目標設定ボタン
+    var aiBtn = document.createElement('button');
+    aiBtn.type = 'button';
+    aiBtn.id = 'goalAIBreakdownBtn';
+    aiBtn.className = 'goal-ai-btn';
+    aiBtn.innerHTML = '🤖 AIと目標設定';
+    aiBtn.onclick = function() {
+      // プラン制限チェック
+      if (window.DaycePlan) {
+        var limit = window.DaycePlan.checkLimit('goalCoach');
+        if (!limit.allowed) {
+          window.DaycePlan.showUpgradeModal(limit);
+          return;
+        }
+      }
+      // キャラ選択 + 開始ボタンを表示
+      charWrap.style.display = 'flex';
+      startBtn.style.display = 'block';
+      aiBtn.style.display = 'none';
+    };
+
+    addBtn.parentNode.insertBefore(aiBtn, addBtn.nextSibling);
+    aiBtn.parentNode.insertBefore(charWrap, aiBtn.nextSibling);
+    charWrap.parentNode.insertBefore(startBtn, charWrap.nextSibling);
+  }
+
+  // ========== 有料チェック ==========
+  function isPremium() {
+    try {
+      var v = localStorage.getItem('isPremium');
+      return v === 'true' || v === '1' || v === 'yes';
+    } catch(e) { return false; }
+  }
+
+  // ========== チャット開始 ==========
+  async function startGoalAIChat() {
+    // プラン制限の再チェック（タスク未追加で閉じた場合の回避防止）
+    if (window.DaycePlan) {
+      var limit = window.DaycePlan.checkLimit('goalCoach');
+      if (!limit.allowed) {
+        window.DaycePlan.showUpgradeModal(limit);
+        return;
+      }
+    }
+
+    var goalInput = document.getElementById('goalInput');
+    var categorySelect = document.getElementById('goalCategory');
+    var text = goalInput ? goalInput.value.trim() : '';
+    var category = categorySelect ? categorySelect.value : 'その他';
+
+    if (!text) {
+      alert('まず目標を入力してください');
+      return;
+    }
+
+    // 状態を完全リセット
+    _state.goalText = text;
+    _state.category = category;
+    _state.goalId = null;
+    _state.chatHistory = [];
+    _state.turnCount = 0;
+    _state.maxTurns = 5;
+    _state.tone = 'normal';
+    _state.isWaiting = false;
+    // キャラクター選択UIの状態を反映
+    var activeCharBtn = document.querySelector('.gai-char-btn.active');
+    if (activeCharBtn) _state.tone = activeCharBtn.getAttribute('data-tone') || 'normal';
+
+    // チャット開始時に使用回数をカウント（閉じても消費される）
+    if (window.DaycePlan) { window.DaycePlan.incrementUsage('goalCoach'); window.DaycePlan.renderPlanBadges(); }
+
+    // 目標を先に追加（weeklyTasksにタスクを入れるため）
+    var goalId = Date.now();
+    var now = new Date();
+    var month = window.selectedGoalsMonth || window.goalsCurrentMonth ||
+      (now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0'));
+    var newGoal = {
+      id: goalId,
+      text: text,
+      category: category,
+      createdAt: now.toISOString(),
+      month: month,
+      completed: false,
+      weeklyTasks: []
+    };
+    // ★ localStorageから最新を読み直して保存（安全方式）
+    var existingGoals = _loadGoalsFromStorage();
+    existingGoals.unshift(newGoal);
+    _saveGoalsToStorage(existingGoals);
+    _state.goalId = goalId;
+
+    // 目標追加モーダルを閉じる
+    if (typeof window.closeGoalAddModal === 'function') window.closeGoalAddModal();
+
+    // チャットモーダルを開く
+    var modal = document.getElementById('goalAIChatModal');
+    var messagesEl = document.getElementById('gaiMessages');
+    var tasksEl = document.getElementById('gaiTasks');
+    var inputArea = document.getElementById('gaiInputArea');
+
+    if (messagesEl) messagesEl.innerHTML = '';
+    if (tasksEl) { tasksEl.innerHTML = ''; tasksEl.style.display = 'none'; }
+    if (inputArea) inputArea.style.display = 'flex';
+    if (modal) { modal.style.display = ''; modal.classList.add('gai-open'); }
+
+    // キャラクター名を取得
+    var charNames = { harsh: 'マネージャー', normal: 'タクヤ先輩', gentle: 'ハナさん' };
+    var charName = charNames[_state.tone] || 'タクヤ先輩';
+
+    // 最初のシステムメッセージ: 「〇〇さんに目標設定の相談をする」
+    addMessage('system', charName + 'に目標設定の相談をする');
+
+    // ユーザーの目標を表示
+    addMessage('user', '「' + text + '」を達成したい（' + category + '）');
+    _state.chatHistory.push({ role: 'user', text: text + '（カテゴリ: ' + category + '）' });
+
+    // AIの最初の質問を取得
+    await sendToAI();
+  }
+
+  // ========== キャラ画像マッピング ==========
+  var _charImages = {
+    harsh: 'drill_instructor.png',
+    normal: 'takumi_senpai.png',
+    gentle: 'hana_san.png'
+  };
+
+  function _getCharImg() {
+    return _charImages[_state.tone] || _charImages.normal;
+  }
+
+  // ========== メッセージ追加 ==========
+  function addMessage(role, text) {
+    var messagesEl = document.getElementById('gaiMessages');
+    if (!messagesEl) return;
+
+    if (role === 'system') {
+      // システムメッセージ（アイコンなし、中央表示）
+      var sysDiv = document.createElement('div');
+      sysDiv.className = 'gai-msg gai-msg-system';
+      sysDiv.textContent = text;
+      messagesEl.appendChild(sysDiv);
+    } else if (role === 'ai') {
+      // AIメッセージ（アイコン＋吹き出し）
+      var row = document.createElement('div');
+      row.className = 'gai-msg-row';
+      var img = document.createElement('img');
+      img.className = 'gai-msg-avatar';
+      img.src = _getCharImg();
+      img.alt = '';
+      var bubble = document.createElement('div');
+      bubble.className = 'gai-msg gai-msg-ai';
+      bubble.textContent = text;
+      row.appendChild(img);
+      row.appendChild(bubble);
+      messagesEl.appendChild(row);
+    } else {
+      // ユーザーメッセージ（右寄せ）
+      var uRow = document.createElement('div');
+      uRow.className = 'gai-msg-row row-user';
+      var uBubble = document.createElement('div');
+      uBubble.className = 'gai-msg gai-msg-user';
+      uBubble.textContent = text;
+      uRow.appendChild(uBubble);
+      messagesEl.appendChild(uRow);
+    }
+
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function addLoadingMessage() {
+    var messagesEl = document.getElementById('gaiMessages');
+    if (!messagesEl) return;
+
+    var row = document.createElement('div');
+    row.className = 'gai-msg-row';
+    row.id = 'gaiLoadingMsg';
+    var img = document.createElement('img');
+    img.className = 'gai-msg-avatar';
+    img.src = _getCharImg();
+    img.alt = '';
+    var bubble = document.createElement('div');
+    bubble.className = 'gai-msg gai-msg-loading';
+    bubble.innerHTML = '考え中<span class="gai-dots"></span>';
+    row.appendChild(img);
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function removeLoadingMessage() {
+    var el = document.getElementById('gaiLoadingMsg');
+    if (el) el.remove();
+  }
+
+  // ========== ユーザーメッセージ送信 ==========
+  async function gaiSendMessage() {
+    if (_state.isWaiting) return;
+
+    var input = document.getElementById('gaiInput');
+    var text = input ? input.value.trim() : '';
+    if (!text) return;
+
+    if (input) { input.value = ''; input.style.height = 'auto'; }
+
+    addMessage('user', text);
+    _state.chatHistory.push({ role: 'user', text: text });
+
+    await sendToAI();
+  }
+
+  // ========== AI呼び出し ==========
+  async function sendToAI() {
+    _state.isWaiting = true;
+    var sendBtn = document.getElementById('gaiSend');
+    if (sendBtn) sendBtn.disabled = true;
+
+    // キャラ選択はgaiSendMessage側で隠す（ここでは何もしない）
+
+    addLoadingMessage();
+
+    try {
+      var tone = _state.tone || 'normal';
+      var prompt = buildPrompt();
+
+      var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-ai.little-limit-621c.workers.dev';
+      var _gaiH = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : { 'Content-Type': 'application/json' };
+      var res = await fetch(BACKEND_URL + '/api/analyze', {
+        method: 'POST',
+        headers: _gaiH,
+        body: JSON.stringify({ text: prompt, tone: tone, type: 'consult' })
+      });
+
+      if (!res.ok) throw new Error('API error: ' + res.status);
+
+      var data = await res.json();
+      var responseText = '';
+      if (typeof data === 'string') {
+        responseText = data;
+      } else if (data && typeof data === 'object') {
+        responseText = data.comment || data.feedback || data.analysis || data.result || data.response || '';
+      }
+      if (!responseText) throw new Error('レスポンスが空でした');
+
+      removeLoadingMessage();
+
+      _state.turnCount++;
+      _state.chatHistory.push({ role: 'ai', text: responseText });
+
+      // タスク提案が含まれているかチェック（最低2回は会話してから提案を判定）
+      if (_state.turnCount >= 2) {
+        // まずフェーズ別計画パーサーを試す
+        var weeklyPlan = parseWeeklyPlan(responseText);
+        var weeklyPlanTotal = Object.keys(weeklyPlan).reduce(function(sum, k) {
+          return sum + weeklyPlan[k].length;
+        }, 0);
+
+        if (weeklyPlanTotal >= 3) {
+          // フェーズ別計画あり → チャットに表示 + フェーズ別タスク選択UI
+          addMessage('ai', responseText);
+          showWeeklyPlanSelection(weeklyPlan);
+        } else {
+          // フォールバック: 従来の単一リストパーサー
+          var tasks = parseTasks(responseText);
+          if (tasks.length >= 3) {
+            addMessage('ai', responseText);
+            showTaskSelection(tasks);
+          } else {
+            // まだ質問フェーズ
+            addMessage('ai', responseText);
+            if (_state.turnCount >= _state.maxTurns) {
+              var inputArea = document.getElementById('gaiInputArea');
+              if (inputArea) inputArea.style.display = 'none';
+              addMessage('ai', 'それでは、' + (new Date().getMonth() + 1) + '月末までの計画を提案しますね...');
+              await sendFinalProposal();
+            }
+          }
+        }
+      } else {
+        // まだ質問フェーズ（2回未満）
+        addMessage('ai', responseText);
+      }
+
+    } catch(e) {
+      removeLoadingMessage();
+      addMessage('ai', 'エラーが発生しました: ' + e.message);
+      console.error('Goal AI chat error:', e);
+    } finally {
+      _state.isWaiting = false;
+      var sendBtn2 = document.getElementById('gaiSend');
+      if (sendBtn2) sendBtn2.disabled = false;
+      var input = document.getElementById('gaiInput');
+      if (input) input.focus();
+    }
+  }
+
+  // ========== 最終タスク提案（強制） ==========
+  async function sendFinalProposal() {
+    _state.isWaiting = true;
+    addLoadingMessage();
+
+    try {
+      var tone = _state.tone || 'normal';
+
+      var historyText = _state.chatHistory.map(function(m) {
+        return (m.role === 'user' ? 'ユーザー' : 'AI') + ': ' + m.text;
+      }).join('\n');
+
+      // 月の残り日数に応じてフェーズを決定（buildPromptと同じロジック）
+      var _fnow = new Date();
+      var _fmonthEnd = new Date(_fnow.getFullYear(), _fnow.getMonth() + 1, 0);
+      var _fremainDays = Math.max(1, Math.floor((_fmonthEnd - _fnow) / 86400000) + 1);
+      var _fmonthName = (_fnow.getMonth() + 1) + '月';
+      var _fphaseLabels;
+      if (_fremainDays <= 7) {
+        _fphaseLabels = '【今月中】\n1. タスク';
+      } else if (_fremainDays <= 14) {
+        _fphaseLabels = '【前半】\n1. タスク\n【後半】\n1. タスク';
+      } else if (_fremainDays <= 21) {
+        _fphaseLabels = '【第1週】\n1. タスク\n【第2週】\n1. タスク\n【第3週】\n1. タスク';
+      } else {
+        _fphaseLabels = '【第1週】\n1. タスク\n【第2週】\n1. タスク\n【第3週】\n1. タスク\n【第4週】\n1. タスク';
+      }
+
+      var prompt = '【指示】以下の会話を踏まえて、' + _fmonthName + '末（残り' + _fremainDays + '日間）の行動計画を提案してください。\n' +
+        '必ず以下のフォーマットで出力してください：\n' +
+        _fphaseLabels + '\n' +
+        '- 各フェーズ2〜3個、全体で6〜12個\n' +
+        '- 最初は取り組みやすく、後半はステップアップ\n' +
+        '- 「週○回〜する」「毎日〜する」のような頻度付き行動\n' +
+        '- 準備やTipsではなく行動そのもの\n\n' +
+        '【会話履歴】\n' + historyText;
+
+      var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://lifelog-ai.little-limit-621c.workers.dev';
+      var _gaiH = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : { 'Content-Type': 'application/json' };
+      var res = await fetch(BACKEND_URL + '/api/analyze', {
+        method: 'POST',
+        headers: _gaiH,
+        body: JSON.stringify({ text: prompt, tone: tone, type: 'consult' })
+      });
+
+      if (!res.ok) throw new Error('API error: ' + res.status);
+
+      var data = await res.json();
+      var responseText = data.comment || data.feedback || data.analysis || data.result || data.response || '';
+      if (!responseText && typeof data === 'string') responseText = data;
+
+      removeLoadingMessage();
+
+      if (responseText) {
+        _state.chatHistory.push({ role: 'ai', text: responseText });
+        addMessage('ai', responseText);
+        // まずフェーズ別計画パーサーを試す
+        var weeklyPlan = parseWeeklyPlan(responseText);
+        var planTotal = Object.keys(weeklyPlan).reduce(function(sum, k) {
+          return sum + weeklyPlan[k].length;
+        }, 0);
+        if (planTotal >= 3) {
+          showWeeklyPlanSelection(weeklyPlan);
+        } else {
+          var tasks = parseTasks(responseText);
+          if (tasks.length > 0) {
+            showTaskSelection(tasks);
+          }
+        }
+      }
+    } catch(e) {
+      removeLoadingMessage();
+      addMessage('ai', 'エラーが発生しました: ' + e.message);
+    } finally {
+      _state.isWaiting = false;
+    }
+  }
+
+  // ========== プロンプト構築 ==========
+  function buildPrompt() {
+    var historyText = _state.chatHistory.map(function(m) {
+      return (m.role === 'user' ? 'ユーザー' : 'AI') + ': ' + m.text;
+    }).join('\n');
+
+    // キャラクター・ルールはWorker側で注入（ソースから隠蔽）
+    var charHeader = '';
+
+    // 過去データのコンテキスト（初回と最終回に含める。中間ターンはトークン節約で省略）
+    var userContext = '';
+    if ((_state.turnCount === 0 || _state.turnCount >= _state.maxTurns - 1) && typeof window.buildContextSummary === 'function') {
+      userContext = window.buildContextSummary('goals', { goalCategory: _state.category });
+    }
+
+    // 今月の残り期間を計算
+    var _now = new Date();
+    var _monthEnd = new Date(_now.getFullYear(), _now.getMonth() + 1, 0);
+    var _remainDays = Math.max(1, Math.floor((_monthEnd - _now) / 86400000) + 1);
+    var _monthLabel = (_now.getMonth() + 1) + '月' + _now.getDate() + '日〜' + (_monthEnd.getMonth() + 1) + '月' + _monthEnd.getDate() + '日';
+    var _monthName = (_now.getMonth() + 1) + '月';
+
+    // 残り日数に応じてフェーズ数を決定
+    var _phaseCount, _phaseLabels;
+    if (_remainDays <= 7) {
+      _phaseCount = 1;
+      _phaseLabels = '【今月中】';
+    } else if (_remainDays <= 14) {
+      _phaseCount = 2;
+      _phaseLabels = '【前半】\n1. タスクA\n【後半】\n1. タスクB';
+    } else if (_remainDays <= 21) {
+      _phaseCount = 3;
+      _phaseLabels = '【第1週】\n1. タスクA\n【第2週】\n1. タスクB\n【第3週】\n1. タスクC';
+    } else {
+      _phaseCount = 4;
+      _phaseLabels = '【第1週】\n1. タスクA\n【第2週】\n1. タスクB\n【第3週】\n1. タスクC\n【第4週】\n1. タスクD';
+    }
+
+    // カテゴリに応じて頻度ルールを切り替え
+    var _cat = _state.category || 'その他';
+    var _freqRule;
+    if (_cat === '健康') {
+      _freqRule =
+        '- 「週○回〜する」「毎日〜する」のような頻度・回数付きの行動にしてください\n' +
+        '- 例: ダイエット → 前半「週2回ジムに行く」→ 後半「週3回ジム+自宅筋トレ1回」\n';
+    } else {
+      _freqRule =
+        '- タスクはシンプルな行動で書いてください（例:「完成したシナリオを見直す」「企画書の骨子を作る」）\n' +
+        '- 頻度（週○回等）は、運動や反復練習など回数が重要な場合のみ付けてください\n' +
+        '- 創作・学習・計画系のタスクは回数より「何をするか」を明確に書いてください\n';
+    }
+
+    var weeklyPlanRule =
+      '【タスク提案のルール】\n' +
+      '- ' + _monthName + '末（' + _monthLabel + '、残り' + _remainDays + '日間）の計画を提案してください\n' +
+      '- 必ず以下のフォーマットで出力してください：\n' +
+      _phaseLabels + '\n' +
+      '- 各フェーズ2〜3個、全体で6〜12個のタスクにしてください\n' +
+      '- 最初は取り組みやすいタスク、後半はステップアップした内容にしてください\n' +
+      _freqRule +
+      '- 準備やTips（「バッグを用意する」等）ではなく、目標達成に直結する行動そのものにしてください\n';
+
+    // 初回: ヒアリング質問
+    if (_state.turnCount === 0) {
+      return charHeader + userContext +
+        '【指示】あなたは目標設定のコーチです。\n' +
+        'ユーザーが「' + _state.goalText + '」（カテゴリ: ' + _state.category + '）という目標を立てようとしています。\n' +
+        'この目標を' + _monthName + '末までの計画に落とし込むために、1つだけ短い質問をしてください。\n' +
+        '- ユーザーの過去データがあれば、それを踏まえた質問をしてください\n' +
+        '- ' + (_cat === '健康' ? '具体的な数値、頻度（週何回？毎日？）、' : '具体的なゴールイメージや現在の状況、') + _monthName + '末にどうなりたいかを聞く質問が望ましい\n' +
+        '- 質問は1〜2文で簡潔に\n' +
+        '- キャラクター設定の口調に従って会話してください\n' +
+        '- タスクリストや分析結果は出力しないでください\n' +
+        '- 普通の会話として質問だけ返してください\n';
+    }
+
+    // 2-3往復目: 質問を続ける（最低2回は質問する）
+    if (_state.turnCount < 2) {
+      return charHeader +
+        '【指示】あなたは目標設定のコーチです。\n' +
+        '以下の会話を踏まえて、もう1つだけ追加の短い質問をしてください。\n' +
+        '- 「最初の1週間はどれくらいやれそう？」「' + _monthName + '末にはどうなっていたい？」など、' + _monthName + '末までの計画を作るための質問をしてください\n' +
+        '- 質問は1〜2文で簡潔に\n' +
+        '- キャラクター設定の口調に従ってください\n' +
+        '- タスクリストはまだ出力しないでください\n\n' +
+        '【会話履歴】\n' + historyText;
+    }
+
+    // それ以降: 質問 or タスク提案
+    if (_state.turnCount < _state.maxTurns - 1) {
+      return charHeader +
+        '【指示】あなたは目標設定のコーチです。\n' +
+        '以下の会話を踏まえて、次のどちらかを行ってください：\n' +
+        '- まだ情報が足りなければ、1つだけ追加の短い質問をしてください\n' +
+        '- 十分な情報があれば、' + _monthName + '末までの計画を提案してください\n' +
+        weeklyPlanRule +
+        '- キャラクター設定の口調に従ってください\n\n' +
+        '【会話履歴】\n' + historyText;
+    }
+
+    // 最終回: 強制タスク提案
+    return charHeader +
+      '【指示】以下の会話を踏まえて、' + _monthName + '末までの行動計画を提案してください。\n' +
+      weeklyPlanRule + '\n' +
+      '【会話履歴】\n' + historyText;
+  }
+
+  // ========== タスクのパース ==========
+  function parseTasks(text) {
+    var lines = text.split('\n');
+    var tasks = [];
+    // 番号付きリスト（1. 2. ①②など）のみをタスクとして認識
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i].trim();
+      // 番号付きリストにマッチするか判定
+      var isNumbered = /^[\d①②③④⑤⑥⑦⑧⑨⑩]+[\.\)）]/.test(line);
+      var isBulleted = /^[-・●▪▸]\s/.test(line);
+      if (!isNumbered && !isBulleted) continue;
+
+      var cleaned = line
+        .replace(/^[\d①②③④⑤⑥⑦⑧⑨⑩]+[\.\)）]\s*/, '')
+        .replace(/^[-・●▪▸]\s*/, '')
+        .trim();
+      if (cleaned.length > 2 && cleaned.length < 100) {
+        tasks.push(cleaned);
+      }
+    }
+    return tasks.slice(0, 8);
+  }
+
+  // ========== 月間計画パーサー ==========
+  function parseWeeklyPlan(text) {
+    // 戻り値: { 1: ['task1', 'task2'], 2: ['task3'], ... }
+    // 「第N週」「N週目」「前半」「後半」「今月中」に対応
+    var result = {};
+    var currentPhase = 0;
+    var lines = text.split('\n');
+    var phaseMap = { '前半': 1, '後半': 2, '今月中': 1 };
+
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i].trim();
+
+      // フェーズヘッダー検出: 【第1週】, 【1週目】, 【前半】, 【後半】, 【今月中】
+      var weekMatch = line.match(/[【\[]*\s*第?\s*(\d)\s*週目?\s*[】\]:]*/);
+      if (weekMatch) {
+        currentPhase = parseInt(weekMatch[1]);
+        if (!result[currentPhase]) result[currentPhase] = [];
+        continue;
+      }
+      // 前半/後半/今月中
+      var phaseMatch = line.match(/[【\[]*\s*(前半|後半|今月中)\s*[】\]:]*/);
+      if (phaseMatch) {
+        currentPhase = phaseMap[phaseMatch[1]] || 1;
+        if (!result[currentPhase]) result[currentPhase] = [];
+        continue;
+      }
+
+      if (currentPhase === 0) continue;
+
+      // 番号付き・箇条書きリストをタスクとして認識
+      var isNumbered = /^[\d①②③④⑤⑥⑦⑧⑨⑩]+[\.\)）]/.test(line);
+      var isBulleted = /^[-・●▪▸]\s/.test(line);
+      if (!isNumbered && !isBulleted) continue;
+
+      var cleaned = line
+        .replace(/^[\d①②③④⑤⑥⑦⑧⑨⑩]+[\.\)）]\s*/, '')
+        .replace(/^[-・●▪▸]\s*/, '')
+        .trim();
+      if (cleaned.length > 2 && cleaned.length < 100) {
+        result[currentPhase].push(cleaned);
+      }
+    }
+    return result;
+  }
+
+  // ========== 日付ユーティリティ ==========
+  function _toDateStr(d) {
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+
+  // 月の残り日数でタスクを均等分散する日付配列を生成
+  function distributeDates(taskCount, weekOffset) {
+    if (taskCount <= 0) return [];
+
+    var today = new Date();
+    today.setHours(0,0,0,0);
+
+    // 基準日 = 今日 + weekOffset週
+    var baseDate = new Date(today);
+    baseDate.setDate(baseDate.getDate() + weekOffset * 7);
+
+    // その月の残り日数を計算
+    var monthEnd = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0);
+    var remainingDays = Math.max(1, Math.floor((monthEnd - baseDate) / 86400000) + 1);
+
+    // タスクを均等分散
+    var dates = [];
+    var interval = Math.max(1, Math.floor(remainingDays / taskCount));
+    for (var i = 0; i < taskCount; i++) {
+      var d = new Date(baseDate);
+      d.setDate(d.getDate() + i * interval);
+      // 月末を超えないようにクランプ
+      if (d > monthEnd) d = new Date(monthEnd);
+      dates.push(_toDateStr(d));
+    }
+    return dates;
+  }
+
+  // ========== タスク選択UI表示 ==========
+  function showTaskSelection(tasks) {
+    var tasksEl = document.getElementById('gaiTasks');
+    var inputArea = document.getElementById('gaiInputArea');
+    if (!tasksEl) return;
+
+    if (inputArea) inputArea.style.display = 'none';
+
+    var canContinue = _state.turnCount < _state.maxTurns;
+
+    // タスクリスト（スクロール領域）
+    tasksEl.innerHTML = tasks.map(function(task, i) {
+      return '<label class="gai-task-item">' +
+        '<input type="checkbox" checked data-task-index="' + i + '" />' +
+        '<span class="gai-task-text">' + escapeHTML(task) + '</span>' +
+        '</label>';
+    }).join('');
+    tasksEl.style.display = 'block';
+
+    // アクションボタンを gai-sheet 直下に追加（タスクリストの外 → 固定）
+    var sheet = tasksEl.closest('.gai-sheet');
+    if (sheet) {
+      // 既存のアクションを削除
+      var oldActions = sheet.querySelector('.gai-task-actions');
+      if (oldActions) oldActions.remove();
+      var oldMore = sheet.querySelector('.gai-more-btn');
+      if (oldMore) oldMore.remove();
+
+      var actionsDiv = document.createElement('div');
+      actionsDiv.className = 'gai-task-actions';
+      actionsDiv.innerHTML =
+        '<button class="gai-add-btn" onclick="window._gaiAddTasks()">✅ 選択したタスクを追加</button>' +
+        '<button class="gai-cancel-btn" onclick="window._closeGoalAIChat()">キャンセル</button>';
+      sheet.appendChild(actionsDiv);
+
+      if (canContinue) {
+        var moreBtn = document.createElement('button');
+        moreBtn.className = 'gai-more-btn';
+        moreBtn.onclick = function() { window._gaiContinueChat(); };
+        moreBtn.textContent = '💬 もっと話してから決める';
+        sheet.appendChild(moreBtn);
+      }
+    }
+  }
+
+  // ========== 月間計画 選択UI表示 ==========
+  function showWeeklyPlanSelection(weeklyPlan) {
+    var tasksEl = document.getElementById('gaiTasks');
+    var inputArea = document.getElementById('gaiInputArea');
+    if (!tasksEl) return;
+    if (inputArea) inputArea.style.display = 'none';
+
+    var canContinue = _state.turnCount < _state.maxTurns;
+
+    // フェーズ数に応じたラベルを動的生成
+    var phaseKeys = Object.keys(weeklyPlan).map(Number).sort(function(a,b){return a-b;});
+    var phaseCount = phaseKeys.length;
+    var phaseLabels = {};
+    if (phaseCount <= 1) {
+      phaseLabels[phaseKeys[0] || 1] = '今月中';
+    } else if (phaseCount === 2) {
+      phaseLabels[phaseKeys[0]] = '前半';
+      phaseLabels[phaseKeys[1]] = '後半';
+    } else {
+      phaseKeys.forEach(function(k, i) { phaseLabels[k] = '第' + (i+1) + '週'; });
+    }
+
+    var html = '';
+    phaseKeys.forEach(function(phase) {
+      var tasks = weeklyPlan[phase];
+      if (!tasks || tasks.length === 0) return;
+      html += '<div class="gai-week-header">📅 ' + (phaseLabels[phase] || ('第' + phase + '週')) + '</div>';
+      tasks.forEach(function(task, i) {
+        html += '<label class="gai-task-item">' +
+          '<input type="checkbox" checked data-week="' + phase + '" data-task-index="' + i + '" />' +
+          '<span class="gai-task-text">' + escapeHTML(task) + '</span>' +
+          '</label>';
+      });
+    });
+
+    tasksEl.innerHTML = html;
+    tasksEl.style.display = 'block';
+
+    var now = new Date();
+    var monthName = (now.getMonth() + 1) + '月';
+
+    var sheet = tasksEl.closest('.gai-sheet');
+    if (sheet) {
+      var oldActions = sheet.querySelector('.gai-task-actions');
+      if (oldActions) oldActions.remove();
+      var oldMore = sheet.querySelector('.gai-more-btn');
+      if (oldMore) oldMore.remove();
+
+      var actionsDiv = document.createElement('div');
+      actionsDiv.className = 'gai-task-actions';
+      actionsDiv.innerHTML =
+        '<button class="gai-add-btn" onclick="window._gaiAddTasks()">✅ ' + monthName + 'の計画を追加</button>' +
+        '<button class="gai-cancel-btn" onclick="window._closeGoalAIChat()">キャンセル</button>';
+      sheet.appendChild(actionsDiv);
+
+      if (canContinue) {
+        var moreBtn = document.createElement('button');
+        moreBtn.className = 'gai-more-btn';
+        moreBtn.onclick = function() { window._gaiContinueChat(); };
+        moreBtn.textContent = '💬 もっと話してから決める';
+        sheet.appendChild(moreBtn);
+      }
+    }
+  }
+
+  // ========== localStorage安全読み書き ==========
+  function _loadGoalsFromStorage() {
+    try {
+      var raw = localStorage.getItem('monthlyGoals');
+      var arr = JSON.parse(raw || '[]');
+      return Array.isArray(arr) ? arr : [];
+    } catch(e) { return []; }
+  }
+  function _saveGoalsToStorage(goals) {
+    try {
+      localStorage.setItem('monthlyGoals', JSON.stringify(goals));
+    } catch(e) {
+      console.error('monthlyGoals保存エラー:', e);
+      alert('データの保存に失敗しました。ストレージ容量を確認してください。');
+      return;
+    }
+    window.monthlyGoals = goals;
+    try {
+      if (window.Storage && window.Storage.set && window.Storage.keys) {
+        window.Storage.set(window.Storage.keys.MONTHLY_GOALS, goals);
+      }
+    } catch(e) {}
+  }
+
+  // ========== 選択したタスクを追加（weeklyTasksへ） ==========
+  function addSelectedTasks() {
+    var checkboxes = document.querySelectorAll('#gaiTasks input[type="checkbox"]:checked');
+    if (checkboxes.length === 0) {
+      alert('追加するタスクを選択してください');
+      return;
+    }
+
+    // ★ 常にlocalStorageから最新データを読む（window.monthlyGoalsを信用しない）
+    var goals = _loadGoalsFromStorage();
+
+    // 紐づく目標を見つける
+    var goal = null;
+    if (_state.goalId) {
+      goal = goals.find(function(g) { return g && g.id === _state.goalId; });
+    }
+
+    var todayDate = _toDateStr(new Date());
+
+    var added = 0;
+
+    if (goal) {
+      // weeklyTasks に追加（日付ベース）
+      if (!goal.weeklyTasks) goal.weeklyTasks = [];
+
+      // data-week ごとにタスクをグルーピングして日付を分散
+      var tasksByWeek = {};
+      checkboxes.forEach(function(cb) {
+        var weekAttr = cb.getAttribute('data-week');
+        var weekOffset = weekAttr ? (parseInt(weekAttr) - 1) : 0;
+        if (!tasksByWeek[weekOffset]) tasksByWeek[weekOffset] = [];
+        tasksByWeek[weekOffset].push(cb);
+      });
+
+      Object.keys(tasksByWeek).forEach(function(offsetStr) {
+        var offset = parseInt(offsetStr);
+        var cbs = tasksByWeek[offset];
+        // この週のタスク群に日付を均等分散
+        var dates = distributeDates(cbs.length, offset);
+
+        cbs.forEach(function(cb, idx) {
+          var label = cb.closest('.gai-task-item');
+          var textEl = label ? label.querySelector('.gai-task-text') : null;
+          var text = textEl ? textEl.textContent.trim() : '';
+          if (!text) return;
+
+          var taskDate = dates[idx] || todayDate;
+
+          goal.weeklyTasks.push({
+            id: Date.now() + added,
+            text: text,
+            date: taskDate,
+            done: false
+          });
+          added++;
+        });
+      });
+    } else {
+      // フォールバック: 目標が見つからない場合は新規目標として追加
+      var category = _state.category || 'その他';
+      var nowFb = new Date();
+      var monthFb = window.selectedGoalsMonth || window.goalsCurrentMonth ||
+        (nowFb.getFullYear() + '-' + String(nowFb.getMonth()+1).padStart(2,'0'));
+
+      checkboxes.forEach(function(cb) {
+        var label = cb.closest('.gai-task-item');
+        var textEl = label ? label.querySelector('.gai-task-text') : null;
+        var text = textEl ? textEl.textContent.trim() : '';
+        if (!text) return;
+
+        goals.unshift({
+          id: Date.now() + added,
+          text: text,
+          category: category,
+          createdAt: nowFb.toISOString(),
+          month: monthFb,
+          completed: false,
+          weeklyTasks: []
+        });
+        added++;
+      });
+    }
+
+    // ★ localStorageに確実に保存
+    if (added > 0) {
+      _saveGoalsToStorage(goals);
+    }
+
+    if (typeof window.renderGoalsAll === 'function') window.renderGoalsAll();
+    else if (typeof window.renderGoals === 'function') window.renderGoals();
+
+    // 表示メッセージ
+    if (typeof window.showStatus === 'function') {
+      var hasMultiPhase = false;
+      checkboxes.forEach(function(cb) {
+        var w = cb.getAttribute('data-week');
+        if (w && parseInt(w) > 1) hasMultiPhase = true;
+      });
+      var msg = hasMultiPhase
+        ? '✅ ' + added + '個のタスクを今月の計画に追加しました'
+        : '✅ ' + added + '個のタスクを今週のやることに追加しました';
+      window.showStatus('goalStatus', msg);
+    }
+
+    // 使用回数カウントはチャット開始時に移動済み（startGoalAIChat内）
+
+    closeChat();
+  }
+
+  // ========== モーダル操作 ==========
+  function closeChat() {
+    var modal = document.getElementById('goalAIChatModal');
+    if (modal) {
+      modal.classList.remove('gai-open');
+      // タスク選択のアクションボタンをクリーンアップ
+      var sheet = modal.querySelector('.gai-sheet');
+      if (sheet) {
+        var actions = sheet.querySelector('.gai-task-actions');
+        if (actions) actions.remove();
+        var more = sheet.querySelector('.gai-more-btn');
+        if (more) more.remove();
+      }
+    }
+  }
+
+  // ========== ユーティリティ ==========
+  function escapeHTML(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ========== チャット音声入力 ==========
+  var _SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var _voiceRec = null;
+  var _voiceListening = false;
+  var _voiceShouldRestart = false;
+  var _voiceFinalText = '';
+  var _isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  function toggleVoice() {
+    if (_voiceListening) {
+      stopVoice();
+    } else {
+      startVoice();
+    }
+  }
+
+  function startVoice() {
+    if (!_SR) { alert('お使いのブラウザは音声入力に対応していません'); return; }
+    var input = document.getElementById('gaiInput');
+    var btn = document.getElementById('gaiVoice');
+    if (!input || !btn) return;
+
+    _voiceRec = new _SR();
+    _voiceRec.lang = 'ja-JP';
+    _voiceRec.continuous = !_isMobile;
+    _voiceRec.interimResults = true;
+    _voiceRec.maxAlternatives = 1;
+
+    _voiceListening = true;
+    _voiceShouldRestart = true;
+    _voiceFinalText = '';
+    var originalText = input.value;
+
+    btn.classList.add('listening');
+    btn.textContent = '⏹️';
+
+    _voiceRec.onresult = function(e) {
+      var interim = '';
+      for (var i = e.resultIndex; i < e.results.length; i++) {
+        var transcript = e.results[i][0].transcript;
+        if (e.results[i].isFinal) {
+          _voiceFinalText += transcript;
+        } else {
+          interim = transcript;
+        }
+      }
+      input.value = originalText + _voiceFinalText + interim;
+    };
+
+    _voiceRec.onerror = function(e) {
+      if (e.error === 'no-speech' || e.error === 'network') return;
+      stopVoice();
+    };
+
+    _voiceRec.onend = function() {
+      if (_voiceListening && _voiceShouldRestart) {
+        setTimeout(function() {
+          if (_voiceListening && _voiceShouldRestart) {
+            try { _voiceRec.start(); } catch(e) {}
+          }
+        }, _isMobile ? 1100 : 500);
+      } else {
+        cleanupVoice();
+      }
+    };
+
+    try { _voiceRec.start(); } catch(e) { cleanupVoice(); }
+  }
+
+  function stopVoice() {
+    _voiceShouldRestart = false;
+    _voiceListening = false;
+    if (_voiceRec) { try { _voiceRec.stop(); } catch(e) {} }
+    cleanupVoice();
+  }
+
+  function cleanupVoice() {
+    _voiceListening = false;
+    _voiceShouldRestart = false;
+    var btn = document.getElementById('gaiVoice');
+    if (btn) { btn.classList.remove('listening'); btn.textContent = '🎤'; }
+    var input = document.getElementById('gaiInput');
+    if (input && _voiceFinalText) {
+      // 最終テキストのみ確定
+      var current = input.value;
+      // interimが含まれてる可能性があるので、originalText + finalTextに確定
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    _voiceRec = null;
+    _voiceFinalText = '';
+  }
+
+  // 音声ボタンのクリックイベント
+  setTimeout(function() {
+    var voiceBtn = document.getElementById('gaiVoice');
+    if (voiceBtn) {
+      voiceBtn.addEventListener('click', toggleVoice);
+    }
+  }, 250);
+
+  // チャットモーダルが閉じられたら音声も停止
+  var _origClose = closeChat;
+  closeChat = function() {
+    if (_voiceListening) stopVoice();
+    _origClose();
+  };
+  window._closeGoalAIChat = closeChat;
+
+  // ========== 「もっと話す」で会話を続ける ==========
+  function continueChat() {
+    var tasksEl = document.getElementById('gaiTasks');
+    var inputArea = document.getElementById('gaiInputArea');
+    if (tasksEl) { tasksEl.innerHTML = ''; tasksEl.style.display = 'none'; }
+    if (inputArea) inputArea.style.display = 'flex';
+    var input = document.getElementById('gaiInput');
+    if (input) input.focus();
+    // 「もっと詳しく聞きたい」というメッセージを表示
+    addMessage('ai', '了解！もう少し詳しく教えてください。何でも聞いてくださいね 😊');
+  }
+
+  // ========== グローバル公開 ==========
+  window._closeGoalAIChat = closeChat;
+  window._gaiSendMessage = gaiSendMessage;
+  window._gaiAddTasks = addSelectedTasks;
+  window._gaiSelectChar = selectChar;
+  window._gaiContinueChat = continueChat;
+
+  // ========== 初期化 ==========
+  function init() {
+    injectAIButton();
+    var observer = new MutationObserver(function() { injectAIButton(); });
+    var goalModal = document.getElementById('goalAddModal');
+    if (goalModal) {
+      observer.observe(goalModal, { attributes: true, attributeFilter: ['style'] });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    setTimeout(init, 100);
+  }
+})();
