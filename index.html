@@ -8141,7 +8141,6 @@ function renderMoneyCalendar() {
     html += '</div>';
     container.innerHTML = html;
 }
-    console.log("moneyCalendar HTML generated, length=", html.length, "first 200 chars:", html.substring(0, 200));
 
 // お金概要
 function renderMoneySummary() {
@@ -14859,23 +14858,6 @@ textarea { width: 100%; }
       '</div>';
     }).join('');
   }
-
-
-  container.innerHTML = all.slice(0, 5).map(function(x) {
-    var tagClass = (x.type === 'activity') ? 'tag-activity' : 'tag-money';
-    var tagLabel = (x.type === 'activity') ? '行動' : 'お金';
-    
-    return '<div class="recent-item">' +
-      '<div class="recent-icon">' + x.icon + '</div>' +
-      '<div class="recent-content">' +
-        '<div class="recent-title">' +
-          '<span class="recent-title-text">' + escapeHtml(x.title) + '</span>' +
-          '<span class="recent-tag ' + tagClass + '">' + tagLabel + '</span>' +
-        '</div>' +
-        '<div class="recent-meta">' + escapeHtml(x.meta) + '</div>' +
-      '</div>' +
-    '</div>';
-  }).join('');
 })();
 </script>
 
