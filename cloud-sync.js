@@ -179,6 +179,7 @@
           '<input type="password" id="csPassword" class="cs-input" placeholder="パスワード（6文字以上）" autocomplete="new-password">' +
           '<input type="password" id="csPasswordConfirm" class="cs-input" placeholder="パスワード（確認）" autocomplete="new-password">' +
           '<div id="csError" class="cs-error" style="display:none;"></div>' +
+          '<div style="font-size:11px;color:#888;line-height:1.5;margin:8px 0 4px;text-align:center;">アカウント作成により<a href="javascript:void(0)" onclick="showLegalModal(\'terms\')" style="color:#4A90D9;text-decoration:underline;">利用規約</a>と<a href="javascript:void(0)" onclick="showLegalModal(\'privacy\')" style="color:#4A90D9;text-decoration:underline;">プライバシーポリシー</a>に同意します</div>' +
           '<button type="button" id="csRegisterBtn" class="cs-btn cs-btn-primary">アカウント作成</button>' +
           '<button type="button" id="csToLogin" class="cs-btn cs-btn-link">ログインはこちら</button>' +
         '</div>';

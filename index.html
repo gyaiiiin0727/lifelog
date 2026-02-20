@@ -5505,6 +5505,19 @@ body.qr-open .fab-container{ pointer-events:none !important; }
             </button>
         </div>
     </div>
+
+    <!-- 法的情報セクション -->
+    <div class="ai-consult-data-section" style="border-top:1px solid #eee;padding-top:16px;">
+        <h3 style="font-size:15px; font-weight:700; color:#333; margin:0 0 12px;">📄 法的情報</h3>
+        <div class="ai-consult-data-btns">
+            <button type="button" class="ai-data-btn" onclick="showLegalModal('terms')">
+                <span>📋</span> 利用規約
+            </button>
+            <button type="button" class="ai-data-btn" onclick="showLegalModal('privacy')">
+                <span>🔒</span> プライバシーポリシー
+            </button>
+        </div>
+    </div>
 </div>
 </div>
 
@@ -18434,6 +18447,7 @@ const modal = $('qrModal');
       '<button onclick="document.getElementById(\'dayce-plan-modal\').remove();" style="padding:10px 32px;background:none;border:1px solid #ddd;border-radius:8px;font-size:14px;color:#666;cursor:pointer;">閉じる</button>' +
       '</div>' +
       '<div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;">※ Stripeの安全な決済ページに移動します</div>' +
+      '<div style="text-align:center;margin-top:8px;font-size:11px;color:#999;"><a href="javascript:void(0)" onclick="showLegalModal(\'terms\')" style="color:#4A90D9;text-decoration:underline;">利用規約</a> ・ <a href="javascript:void(0)" onclick="showLegalModal(\'privacy\')" style="color:#4A90D9;text-decoration:underline;">プライバシーポリシー</a></div>' +
     '</div>';
 
     overlay.innerHTML = html;
@@ -21674,6 +21688,109 @@ if ('serviceWorker' in navigator) {
 <script src="voice-input-extra.js"></script>
 <script src="goals-v2.js"></script>
 <script src="cloud-sync.js"></script>
+
+<!-- ========== 利用規約・プライバシーポリシー ========== -->
+<script>
+(function(){
+  'use strict';
+
+  var LEGAL = {
+    terms: {
+      title: '利用規約',
+      lastUpdated: '2026年2月20日',
+      sections: [
+        { heading: '第1条（適用）',
+          body: '本規約は、Dayce（以下「本サービス」）の利用に関する条件を定めるものです。ユーザーは本サービスを利用することにより、本規約に同意したものとみなされます。' },
+        { heading: '第2条（サービス内容）',
+          body: '本サービスは、日々の行動・支出・日記の記録および振り返りを支援するライフログアプリケーションです。AI相談機能、クラウド同期機能、各種レポート機能等を提供します。' },
+        { heading: '第3条（アカウント）',
+          body: 'ユーザーはメールアドレスとパスワードによりアカウントを作成できます。アカウント情報の管理はユーザー自身の責任で行ってください。第三者による不正利用があった場合、速やかにご連絡ください。' },
+        { heading: '第4条（料金・プラン）',
+          body: '本サービスには無料プランとプロプラン（月額500円・税込）があります。プロプランの決済はStripe社の決済サービスを利用します。解約は請求期間の終了時に適用され、期間中は引き続きご利用いただけます。' },
+        { heading: '第5条（データの取り扱い）',
+          body: 'ユーザーが入力したデータは端末内（localStorage）に保存されます。クラウド同期を有効にした場合、暗号化された状態でサーバーに保存されます。詳細はプライバシーポリシーをご確認ください。' },
+        { heading: '第6条（AI機能について）',
+          body: 'AI相談機能はOpenAI社のAPIを利用しています。AI の回答は参考情報であり、医療・法律・財務等の専門的助言ではありません。重要な判断にはご自身の責任で専門家にご相談ください。' },
+        { heading: '第7条（禁止事項）',
+          body: '以下の行為を禁止します：(1) 不正アクセスやシステムへの攻撃 (2) 他のユーザーへの迷惑行為 (3) 法令に違反する目的での利用 (4) サービスの逆コンパイルや改変 (5) 商業目的での無断転載・複製' },
+        { heading: '第8条（免責事項）',
+          body: '本サービスは現状有姿で提供されます。データの消失、サービスの中断、AI回答の誤り等について、運営者は故意または重過失の場合を除き責任を負いません。' },
+        { heading: '第9条（規約の変更）',
+          body: '運営者は本規約を変更する場合があります。重要な変更がある場合はアプリ内でお知らせします。変更後も本サービスを利用した場合、変更後の規約に同意したものとみなされます。' },
+        { heading: '第10条（準拠法・管轄）',
+          body: '本規約は日本法に準拠します。本サービスに関する紛争は、東京地方裁判所を第一審の専属的合意管轄裁判所とします。' }
+      ]
+    },
+    privacy: {
+      title: 'プライバシーポリシー',
+      lastUpdated: '2026年2月20日',
+      sections: [
+        { heading: '1. 収集する情報',
+          body: '本サービスでは以下の情報を取り扱います：\n・メールアドレス（アカウント登録時）\n・パスワード（ハッシュ化して保存）\n・行動記録、支出記録、日記等のユーザー入力データ\n・決済情報（Stripe社が管理。運営者はカード番号等を保持しません）' },
+        { heading: '2. データの保存場所',
+          body: '・端末データ：お使いのブラウザのlocalStorageに保存されます\n・クラウドデータ：Cloudflare Workers KV（米国リージョン）に暗号化保存されます\n・決済データ：Stripe社のセキュアなサーバーで管理されます' },
+        { heading: '3. データの利用目的',
+          body: '収集したデータは以下の目的にのみ利用します：\n・サービスの提供および改善\n・アカウント認証とクラウド同期\n・AI相談機能の応答生成（OpenAI APIへの送信）\n・決済処理\n・お問い合わせへの対応' },
+        { heading: '4. 第三者への提供',
+          body: 'ユーザーの個人データを第三者に販売・貸与することはありません。ただし以下の場合を除きます：\n・AI機能利用時のOpenAI社への送信（回答生成目的のみ）\n・決済処理のためのStripe社への提供\n・法令に基づく開示要求があった場合' },
+        { heading: '5. AI機能とデータ',
+          body: 'AI相談機能を利用する際、相談内容がOpenAI社のAPIに送信されます。OpenAI社のデータ利用ポリシーに従い、API経由のデータはモデルの学習に使用されません。' },
+        { heading: '6. Cookieとローカルストレージ',
+          body: '本サービスではCookieは使用しません。代わりにブラウザのlocalStorageを利用してユーザー設定やデータを保存します。ブラウザの設定からlocalStorageをクリアすることで、端末上のデータを削除できます。' },
+        { heading: '7. データの削除',
+          body: 'ユーザーはいつでもデータを削除できます：\n・端末データ：ブラウザのデータ消去で削除可能\n・クラウドデータ：アカウント削除により削除されます\n・決済データ：Stripeの管理ページから管理できます' },
+        { heading: '8. セキュリティ',
+          body: '通信はすべてHTTPSで暗号化されています。パスワードはbcryptでハッシュ化して保存し、平文では保持しません。ただし、インターネット上の通信において完全な安全性を保証することはできません。' },
+        { heading: '9. 未成年者の利用',
+          body: '本サービスは13歳以上の方を対象としています。13歳未満の方は保護者の同意のもとでご利用ください。' },
+        { heading: '10. ポリシーの変更',
+          body: '本ポリシーは必要に応じて改定する場合があります。重要な変更がある場合はアプリ内でお知らせします。' },
+        { heading: '11. お問い合わせ',
+          body: '本ポリシーに関するお問い合わせは、アプリ内のAI相談タブのフィードバック機能よりご連絡ください。' }
+      ]
+    }
+  };
+
+  window.showLegalModal = function(type) {
+    var data = LEGAL[type];
+    if (!data) return;
+
+    // 既存モーダルがあれば削除
+    var existing = document.getElementById('dayce-legal-modal');
+    if (existing) existing.remove();
+
+    var overlay = document.createElement('div');
+    overlay.id = 'dayce-legal-modal';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;';
+
+    var html = '<div style="width:100%;max-width:480px;max-height:85vh;background:#fff;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;">' +
+      '<div style="padding:20px 20px 12px;border-bottom:1px solid #eee;flex-shrink:0;">' +
+        '<div style="font-size:20px;font-weight:700;color:#333;">' + data.title + '</div>' +
+        '<div style="font-size:12px;color:#999;margin-top:4px;">最終更新日: ' + data.lastUpdated + '</div>' +
+      '</div>' +
+      '<div style="padding:16px 20px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;">';
+
+    data.sections.forEach(function(s) {
+      html += '<div style="margin-bottom:20px;">' +
+        '<div style="font-size:14px;font-weight:700;color:#333;margin-bottom:6px;">' + s.heading + '</div>' +
+        '<div style="font-size:13px;line-height:1.7;color:#555;white-space:pre-line;">' + s.body + '</div>' +
+      '</div>';
+    });
+
+    html += '</div>' +
+      '<div style="padding:12px 20px 16px;border-top:1px solid #eee;flex-shrink:0;text-align:center;">' +
+        '<button onclick="document.getElementById(\'dayce-legal-modal\').remove();" style="padding:10px 40px;background:#4A90D9;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">閉じる</button>' +
+      '</div>' +
+    '</div>';
+
+    overlay.innerHTML = html;
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) overlay.remove();
+    });
+    document.body.appendChild(overlay);
+  };
+})();
+</script>
 
 <!-- ========== インラインヒントカード ========== -->
 <script>
