@@ -32,9 +32,10 @@
   function getEmail() { return localStorage.getItem(LS_EMAIL); }
   function getLastSynced() { return localStorage.getItem(LS_LAST_SYNCED); }
 
-  function saveAuth(token, email) {
+  function saveAuth(token, email, createdAt) {
     localStorage.setItem(LS_TOKEN, token);
     localStorage.setItem(LS_EMAIL, email);
+    if (createdAt) localStorage.setItem('syncAuthRegisteredAt', createdAt);
   }
   function clearAuth() {
     localStorage.removeItem(LS_TOKEN);
@@ -78,7 +79,7 @@
       method: 'POST',
       body: { email: email, password: password }
     });
-    saveAuth(res.token, res.email);
+    saveAuth(res.token, res.email, res.createdAt);
     return res;
   }
 
@@ -87,7 +88,7 @@
       method: 'POST',
       body: { email: email, password: password }
     });
-    saveAuth(res.token, res.email);
+    saveAuth(res.token, res.email, res.createdAt);
     return res;
   }
 

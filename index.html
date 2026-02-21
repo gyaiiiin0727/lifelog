@@ -5389,7 +5389,10 @@ body.qr-open .fab-container{ pointer-events:none !important; }
               <button class="simple-nav-btn" type="button" onclick="changeGoalsMonth(1)">次月 ▶</button>
             </div>
 <div class="goals-section">
-<button class="category-edit-button goal-add-button" onclick="openGoalAddModal()">➕ 新しい目標を追加</button>
+<div style="display:flex;gap:8px;margin-bottom:8px;">
+  <button class="category-edit-button goal-add-button" onclick="openGoalAddModal()" style="flex:1;margin:0;">✏️ 自分で入力</button>
+  <button class="category-edit-button goal-add-button" onclick="window._openGoalAIDirect()" style="flex:1;margin:0;background:linear-gradient(135deg,#2196F3,#1565C0);color:#fff;border-color:#2196F3;">🤖 AIと目標設定</button>
+</div>
 <div class="status-message" id="goalStatus"></div>
 </div>
 <div class="goals-list-section">
@@ -18223,12 +18226,32 @@ const modal = $('qrModal');
 
   // --- プラン定義 ---
   var PLANS = {
-    free:    { label: '無料プラン',    journal: 30, consult: 0,  goalCoach: 1, charLimit: true,  csv: false, cloudSync: true, journalDaily: 1 },
+    free:    { label: '無料プラン',    journal: 10, consult: 0,  goalCoach: 1, charLimit: true,  csv: false, cloudSync: true, journalDaily: 1 },
     pro:     { label: 'プロ（¥500/月）', journal: 9999, consult: 9999, goalCoach: 9999, charLimit: false, csv: true, cloudSync: true },
     // 後方互換: 旧プランでログインしているユーザー向け
     lite:    { label: 'プロ（¥500/月）', journal: 9999, consult: 9999, goalCoach: 9999, charLimit: false, csv: true, cloudSync: true },
     premium: { label: 'プロ（¥500/月）', journal: 9999, consult: 9999, goalCoach: 9999, charLimit: false, csv: true, cloudSync: true }
   };
+
+  // --- 初月無制限判定 ---
+  function isFirstMonth() {
+    try {
+      var registered = localStorage.getItem('syncAuthRegisteredAt');
+      if (!registered) return false;
+      var created = new Date(registered).getTime();
+      return (Date.now() - created) < 30 * 24 * 60 * 60 * 1000;
+    } catch(e) { return false; }
+  }
+
+  // 初月なら制限を緩和した仮想プランを返す
+  function getEffectiveLimits() {
+    var plan = getPlan();
+    if (plan === 'free' && isFirstMonth()) {
+      // 初月: ジャーナル無制限、AI相談無制限、コーチ無制限、キャラ全員OK
+      return { label: '無料プラン（初月特典）', journal: 9999, consult: 9999, goalCoach: 9999, charLimit: false, csv: false, cloudSync: true };
+    }
+    return PLANS[plan];
+  }
 
   // --- 現在のプランレベル取得 ---
   function getPlan() {
@@ -18306,7 +18329,7 @@ const modal = $('qrModal');
 
   function checkLimit(type) {
     var plan = getPlan();
-    var limits = PLANS[plan];
+    var limits = getEffectiveLimits();
     var usage = getUsage();
     var limit = limits[type];
     var current = usage[type] || 0;
@@ -18324,8 +18347,8 @@ const modal = $('qrModal');
           : '今月の利用回数（' + limit + '回）に達しました'
       };
     }
-    // 日次制限チェック（無料プランのジャーナル: 1日1回）
-    if (type === 'journal' && limits.journalDaily) {
+    // 日次制限チェック（無料プランのジャーナル: 1日1回）※初月は日次制限なし
+    if (type === 'journal' && limits.journalDaily && !isFirstMonth()) {
       var dailyUsed = getDailyUsage('journal');
       if (dailyUsed >= limits.journalDaily) {
         return {
@@ -18343,8 +18366,8 @@ const modal = $('qrModal');
 
   // --- キャラクター制限チェック ---
   function checkCharacter(tone) {
-    var plan = getPlan();
-    if (PLANS[plan].charLimit && tone !== 'normal') {
+    var limits = getEffectiveLimits();
+    if (limits.charLimit && tone !== 'normal') {
       return { allowed: false, reason: 'キャラクター選択はプロプランで利用できます' };
     }
     return { allowed: true };
@@ -18398,12 +18421,13 @@ const modal = $('qrModal');
   function renderPlanBadges() {
     var plan = getPlan();
     var usage = getUsage();
-    var limits = PLANS[plan];
+    var limits = getEffectiveLimits();
+    var firstMonth = isFirstMonth();
 
     // AI相談タブ内の残回数表示
     var badge = document.getElementById('dayce-plan-badge');
     if (badge) {
-      badge.textContent = PLANS[plan].label;
+      badge.textContent = firstMonth ? '無料プラン（初月特典 🎁）' : PLANS[plan].label;
       badge.className = 'dayce-plan-badge dayce-plan-' + plan;
     }
 
@@ -18415,13 +18439,13 @@ const modal = $('qrModal');
       var lim = limits[t];
       var used = usage[t] || 0;
       if (lim === 9999) {
-        el.textContent = '無制限';
+        el.textContent = firstMonth ? '初月無制限 🎁' : '無制限';
         el.style.color = '#27ae60';
       } else if (lim === 0) {
         el.textContent = '利用不可';
         el.style.color = '#999';
-      } else if (t === 'journal' && limits.journalDaily) {
-        // 日次制限表示（無料プランのジャーナル）
+      } else if (t === 'journal' && limits.journalDaily && !firstMonth) {
+        // 日次制限表示（無料プランのジャーナル、初月以降）
         var dailyUsed = getDailyUsage('journal');
         var dailyRemain = Math.max(0, limits.journalDaily - dailyUsed);
         el.textContent = dailyRemain > 0 ? '今日あと' + dailyRemain + '回' : '今日は使用済み';
@@ -18447,12 +18471,13 @@ const modal = $('qrModal');
 
     var cards = [
       { key: 'free', name: '無料', price: '¥0', color: '#78909c', features: [
+        '🎁 初月: 全機能無制限で体験OK！',
         '記録・カレンダー・レポート: ✅',
         '過去データ閲覧: 30日分',
-        '心を整える: 1日1回（月30回）',
-        'AI相談: ❌',
-        '目標コーチ: 月1回',
-        'キャラクター: タクヤ先輩のみ',
+        '心を整える: 月10回（1日1回）',
+        'AI相談: ❌（2ヶ月目〜）',
+        '目標コーチ: 月1回（2ヶ月目〜）',
+        'キャラクター: タクヤ先輩のみ（2ヶ月目〜）',
         'CSV出力: ❌',
         'クラウド同期: ✅'
       ]},

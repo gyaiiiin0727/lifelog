@@ -22,24 +22,23 @@
     '  padding: 1px 6px; border-radius: 4px; margin-left: 6px;',
     '}',
 
-    /* ===== オーバーレイ（背景） ===== */
+    /* ===== オーバーレイ（全画面） ===== */
     '#goalAIChatModal {',
-    '  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45);',
-    '  z-index:9999; align-items:flex-end; justify-content:center;',
+    '  display:none; position:fixed; inset:0; background:#fff;',
+    '  z-index:99999;',
     '}',
-    '#goalAIChatModal.gai-open { display:flex !important; }',
+    '#goalAIChatModal.gai-open { display:flex !important; flex-direction:column; }',
 
-    /* ===== ボトムシート本体 ===== */
+    /* ===== 全画面本体 ===== */
     '#goalAIChatModal .gai-sheet {',
-    '  width:100%; max-width:480px; max-height:94vh;',
-    '  background:#fff; border-radius:20px 20px 0 0;',
-    '  box-shadow:0 -4px 24px rgba(0,0,0,0.18);',
+    '  width:100%; height:100%;',
+    '  background:#fff;',
     '  display:flex; flex-direction:column; overflow:hidden;',
-    '  padding:0;',
+    '  padding:0; padding-top:env(safe-area-inset-top, 0px);',
     '}',
 
-    /* ドラッグハンドル風 */
-    '.gai-handle { width:36px; height:4px; background:#d1d5db; border-radius:2px; margin:10px auto 0; }',
+    /* ドラッグハンドル風（非表示） */
+    '.gai-handle { display:none; }',
 
     /* ヘッダー */
     '.gai-header {',
@@ -1260,12 +1259,176 @@
     addMessage('ai', '了解！もう少し詳しく教えてください。何でも聞いてくださいね 😊');
   }
 
+  // ========== 直接AIチャットを開く（目標タブから直接） ==========
+  function openGoalAIDirect() {
+    // プラン制限チェック
+    if (window.DaycePlan) {
+      var limit = window.DaycePlan.checkLimit('goalCoach');
+      if (!limit.allowed) {
+        window.DaycePlan.showUpgradeModal(limit);
+        return;
+      }
+    }
+
+    // 全画面ポップアップ: キャラ選択 + 目標入力を表示
+    var overlay = document.createElement('div');
+    overlay.id = 'goalAISetupOverlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:#fff;z-index:99998;display:flex;flex-direction:column;overflow-y:auto;';
+
+    var toneData = [
+      {id:'harsh', img:'drill_instructor.png', name:'マネージャー', desc:'厳しめに目標を管理', color:'#e74c3c'},
+      {id:'normal', img:'takumi_senpai.png', name:'タクヤ先輩', desc:'フランクに相談', color:'#4a90e2'},
+      {id:'gentle', img:'hana_san.png', name:'ハナさん', desc:'やさしくサポート', color:'#27ae60'}
+    ];
+
+    var html = '<div style="max-width:480px;width:100%;margin:0 auto;padding:20px 16px;padding-top:max(env(safe-area-inset-top,20px),20px);">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">';
+    html += '<h2 style="font-size:20px;font-weight:700;margin:0;">🤖 AIと目標設定</h2>';
+    html += '<button onclick="document.getElementById(\'goalAISetupOverlay\').remove()" style="font-size:24px;background:none;border:none;color:#999;cursor:pointer;padding:4px 8px;">&times;</button>';
+    html += '</div>';
+
+    // 説明
+    html += '<p style="color:#666;font-size:14px;margin-bottom:20px;line-height:1.6;">AIキャラクターとチャットしながら、あなたに合った目標と行動計画を一緒に作ります。</p>';
+
+    // 目標入力
+    html += '<div style="margin-bottom:20px;">';
+    html += '<label style="font-size:14px;font-weight:600;color:#333;display:block;margin-bottom:8px;">💡 達成したいことを入力</label>';
+    html += '<input id="gaiDirectGoalInput" type="text" placeholder="例: 3ヶ月で5kg痩せたい" style="width:100%;padding:14px;border:1.5px solid #d1d5db;border-radius:12px;font-size:16px;box-sizing:border-box;outline:none;" />';
+    html += '</div>';
+
+    // カテゴリ
+    html += '<div style="margin-bottom:24px;">';
+    html += '<label style="font-size:14px;font-weight:600;color:#333;display:block;margin-bottom:8px;">📂 カテゴリ</label>';
+    html += '<select id="gaiDirectCategory" style="width:100%;padding:12px;border:1.5px solid #d1d5db;border-radius:12px;font-size:15px;background:#fff;box-sizing:border-box;">';
+    html += '<option value="健康">💪 健康</option><option value="仕事">💼 仕事</option><option value="学習">📚 学習</option>';
+    html += '<option value="家族">👨‍👩‍👧‍👦 家族</option><option value="趣味">🎨 趣味</option><option value="その他">📝 その他</option>';
+    html += '</select></div>';
+
+    // キャラクター選択
+    html += '<label style="font-size:14px;font-weight:600;color:#333;display:block;margin-bottom:12px;">🤖 相談するキャラクターを選択</label>';
+    html += '<div style="display:flex;gap:10px;margin-bottom:28px;">';
+    toneData.forEach(function(td) {
+      var isDefault = td.id === 'normal';
+      html += '<button type="button" onclick="document.querySelectorAll(\'#goalAISetupOverlay .gai-direct-char\').forEach(function(b){b.style.borderColor=\'#e0e0e0\';b.style.background=\'#fff\';});this.style.borderColor=\'' + td.color + '\';this.style.background=\'#f8f9fa\';this.setAttribute(\'data-selected\',\'true\');document.querySelectorAll(\'#goalAISetupOverlay .gai-direct-char\').forEach(function(b){if(b!==event.currentTarget)b.removeAttribute(\'data-selected\');});" class="gai-direct-char" data-tone="' + td.id + '"' + (isDefault ? ' data-selected="true"' : '') + ' style="flex:1;padding:14px 8px;border:2px solid ' + (isDefault ? td.color : '#e0e0e0') + ';border-radius:14px;background:' + (isDefault ? '#f8f9fa' : '#fff') + ';cursor:pointer;text-align:center;">';
+      html += '<img src="' + td.img + '" alt="' + td.name + '" style="width:56px;height:56px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 8px;">';
+      html += '<div style="font-size:13px;font-weight:700;color:#333;">' + td.name + '</div>';
+      html += '<div style="font-size:11px;color:#888;margin-top:2px;">' + td.desc + '</div>';
+      html += '</button>';
+    });
+    html += '</div>';
+
+    // 開始ボタン
+    html += '<button onclick="window._startGoalAIDirect()" style="width:100%;padding:16px;background:linear-gradient(135deg,#2196F3,#1565C0);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(33,150,243,0.3);">🚀 チャットで目標を設定する</button>';
+    html += '</div>';
+
+    overlay.innerHTML = html;
+    document.body.appendChild(overlay);
+
+    // 入力にフォーカス
+    setTimeout(function() {
+      var inp = document.getElementById('gaiDirectGoalInput');
+      if (inp) inp.focus();
+    }, 200);
+  }
+
+  // AIチャット直接開始（セットアップ画面から）
+  async function startGoalAIDirect() {
+    var goalInput = document.getElementById('gaiDirectGoalInput');
+    var categorySelect = document.getElementById('gaiDirectCategory');
+    var text = goalInput ? goalInput.value.trim() : '';
+    var category = categorySelect ? categorySelect.value : 'その他';
+
+    if (!text) {
+      goalInput.style.borderColor = '#e74c3c';
+      goalInput.setAttribute('placeholder', '⚠️ 目標を入力してください');
+      goalInput.focus();
+      return;
+    }
+
+    // 選択されたキャラクターを取得
+    var selectedChar = document.querySelector('#goalAISetupOverlay .gai-direct-char[data-selected="true"]');
+    var tone = selectedChar ? selectedChar.getAttribute('data-tone') : 'normal';
+
+    // キャラクター制限チェック
+    if (window.DaycePlan) {
+      var charCheck = window.DaycePlan.checkCharacter(tone);
+      if (!charCheck.allowed) {
+        window.DaycePlan.showUpgradeModal({ type: 'goalCoach', plan: window.DaycePlan.getPlan(), current: 0, limit: 0, reason: charCheck.reason });
+        return;
+      }
+    }
+
+    // セットアップ画面を閉じる
+    var setupOverlay = document.getElementById('goalAISetupOverlay');
+    if (setupOverlay) setupOverlay.remove();
+
+    // 状態リセット＆チャット開始（startGoalAIChatのロジックを流用）
+    _state.goalText = text;
+    _state.category = category;
+    _state.goalId = null;
+    _state.chatHistory = [];
+    _state.turnCount = 0;
+    _state.maxTurns = 5;
+    _state.tone = tone;
+    _state.isWaiting = false;
+
+    // 使用回数カウント
+    if (window.DaycePlan) { window.DaycePlan.incrementUsage('goalCoach'); window.DaycePlan.renderPlanBadges(); }
+
+    // 目標を先に追加
+    var goalId = Date.now();
+    var now = new Date();
+    var month = window.selectedGoalsMonth || window.goalsCurrentMonth ||
+      (now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0'));
+    var newGoal = {
+      id: goalId,
+      text: text,
+      category: category,
+      createdAt: now.toISOString(),
+      month: month,
+      completed: false,
+      weeklyTasks: []
+    };
+    var existingGoals = _loadGoalsFromStorage();
+    existingGoals.unshift(newGoal);
+    _saveGoalsToStorage(existingGoals);
+    _state.goalId = goalId;
+
+    // チャットモーダルを開く
+    var modal = document.getElementById('goalAIChatModal');
+    var messagesEl = document.getElementById('gaiMessages');
+    var tasksEl = document.getElementById('gaiTasks');
+    var inputArea = document.getElementById('gaiInputArea');
+
+    if (messagesEl) messagesEl.innerHTML = '';
+    if (tasksEl) { tasksEl.innerHTML = ''; tasksEl.style.display = 'none'; }
+    if (inputArea) inputArea.style.display = 'flex';
+    if (modal) { modal.style.display = ''; modal.classList.add('gai-open'); }
+
+    // キャラクター選択ボタンを更新
+    var charBtns = modal.querySelectorAll('.gai-char-btn');
+    charBtns.forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-tone') === tone);
+    });
+
+    var charNames = { harsh: 'マネージャー', normal: 'タクヤ先輩', gentle: 'ハナさん' };
+    var charName = charNames[tone] || 'タクヤ先輩';
+
+    addMessage('system', charName + 'に目標設定の相談をする');
+    addMessage('user', '「' + text + '」を達成したい（' + category + '）');
+    _state.chatHistory.push({ role: 'user', text: text + '（カテゴリ: ' + category + '）' });
+
+    await sendToAI();
+  }
+
   // ========== グローバル公開 ==========
   window._closeGoalAIChat = closeChat;
   window._gaiSendMessage = gaiSendMessage;
   window._gaiAddTasks = addSelectedTasks;
   window._gaiSelectChar = selectChar;
   window._gaiContinueChat = continueChat;
+  window._openGoalAIDirect = openGoalAIDirect;
+  window._startGoalAIDirect = startGoalAIDirect;
 
   // ========== 初期化 ==========
   function init() {
