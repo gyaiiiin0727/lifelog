@@ -312,7 +312,14 @@
       aiBtn.style.display = 'none';
     };
 
-    addBtn.parentNode.insertBefore(aiBtn, addBtn.nextSibling);
+    // "or" 区切り表示
+    var orDiv = document.createElement('div');
+    orDiv.id = 'goalAddOrDivider';
+    orDiv.style.cssText = 'display:flex;align-items:center;gap:12px;margin:12px 0;';
+    orDiv.innerHTML = '<div style="flex:1;height:1px;background:#e0e0e0;"></div><span style="font-size:13px;color:#aaa;font-weight:600;">or</span><div style="flex:1;height:1px;background:#e0e0e0;"></div>';
+
+    addBtn.parentNode.insertBefore(orDiv, addBtn.nextSibling);
+    orDiv.parentNode.insertBefore(aiBtn, orDiv.nextSibling);
     aiBtn.parentNode.insertBefore(charWrap, aiBtn.nextSibling);
     charWrap.parentNode.insertBefore(startBtn, charWrap.nextSibling);
   }
@@ -422,6 +429,47 @@
     return _charImages[_state.tone] || _charImages.normal;
   }
 
+  // ========== テキスト→HTML変換（箇条書き・改行対応） ==========
+  function formatAIText(text) {
+    if (!text) return '';
+    // HTMLエスケープ
+    var escaped = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    // 行ごとに処理
+    var lines = escaped.split('\n');
+    var html = '';
+    var inList = false;
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+      // 箇条書き: ・, -, *, •, 数字付き (1. 2) ...)
+      var bulletMatch = line.match(/^\s*([・\-\*•]|(\d+[\.\)]\s?))\s*/);
+      if (bulletMatch) {
+        if (!inList) { html += '<ul style="margin:6px 0;padding-left:18px;list-style:none;">'; inList = true; }
+        var content = line.replace(/^\s*([・\-\*•]|(\d+[\.\)]\s?))\s*/, '');
+        // **太字** 対応
+        content = content.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+        html += '<li style="margin:4px 0;padding-left:4px;position:relative;line-height:1.5;">';
+        // アイコンを付ける: 数字リストは番号、それ以外は▸
+        if (line.match(/^\s*\d+[\.\)]/)) {
+          html += '<span style="color:#2196F3;font-weight:700;margin-right:4px;">' + line.match(/^\s*(\d+)/)[1] + '.</span> ';
+        } else {
+          html += '<span style="color:#2196F3;margin-right:4px;">▸</span>';
+        }
+        html += content + '</li>';
+      } else {
+        if (inList) { html += '</ul>'; inList = false; }
+        // **太字** 対応
+        line = line.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+        if (line.trim() === '') {
+          html += '<div style="height:8px;"></div>';
+        } else {
+          html += '<div style="line-height:1.6;margin:2px 0;">' + line + '</div>';
+        }
+      }
+    }
+    if (inList) html += '</ul>';
+    return html;
+  }
+
   // ========== メッセージ追加 ==========
   function addMessage(role, text) {
     var messagesEl = document.getElementById('gaiMessages');
@@ -434,7 +482,7 @@
       sysDiv.textContent = text;
       messagesEl.appendChild(sysDiv);
     } else if (role === 'ai') {
-      // AIメッセージ（アイコン＋吹き出し）
+      // AIメッセージ（アイコン＋吹き出し）— HTML変換で箇条書き対応
       var row = document.createElement('div');
       row.className = 'gai-msg-row';
       var img = document.createElement('img');
@@ -443,7 +491,7 @@
       img.alt = '';
       var bubble = document.createElement('div');
       bubble.className = 'gai-msg gai-msg-ai';
-      bubble.textContent = text;
+      bubble.innerHTML = formatAIText(text);
       row.appendChild(img);
       row.appendChild(bubble);
       messagesEl.appendChild(row);
@@ -727,27 +775,38 @@
       _freqRule +
       '- 準備やTips（「バッグを用意する」等）ではなく、目標達成に直結する行動そのものにしてください\n';
 
+    // フォーマットルール（全プロンプト共通）
+    var formatRule =
+      '【返信フォーマットのルール】\n' +
+      '- 長い文章は避け、短い段落 + 箇条書き（・や数字リスト）で見やすく整理してください\n' +
+      '- 1つの段落は2〜3文以内にしてください\n' +
+      '- ポイントを伝えるときは必ず箇条書きを使ってください\n' +
+      '- 箇条書きの各項目は1行で簡潔に書いてください\n\n';
+
     // 初回: ヒアリング質問
     if (_state.turnCount === 0) {
-      return charHeader + userContext +
+      return charHeader + userContext + formatRule +
         '【指示】あなたは目標設定のコーチです。\n' +
         'ユーザーが「' + _state.goalText + '」（カテゴリ: ' + _state.category + '）という目標を立てようとしています。\n' +
-        'この目標を' + _monthName + '末までの計画に落とし込むために、1つだけ短い質問をしてください。\n' +
-        '- ユーザーの過去データがあれば、それを踏まえた質問をしてください\n' +
+        'この目標を' + _monthName + '末までの計画に落とし込むために、以下の流れで返信してください：\n' +
+        '1. まず短い共感コメント（1文）\n' +
+        '2. 目標を達成するために大事なポイントを2〜3個、箇条書きで簡潔に示す\n' +
+        '3. 最後に、計画を作るための質問を1つだけする\n' +
+        '- ユーザーの過去データがあれば、それを踏まえた内容にしてください\n' +
         '- ' + (_cat === '健康' ? '具体的な数値、頻度（週何回？毎日？）、' : '具体的なゴールイメージや現在の状況、') + _monthName + '末にどうなりたいかを聞く質問が望ましい\n' +
-        '- 質問は1〜2文で簡潔に\n' +
         '- キャラクター設定の口調に従って会話してください\n' +
-        '- タスクリストや分析結果は出力しないでください\n' +
-        '- 普通の会話として質問だけ返してください\n';
+        '- タスクリストや分析結果は出力しないでください\n';
     }
 
     // 2-3往復目: 質問を続ける（最低2回は質問する）
     if (_state.turnCount < 2) {
-      return charHeader +
+      return charHeader + formatRule +
         '【指示】あなたは目標設定のコーチです。\n' +
-        '以下の会話を踏まえて、もう1つだけ追加の短い質問をしてください。\n' +
+        '以下の会話を踏まえて、以下の流れで返信してください：\n' +
+        '1. ユーザーの回答を踏まえた短いフィードバック（1〜2文）\n' +
+        '2. 必要なら補足ポイントを箇条書きで2〜3個\n' +
+        '3. 計画を作るための追加質問を1つだけ\n' +
         '- 「最初の1週間はどれくらいやれそう？」「' + _monthName + '末にはどうなっていたい？」など、' + _monthName + '末までの計画を作るための質問をしてください\n' +
-        '- 質問は1〜2文で簡潔に\n' +
         '- キャラクター設定の口調に従ってください\n' +
         '- タスクリストはまだ出力しないでください\n\n' +
         '【会話履歴】\n' + historyText;
@@ -755,10 +814,10 @@
 
     // それ以降: 質問 or タスク提案
     if (_state.turnCount < _state.maxTurns - 1) {
-      return charHeader +
+      return charHeader + formatRule +
         '【指示】あなたは目標設定のコーチです。\n' +
         '以下の会話を踏まえて、次のどちらかを行ってください：\n' +
-        '- まだ情報が足りなければ、1つだけ追加の短い質問をしてください\n' +
+        '- まだ情報が足りなければ、フィードバック＋箇条書きポイント＋質問1つの形式で返信\n' +
         '- 十分な情報があれば、' + _monthName + '末までの計画を提案してください\n' +
         weeklyPlanRule +
         '- キャラクター設定の口調に従ってください\n\n' +
@@ -1255,6 +1314,9 @@
     if (inputArea) inputArea.style.display = 'flex';
     var input = document.getElementById('gaiInput');
     if (input) input.focus();
+    // 「もっと話す」を押した後、2回ラリーで再度タスクを提示するためにターンカウントをリセット
+    _state.turnCount = 0;
+    _state.maxTurns = 5;
     // 「もっと詳しく聞きたい」というメッセージを表示
     addMessage('ai', '了解！もう少し詳しく教えてください。何でも聞いてくださいね 😊');
   }
