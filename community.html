@@ -2,13 +2,9 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Dayce Community</title>
-<meta name="description" content="Dayceユーザーのコミュニティ掲示板。日々の振り返りやTipsを共有しよう。">
-<meta property="og:title" content="Dayce Community">
-<meta property="og:description" content="Dayceユーザーのコミュニティ掲示板">
-<meta property="og:type" content="website">
-<meta name="theme-color" content="#ffffff">
+<meta name="description" content="Dayceユーザーの交流・情報共有コミュニティ">
 <link rel="icon" href="./icon.jpg">
 <style>
 :root {
@@ -18,615 +14,220 @@
   --blue-dark: #1976D2;
   --gray-50: #f8f9fa;
   --gray-100: #f0f0f0;
+  --gray-200: #e5e7eb;
   --gray-400: #999;
   --gray-600: #666;
+  --green: #27ae60;
+  --red: #e74c3c;
 }
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  color: var(--black);
-  background: var(--gray-50);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Header */
-.cm-header {
-  position: sticky; top: 0; z-index: 100;
-  height: 56px; display: flex; align-items: center; justify-content: space-between;
-  padding: 0 16px; background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-}
-.cm-logo { display:flex; align-items:center; gap:2px; text-decoration:none; }
-.cm-logo img { width:30px; height:30px; border-radius:6px; }
-.cm-logo span { font-size:18px; font-weight:800; color:var(--black); }
-.cm-logo small { font-size:12px; color:var(--gray-400); margin-left:6px; font-weight:600; }
-.cm-header-link { font-size:13px; color:var(--blue); text-decoration:none; font-weight:600; }
-
-/* Container */
-.cm-container { max-width:640px; margin:0 auto; padding:16px; }
-
-/* Auth Banner */
-.cm-auth-banner {
-  background: var(--white); border-radius:14px; padding:20px;
-  margin-bottom:16px; border:1px solid var(--gray-100);
-}
-.cm-auth-banner h3 { font-size:15px; margin-bottom:12px; }
-.cm-auth-tabs { display:flex; gap:0; margin-bottom:14px; }
-.cm-auth-tab {
-  flex:1; padding:8px; text-align:center; font-size:13px; font-weight:600;
-  border:1px solid var(--gray-100); background:var(--white); cursor:pointer; color:var(--gray-600);
-}
-.cm-auth-tab:first-child { border-radius:8px 0 0 8px; }
-.cm-auth-tab:last-child { border-radius:0 8px 8px 0; }
-.cm-auth-tab.active { background:var(--black); color:var(--white); border-color:var(--black); }
-.cm-auth-input {
-  width:100%; padding:10px 12px; border:1px solid var(--gray-100); border-radius:8px;
-  font-size:14px; margin-bottom:8px; outline:none;
-}
-.cm-auth-input:focus { border-color:var(--blue); }
-.cm-auth-btn {
-  width:100%; padding:12px; border:none; border-radius:10px;
-  background:var(--blue); color:var(--white); font-size:14px; font-weight:700;
-  cursor:pointer; transition:all 0.2s;
-}
-.cm-auth-btn:hover { background:var(--blue-dark); }
-.cm-auth-btn:disabled { opacity:0.5; cursor:not-allowed; }
-.cm-auth-error { color:#ef4444; font-size:12px; margin-top:6px; }
-.cm-auth-info { color:var(--gray-600); font-size:12px; margin-top:8px; text-align:center; }
-
-/* User Bar */
-.cm-user-bar {
-  background:var(--white); border-radius:14px; padding:14px 16px;
-  margin-bottom:16px; border:1px solid var(--gray-100);
-  display:flex; align-items:center; justify-content:space-between;
-}
-.cm-user-info { display:flex; align-items:center; gap:10px; }
-.cm-avatar {
-  width:36px; height:36px; border-radius:50%; display:flex; align-items:center;
-  justify-content:center; font-weight:700; font-size:16px; color:var(--white);
-}
-.cm-user-name { font-size:14px; font-weight:700; }
-.cm-user-email { font-size:11px; color:var(--gray-400); }
-.cm-logout-btn {
-  font-size:12px; color:var(--gray-400); background:none; border:1px solid var(--gray-100);
-  padding:4px 10px; border-radius:6px; cursor:pointer;
-}
-
-/* Compose */
-.cm-compose {
-  background:var(--white); border-radius:14px; padding:16px;
-  margin-bottom:16px; border:1px solid var(--gray-100);
-}
-.cm-compose textarea {
-  width:100%; min-height:80px; padding:12px; border:1px solid var(--gray-100);
-  border-radius:10px; font-size:14px; font-family:inherit; resize:vertical;
-  outline:none; line-height:1.5;
-}
-.cm-compose textarea:focus { border-color:var(--blue); }
-.cm-compose-footer { display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
-.cm-char-count { font-size:12px; color:var(--gray-400); }
-.cm-post-btn {
-  padding:10px 24px; border:none; border-radius:10px;
-  background:var(--black); color:var(--white); font-size:14px; font-weight:700;
-  cursor:pointer; transition:all 0.2s;
-}
-.cm-post-btn:hover { background:#333; }
-.cm-post-btn:disabled { opacity:0.4; cursor:not-allowed; }
-
-/* Posts */
-.cm-post {
-  background:var(--white); border-radius:14px; padding:16px;
-  margin-bottom:12px; border:1px solid var(--gray-100);
-}
-.cm-post-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-.cm-post-avatar {
-  width:32px; height:32px; border-radius:50%; display:flex; align-items:center;
-  justify-content:center; font-weight:700; font-size:14px; color:var(--white); flex-shrink:0;
-}
-.cm-post-meta { flex:1; }
-.cm-post-nick { font-size:14px; font-weight:700; }
-.cm-post-time { font-size:11px; color:var(--gray-400); margin-left:8px; }
-.cm-post-body { font-size:14px; line-height:1.6; white-space:pre-wrap; word-break:break-word; margin-bottom:12px; }
-.cm-post-actions { display:flex; align-items:center; gap:12px; }
-.cm-comment-toggle {
-  font-size:13px; color:var(--gray-600); background:none; border:none;
-  cursor:pointer; padding:4px 0;
-}
-.cm-delete-btn {
-  font-size:12px; color:#ef4444; background:none; border:none; cursor:pointer;
-  margin-left:auto; padding:4px 8px;
-}
-
-/* Comments */
-.cm-comments { margin-top:12px; padding-top:12px; border-top:1px solid var(--gray-100); }
-.cm-comment {
-  display:flex; gap:8px; margin-bottom:10px; padding:8px 10px;
-  background:var(--gray-50); border-radius:10px;
-}
-.cm-comment-avatar {
-  width:24px; height:24px; min-width:24px; border-radius:50%; display:flex;
-  align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--white);
-}
-.cm-comment-content { flex:1; }
-.cm-comment-nick { font-size:12px; font-weight:700; }
-.cm-comment-time { font-size:10px; color:var(--gray-400); margin-left:6px; }
-.cm-comment-text { font-size:13px; line-height:1.5; margin-top:2px; }
-.cm-comment-del { font-size:11px; color:#ef4444; background:none; border:none; cursor:pointer; margin-left:auto; }
-.cm-comment-form { display:flex; gap:8px; margin-top:10px; }
-.cm-comment-input {
-  flex:1; padding:8px 12px; border:1px solid var(--gray-100); border-radius:8px;
-  font-size:13px; outline:none; font-family:inherit;
-}
-.cm-comment-input:focus { border-color:var(--blue); }
-.cm-comment-submit {
-  padding:8px 16px; border:none; border-radius:8px; background:var(--blue);
-  color:var(--white); font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap;
-}
-
-/* Nickname Modal */
-.cm-modal-overlay {
-  position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5);
-  z-index:200; display:flex; align-items:center; justify-content:center; padding:20px;
-}
-.cm-modal {
-  background:var(--white); border-radius:16px; padding:24px; max-width:360px; width:100%;
-}
-.cm-modal h3 { font-size:16px; margin-bottom:12px; }
-.cm-modal p { font-size:13px; color:var(--gray-600); margin-bottom:14px; }
-
-/* Loading & Empty */
-.cm-loading { text-align:center; padding:40px; color:var(--gray-400); font-size:14px; }
-.cm-empty { text-align:center; padding:60px 20px; color:var(--gray-400); }
-.cm-empty-icon { font-size:3rem; margin-bottom:12px; }
-.cm-load-more {
-  display:block; width:100%; padding:14px; border:1px solid var(--gray-100);
-  border-radius:10px; background:var(--white); font-size:14px; color:var(--gray-600);
-  cursor:pointer; text-align:center; font-weight:600;
-}
-.cm-load-more:hover { background:var(--gray-50); }
-
-/* Toast */
-.cm-toast {
-  position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
-  background:var(--black); color:var(--white); padding:12px 24px; border-radius:10px;
-  font-size:13px; font-weight:600; z-index:300; opacity:0; transition:opacity 0.3s;
-  pointer-events:none;
-}
-.cm-toast.show { opacity:1; }
-
-/* Footer */
-.cm-footer {
-  text-align:center; padding:30px 16px; font-size:12px; color:var(--gray-400);
-}
-
-/* hide */
-.hidden { display:none !important; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; background: var(--gray-50); color: var(--black); -webkit-font-smoothing: antialiased; min-height: 100vh; }
+.hidden { display: none !important; }
+.cm-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--gray-100); padding: 10px 16px; padding-top: max(env(safe-area-inset-top, 10px), 10px); }
+.cm-header-inner { max-width: 640px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+.cm-logo { display: flex; align-items: center; gap: 6px; text-decoration: none; color: var(--black); }
+.cm-logo img { width: 28px; height: 28px; border-radius: 6px; }
+.cm-logo span { font-size: 18px; font-weight: 800; }
+.cm-logo small { font-size: 10px; color: var(--gray-400); margin-left: 2px; }
+.cm-header-user { display: flex; align-items: center; gap: 10px; }
+.cm-header-link { font-size: 12px; color: var(--blue); text-decoration: none; }
+.cm-avatar-sm { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; flex-shrink: 0; }
+.cm-tabs { display: flex; gap: 0; background: var(--gray-100); border-radius: 10px; padding: 3px; max-width: 300px; margin: 8px auto 0; }
+.cm-tab { flex: 1; padding: 7px 0; border: none; border-radius: 8px; background: transparent; font-size: 13px; font-weight: 600; color: var(--gray-600); cursor: pointer; transition: all 0.2s; }
+.cm-tab.active { background: var(--black); color: var(--white); }
+.cm-container { max-width: 640px; margin: 0 auto; padding: 16px; }
+.cm-section-title { font-size: 16px; font-weight: 700; margin: 20px 0 12px; }
+.cm-section-title:first-child { margin-top: 0; }
+.cm-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+.cm-featured { display: flex; gap: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; scroll-snap-type: x mandatory; }
+.cm-featured::-webkit-scrollbar { display: none; }
+.cm-featured-card { flex: 0 0 280px; scroll-snap-align: start; background: var(--white); border: 1px solid var(--gray-200); border-radius: 14px; padding: 16px; cursor: pointer; transition: border-color 0.2s; }
+.cm-featured-card:hover { border-color: var(--blue); }
+.cm-featured-tag { display: inline-block; font-size: 11px; font-weight: 600; color: var(--blue); background: #e3f2fd; padding: 2px 8px; border-radius: 6px; margin-bottom: 8px; }
+.cm-featured-title { font-size: 15px; font-weight: 700; line-height: 1.4; margin-bottom: 6px; }
+.cm-featured-excerpt { font-size: 13px; color: var(--gray-600); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.cm-featured-meta { font-size: 11px; color: var(--gray-400); margin-top: 8px; }
+.cm-cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.cm-cat-card { background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 14px; padding: 16px 12px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.cm-cat-card:hover { border-color: var(--blue); background: #f0f7ff; }
+.cm-cat-emoji { font-size: 28px; display: block; margin-bottom: 6px; }
+.cm-cat-label { font-size: 14px; font-weight: 700; color: var(--black); }
+.cm-thread-item { background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.2s; }
+.cm-thread-item:hover { border-color: var(--blue); }
+.cm-thread-title { font-size: 15px; font-weight: 700; line-height: 1.4; margin-bottom: 4px; }
+.cm-thread-meta { font-size: 12px; color: var(--gray-400); display: flex; gap: 12px; align-items: center; }
+.cm-thread-op { background: var(--white); border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px 16px; margin-bottom: 16px; }
+.cm-thread-op-title { font-size: 18px; font-weight: 800; margin-bottom: 8px; line-height: 1.4; }
+.cm-thread-op-body { font-size: 14px; line-height: 1.8; white-space: pre-wrap; }
+.cm-author-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.cm-author-name { font-size: 13px; font-weight: 600; }
+.cm-article-body { font-size: 15px; line-height: 1.9; white-space: pre-wrap; }
+.cm-comments-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+.cm-comment { padding: 10px 0; border-bottom: 1px solid var(--gray-100); }
+.cm-comment:last-child { border-bottom: none; }
+.cm-comment-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.cm-comment-nick { font-size: 12px; font-weight: 600; }
+.cm-comment-time { font-size: 11px; color: var(--gray-400); }
+.cm-comment-body { font-size: 13px; line-height: 1.6; }
+.cm-comment-del { font-size: 11px; color: var(--gray-400); cursor: pointer; margin-left: auto; }
+.cm-comment-del:hover { color: var(--red); }
+.cm-input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--gray-200); border-radius: 10px; font-size: 15px; outline: none; font-family: inherit; }
+.cm-input:focus { border-color: var(--blue); }
+.cm-textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--gray-200); border-radius: 10px; font-size: 15px; outline: none; font-family: inherit; resize: vertical; min-height: 80px; }
+.cm-textarea:focus { border-color: var(--blue); }
+.cm-btn { display: inline-block; padding: 10px 20px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+.cm-btn-primary { background: var(--blue); color: var(--white); }
+.cm-btn-primary:hover { background: var(--blue-dark); }
+.cm-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.cm-btn-outline { background: transparent; border: 1.5px solid var(--gray-200); color: var(--gray-600); }
+.cm-btn-outline:hover { border-color: var(--blue); color: var(--blue); }
+.cm-btn-sm { padding: 6px 14px; font-size: 13px; }
+.cm-form-group { margin-bottom: 14px; }
+.cm-form-label { font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 6px; display: block; }
+.cm-char-count { font-size: 11px; color: var(--gray-400); text-align: right; margin-top: 4px; }
+.cm-reply-form { display: flex; gap: 8px; margin-top: 12px; }
+.cm-reply-form .cm-input { flex: 1; padding: 10px 12px; font-size: 14px; }
+.cm-tag { display: inline-block; font-size: 11px; color: var(--blue); background: #e3f2fd; padding: 2px 8px; border-radius: 6px; margin-right: 4px; }
+.cm-filter-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.cm-filter-pill { padding: 6px 14px; border: 1.5px solid var(--gray-200); border-radius: 20px; background: var(--white); font-size: 13px; font-weight: 600; color: var(--gray-600); cursor: pointer; transition: all 0.2s; }
+.cm-filter-pill.active { border-color: var(--blue); color: var(--blue); background: #e3f2fd; }
+.cm-back { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--gray-600); cursor: pointer; margin-bottom: 12px; background: none; border: none; font-family: inherit; }
+.cm-back:hover { color: var(--blue); }
+.cm-login-prompt { background: #e3f2fd; border-radius: 12px; padding: 16px; text-align: center; font-size: 14px; color: var(--blue-dark); margin-top: 12px; }
+.cm-login-prompt a { color: var(--blue); font-weight: 600; }
+.cm-cta { background: linear-gradient(135deg, #2196F3 0%, #1565C0 100%); border-radius: 14px; padding: 24px 20px; text-align: center; color: #fff; margin: 20px 0; }
+.cm-cta h3 { font-size: 16px; margin-bottom: 6px; }
+.cm-cta p { font-size: 13px; opacity: 0.9; margin-bottom: 12px; }
+.cm-cta a { display: inline-block; background: #fff; color: var(--blue); padding: 10px 24px; border-radius: 10px; font-weight: 700; font-size: 14px; text-decoration: none; }
+.cm-empty { text-align: center; padding: 40px 16px; color: var(--gray-400); }
+.cm-empty-icon { font-size: 40px; margin-bottom: 8px; }
+.cm-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--black); color: var(--white); padding: 12px 24px; border-radius: 24px; font-size: 14px; z-index: 99999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.cm-toast.show { opacity: 1; }
+.cm-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.cm-modal { background: var(--white); border-radius: 16px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; padding: 24px 20px; }
+.cm-modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+.cm-modal-close { float: right; font-size: 24px; cursor: pointer; color: var(--gray-400); background: none; border: none; line-height: 1; }
+.cm-loading { text-align: center; padding: 32px; color: var(--gray-400); }
+.cm-footer { text-align: center; padding: 24px 16px; font-size: 12px; color: var(--gray-400); }
 </style>
 </head>
 <body>
-
 <header class="cm-header">
-  <a href="./lp.html" class="cm-logo">
-    <img src="./icon.jpg" alt="Dayce" width="30" height="30">
-    <span>ayce</span>
-    <small>Community</small>
-  </a>
-  <a href="./index.html" class="cm-header-link">アプリに戻る</a>
+  <div class="cm-header-inner">
+    <a href="./lp.html" class="cm-logo"><img src="./icon.jpg" alt="Dayce" width="28" height="28"><span>ayce</span><small>Community</small></a>
+    <div class="cm-header-user" id="headerUser"><a href="./index.html" class="cm-header-link">ログイン</a></div>
+  </div>
+  <div class="cm-tabs" id="mainTabs">
+    <button class="cm-tab active" onclick="switchTab('home')" data-tab="home">ホーム</button>
+    <button class="cm-tab" onclick="switchTab('articles')" data-tab="articles">記事</button>
+    <button class="cm-tab" onclick="switchTab('forum')" data-tab="forum">交流</button>
+  </div>
 </header>
-
-<div class="cm-container">
-  <!-- Auth Banner (shown when not logged in) -->
-  <div id="authBanner" class="cm-auth-banner hidden">
-    <h3>コミュニティに参加しよう</h3>
-    <div class="cm-auth-tabs">
-      <div class="cm-auth-tab active" onclick="switchAuthTab('login')">ログイン</div>
-      <div class="cm-auth-tab" onclick="switchAuthTab('register')">新規登録</div>
+<main class="cm-container">
+<section id="tabHome">
+  <h3 class="cm-section-title">📝 注目の記事</h3>
+  <div class="cm-featured" id="homeFeatured"><div class="cm-loading">読み込み中...</div></div>
+  <h3 class="cm-section-title">💬 最新の交流</h3>
+  <div id="homeRecent"><div class="cm-loading">読み込み中...</div></div>
+  <div id="homeCta" class="cm-cta hidden">
+    <h3>Dayceで毎日を記録しよう</h3>
+    <p>声で日記を書いて、AIがあなたの気づきを整理します</p>
+    <a href="./index.html">アプリを始める →</a>
+  </div>
+</section>
+<section id="tabArticles" class="hidden">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <div class="cm-filter-pills" id="articleFilters">
+      <button class="cm-filter-pill active" onclick="filterArticles('all')">すべて</button>
+      <button class="cm-filter-pill" onclick="filterArticles('admin')">📌 運営</button>
+      <button class="cm-filter-pill" onclick="filterArticles('user')">✏️ ユーザー</button>
     </div>
-    <input type="email" id="authEmail" class="cm-auth-input" placeholder="メールアドレス">
-    <input type="password" id="authPassword" class="cm-auth-input" placeholder="パスワード">
-    <button id="authBtn" class="cm-auth-btn" onclick="doAuth()">ログイン</button>
-    <div id="authError" class="cm-auth-error hidden"></div>
-    <div class="cm-auth-info">Dayceアプリのアカウントでログインできます</div>
+    <button class="cm-btn cm-btn-primary cm-btn-sm hidden" id="writeArticleBtn" onclick="showNewArticleModal()">✏️ 記事を書く</button>
   </div>
-
-  <!-- User Bar (shown when logged in) -->
-  <div id="userBar" class="cm-user-bar hidden">
-    <div class="cm-user-info">
-      <div id="userAvatar" class="cm-avatar">N</div>
-      <div>
-        <div id="userName" class="cm-user-name">名無し</div>
-        <div id="userEmail" class="cm-user-email"></div>
-      </div>
+  <div id="articleList"></div>
+  <div id="articleDetail" class="hidden"></div>
+  <button class="cm-btn cm-btn-outline hidden" id="articleLoadMore" onclick="loadArticles(false)" style="width:100%;margin-top:8px;">もっと読む</button>
+</section>
+<section id="tabForum" class="hidden">
+  <div id="forumCategories">
+    <h3 class="cm-section-title">🎯 目標カテゴリ</h3>
+    <div class="cm-cat-grid" id="goalCats"></div>
+    <h3 class="cm-section-title">💭 用途カテゴリ</h3>
+    <div class="cm-cat-grid" id="purposeCats"></div>
+  </div>
+  <div id="forumThreads" class="hidden">
+    <button class="cm-back" onclick="showForumCategories()">← カテゴリ一覧</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h3 class="cm-section-title" id="threadListTitle" style="margin:0;"></h3>
+      <button class="cm-btn cm-btn-primary cm-btn-sm hidden" id="newThreadBtn" onclick="showNewThreadModal()">＋ 新規スレッド</button>
     </div>
-    <button class="cm-logout-btn" onclick="doLogout()">ログアウト</button>
+    <div id="threadList"></div>
+    <button class="cm-btn cm-btn-outline hidden" id="threadLoadMore" onclick="loadThreads(false)" style="width:100%;margin-top:8px;">もっと読む</button>
   </div>
-
-  <!-- Compose (shown when logged in) -->
-  <div id="composeBox" class="cm-compose hidden">
-    <textarea id="composeText" placeholder="今日の振り返りやTipsをシェアしよう..." maxlength="500" oninput="updateCharCount()"></textarea>
-    <div class="cm-compose-footer">
-      <span id="charCount" class="cm-char-count">0 / 500</span>
-      <button id="postBtn" class="cm-post-btn" onclick="createPost()" disabled>投稿する</button>
-    </div>
+  <div id="forumThread" class="hidden">
+    <button class="cm-back" id="threadBackBtn" onclick="backToThreads()">← スレッド一覧</button>
+    <div id="threadDetail"></div>
   </div>
-
-  <!-- Login prompt for non-logged-in -->
-  <div id="loginPrompt" class="cm-compose hidden" style="text-align:center;padding:20px;">
-    <p style="font-size:14px;color:var(--gray-600);">投稿するにはログインが必要です ☝️</p>
-  </div>
-
-  <!-- Posts -->
-  <div id="postsContainer"></div>
-  <div id="loadingIndicator" class="cm-loading">読み込み中...</div>
-  <button id="loadMoreBtn" class="cm-load-more hidden" onclick="loadPosts()">もっと読む</button>
-  <div id="emptyState" class="cm-empty hidden">
-    <div class="cm-empty-icon">💬</div>
-    <p>まだ投稿がありません。<br>最初の投稿をしてみよう！</p>
-  </div>
-</div>
-
-<!-- Nickname Modal -->
-<div id="nicknameModal" class="cm-modal-overlay hidden" onclick="event.target===this&&closeNicknameModal()">
-  <div class="cm-modal">
-    <h3>ニックネームを設定</h3>
-    <p>コミュニティで表示される名前を入力してください</p>
-    <input type="text" id="nicknameInput" class="cm-auth-input" placeholder="ニックネーム（1〜20文字）" maxlength="20">
-    <button class="cm-auth-btn" onclick="setNickname()">設定する</button>
-  </div>
-</div>
-
-<!-- Toast -->
-<div id="toast" class="cm-toast"></div>
-
+</section>
+</main>
+<div class="cm-toast" id="toast"></div>
 <footer class="cm-footer">&copy; 2025 Dayce Community</footer>
-
 <script>
-const API = 'https://lifelog-ai.little-limit-621c.workers.dev';
-let currentUser = null;  // { email, nickname }
-let nextCursor = null;
-let isLoading = false;
-let authMode = 'login';
+'use strict';
+var API='https://lifelog-ai.little-limit-621c.workers.dev';
+var COLORS=['#e74c3c','#2196F3','#27ae60','#f39c12','#9b59b6','#1abc9c','#e67e22','#3498db'];
+var CATEGORIES={goal:[{id:'health',emoji:'💪',label:'健康'},{id:'work',emoji:'💼',label:'仕事'},{id:'study',emoji:'📚',label:'学習'},{id:'hobby',emoji:'🎨',label:'趣味'}],purpose:[{id:'question',emoji:'❓',label:'質問・相談'},{id:'chat',emoji:'💬',label:'雑談'},{id:'result',emoji:'🏆',label:'成果報告'},{id:'tips',emoji:'💡',label:'Tips共有'}]};
+var ALL_CATS=CATEGORIES.goal.concat(CATEGORIES.purpose);
+function catInfo(id){return ALL_CATS.find(function(c){return c.id===id;})||{emoji:'💬',label:id||'雑談'};}
+var currentUser=null,activeTab='home',articleFilter='all',articleCursor=null,currentCategory=null,threadCursor=null,currentThreadId=null;
 
-// --- Colors ---
-const COLORS = ['#2196F3','#e74c3c','#27ae60','#9b59b6','#f39c12','#1abc9c','#e67e22','#3498db'];
-function avatarColor(str) {
-  let h = 0;
-  for (let i = 0; i < str.length; i++) h = str.charCodeAt(i) + ((h << 5) - h);
-  return COLORS[Math.abs(h) % COLORS.length];
-}
-function avatarLetter(name) { return (name || '?')[0].toUpperCase(); }
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function timeAgo(iso){var d=Date.now()-new Date(iso).getTime();if(d<60000)return'たった今';if(d<3600000)return Math.floor(d/60000)+'分前';if(d<86400000)return Math.floor(d/3600000)+'時間前';return Math.floor(d/86400000)+'日前';}
+function avatarColor(e){var h=0;for(var i=0;i<(e||'').length;i++)h=((h<<5)-h)+e.charCodeAt(i);return COLORS[Math.abs(h)%COLORS.length];}
+function avatarHTML(n,e,s){s=s||30;return'<div class="cm-avatar-sm" style="width:'+s+'px;height:'+s+'px;background:'+avatarColor(e)+';font-size:'+(s*0.43)+'px;">'+esc((n||'?')[0])+'</div>';}
+function showToast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
+function truncate(s,n){return s&&s.length>n?s.slice(0,n)+'...':s;}
+async function apiFetch(p,o){o=o||{};var h={'Content-Type':'application/json'};var tk=localStorage.getItem('syncAuthToken');if(tk)h['Authorization']='Bearer '+tk;var fo={method:o.method||'GET',headers:h};if(o.body)fo.body=JSON.stringify(o.body);var r=await fetch(API+p,fo);var d=await r.json();if(!r.ok)throw new Error(d.error||'Error');return d;}
+function requireLogin(){if(currentUser){if(!currentUser.nickname){showNicknameModal();return false;}return true;}showToast('投稿するにはDayceアプリからログインしてください');return false;}
 
-// --- Escape ---
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+async function initUser(){var tk=localStorage.getItem('syncAuthToken'),em=localStorage.getItem('syncAuthEmail');if(!tk||!em){currentUser=null;updateAuthUI();return;}try{var d=await apiFetch('/api/community/me');currentUser={email:d.email||em,nickname:d.nickname,isAdmin:d.isAdmin||false};}catch(e){currentUser=null;}updateAuthUI();}
+function updateAuthUI(){var el=document.getElementById('headerUser');if(currentUser){el.innerHTML=avatarHTML(currentUser.nickname||currentUser.email,currentUser.email,30)+'<a href="./index.html" class="cm-header-link">アプリ</a>';}else{el.innerHTML='<a href="./index.html" class="cm-header-link">ログイン</a>';}var wb=document.getElementById('writeArticleBtn');if(wb)wb.classList.toggle('hidden',!currentUser);var nt=document.getElementById('newThreadBtn');if(nt)nt.classList.toggle('hidden',!currentUser);var cta=document.getElementById('homeCta');if(cta)cta.classList.toggle('hidden',!!currentUser);}
 
-// --- Time ago ---
-function timeAgo(iso) {
-  var d = Date.now() - new Date(iso).getTime();
-  if (d < 60000) return 'たった今';
-  if (d < 3600000) return Math.floor(d/60000) + '分前';
-  if (d < 86400000) return Math.floor(d/3600000) + '時間前';
-  return Math.floor(d/86400000) + '日前';
-}
+function switchTab(tab){activeTab=tab;document.getElementById('tabHome').classList.toggle('hidden',tab!=='home');document.getElementById('tabArticles').classList.toggle('hidden',tab!=='articles');document.getElementById('tabForum').classList.toggle('hidden',tab!=='forum');document.querySelectorAll('.cm-tab').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-tab')===tab);});location.hash=tab;if(tab==='home')loadHome();if(tab==='articles'){showArticleList();loadArticles(true);}if(tab==='forum')showForumCategories();}
 
-// --- API helper ---
-async function apiFetch(path, opts) {
-  opts = opts || {};
-  var headers = { 'Content-Type': 'application/json' };
-  var token = localStorage.getItem('syncAuthToken');
-  if (token) headers['Authorization'] = 'Bearer ' + token;
-  var resp = await fetch(API + path, Object.assign({}, opts, { headers: headers }));
-  var data = await resp.json();
-  if (!resp.ok) throw new Error(data.error || 'Error');
-  return data;
-}
+async function loadHome(){var fe=document.getElementById('homeFeatured'),re=document.getElementById('homeRecent');fe.innerHTML='<div class="cm-loading">読み込み中...</div>';re.innerHTML='<div class="cm-loading">読み込み中...</div>';try{var[ar,pr]=await Promise.all([apiFetch('/api/community/articles?limit=5'),apiFetch('/api/community/posts?limit=5')]);if(ar.articles&&ar.articles.length>0){fe.innerHTML=ar.articles.map(function(a){return'<div class="cm-featured-card" onclick="switchTab(\'articles\');showArticleDetail(\''+esc(a.id)+'\')">'+'<div class="cm-featured-tag">'+(a.type==='admin'?'📌 運営':'✏️ ユーザー')+'</div>'+'<div class="cm-featured-title">'+esc(a.title)+'</div>'+'<div class="cm-featured-excerpt">'+esc(truncate(a.body,80))+'</div>'+'<div class="cm-featured-meta">'+esc(a.nickname)+' · '+timeAgo(a.createdAt)+'</div></div>';}).join('');}else{fe.innerHTML='<div class="cm-empty" style="padding:20px;"><div class="cm-empty-icon">📝</div>まだ記事がありません</div>';}if(pr.posts&&pr.posts.length>0){re.innerHTML=pr.posts.map(function(p){var ci=catInfo(p.category);var t=p.title||truncate(p.body,40);return'<div class="cm-thread-item" onclick="switchTab(\'forum\');openThreadDirect(\''+esc(p.id)+'\',\''+esc(p.category||'chat')+'\')">'+'<div class="cm-thread-title">'+ci.emoji+' '+esc(t)+'</div>'+'<div class="cm-thread-meta"><span>'+esc(p.nickname)+'</span><span>💬 '+(p.commentCount||0)+'</span><span>'+timeAgo(p.lastActivity||p.createdAt)+'</span></div></div>';}).join('');}else{re.innerHTML='<div class="cm-empty" style="padding:20px;"><div class="cm-empty-icon">💬</div>まだ投稿がありません</div>';}}catch(e){fe.innerHTML='<div class="cm-empty">読み込みに失敗しました</div>';re.innerHTML='';}}
 
-// --- Toast ---
-function showToast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 2500);
-}
+function showArticleList(){document.getElementById('articleList').classList.remove('hidden');document.getElementById('articleDetail').classList.add('hidden');document.getElementById('articleDetail').innerHTML='';}
+function filterArticles(f){articleFilter=f;document.querySelectorAll('#articleFilters .cm-filter-pill').forEach(function(b,i){b.classList.toggle('active',i===(f==='all'?0:f==='admin'?1:2));});loadArticles(true);}
+async function loadArticles(reset){if(reset)articleCursor=null;var el=document.getElementById('articleList');if(reset)el.innerHTML='<div class="cm-loading">読み込み中...</div>';try{var q='/api/community/articles?limit=10&filter='+articleFilter;if(articleCursor)q+='&cursor='+articleCursor;var d=await apiFetch(q);if(reset)el.innerHTML='';if(d.articles.length===0&&reset){el.innerHTML='<div class="cm-empty"><div class="cm-empty-icon">📝</div>まだ記事がありません</div>';}d.articles.forEach(function(a){el.innerHTML+='<div class="cm-card" style="cursor:pointer;" onclick="showArticleDetail(\''+esc(a.id)+'\')">'+'<div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;">'+'<span class="cm-tag">'+(a.type==='admin'?'📌 運営':'✏️ ユーザー')+'</span>'+(a.tags||[]).map(function(t){return'<span class="cm-tag">'+esc(t)+'</span>';}).join('')+'</div>'+'<div style="font-size:16px;font-weight:700;margin-bottom:6px;line-height:1.4;">'+esc(a.title)+'</div>'+'<div style="font-size:13px;color:var(--gray-600);line-height:1.5;margin-bottom:8px;">'+esc(truncate(a.body,120))+'</div>'+'<div style="font-size:12px;color:var(--gray-400);display:flex;gap:12px;"><span>'+esc(a.nickname)+'</span><span>'+timeAgo(a.createdAt)+'</span><span>💬 '+(a.commentCount||0)+'</span></div></div>';});articleCursor=d.nextCursor;document.getElementById('articleLoadMore').classList.toggle('hidden',!d.hasMore);}catch(e){if(reset)el.innerHTML='<div class="cm-empty">読み込みに失敗しました</div>';}}
 
-// --- Auth ---
-function switchAuthTab(mode) {
-  authMode = mode;
-  var tabs = document.querySelectorAll('.cm-auth-tab');
-  tabs[0].classList.toggle('active', mode === 'login');
-  tabs[1].classList.toggle('active', mode === 'register');
-  document.getElementById('authBtn').textContent = mode === 'login' ? 'ログイン' : '新規登録';
-  document.getElementById('authError').classList.add('hidden');
-}
+async function showArticleDetail(id){var le=document.getElementById('articleList'),de=document.getElementById('articleDetail');le.classList.add('hidden');de.classList.remove('hidden');document.getElementById('articleLoadMore').classList.add('hidden');de.innerHTML='<div class="cm-loading">読み込み中...</div>';try{var[ar,cr]=await Promise.all([apiFetch('/api/community/articles/'+id),apiFetch('/api/community/articles/'+id+'/comments')]);var a=ar.article;var h='<button class="cm-back" onclick="showArticleList();loadArticles(true);">← 記事一覧</button><div class="cm-card">';h+='<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;"><span class="cm-tag">'+(a.type==='admin'?'📌 運営':'✏️ ユーザー')+'</span>';(a.tags||[]).forEach(function(t){h+='<span class="cm-tag">'+esc(t)+'</span>';});h+='</div><h2 style="font-size:20px;font-weight:800;line-height:1.4;margin-bottom:10px;">'+esc(a.title)+'</h2>';h+='<div class="cm-author-row">'+avatarHTML(a.nickname,a.author,28)+'<span class="cm-author-name">'+esc(a.nickname)+'</span><span style="font-size:12px;color:var(--gray-400);">'+timeAgo(a.createdAt)+'</span></div>';h+='<div class="cm-article-body">'+esc(a.body)+'</div>';if(currentUser&&(currentUser.email===a.author||currentUser.isAdmin)){h+='<div style="margin-top:16px;text-align:right;"><button class="cm-btn cm-btn-outline cm-btn-sm" style="color:var(--red);border-color:var(--red);" onclick="deleteArticle(\''+esc(a.id)+'\')">🗑 削除</button></div>';}h+='</div><div class="cm-card" style="margin-top:12px;"><div class="cm-comments-title">💬 コメント ('+(cr.comments||[]).length+')</div>';h+=renderComments(cr.comments||[],a.id);if(currentUser){h+='<div class="cm-reply-form"><input class="cm-input" id="articleCommentInput" placeholder="コメントを書く..." maxlength="300"><button class="cm-btn cm-btn-primary cm-btn-sm" onclick="postComment(\''+esc(a.id)+'\',\'articleCommentInput\')">送信</button></div>';}else{h+='<div class="cm-login-prompt"><a href="./index.html">Dayceアプリからログイン</a>してコメントしよう</div>';}h+='</div>';de.innerHTML=h;}catch(e){de.innerHTML='<button class="cm-back" onclick="showArticleList();loadArticles(true);">← 戻る</button><div class="cm-empty">記事を読み込めませんでした</div>';}}
+async function deleteArticle(id){if(!confirm('この記事を削除しますか？'))return;try{await apiFetch('/api/community/articles/delete',{method:'POST',body:{articleId:id}});showToast('記事を削除しました');showArticleList();loadArticles(true);}catch(e){showToast('エラー: '+e.message);}}
 
-async function doAuth() {
-  var email = document.getElementById('authEmail').value.trim();
-  var password = document.getElementById('authPassword').value;
-  if (!email || !password) return;
+function showForumCategories(){document.getElementById('forumCategories').classList.remove('hidden');document.getElementById('forumThreads').classList.add('hidden');document.getElementById('forumThread').classList.add('hidden');renderCategories();}
+function renderCategories(){['goal','purpose'].forEach(function(g){var el=document.getElementById(g==='goal'?'goalCats':'purposeCats');el.innerHTML=CATEGORIES[g].map(function(c){return'<div class="cm-cat-card" onclick="openCategory(\''+c.id+'\')">'+'<span class="cm-cat-emoji">'+c.emoji+'</span>'+'<span class="cm-cat-label">'+esc(c.label)+'</span></div>';}).join('');});}
+function openCategory(catId){currentCategory=catId;threadCursor=null;document.getElementById('forumCategories').classList.add('hidden');document.getElementById('forumThreads').classList.remove('hidden');document.getElementById('forumThread').classList.add('hidden');var ci=catInfo(catId);document.getElementById('threadListTitle').textContent=ci.emoji+' '+ci.label;document.getElementById('newThreadBtn').classList.toggle('hidden',!currentUser);loadThreads(true);}
+async function loadThreads(reset){if(reset)threadCursor=null;var el=document.getElementById('threadList');if(reset)el.innerHTML='<div class="cm-loading">読み込み中...</div>';try{var q='/api/community/posts?limit=20&category='+currentCategory;if(threadCursor)q+='&cursor='+threadCursor;var d=await apiFetch(q);if(reset)el.innerHTML='';if(d.posts.length===0&&reset){el.innerHTML='<div class="cm-empty"><div class="cm-empty-icon">💬</div>まだスレッドがありません<br>最初のスレッドを作成しよう！</div>';}d.posts.forEach(function(p){var t=p.title||truncate(p.body,50);el.innerHTML+='<div class="cm-thread-item" onclick="openThread(\''+esc(p.id)+'\')">'+'<div class="cm-thread-title">'+esc(t)+'</div>'+'<div class="cm-thread-meta"><span>'+esc(p.nickname)+'</span><span>💬 '+(p.commentCount||0)+'</span><span>'+timeAgo(p.lastActivity||p.createdAt)+'</span></div></div>';});threadCursor=d.nextCursor;document.getElementById('threadLoadMore').classList.toggle('hidden',!d.hasMore);}catch(e){if(reset)el.innerHTML='<div class="cm-empty">読み込みに失敗しました</div>';}}
 
-  var btn = document.getElementById('authBtn');
-  btn.disabled = true;
-  document.getElementById('authError').classList.add('hidden');
+async function openThread(tid){currentThreadId=tid;document.getElementById('forumThreads').classList.add('hidden');document.getElementById('forumThread').classList.remove('hidden');var de=document.getElementById('threadDetail');de.innerHTML='<div class="cm-loading">読み込み中...</div>';try{var[pr,cr]=await Promise.all([apiFetch('/api/community/posts?limit=50'+(currentCategory?'&category='+currentCategory:'')),apiFetch('/api/community/posts/'+tid+'/comments')]);var th=null;for(var i=0;i<pr.posts.length;i++){if(pr.posts[i].id===tid){th=pr.posts[i];break;}}if(!th){de.innerHTML='<div class="cm-empty">スレッドが見つかりません</div>';return;}var ci=catInfo(th.category);var t=th.title||truncate(th.body,50);var h='<div class="cm-thread-op"><span class="cm-tag">'+ci.emoji+' '+ci.label+'</span><div class="cm-thread-op-title">'+esc(t)+'</div><div class="cm-author-row">'+avatarHTML(th.nickname,th.author,28)+'<span class="cm-author-name">'+esc(th.nickname)+'</span><span style="font-size:12px;color:var(--gray-400);">'+timeAgo(th.createdAt)+'</span></div><div class="cm-thread-op-body">'+esc(th.body)+'</div>';if(currentUser&&(currentUser.email===th.author||currentUser.isAdmin)){h+='<div style="margin-top:12px;text-align:right;"><button class="cm-btn cm-btn-outline cm-btn-sm" style="color:var(--red);border-color:var(--red);" onclick="deleteThread(\''+esc(th.id)+'\')">🗑 削除</button></div>';}h+='</div><div class="cm-card"><div class="cm-comments-title">💬 返信 ('+(cr.comments||[]).length+')</div>';h+=renderComments(cr.comments||[],tid);if(currentUser){h+='<div class="cm-reply-form"><input class="cm-input" id="threadCommentInput" placeholder="返信を書く..." maxlength="300"><button class="cm-btn cm-btn-primary cm-btn-sm" onclick="postComment(\''+esc(tid)+'\',\'threadCommentInput\')">送信</button></div>';}else{h+='<div class="cm-login-prompt"><a href="./index.html">Dayceアプリからログイン</a>して返信しよう</div>';}h+='</div>';de.innerHTML=h;}catch(e){de.innerHTML='<div class="cm-empty">読み込みに失敗しました</div>';}}
+function openThreadDirect(tid,cat){currentCategory=cat||'chat';currentThreadId=tid;document.getElementById('forumCategories').classList.add('hidden');document.getElementById('forumThreads').classList.add('hidden');document.getElementById('forumThread').classList.remove('hidden');document.getElementById('threadBackBtn').onclick=function(){openCategory(currentCategory);};openThread(tid);}
+function backToThreads(){document.getElementById('forumThread').classList.add('hidden');document.getElementById('forumThreads').classList.remove('hidden');}
+async function deleteThread(id){if(!confirm('このスレッドを削除しますか？'))return;try{await apiFetch('/api/community/posts/delete',{method:'POST',body:{postId:id}});showToast('スレッドを削除しました');if(currentCategory)openCategory(currentCategory);else showForumCategories();}catch(e){showToast('エラー: '+e.message);}}
 
-  try {
-    var endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
-    var data = await apiFetch(endpoint, {
-      method: 'POST',
-      body: JSON.stringify({ email: email, password: password })
-    });
-    localStorage.setItem('syncAuthToken', data.token);
-    localStorage.setItem('syncAuthEmail', data.email);
-    await initUser();
-  } catch (e) {
-    var err = document.getElementById('authError');
-    err.textContent = e.message;
-    err.classList.remove('hidden');
-  }
-  btn.disabled = false;
-}
+function renderComments(comments,targetId){if(!comments||comments.length===0)return'<div style="padding:8px 0;color:var(--gray-400);font-size:13px;">まだコメントはありません</div>';return comments.map(function(c){var cd=currentUser&&(currentUser.email===c.author||currentUser.isAdmin);return'<div class="cm-comment"><div class="cm-comment-header">'+avatarHTML(c.nickname,c.author,22)+'<span class="cm-comment-nick">'+esc(c.nickname)+'</span><span class="cm-comment-time">'+timeAgo(c.createdAt)+'</span>'+(cd?'<span class="cm-comment-del" onclick="deleteComment(\''+esc(targetId)+'\',\''+esc(c.id)+'\')">削除</span>':'')+'</div><div class="cm-comment-body">'+esc(c.body)+'</div></div>';}).join('');}
+async function postComment(tid,iid){if(!requireLogin())return;var inp=document.getElementById(iid);var t=inp?inp.value.trim():'';if(!t)return;try{var ep=tid.startsWith('a_')?'/api/community/articles/'+tid+'/comments':'/api/community/posts/'+tid+'/comments';await apiFetch(ep,{method:'POST',body:{body:t}});inp.value='';showToast('コメントしました');if(tid.startsWith('a_'))showArticleDetail(tid);else openThread(tid);}catch(e){showToast('エラー: '+e.message);}}
+async function deleteComment(tid,cid){if(!confirm('このコメントを削除しますか？'))return;try{await apiFetch('/api/community/comments/delete',{method:'POST',body:{targetId:tid,commentId:cid}});showToast('コメントを削除しました');if(tid.startsWith('a_'))showArticleDetail(tid);else openThread(tid);}catch(e){showToast('エラー: '+e.message);}}
 
-function doLogout() {
-  localStorage.removeItem('syncAuthToken');
-  localStorage.removeItem('syncAuthEmail');
-  currentUser = null;
-  updateUI();
-}
+function showNewArticleModal(){if(!requireLogin())return;var o=document.createElement('div');o.className='cm-modal-overlay';o.id='articleModal';o.onclick=function(e){if(e.target===o)o.remove();};o.innerHTML='<div class="cm-modal"><button class="cm-modal-close" onclick="document.getElementById(\'articleModal\').remove()">&times;</button><div class="cm-modal-title">✏️ 記事を書く</div><div class="cm-form-group"><label class="cm-form-label">タイトル</label><input class="cm-input" id="articleTitleInput" placeholder="記事のタイトル" maxlength="100"></div><div class="cm-form-group"><label class="cm-form-label">本文</label><textarea class="cm-textarea" id="articleBodyInput" placeholder="内容を書いてください..." maxlength="5000" rows="10"></textarea><div class="cm-char-count"><span id="articleCharCount">0</span> / 5000</div></div><div class="cm-form-group"><label class="cm-form-label">タグ（カンマ区切り、最大5個）</label><input class="cm-input" id="articleTagsInput" placeholder="例: ダイエット, 習慣化, コツ"></div><button class="cm-btn cm-btn-primary" style="width:100%;" onclick="submitArticle()">投稿する</button></div>';document.body.appendChild(o);document.getElementById('articleBodyInput').addEventListener('input',function(){document.getElementById('articleCharCount').textContent=this.value.length;});}
+async function submitArticle(){var ti=document.getElementById('articleTitleInput').value.trim(),bo=document.getElementById('articleBodyInput').value.trim(),ts=document.getElementById('articleTagsInput').value.trim();var tags=ts?ts.split(',').map(function(t){return t.trim();}).filter(Boolean).slice(0,5):[];if(!ti){showToast('タイトルを入力してください');return;}if(!bo){showToast('本文を入力してください');return;}try{await apiFetch('/api/community/articles',{method:'POST',body:{title:ti,body:bo,tags:tags}});document.getElementById('articleModal').remove();showToast('記事を投稿しました！');loadArticles(true);}catch(e){showToast('エラー: '+e.message);}}
 
-// --- User ---
-async function initUser() {
-  var token = localStorage.getItem('syncAuthToken');
-  var email = localStorage.getItem('syncAuthEmail');
-  if (!token || !email) { currentUser = null; updateUI(); return; }
+function showNewThreadModal(){if(!requireLogin())return;var ci=catInfo(currentCategory);var o=document.createElement('div');o.className='cm-modal-overlay';o.id='threadModal';o.onclick=function(e){if(e.target===o)o.remove();};var opts=ALL_CATS.map(function(c){return'<option value="'+c.id+'"'+(c.id===currentCategory?' selected':'')+'>'+c.emoji+' '+c.label+'</option>';}).join('');o.innerHTML='<div class="cm-modal"><button class="cm-modal-close" onclick="document.getElementById(\'threadModal\').remove()">&times;</button><div class="cm-modal-title">💬 新しいスレッド</div><div class="cm-form-group"><label class="cm-form-label">カテゴリ</label><select class="cm-input" id="threadCatInput">'+opts+'</select></div><div class="cm-form-group"><label class="cm-form-label">タイトル</label><input class="cm-input" id="threadTitleInput" placeholder="スレッドのタイトル" maxlength="100"></div><div class="cm-form-group"><label class="cm-form-label">本文</label><textarea class="cm-textarea" id="threadBodyInput" placeholder="内容を書いてください..." maxlength="2000" rows="6"></textarea><div class="cm-char-count"><span id="threadCharCount">0</span> / 2000</div></div><button class="cm-btn cm-btn-primary" style="width:100%;" onclick="submitThread()">投稿する</button></div>';document.body.appendChild(o);document.getElementById('threadBodyInput').addEventListener('input',function(){document.getElementById('threadCharCount').textContent=this.value.length;});}
+async function submitThread(){var cat=document.getElementById('threadCatInput').value,ti=document.getElementById('threadTitleInput').value.trim(),bo=document.getElementById('threadBodyInput').value.trim();if(!ti){showToast('タイトルを入力してください');return;}if(!bo){showToast('本文を入力してください');return;}try{await apiFetch('/api/community/posts',{method:'POST',body:{title:ti,body:bo,category:cat}});document.getElementById('threadModal').remove();showToast('スレッドを作成しました！');currentCategory=cat;openCategory(cat);}catch(e){showToast('エラー: '+e.message);}}
 
-  try {
-    var data = await apiFetch('/api/community/me');
-    currentUser = { email: data.email || email, nickname: data.nickname || null };
-  } catch (e) {
-    // Token expired
-    currentUser = null;
-    localStorage.removeItem('syncAuthToken');
-  }
-  updateUI();
-}
+function showNicknameModal(){var o=document.createElement('div');o.className='cm-modal-overlay';o.id='nicknameModal';o.onclick=function(e){if(e.target===o)o.remove();};o.innerHTML='<div class="cm-modal"><button class="cm-modal-close" onclick="document.getElementById(\'nicknameModal\').remove()">&times;</button><div class="cm-modal-title">👤 ニックネーム設定</div><p style="font-size:14px;color:var(--gray-600);margin-bottom:14px;">コミュニティで表示される名前を設定してください</p><div class="cm-form-group"><input class="cm-input" id="nicknameInput" placeholder="ニックネーム（1〜20文字）" maxlength="20"></div><button class="cm-btn cm-btn-primary" style="width:100%;" onclick="submitNickname()">設定する</button></div>';document.body.appendChild(o);}
+async function submitNickname(){var n=document.getElementById('nicknameInput').value.trim();if(!n){showToast('ニックネームを入力してください');return;}try{await apiFetch('/api/community/me',{method:'POST',body:{nickname:n}});currentUser.nickname=n;updateAuthUI();document.getElementById('nicknameModal').remove();showToast('ニックネームを設定しました');}catch(e){showToast('エラー: '+e.message);}}
 
-function updateUI() {
-  var loggedIn = !!currentUser;
-  document.getElementById('authBanner').classList.toggle('hidden', loggedIn);
-  document.getElementById('userBar').classList.toggle('hidden', !loggedIn);
-  document.getElementById('composeBox').classList.toggle('hidden', !loggedIn);
-  document.getElementById('loginPrompt').classList.toggle('hidden', loggedIn);
-
-  if (loggedIn) {
-    var name = currentUser.nickname || '名無し';
-    document.getElementById('userName').textContent = name;
-    document.getElementById('userEmail').textContent = currentUser.email;
-    var av = document.getElementById('userAvatar');
-    av.textContent = avatarLetter(name);
-    av.style.background = avatarColor(currentUser.email);
-  }
-}
-
-// --- Nickname ---
-function showNicknameModal() {
-  document.getElementById('nicknameModal').classList.remove('hidden');
-  document.getElementById('nicknameInput').focus();
-}
-function closeNicknameModal() {
-  document.getElementById('nicknameModal').classList.add('hidden');
-}
-async function setNickname() {
-  var name = document.getElementById('nicknameInput').value.trim();
-  if (!name) return;
-  try {
-    await apiFetch('/api/community/me', {
-      method: 'POST',
-      body: JSON.stringify({ nickname: name })
-    });
-    currentUser.nickname = name;
-    updateUI();
-    closeNicknameModal();
-    showToast('ニックネームを設定しました');
-  } catch (e) {
-    showToast(e.message);
-  }
-}
-
-// --- Compose ---
-function updateCharCount() {
-  var text = document.getElementById('composeText').value;
-  document.getElementById('charCount').textContent = text.length + ' / 500';
-  document.getElementById('postBtn').disabled = !text.trim();
-}
-
-async function createPost() {
-  if (!currentUser) return;
-  if (!currentUser.nickname) { showNicknameModal(); return; }
-
-  var textarea = document.getElementById('composeText');
-  var text = textarea.value.trim();
-  if (!text) return;
-
-  document.getElementById('postBtn').disabled = true;
-  try {
-    var data = await apiFetch('/api/community/posts', {
-      method: 'POST',
-      body: JSON.stringify({ body: text })
-    });
-    textarea.value = '';
-    updateCharCount();
-    // Insert post at top
-    var container = document.getElementById('postsContainer');
-    var div = document.createElement('div');
-    div.innerHTML = renderPost(data.post);
-    container.insertBefore(div.firstElementChild, container.firstChild);
-    document.getElementById('emptyState').classList.add('hidden');
-    showToast('投稿しました！');
-  } catch (e) {
-    showToast(e.message);
-  }
-  document.getElementById('postBtn').disabled = false;
-}
-
-// --- Posts ---
-function renderPost(p) {
-  var isOwn = currentUser && currentUser.email === p.author;
-  var color = avatarColor(p.author);
-  return '<div class="cm-post" id="post-' + esc(p.id) + '">'
-    + '<div class="cm-post-header">'
-    + '<div class="cm-post-avatar" style="background:' + color + ';">' + avatarLetter(p.nickname) + '</div>'
-    + '<div class="cm-post-meta">'
-    + '<span class="cm-post-nick">' + esc(p.nickname) + '</span>'
-    + '<span class="cm-post-time">' + timeAgo(p.createdAt) + '</span>'
-    + '</div></div>'
-    + '<div class="cm-post-body">' + esc(p.body) + '</div>'
-    + '<div class="cm-post-actions">'
-    + '<button class="cm-comment-toggle" onclick="toggleComments(\'' + p.id + '\')">'
-    + '💬 ' + (p.commentCount || 0) + '件のコメント</button>'
-    + (isOwn ? '<button class="cm-delete-btn" onclick="deletePost(\'' + p.id + '\')">削除</button>' : '')
-    + '</div>'
-    + '<div class="cm-comments hidden" id="comments-' + p.id + '">'
-    + '<div class="cm-comments-list" id="commentslist-' + p.id + '"></div>'
-    + (currentUser ? '<div class="cm-comment-form">'
-      + '<input class="cm-comment-input" id="commentinput-' + p.id + '" placeholder="コメントを書く..." maxlength="300">'
-      + '<button class="cm-comment-submit" onclick="createComment(\'' + p.id + '\')">送信</button>'
-      + '</div>' : '')
-    + '</div></div>';
-}
-
-async function loadPosts() {
-  if (isLoading) return;
-  isLoading = true;
-  document.getElementById('loadingIndicator').classList.remove('hidden');
-  document.getElementById('loadMoreBtn').classList.add('hidden');
-
-  try {
-    var query = '/api/community/posts?limit=20';
-    if (nextCursor) query += '&cursor=' + encodeURIComponent(nextCursor);
-    var data = await apiFetch(query);
-    var container = document.getElementById('postsContainer');
-
-    if (data.posts.length === 0 && !nextCursor) {
-      document.getElementById('emptyState').classList.remove('hidden');
-    }
-
-    data.posts.forEach(function(p) {
-      var div = document.createElement('div');
-      div.innerHTML = renderPost(p);
-      container.appendChild(div.firstElementChild);
-    });
-
-    nextCursor = data.nextCursor;
-    if (data.hasMore && nextCursor) {
-      document.getElementById('loadMoreBtn').classList.remove('hidden');
-    }
-  } catch (e) {
-    showToast('読み込みに失敗しました');
-  }
-  document.getElementById('loadingIndicator').classList.add('hidden');
-  isLoading = false;
-}
-
-async function deletePost(postId) {
-  if (!confirm('この投稿を削除しますか？')) return;
-  try {
-    await apiFetch('/api/community/posts/delete', {
-      method: 'POST',
-      body: JSON.stringify({ postId: postId })
-    });
-    var el = document.getElementById('post-' + postId);
-    if (el) el.remove();
-    showToast('削除しました');
-  } catch (e) {
-    showToast(e.message);
-  }
-}
-
-// --- Comments ---
-async function toggleComments(postId) {
-  var el = document.getElementById('comments-' + postId);
-  if (el.classList.contains('hidden')) {
-    el.classList.remove('hidden');
-    await loadComments(postId);
-  } else {
-    el.classList.add('hidden');
-  }
-}
-
-async function loadComments(postId) {
-  var list = document.getElementById('commentslist-' + postId);
-  list.innerHTML = '<div style="text-align:center;padding:8px;color:var(--gray-400);font-size:12px;">読み込み中...</div>';
-  try {
-    var data = await apiFetch('/api/community/posts/' + postId + '/comments');
-    if (data.comments.length === 0) {
-      list.innerHTML = '<div style="padding:8px;color:var(--gray-400);font-size:13px;">まだコメントはありません</div>';
-      return;
-    }
-    list.innerHTML = data.comments.map(function(c) {
-      var isOwn = currentUser && currentUser.email === c.author;
-      var color = avatarColor(c.author);
-      return '<div class="cm-comment" id="comment-' + c.id + '">'
-        + '<div class="cm-comment-avatar" style="background:' + color + ';">' + avatarLetter(c.nickname) + '</div>'
-        + '<div class="cm-comment-content">'
-        + '<span class="cm-comment-nick">' + esc(c.nickname) + '</span>'
-        + '<span class="cm-comment-time">' + timeAgo(c.createdAt) + '</span>'
-        + '<div class="cm-comment-text">' + esc(c.body) + '</div>'
-        + '</div>'
-        + (isOwn ? '<button class="cm-comment-del" onclick="deleteComment(\'' + postId + '\',\'' + c.id + '\')">削除</button>' : '')
-        + '</div>';
-    }).join('');
-  } catch (e) {
-    list.innerHTML = '<div style="padding:8px;color:#ef4444;font-size:13px;">読み込みに失敗しました</div>';
-  }
-}
-
-async function createComment(postId) {
-  if (!currentUser) return;
-  if (!currentUser.nickname) { showNicknameModal(); return; }
-
-  var input = document.getElementById('commentinput-' + postId);
-  var text = input.value.trim();
-  if (!text) return;
-
-  try {
-    var data = await apiFetch('/api/community/posts/' + postId + '/comments', {
-      method: 'POST',
-      body: JSON.stringify({ body: text })
-    });
-    input.value = '';
-    await loadComments(postId);
-    // Update comment count on toggle button
-    var toggle = document.querySelector('#post-' + postId + ' .cm-comment-toggle');
-    if (toggle) {
-      var m = toggle.textContent.match(/\d+/);
-      var n = m ? parseInt(m[0]) + 1 : 1;
-      toggle.textContent = '💬 ' + n + '件のコメント';
-    }
-  } catch (e) {
-    showToast(e.message);
-  }
-}
-
-async function deleteComment(postId, commentId) {
-  if (!confirm('このコメントを削除しますか？')) return;
-  try {
-    await apiFetch('/api/community/comments/delete', {
-      method: 'POST',
-      body: JSON.stringify({ postId: postId, commentId: commentId })
-    });
-    var el = document.getElementById('comment-' + commentId);
-    if (el) el.remove();
-    showToast('削除しました');
-  } catch (e) {
-    showToast(e.message);
-  }
-}
-
-// --- Init ---
-document.addEventListener('DOMContentLoaded', async function() {
-  await initUser();
-  await loadPosts();
-});
+document.addEventListener('DOMContentLoaded',async function(){await initUser();var h=location.hash.slice(1);if(['home','articles','forum'].includes(h))switchTab(h);else switchTab('home');});
 </script>
 </body>
 </html>
