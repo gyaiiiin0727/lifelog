@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dayce Community</title>
+<meta name="description" content="Dayceユーザーのコミュニティ掲示板。日々の振り返りやTipsを共有しよう。">
+<meta property="og:title" content="Dayce Community">
+<meta property="og:description" content="Dayceユーザーのコミュニティ掲示板">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="./icon.jpg">
+<style>
+:root {
+  --black: #111;
+  --white: #fff;
+  --blue: #2196F3;
+  --blue-dark: #1976D2;
+  --gray-50: #f8f9fa;
+  --gray-100: #f0f0f0;
+  --gray-400: #999;
+  --gray-600: #666;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: var(--black);
+  background: var(--gray-50);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header */
+.cm-header {
+  position: sticky; top: 0; z-index: 100;
+  height: 56px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px; background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.cm-logo { display:flex; align-items:center; gap:2px; text-decoration:none; }
+.cm-logo img { width:30px; height:30px; border-radius:6px; }
+.cm-logo span { font-size:18px; font-weight:800; color:var(--black); }
+.cm-logo small { font-size:12px; color:var(--gray-400); margin-left:6px; font-weight:600; }
+.cm-header-link { font-size:13px; color:var(--blue); text-decoration:none; font-weight:600; }
+
+/* Container */
+.cm-container { max-width:640px; margin:0 auto; padding:16px; }
+
+/* Auth Banner */
+.cm-auth-banner {
+  background: var(--white); border-radius:14px; padding:20px;
+  margin-bottom:16px; border:1px solid var(--gray-100);
+}
+.cm-auth-banner h3 { font-size:15px; margin-bottom:12px; }
+.cm-auth-tabs { display:flex; gap:0; margin-bottom:14px; }
+.cm-auth-tab {
+  flex:1; padding:8px; text-align:center; font-size:13px; font-weight:600;
+  border:1px solid var(--gray-100); background:var(--white); cursor:pointer; color:var(--gray-600);
+}
+.cm-auth-tab:first-child { border-radius:8px 0 0 8px; }
+.cm-auth-tab:last-child { border-radius:0 8px 8px 0; }
+.cm-auth-tab.active { background:var(--black); color:var(--white); border-color:var(--black); }
+.cm-auth-input {
+  width:100%; padding:10px 12px; border:1px solid var(--gray-100); border-radius:8px;
+  font-size:14px; margin-bottom:8px; outline:none;
+}
+.cm-auth-input:focus { border-color:var(--blue); }
+.cm-auth-btn {
+  width:100%; padding:12px; border:none; border-radius:10px;
+  background:var(--blue); color:var(--white); font-size:14px; font-weight:700;
+  cursor:pointer; transition:all 0.2s;
+}
+.cm-auth-btn:hover { background:var(--blue-dark); }
+.cm-auth-btn:disabled { opacity:0.5; cursor:not-allowed; }
+.cm-auth-error { color:#ef4444; font-size:12px; margin-top:6px; }
+.cm-auth-info { color:var(--gray-600); font-size:12px; margin-top:8px; text-align:center; }
+
+/* User Bar */
+.cm-user-bar {
+  background:var(--white); border-radius:14px; padding:14px 16px;
+  margin-bottom:16px; border:1px solid var(--gray-100);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.cm-user-info { display:flex; align-items:center; gap:10px; }
+.cm-avatar {
+  width:36px; height:36px; border-radius:50%; display:flex; align-items:center;
+  justify-content:center; font-weight:700; font-size:16px; color:var(--white);
+}
+.cm-user-name { font-size:14px; font-weight:700; }
+.cm-user-email { font-size:11px; color:var(--gray-400); }
+.cm-logout-btn {
+  font-size:12px; color:var(--gray-400); background:none; border:1px solid var(--gray-100);
+  padding:4px 10px; border-radius:6px; cursor:pointer;
+}
+
+/* Compose */
+.cm-compose {
+  background:var(--white); border-radius:14px; padding:16px;
+  margin-bottom:16px; border:1px solid var(--gray-100);
+}
+.cm-compose textarea {
+  width:100%; min-height:80px; padding:12px; border:1px solid var(--gray-100);
+  border-radius:10px; font-size:14px; font-family:inherit; resize:vertical;
+  outline:none; line-height:1.5;
+}
+.cm-compose textarea:focus { border-color:var(--blue); }
+.cm-compose-footer { display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
+.cm-char-count { font-size:12px; color:var(--gray-400); }
+.cm-post-btn {
+  padding:10px 24px; border:none; border-radius:10px;
+  background:var(--black); color:var(--white); font-size:14px; font-weight:700;
+  cursor:pointer; transition:all 0.2s;
+}
+.cm-post-btn:hover { background:#333; }
+.cm-post-btn:disabled { opacity:0.4; cursor:not-allowed; }
+
+/* Posts */
+.cm-post {
+  background:var(--white); border-radius:14px; padding:16px;
+  margin-bottom:12px; border:1px solid var(--gray-100);
+}
+.cm-post-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.cm-post-avatar {
+  width:32px; height:32px; border-radius:50%; display:flex; align-items:center;
+  justify-content:center; font-weight:700; font-size:14px; color:var(--white); flex-shrink:0;
+}
+.cm-post-meta { flex:1; }
+.cm-post-nick { font-size:14px; font-weight:700; }
+.cm-post-time { font-size:11px; color:var(--gray-400); margin-left:8px; }
+.cm-post-body { font-size:14px; line-height:1.6; white-space:pre-wrap; word-break:break-word; margin-bottom:12px; }
+.cm-post-actions { display:flex; align-items:center; gap:12px; }
+.cm-comment-toggle {
+  font-size:13px; color:var(--gray-600); background:none; border:none;
+  cursor:pointer; padding:4px 0;
+}
+.cm-delete-btn {
+  font-size:12px; color:#ef4444; background:none; border:none; cursor:pointer;
+  margin-left:auto; padding:4px 8px;
+}
+
+/* Comments */
+.cm-comments { margin-top:12px; padding-top:12px; border-top:1px solid var(--gray-100); }
+.cm-comment {
+  display:flex; gap:8px; margin-bottom:10px; padding:8px 10px;
+  background:var(--gray-50); border-radius:10px;
+}
+.cm-comment-avatar {
+  width:24px; height:24px; min-width:24px; border-radius:50%; display:flex;
+  align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--white);
+}
+.cm-comment-content { flex:1; }
+.cm-comment-nick { font-size:12px; font-weight:700; }
+.cm-comment-time { font-size:10px; color:var(--gray-400); margin-left:6px; }
+.cm-comment-text { font-size:13px; line-height:1.5; margin-top:2px; }
+.cm-comment-del { font-size:11px; color:#ef4444; background:none; border:none; cursor:pointer; margin-left:auto; }
+.cm-comment-form { display:flex; gap:8px; margin-top:10px; }
+.cm-comment-input {
+  flex:1; padding:8px 12px; border:1px solid var(--gray-100); border-radius:8px;
+  font-size:13px; outline:none; font-family:inherit;
+}
+.cm-comment-input:focus { border-color:var(--blue); }
+.cm-comment-submit {
+  padding:8px 16px; border:none; border-radius:8px; background:var(--blue);
+  color:var(--white); font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap;
+}
+
+/* Nickname Modal */
+.cm-modal-overlay {
+  position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5);
+  z-index:200; display:flex; align-items:center; justify-content:center; padding:20px;
+}
+.cm-modal {
+  background:var(--white); border-radius:16px; padding:24px; max-width:360px; width:100%;
+}
+.cm-modal h3 { font-size:16px; margin-bottom:12px; }
+.cm-modal p { font-size:13px; color:var(--gray-600); margin-bottom:14px; }
+
+/* Loading & Empty */
+.cm-loading { text-align:center; padding:40px; color:var(--gray-400); font-size:14px; }
+.cm-empty { text-align:center; padding:60px 20px; color:var(--gray-400); }
+.cm-empty-icon { font-size:3rem; margin-bottom:12px; }
+.cm-load-more {
+  display:block; width:100%; padding:14px; border:1px solid var(--gray-100);
+  border-radius:10px; background:var(--white); font-size:14px; color:var(--gray-600);
+  cursor:pointer; text-align:center; font-weight:600;
+}
+.cm-load-more:hover { background:var(--gray-50); }
+
+/* Toast */
+.cm-toast {
+  position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+  background:var(--black); color:var(--white); padding:12px 24px; border-radius:10px;
+  font-size:13px; font-weight:600; z-index:300; opacity:0; transition:opacity 0.3s;
+  pointer-events:none;
+}
+.cm-toast.show { opacity:1; }
+
+/* Footer */
+.cm-footer {
+  text-align:center; padding:30px 16px; font-size:12px; color:var(--gray-400);
+}
+
+/* hide */
+.hidden { display:none !important; }
+</style>
+</head>
+<body>
+
+<header class="cm-header">
+  <a href="./lp.html" class="cm-logo">
+    <img src="./icon.jpg" alt="Dayce" width="30" height="30">
+    <span>ayce</span>
+    <small>Community</small>
+  </a>
+  <a href="./index.html" class="cm-header-link">アプリに戻る</a>
+</header>
+
+<div class="cm-container">
+  <!-- Auth Banner (shown when not logged in) -->
+  <div id="authBanner" class="cm-auth-banner hidden">
+    <h3>コミュニティに参加しよう</h3>
+    <div class="cm-auth-tabs">
+      <div class="cm-auth-tab active" onclick="switchAuthTab('login')">ログイン</div>
+      <div class="cm-auth-tab" onclick="switchAuthTab('register')">新規登録</div>
+    </div>
+    <input type="email" id="authEmail" class="cm-auth-input" placeholder="メールアドレス">
+    <input type="password" id="authPassword" class="cm-auth-input" placeholder="パスワード">
+    <button id="authBtn" class="cm-auth-btn" onclick="doAuth()">ログイン</button>
+    <div id="authError" class="cm-auth-error hidden"></div>
+    <div class="cm-auth-info">Dayceアプリのアカウントでログインできます</div>
+  </div>
+
+  <!-- User Bar (shown when logged in) -->
+  <div id="userBar" class="cm-user-bar hidden">
+    <div class="cm-user-info">
+      <div id="userAvatar" class="cm-avatar">N</div>
+      <div>
+        <div id="userName" class="cm-user-name">名無し</div>
+        <div id="userEmail" class="cm-user-email"></div>
+      </div>
+    </div>
+    <button class="cm-logout-btn" onclick="doLogout()">ログアウト</button>
+  </div>
+
+  <!-- Compose (shown when logged in) -->
+  <div id="composeBox" class="cm-compose hidden">
+    <textarea id="composeText" placeholder="今日の振り返りやTipsをシェアしよう..." maxlength="500" oninput="updateCharCount()"></textarea>
+    <div class="cm-compose-footer">
+      <span id="charCount" class="cm-char-count">0 / 500</span>
+      <button id="postBtn" class="cm-post-btn" onclick="createPost()" disabled>投稿する</button>
+    </div>
+  </div>
+
+  <!-- Login prompt for non-logged-in -->
+  <div id="loginPrompt" class="cm-compose hidden" style="text-align:center;padding:20px;">
+    <p style="font-size:14px;color:var(--gray-600);">投稿するにはログインが必要です ☝️</p>
+  </div>
+
+  <!-- Posts -->
+  <div id="postsContainer"></div>
+  <div id="loadingIndicator" class="cm-loading">読み込み中...</div>
+  <button id="loadMoreBtn" class="cm-load-more hidden" onclick="loadPosts()">もっと読む</button>
+  <div id="emptyState" class="cm-empty hidden">
+    <div class="cm-empty-icon">💬</div>
+    <p>まだ投稿がありません。<br>最初の投稿をしてみよう！</p>
+  </div>
+</div>
+
+<!-- Nickname Modal -->
+<div id="nicknameModal" class="cm-modal-overlay hidden" onclick="event.target===this&&closeNicknameModal()">
+  <div class="cm-modal">
+    <h3>ニックネームを設定</h3>
+    <p>コミュニティで表示される名前を入力してください</p>
+    <input type="text" id="nicknameInput" class="cm-auth-input" placeholder="ニックネーム（1〜20文字）" maxlength="20">
+    <button class="cm-auth-btn" onclick="setNickname()">設定する</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="cm-toast"></div>
+
+<footer class="cm-footer">&copy; 2025 Dayce Community</footer>
+
+<script>
+const API = 'https://lifelog-ai.little-limit-621c.workers.dev';
+let currentUser = null;  // { email, nickname }
+let nextCursor = null;
+let isLoading = false;
+let authMode = 'login';
+
+// --- Colors ---
+const COLORS = ['#2196F3','#e74c3c','#27ae60','#9b59b6','#f39c12','#1abc9c','#e67e22','#3498db'];
+function avatarColor(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = str.charCodeAt(i) + ((h << 5) - h);
+  return COLORS[Math.abs(h) % COLORS.length];
+}
+function avatarLetter(name) { return (name || '?')[0].toUpperCase(); }
+
+// --- Escape ---
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// --- Time ago ---
+function timeAgo(iso) {
+  var d = Date.now() - new Date(iso).getTime();
+  if (d < 60000) return 'たった今';
+  if (d < 3600000) return Math.floor(d/60000) + '分前';
+  if (d < 86400000) return Math.floor(d/3600000) + '時間前';
+  return Math.floor(d/86400000) + '日前';
+}
+
+// --- API helper ---
+async function apiFetch(path, opts) {
+  opts = opts || {};
+  var headers = { 'Content-Type': 'application/json' };
+  var token = localStorage.getItem('syncAuthToken');
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  var resp = await fetch(API + path, Object.assign({}, opts, { headers: headers }));
+  var data = await resp.json();
+  if (!resp.ok) throw new Error(data.error || 'Error');
+  return data;
+}
+
+// --- Toast ---
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+// --- Auth ---
+function switchAuthTab(mode) {
+  authMode = mode;
+  var tabs = document.querySelectorAll('.cm-auth-tab');
+  tabs[0].classList.toggle('active', mode === 'login');
+  tabs[1].classList.toggle('active', mode === 'register');
+  document.getElementById('authBtn').textContent = mode === 'login' ? 'ログイン' : '新規登録';
+  document.getElementById('authError').classList.add('hidden');
+}
+
+async function doAuth() {
+  var email = document.getElementById('authEmail').value.trim();
+  var password = document.getElementById('authPassword').value;
+  if (!email || !password) return;
+
+  var btn = document.getElementById('authBtn');
+  btn.disabled = true;
+  document.getElementById('authError').classList.add('hidden');
+
+  try {
+    var endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
+    var data = await apiFetch(endpoint, {
+      method: 'POST',
+      body: JSON.stringify({ email: email, password: password })
+    });
+    localStorage.setItem('syncAuthToken', data.token);
+    localStorage.setItem('syncAuthEmail', data.email);
+    await initUser();
+  } catch (e) {
+    var err = document.getElementById('authError');
+    err.textContent = e.message;
+    err.classList.remove('hidden');
+  }
+  btn.disabled = false;
+}
+
+function doLogout() {
+  localStorage.removeItem('syncAuthToken');
+  localStorage.removeItem('syncAuthEmail');
+  currentUser = null;
+  updateUI();
+}
+
+// --- User ---
+async function initUser() {
+  var token = localStorage.getItem('syncAuthToken');
+  var email = localStorage.getItem('syncAuthEmail');
+  if (!token || !email) { currentUser = null; updateUI(); return; }
+
+  try {
+    var data = await apiFetch('/api/community/me');
+    currentUser = { email: data.email || email, nickname: data.nickname || null };
+  } catch (e) {
+    // Token expired
+    currentUser = null;
+    localStorage.removeItem('syncAuthToken');
+  }
+  updateUI();
+}
+
+function updateUI() {
+  var loggedIn = !!currentUser;
+  document.getElementById('authBanner').classList.toggle('hidden', loggedIn);
+  document.getElementById('userBar').classList.toggle('hidden', !loggedIn);
+  document.getElementById('composeBox').classList.toggle('hidden', !loggedIn);
+  document.getElementById('loginPrompt').classList.toggle('hidden', loggedIn);
+
+  if (loggedIn) {
+    var name = currentUser.nickname || '名無し';
+    document.getElementById('userName').textContent = name;
+    document.getElementById('userEmail').textContent = currentUser.email;
+    var av = document.getElementById('userAvatar');
+    av.textContent = avatarLetter(name);
+    av.style.background = avatarColor(currentUser.email);
+  }
+}
+
+// --- Nickname ---
+function showNicknameModal() {
+  document.getElementById('nicknameModal').classList.remove('hidden');
+  document.getElementById('nicknameInput').focus();
+}
+function closeNicknameModal() {
+  document.getElementById('nicknameModal').classList.add('hidden');
+}
+async function setNickname() {
+  var name = document.getElementById('nicknameInput').value.trim();
+  if (!name) return;
+  try {
+    await apiFetch('/api/community/me', {
+      method: 'POST',
+      body: JSON.stringify({ nickname: name })
+    });
+    currentUser.nickname = name;
+    updateUI();
+    closeNicknameModal();
+    showToast('ニックネームを設定しました');
+  } catch (e) {
+    showToast(e.message);
+  }
+}
+
+// --- Compose ---
+function updateCharCount() {
+  var text = document.getElementById('composeText').value;
+  document.getElementById('charCount').textContent = text.length + ' / 500';
+  document.getElementById('postBtn').disabled = !text.trim();
+}
+
+async function createPost() {
+  if (!currentUser) return;
+  if (!currentUser.nickname) { showNicknameModal(); return; }
+
+  var textarea = document.getElementById('composeText');
+  var text = textarea.value.trim();
+  if (!text) return;
+
+  document.getElementById('postBtn').disabled = true;
+  try {
+    var data = await apiFetch('/api/community/posts', {
+      method: 'POST',
+      body: JSON.stringify({ body: text })
+    });
+    textarea.value = '';
+    updateCharCount();
+    // Insert post at top
+    var container = document.getElementById('postsContainer');
+    var div = document.createElement('div');
+    div.innerHTML = renderPost(data.post);
+    container.insertBefore(div.firstElementChild, container.firstChild);
+    document.getElementById('emptyState').classList.add('hidden');
+    showToast('投稿しました！');
+  } catch (e) {
+    showToast(e.message);
+  }
+  document.getElementById('postBtn').disabled = false;
+}
+
+// --- Posts ---
+function renderPost(p) {
+  var isOwn = currentUser && currentUser.email === p.author;
+  var color = avatarColor(p.author);
+  return '<div class="cm-post" id="post-' + esc(p.id) + '">'
+    + '<div class="cm-post-header">'
+    + '<div class="cm-post-avatar" style="background:' + color + ';">' + avatarLetter(p.nickname) + '</div>'
+    + '<div class="cm-post-meta">'
+    + '<span class="cm-post-nick">' + esc(p.nickname) + '</span>'
+    + '<span class="cm-post-time">' + timeAgo(p.createdAt) + '</span>'
+    + '</div></div>'
+    + '<div class="cm-post-body">' + esc(p.body) + '</div>'
+    + '<div class="cm-post-actions">'
+    + '<button class="cm-comment-toggle" onclick="toggleComments(\'' + p.id + '\')">'
+    + '💬 ' + (p.commentCount || 0) + '件のコメント</button>'
+    + (isOwn ? '<button class="cm-delete-btn" onclick="deletePost(\'' + p.id + '\')">削除</button>' : '')
+    + '</div>'
+    + '<div class="cm-comments hidden" id="comments-' + p.id + '">'
+    + '<div class="cm-comments-list" id="commentslist-' + p.id + '"></div>'
+    + (currentUser ? '<div class="cm-comment-form">'
+      + '<input class="cm-comment-input" id="commentinput-' + p.id + '" placeholder="コメントを書く..." maxlength="300">'
+      + '<button class="cm-comment-submit" onclick="createComment(\'' + p.id + '\')">送信</button>'
+      + '</div>' : '')
+    + '</div></div>';
+}
+
+async function loadPosts() {
+  if (isLoading) return;
+  isLoading = true;
+  document.getElementById('loadingIndicator').classList.remove('hidden');
+  document.getElementById('loadMoreBtn').classList.add('hidden');
+
+  try {
+    var query = '/api/community/posts?limit=20';
+    if (nextCursor) query += '&cursor=' + encodeURIComponent(nextCursor);
+    var data = await apiFetch(query);
+    var container = document.getElementById('postsContainer');
+
+    if (data.posts.length === 0 && !nextCursor) {
+      document.getElementById('emptyState').classList.remove('hidden');
+    }
+
+    data.posts.forEach(function(p) {
+      var div = document.createElement('div');
+      div.innerHTML = renderPost(p);
+      container.appendChild(div.firstElementChild);
+    });
+
+    nextCursor = data.nextCursor;
+    if (data.hasMore && nextCursor) {
+      document.getElementById('loadMoreBtn').classList.remove('hidden');
+    }
+  } catch (e) {
+    showToast('読み込みに失敗しました');
+  }
+  document.getElementById('loadingIndicator').classList.add('hidden');
+  isLoading = false;
+}
+
+async function deletePost(postId) {
+  if (!confirm('この投稿を削除しますか？')) return;
+  try {
+    await apiFetch('/api/community/posts/delete', {
+      method: 'POST',
+      body: JSON.stringify({ postId: postId })
+    });
+    var el = document.getElementById('post-' + postId);
+    if (el) el.remove();
+    showToast('削除しました');
+  } catch (e) {
+    showToast(e.message);
+  }
+}
+
+// --- Comments ---
+async function toggleComments(postId) {
+  var el = document.getElementById('comments-' + postId);
+  if (el.classList.contains('hidden')) {
+    el.classList.remove('hidden');
+    await loadComments(postId);
+  } else {
+    el.classList.add('hidden');
+  }
+}
+
+async function loadComments(postId) {
+  var list = document.getElementById('commentslist-' + postId);
+  list.innerHTML = '<div style="text-align:center;padding:8px;color:var(--gray-400);font-size:12px;">読み込み中...</div>';
+  try {
+    var data = await apiFetch('/api/community/posts/' + postId + '/comments');
+    if (data.comments.length === 0) {
+      list.innerHTML = '<div style="padding:8px;color:var(--gray-400);font-size:13px;">まだコメントはありません</div>';
+      return;
+    }
+    list.innerHTML = data.comments.map(function(c) {
+      var isOwn = currentUser && currentUser.email === c.author;
+      var color = avatarColor(c.author);
+      return '<div class="cm-comment" id="comment-' + c.id + '">'
+        + '<div class="cm-comment-avatar" style="background:' + color + ';">' + avatarLetter(c.nickname) + '</div>'
+        + '<div class="cm-comment-content">'
+        + '<span class="cm-comment-nick">' + esc(c.nickname) + '</span>'
+        + '<span class="cm-comment-time">' + timeAgo(c.createdAt) + '</span>'
+        + '<div class="cm-comment-text">' + esc(c.body) + '</div>'
+        + '</div>'
+        + (isOwn ? '<button class="cm-comment-del" onclick="deleteComment(\'' + postId + '\',\'' + c.id + '\')">削除</button>' : '')
+        + '</div>';
+    }).join('');
+  } catch (e) {
+    list.innerHTML = '<div style="padding:8px;color:#ef4444;font-size:13px;">読み込みに失敗しました</div>';
+  }
+}
+
+async function createComment(postId) {
+  if (!currentUser) return;
+  if (!currentUser.nickname) { showNicknameModal(); return; }
+
+  var input = document.getElementById('commentinput-' + postId);
+  var text = input.value.trim();
+  if (!text) return;
+
+  try {
+    var data = await apiFetch('/api/community/posts/' + postId + '/comments', {
+      method: 'POST',
+      body: JSON.stringify({ body: text })
+    });
+    input.value = '';
+    await loadComments(postId);
+    // Update comment count on toggle button
+    var toggle = document.querySelector('#post-' + postId + ' .cm-comment-toggle');
+    if (toggle) {
+      var m = toggle.textContent.match(/\d+/);
+      var n = m ? parseInt(m[0]) + 1 : 1;
+      toggle.textContent = '💬 ' + n + '件のコメント';
+    }
+  } catch (e) {
+    showToast(e.message);
+  }
+}
+
+async function deleteComment(postId, commentId) {
+  if (!confirm('このコメントを削除しますか？')) return;
+  try {
+    await apiFetch('/api/community/comments/delete', {
+      method: 'POST',
+      body: JSON.stringify({ postId: postId, commentId: commentId })
+    });
+    var el = document.getElementById('comment-' + commentId);
+    if (el) el.remove();
+    showToast('削除しました');
+  } catch (e) {
+    showToast(e.message);
+  }
+}
+
+// --- Init ---
+document.addEventListener('DOMContentLoaded', async function() {
+  await initUser();
+  await loadPosts();
+});
+</script>
+</body>
+</html>
