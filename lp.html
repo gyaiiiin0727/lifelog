@@ -186,12 +186,293 @@ body {
   padding: 28px 20px;
   text-align: center;
   transition: all 0.3s;
+  cursor: pointer;
 }
 
 .lp-feature-card:hover {
   border-color: var(--blue);
   box-shadow: 0 8px 24px rgba(33,150,243,0.08);
   transform: translateY(-2px);
+}
+
+.lp-feature-card .lp-demo-hint {
+  font-size: 0.7rem;
+  color: var(--blue);
+  margin-top: 8px;
+  opacity: 0.7;
+}
+
+/* === Demo Modal === */
+.demo-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.demo-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.demo-phone {
+  width: 280px;
+  height: 520px;
+  background: #fff;
+  border-radius: 32px;
+  border: 4px solid #222;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  transform: scale(0.8);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.demo-overlay.active .demo-phone {
+  transform: scale(1);
+}
+
+.demo-phone-notch {
+  width: 100px;
+  height: 24px;
+  background: #222;
+  border-radius: 0 0 16px 16px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.demo-phone-screen {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #fff;
+  overflow: hidden;
+}
+
+.demo-phone-header {
+  height: 44px;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-top: 24px;
+  box-sizing: content-box;
+}
+
+.demo-phone-body {
+  padding: 16px;
+  height: calc(100% - 68px);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Demo steps */
+.demo-step {
+  position: absolute;
+  top: 16px; left: 16px; right: 16px; bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateX(40px);
+  transition: all 0.5s ease;
+  pointer-events: none;
+}
+.demo-step.active {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+.demo-step.exit {
+  opacity: 0;
+  transform: translateX(-40px);
+}
+
+.demo-step-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.demo-step-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.demo-step-desc {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* Demo mock UI elements */
+.demo-mock-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 24px;
+  background: var(--blue);
+  color: #fff;
+  border-radius: 24px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 12px;
+  animation: demoPulse 2s infinite;
+}
+
+@keyframes demoPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(33,150,243,0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(33,150,243,0); }
+}
+
+.demo-mock-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 13px;
+  color: #333;
+  background: #f8f9fa;
+  margin-top: 10px;
+}
+
+.demo-mock-list {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.demo-mock-list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: #333;
+  opacity: 0;
+  animation: demoSlideIn 0.4s ease forwards;
+}
+
+@keyframes demoSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.demo-mock-tag {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Progress dots */
+.demo-progress {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  position: absolute;
+  bottom: 8px;
+  left: 0; right: 0;
+}
+
+.demo-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ddd;
+  transition: all 0.3s;
+}
+.demo-dot.active {
+  background: var(--blue);
+  width: 18px;
+  border-radius: 3px;
+}
+
+/* Close button */
+.demo-close {
+  position: absolute;
+  top: -40px;
+  right: -10px;
+  width: 32px;
+  height: 32px;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+}
+
+/* Typing animation */
+.demo-typing {
+  display: inline;
+  border-right: 2px solid var(--blue);
+  animation: demoBlink 0.8s infinite;
+}
+@keyframes demoBlink {
+  0%, 50% { border-color: var(--blue); }
+  51%, 100% { border-color: transparent; }
+}
+
+/* Voice wave animation */
+.demo-voice-wave {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  margin: 12px 0;
+}
+.demo-voice-bar {
+  width: 4px;
+  border-radius: 2px;
+  background: var(--blue);
+  animation: demoWave 0.8s ease-in-out infinite;
+}
+.demo-voice-bar:nth-child(1) { height: 12px; animation-delay: 0s; }
+.demo-voice-bar:nth-child(2) { height: 24px; animation-delay: 0.1s; }
+.demo-voice-bar:nth-child(3) { height: 32px; animation-delay: 0.2s; }
+.demo-voice-bar:nth-child(4) { height: 20px; animation-delay: 0.3s; }
+.demo-voice-bar:nth-child(5) { height: 28px; animation-delay: 0.15s; }
+@keyframes demoWave {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
+}
+
+@keyframes demoGrow {
+  from { height: 0; }
+}
+
+@keyframes demoLine {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes demoFadeIn {
+  to { opacity: 1; }
+}
+
+@keyframes demoProgress {
+  from { width: 0; }
 }
 
 .lp-feature-icon {
@@ -497,35 +778,41 @@ body {
   <div class="lp-container">
     <h2 class="lp-section-title lp-fade">Dayceでできること</h2>
     <div class="lp-features-grid">
-      <div class="lp-feature-card lp-fade">
+      <div class="lp-feature-card lp-fade" onclick="showDemo('journal')">
         <div class="lp-feature-icon">📔</div>
         <div class="lp-feature-title">ジャーナル</div>
         <div class="lp-feature-desc">声で日記を記録。AIキャラクターが毎日フィードバック</div>
+        <div class="lp-demo-hint">▶ タップしてデモを見る</div>
       </div>
-      <div class="lp-feature-card lp-fade">
+      <div class="lp-feature-card lp-fade" onclick="showDemo('activity')">
         <div class="lp-feature-icon">⏱️</div>
         <div class="lp-feature-title">行動記録</div>
         <div class="lp-feature-desc">活動内容と時間を声でサクッと記録</div>
+        <div class="lp-demo-hint">▶ タップしてデモを見る</div>
       </div>
-      <div class="lp-feature-card lp-fade">
+      <div class="lp-feature-card lp-fade" onclick="showDemo('money')">
         <div class="lp-feature-icon">💰</div>
         <div class="lp-feature-title">お金管理</div>
         <div class="lp-feature-desc">収入・支出を簡単記録。カテゴリ別に自動集計</div>
+        <div class="lp-demo-hint">▶ タップしてデモを見る</div>
       </div>
-      <div class="lp-feature-card lp-fade">
+      <div class="lp-feature-card lp-fade" onclick="showDemo('goal')">
         <div class="lp-feature-icon">🎯</div>
         <div class="lp-feature-title">目標管理</div>
         <div class="lp-feature-desc">目標を設定するとAIが週次タスクに自動分解</div>
+        <div class="lp-demo-hint">▶ タップしてデモを見る</div>
       </div>
-      <div class="lp-feature-card lp-fade">
+      <div class="lp-feature-card lp-fade" onclick="showDemo('report')">
         <div class="lp-feature-icon">📊</div>
         <div class="lp-feature-title">レポート</div>
         <div class="lp-feature-desc">行動・お金の傾向をグラフで可視化</div>
+        <div class="lp-demo-hint">▶ タップしてデモを見る</div>
       </div>
-      <div class="lp-feature-card lp-fade">
+      <div class="lp-feature-card lp-fade" onclick="showDemo('ai')">
         <div class="lp-feature-icon">🤖</div>
         <div class="lp-feature-title">AI相談</div>
         <div class="lp-feature-desc">3人のAIキャラクターに何でも相談できる</div>
+        <div class="lp-demo-hint">▶ タップしてデモを見る</div>
       </div>
     </div>
   </div>
@@ -616,7 +903,254 @@ body {
   <p>&copy; 2025 Dayce. All rights reserved.</p>
 </footer>
 
+<!-- Demo Modal -->
+<div class="demo-overlay" id="demoOverlay" onclick="if(event.target===this)closeDemo()">
+  <div class="demo-phone" style="position:relative;">
+    <button class="demo-close" onclick="closeDemo()">&times;</button>
+    <div class="demo-phone-screen">
+      <div class="demo-phone-notch"></div>
+      <div class="demo-phone-header" id="demoHeader">Dayce</div>
+      <div class="demo-phone-body" id="demoBody"></div>
+      <div class="demo-progress" id="demoProgress"></div>
+    </div>
+  </div>
+</div>
+
 <script>
+// === Demo Animation System ===
+var DEMOS = {
+  journal: {
+    title: '📔 ジャーナル',
+    steps: [
+      {
+        icon: '🎤',
+        title: 'マイクボタンをタップ',
+        desc: 'ジャーナルタブで＋ボタンを押して声で入力開始',
+        mock: '<div class="demo-mock-btn">🎤 声で記録する</div>'
+      },
+      {
+        icon: '',
+        title: '今日の出来事を話す',
+        desc: '「今日は朝ランニングして気持ちよかった。仕事で新しいプロジェクトが始まった」',
+        mock: '<div class="demo-voice-wave"><div class="demo-voice-bar"></div><div class="demo-voice-bar"></div><div class="demo-voice-bar"></div><div class="demo-voice-bar"></div><div class="demo-voice-bar"></div></div><div class="demo-mock-input" style="text-align:left;font-size:12px;line-height:1.6;">今日は朝ランニングして気持ちよかった。仕事で新しいプロジェクトが始まった<span class="demo-typing"></span></div>'
+      },
+      {
+        icon: '🤖',
+        title: 'AIがフィードバック',
+        desc: 'キャラクターがあなたの日記に寄り添ったコメントを返します',
+        mock: '<div style="display:flex;gap:8px;align-items:flex-start;margin-top:10px;"><div style="width:36px;height:36px;border-radius:50%;background:#e3f2fd;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">😊</div><div style="background:#f0f7ff;border-radius:12px;padding:10px 12px;font-size:11px;color:#333;line-height:1.6;">朝ランいいね！運動すると1日のパフォーマンス上がるよ。新しいプロジェクト、楽しみだな！</div></div>'
+      }
+    ]
+  },
+  activity: {
+    title: '⏱️ 行動記録',
+    steps: [
+      {
+        icon: '➕',
+        title: '＋ボタンで記録開始',
+        desc: '行動タブの＋ボタンをタップ',
+        mock: '<div style="position:relative;width:56px;height:56px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;margin:0 auto;animation:demoPulse 2s infinite;">+</div>'
+      },
+      {
+        icon: '',
+        title: '声で入力する',
+        desc: '「筋トレ 30分」と話すだけで自動認識',
+        mock: '<div class="demo-voice-wave"><div class="demo-voice-bar"></div><div class="demo-voice-bar"></div><div class="demo-voice-bar"></div><div class="demo-voice-bar"></div><div class="demo-voice-bar"></div></div><div class="demo-mock-input">🎤 「筋トレ 30分」<span class="demo-typing"></span></div>'
+      },
+      {
+        icon: '✅',
+        title: '自動で記録完了！',
+        desc: 'AIが内容・時間・カテゴリを自動で分類',
+        mock: '<div class="demo-mock-list"><div class="demo-mock-list-item" style="animation-delay:0s"><span class="demo-mock-tag" style="background:#4CAF50">運動</span><span>筋トレ</span><span style="margin-left:auto;color:#888;font-size:11px;">30分</span></div><div class="demo-mock-list-item" style="animation-delay:0.2s"><span class="demo-mock-tag" style="background:#2196F3">学習</span><span>英語の勉強</span><span style="margin-left:auto;color:#888;font-size:11px;">45分</span></div><div class="demo-mock-list-item" style="animation-delay:0.4s"><span class="demo-mock-tag" style="background:#FF9800">仕事</span><span>企画書作成</span><span style="margin-left:auto;color:#888;font-size:11px;">60分</span></div></div>'
+      }
+    ]
+  },
+  money: {
+    title: '💰 お金管理',
+    steps: [
+      {
+        icon: '🎤',
+        title: '声でお金を記録',
+        desc: 'お金タブで＋ボタン → 声で入力',
+        mock: '<div class="demo-mock-btn">🎤 声で記録する</div>'
+      },
+      {
+        icon: '',
+        title: '「ランチ 850円」と話す',
+        desc: 'AIが金額とカテゴリを自動認識',
+        mock: '<div class="demo-voice-wave"><div class="demo-voice-bar"></div><div class="demo-voice-bar"></div><div class="demo-voice-bar"></div><div class="demo-voice-bar"></div><div class="demo-voice-bar"></div></div><div class="demo-mock-input">🎤 「ランチ 850円」<span class="demo-typing"></span></div>'
+      },
+      {
+        icon: '📊',
+        title: '自動でカテゴリ分類',
+        desc: '食費・交通費・趣味など自動集計',
+        mock: '<div class="demo-mock-list"><div class="demo-mock-list-item" style="animation-delay:0s"><span class="demo-mock-tag" style="background:#FF5722">食費</span><span>ランチ</span><span style="margin-left:auto;font-weight:600;color:#e74c3c;">-¥850</span></div><div class="demo-mock-list-item" style="animation-delay:0.2s"><span class="demo-mock-tag" style="background:#607D8B">交通</span><span>電車</span><span style="margin-left:auto;font-weight:600;color:#e74c3c;">-¥340</span></div><div class="demo-mock-list-item" style="animation-delay:0.4s"><span class="demo-mock-tag" style="background:#4CAF50">収入</span><span>給料</span><span style="margin-left:auto;font-weight:600;color:#27ae60;">+¥250,000</span></div></div>'
+      }
+    ]
+  },
+  goal: {
+    title: '🎯 目標管理',
+    steps: [
+      {
+        icon: '✍️',
+        title: '目標を設定する',
+        desc: '達成したい目標を入力するだけ',
+        mock: '<div class="demo-mock-input" style="text-align:left;">TOEIC 800点を取る<span class="demo-typing"></span></div><div class="demo-mock-btn" style="margin-top:16px;">🎯 目標を追加</div>'
+      },
+      {
+        icon: '🤖',
+        title: 'AIが自動で分解',
+        desc: '目標を週次タスクに自動分解してくれる',
+        mock: '<div style="text-align:left;margin-top:8px;"><div style="font-size:13px;font-weight:700;margin-bottom:8px;">📋 AIが作成したタスク</div><div class="demo-mock-list"><div class="demo-mock-list-item" style="animation-delay:0s">☐ 単語帳を毎日30分</div><div class="demo-mock-list-item" style="animation-delay:0.2s">☐ リスニング問題を10問</div><div class="demo-mock-list-item" style="animation-delay:0.4s">☐ 模擬テストを週末に</div></div></div>'
+      },
+      {
+        icon: '📈',
+        title: '進捗を見える化',
+        desc: 'タスクの達成率でモチベーション維持',
+        mock: '<div style="text-align:center;margin-top:8px;"><div style="font-size:36px;font-weight:800;color:var(--blue);">67%</div><div style="font-size:12px;color:#888;margin-bottom:12px;">今週の達成率</div><div style="width:100%;height:8px;background:#eee;border-radius:4px;overflow:hidden;"><div style="width:67%;height:100%;background:linear-gradient(90deg,var(--blue),#64B5F6);border-radius:4px;animation:demoProgress 1.5s ease forwards;"></div></div></div>'
+      }
+    ]
+  },
+  report: {
+    title: '📊 レポート',
+    steps: [
+      {
+        icon: '📅',
+        title: '自動でレポート生成',
+        desc: '記録したデータを自動でグラフに',
+        mock: '<div style="text-align:center;"><div style="font-size:14px;font-weight:700;margin-bottom:12px;">今週の行動サマリー</div><div style="display:flex;gap:4px;align-items:flex-end;justify-content:center;height:80px;"><div style="width:24px;background:#90CAF9;border-radius:4px 4px 0 0;height:30%;animation:demoGrow 0.6s ease forwards;"></div><div style="width:24px;background:#64B5F6;border-radius:4px 4px 0 0;height:50%;animation:demoGrow 0.6s ease 0.1s forwards;"></div><div style="width:24px;background:#42A5F5;border-radius:4px 4px 0 0;height:70%;animation:demoGrow 0.6s ease 0.2s forwards;"></div><div style="width:24px;background:#2196F3;border-radius:4px 4px 0 0;height:45%;animation:demoGrow 0.6s ease 0.3s forwards;"></div><div style="width:24px;background:#1E88E5;border-radius:4px 4px 0 0;height:85%;animation:demoGrow 0.6s ease 0.4s forwards;"></div><div style="width:24px;background:#1976D2;border-radius:4px 4px 0 0;height:60%;animation:demoGrow 0.6s ease 0.5s forwards;"></div><div style="width:24px;background:#1565C0;border-radius:4px 4px 0 0;height:40%;animation:demoGrow 0.6s ease 0.6s forwards;"></div></div><div style="display:flex;justify-content:space-around;font-size:9px;color:#999;margin-top:4px;">月 火 水 木 金 土 日</div></div>'
+      },
+      {
+        icon: '💰',
+        title: 'お金の傾向も一目で',
+        desc: 'カテゴリ別の支出割合を可視化',
+        mock: '<div style="text-align:center;"><div style="width:100px;height:100px;border-radius:50%;background:conic-gradient(#FF5722 0% 35%, #2196F3 35% 55%, #4CAF50 55% 75%, #FF9800 75% 100%);margin:0 auto 12px;"></div><div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;font-size:10px;"><span>🔴 食費 35%</span><span>🔵 交通 20%</span><span>🟢 趣味 20%</span><span>🟠 日用品 25%</span></div></div>'
+      },
+      {
+        icon: '📈',
+        title: 'トレンドを把握',
+        desc: '月ごとの推移で成長を実感',
+        mock: '<div style="text-align:center;"><div style="font-size:12px;font-weight:600;margin-bottom:8px;">行動時間の推移</div><svg width="200" height="80" viewBox="0 0 200 80" style="margin:0 auto;display:block;"><polyline points="10,70 40,50 70,55 100,35 130,40 160,25 190,15" fill="none" stroke="#2196F3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="stroke-dasharray:300;stroke-dashoffset:300;animation:demoLine 2s ease forwards;"/><circle cx="190" cy="15" r="4" fill="#2196F3" style="opacity:0;animation:demoFadeIn 0.3s ease 1.8s forwards;"/></svg><div style="font-size:24px;font-weight:800;color:#27ae60;margin-top:4px;">↑ 32%</div><div style="font-size:10px;color:#888;">先月比</div></div>'
+      }
+    ]
+  },
+  ai: {
+    title: '🤖 AI相談',
+    steps: [
+      {
+        icon: '💬',
+        title: 'AI相談タブを開く',
+        desc: '3人のキャラクターから選んで相談',
+        mock: '<div style="display:flex;gap:8px;justify-content:center;margin-top:8px;"><div style="text-align:center;padding:12px;border:2px solid #e3f2fd;border-radius:12px;flex:1;"><div style="font-size:24px;">😎</div><div style="font-size:10px;font-weight:600;margin-top:4px;">タクヤ先輩</div></div><div style="text-align:center;padding:12px;border:2px solid #e8f5e9;border-radius:12px;flex:1;"><div style="font-size:24px;">🌸</div><div style="font-size:10px;font-weight:600;margin-top:4px;">ハナさん</div></div><div style="text-align:center;padding:12px;border:2px solid #fbe9e7;border-radius:12px;flex:1;"><div style="font-size:24px;">👔</div><div style="font-size:10px;font-weight:600;margin-top:4px;">マネージャー</div></div></div>'
+      },
+      {
+        icon: '',
+        title: '何でも相談できる',
+        desc: '仕事・人間関係・将来のこと',
+        mock: '<div style="margin-top:8px;"><div style="background:#e3f2fd;border-radius:12px 12px 0 12px;padding:10px 12px;font-size:11px;margin-bottom:6px;text-align:right;margin-left:40px;">転職するか悩んでいます...</div><div style="display:flex;gap:6px;align-items:flex-end;"><div style="width:28px;height:28px;border-radius:50%;background:#e3f2fd;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">😎</div><div style="background:#f5f5f5;border-radius:0 12px 12px 12px;padding:10px 12px;font-size:11px;line-height:1.6;">うんうん、それ大事な決断だよな。まず今の仕事で不満なこと、転職先に求めることを整理してみない？</div></div></div>'
+      },
+      {
+        icon: '📝',
+        title: 'AIが記録も分析',
+        desc: '過去のジャーナルを踏まえてアドバイス',
+        mock: '<div style="background:#fff3e0;border-radius:12px;padding:12px;margin-top:8px;"><div style="font-size:11px;font-weight:600;color:#E65100;margin-bottom:6px;">📊 あなたの傾向</div><div style="font-size:11px;color:#555;line-height:1.6;">最近のジャーナルを見ると「やりがい」というワードが増えています。今の仕事の何に物足りなさを感じているか、一緒に探ってみましょう。</div></div>'
+      }
+    ]
+  }
+};
+
+var demoTimer = null;
+var currentStep = 0;
+
+function showDemo(key) {
+  var demo = DEMOS[key];
+  if (!demo) return;
+
+  var overlay = document.getElementById('demoOverlay');
+  var header = document.getElementById('demoHeader');
+  var body = document.getElementById('demoBody');
+  var progress = document.getElementById('demoProgress');
+
+  header.textContent = demo.title;
+  currentStep = 0;
+
+  // Build progress dots
+  progress.innerHTML = '';
+  for (var i = 0; i < demo.steps.length; i++) {
+    var dot = document.createElement('div');
+    dot.className = 'demo-dot' + (i === 0 ? ' active' : '');
+    progress.appendChild(dot);
+  }
+
+  // Show overlay
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  // Render first step
+  renderDemoStep(demo, 0);
+
+  // Auto-advance steps
+  if (demoTimer) clearInterval(demoTimer);
+  demoTimer = setInterval(function() {
+    currentStep++;
+    if (currentStep >= demo.steps.length) {
+      currentStep = 0;
+    }
+    renderDemoStep(demo, currentStep);
+  }, 3500);
+}
+
+function renderDemoStep(demo, stepIdx) {
+  var body = document.getElementById('demoBody');
+  var step = demo.steps[stepIdx];
+
+  // Fade out current
+  var currentEl = body.querySelector('.demo-step.active');
+  if (currentEl) {
+    currentEl.classList.remove('active');
+    currentEl.classList.add('exit');
+  }
+
+  // Create new step
+  setTimeout(function() {
+    body.innerHTML = '';
+    var el = document.createElement('div');
+    el.className = 'demo-step';
+    el.innerHTML =
+      (step.icon ? '<div class="demo-step-icon">' + step.icon + '</div>' : '') +
+      '<div class="demo-step-title">' + step.title + '</div>' +
+      '<div class="demo-step-desc">' + step.desc + '</div>' +
+      (step.mock || '');
+    body.appendChild(el);
+
+    // Trigger animation
+    requestAnimationFrame(function() {
+      el.classList.add('active');
+    });
+  }, 250);
+
+  // Update dots
+  var dots = document.querySelectorAll('.demo-dot');
+  dots.forEach(function(d, i) {
+    d.classList.toggle('active', i === stepIdx);
+  });
+}
+
+function closeDemo() {
+  var overlay = document.getElementById('demoOverlay');
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+  if (demoTimer) {
+    clearInterval(demoTimer);
+    demoTimer = null;
+  }
+}
+
+// ESC key to close
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeDemo();
+});
+
 // Scroll fade-in animation
 document.addEventListener('DOMContentLoaded', function() {
   var fades = document.querySelectorAll('.lp-fade');

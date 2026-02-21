@@ -8,9 +8,9 @@
 
 <!-- ===== PWA Settings (v40.18) ===== -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#111111">
+<meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Dayce">
 <link rel="apple-touch-icon" href="icon.jpg">
 <meta name="mobile-web-app-capable" content="yes">
@@ -4082,9 +4082,9 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 
 <!-- ===== PWA ===== -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#111111">
+<meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Dayce">
 <link rel="apple-touch-icon" href="icon.jpg">
 
@@ -18247,8 +18247,8 @@ const modal = $('qrModal');
   function getEffectiveLimits() {
     var plan = getPlan();
     if (plan === 'free' && isFirstMonth()) {
-      // 初月: ジャーナル無制限、AI相談無制限、コーチ無制限、キャラ全員OK
-      return { label: '無料プラン（初月特典）', journal: 9999, consult: 9999, goalCoach: 9999, charLimit: false, csv: false, cloudSync: true };
+      // 初月: ジャーナル無制限、AI相談無制限、コーチ3回、キャラ全員OK
+      return { label: '無料プラン（初月特典）', journal: 9999, consult: 9999, goalCoach: 3, charLimit: false, csv: false, cloudSync: true };
     }
     return PLANS[plan];
   }
@@ -18441,6 +18441,10 @@ const modal = $('qrModal');
       if (lim === 9999) {
         el.textContent = firstMonth ? '初月無制限 🎁' : '無制限';
         el.style.color = '#27ae60';
+      } else if (firstMonth && t === 'goalCoach') {
+        var remain = Math.max(0, lim - used);
+        el.textContent = '初月' + remain + '/' + lim + '回 🎁';
+        el.style.color = remain > 0 ? '#27ae60' : '#e74c3c';
       } else if (lim === 0) {
         el.textContent = '利用不可';
         el.style.color = '#999';
@@ -18471,12 +18475,12 @@ const modal = $('qrModal');
 
     var cards = [
       { key: 'free', name: '無料', price: '¥0', color: '#78909c', features: [
-        '🎁 初月: 全機能無制限で体験OK！',
+        '🎁 初月: AI相談無制限で体験OK！',
         '記録・カレンダー・レポート: ✅',
         '過去データ閲覧: 30日分',
         '心を整える: 月10回（1日1回）',
         'AI相談: ❌（2ヶ月目〜）',
-        '目標コーチ: 月1回（2ヶ月目〜）',
+        '目標コーチ: 初月3回 → 月1回',
         'キャラクター: タクヤ先輩のみ（2ヶ月目〜）',
         'CSV出力: ❌',
         'クラウド同期: ✅'
