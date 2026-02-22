@@ -362,6 +362,7 @@
     _state.maxTurns = 5;
     _state.tone = 'normal';
     _state.isWaiting = false;
+    _continueCount = 0;
     // キャラクター選択UIの状態を反映
     var activeCharBtn = document.querySelector('.gai-char-btn.active');
     if (activeCharBtn) _state.tone = activeCharBtn.getAttribute('data-tone') || 'normal';
@@ -1189,6 +1190,17 @@
         if (more) more.remove();
       }
     }
+    // キャンセル時：タスクが0件の空目標を削除
+    if (_state.goalId) {
+      var goals = _loadGoalsFromStorage();
+      var idx = goals.findIndex(function(g) { return g && g.id === _state.goalId; });
+      if (idx !== -1 && (!goals[idx].weeklyTasks || goals[idx].weeklyTasks.length === 0)) {
+        goals.splice(idx, 1);
+        _saveGoalsToStorage(goals);
+        if (typeof window.renderGoalsV2 === 'function') window.renderGoalsV2();
+      }
+      _state.goalId = null;
+    }
   }
 
   // ========== ユーティリティ ==========
@@ -1307,17 +1319,21 @@
   window._closeGoalAIChat = closeChat;
 
   // ========== 「もっと話す」で会話を続ける ==========
+  var _continueCount = 0;
   function continueChat() {
+    _continueCount++;
+    if (_continueCount > 3) {
+      addMessage('ai', 'たくさん話せて良かったです！この内容でタスクを決めましょう 😊');
+      return;
+    }
     var tasksEl = document.getElementById('gaiTasks');
     var inputArea = document.getElementById('gaiInputArea');
     if (tasksEl) { tasksEl.innerHTML = ''; tasksEl.style.display = 'none'; }
     if (inputArea) inputArea.style.display = 'flex';
     var input = document.getElementById('gaiInput');
     if (input) input.focus();
-    // 「もっと話す」を押した後、2回ラリーで再度タスクを提示するためにターンカウントをリセット
     _state.turnCount = 0;
     _state.maxTurns = 5;
-    // 「もっと詳しく聞きたい」というメッセージを表示
     addMessage('ai', '了解！もう少し詳しく教えてください。何でも聞いてくださいね 😊');
   }
 
@@ -1433,6 +1449,7 @@
     _state.maxTurns = 5;
     _state.tone = tone;
     _state.isWaiting = false;
+    _continueCount = 0;
 
     // 使用回数カウント
     if (window.DaycePlan) { window.DaycePlan.incrementUsage('goalCoach'); window.DaycePlan.renderPlanBadges(); }

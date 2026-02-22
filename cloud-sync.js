@@ -40,6 +40,7 @@
   function clearAuth() {
     localStorage.removeItem(LS_TOKEN);
     localStorage.removeItem(LS_EMAIL);
+    localStorage.removeItem('syncAuthRegisteredAt');
   }
 
   function isLoggedIn() {

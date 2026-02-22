@@ -5908,9 +5908,11 @@ function applyTabOnlyVisibility(activeTab) {
         // クイックボタンを動的生成
         function renderActivityQuickButtons() {
             const container = document.getElementById('activityQuickButtons');
-            container.innerHTML = activityCategories.map(cat => 
-                `<button class="quick-button" data-category="${cat.name}" data-emoji="${cat.emoji}" onclick="selectCategory('${cat.name}', '${cat.emoji}')">${cat.emoji} ${cat.name}</button>`
-            ).join('');
+            container.innerHTML = activityCategories.map(cat => {
+                var safeName = escapeHtml(cat.name);
+                var safeEmoji = escapeHtml(cat.emoji);
+                return `<button class="quick-button" data-category="${safeName}" data-emoji="${safeEmoji}" onclick="selectCategory('${safeName.replace(/'/g, "\\&#39;")}', '${safeEmoji.replace(/'/g, "\\&#39;")}')">${safeEmoji} ${safeName}</button>`;
+            }).join('');
         }
         
         // カテゴリ選択（クイックボタン）
@@ -6085,7 +6087,7 @@ function switchMoneyType(type) {
         btn.classList.remove('active');
     });
     document.getElementById('selectedMoneyCategory').textContent = 'カテゴリを選択してください';
-  applyTabOnlyVisibility(tabName);
+  applyTabOnlyVisibility('money');
 }
 
 
@@ -6184,17 +6186,19 @@ function renderMoneyCategories() {
     // 支出カテゴリ
     const expenseContainer = document.querySelector('#expenseCategories .money-category-buttons');
     if (expenseContainer) {
-        expenseContainer.innerHTML = expenseCategories.map(cat => 
-            `<button class="category-btn" onclick="selectMoneyCategory('${cat.name}')" data-category="${cat.name}">${cat.emoji} ${cat.name}</button>`
-        ).join('');
+        expenseContainer.innerHTML = expenseCategories.map(cat => {
+            var s = escapeHtml(cat.name), e = escapeHtml(cat.emoji);
+            return `<button class="category-btn" onclick="selectMoneyCategory('${s.replace(/'/g, "\\&#39;")}')" data-category="${s}">${e} ${s}</button>`;
+        }).join('');
     }
-    
+
     // 収入カテゴリ
     const incomeContainer = document.querySelector('#incomeCategories .money-category-buttons');
     if (incomeContainer) {
-        incomeContainer.innerHTML = incomeCategories.map(cat => 
-            `<button class="category-btn" onclick="selectMoneyCategory('${cat.name}')" data-category="${cat.name}">${cat.emoji} ${cat.name}</button>`
-        ).join('');
+        incomeContainer.innerHTML = incomeCategories.map(cat => {
+            var s = escapeHtml(cat.name), e = escapeHtml(cat.emoji);
+            return `<button class="category-btn" onclick="selectMoneyCategory('${s.replace(/'/g, "\\&#39;")}')" data-category="${s}">${e} ${s}</button>`;
+        }).join('');
     }
 }
 
@@ -6217,13 +6221,14 @@ function renderCategoryEditList(type) {
     const container = document.getElementById('categoryEditList');
     const categories = type === 'expense' ? expenseCategories : incomeCategories;
     
-    container.innerHTML = categories.map((cat, index) => `
-        <div class="category-edit-item">
-            <span class="category-edit-emoji">${cat.emoji}</span>
-            <span class="category-edit-name">${cat.name}</span>
-            <button class="btn-icon" onclick="deleteMoneyCategoryItem('${type}', ${index})" title="削除">🗑️</button>
-        </div>
-    `).join('');
+    container.innerHTML = categories.map((cat, index) => {
+        var s = escapeHtml(cat.name), e = escapeHtml(cat.emoji);
+        return `<div class="category-edit-item">
+            <span class="category-edit-emoji">${e}</span>
+            <span class="category-edit-name">${s}</span>
+            <button class="btn-icon" onclick="deleteMoneyCategoryItem('${escapeHtml(type)}', ${index})" title="削除">🗑️</button>
+        </div>`;
+    }).join('');
 }
 
 // カテゴリ追加
@@ -6294,9 +6299,9 @@ function renderActivityCategories() {
 
     // ボタンを生成
     wrap.innerHTML = activityCategories.map(cat => {
-        const safeName = String(cat.name || '').replace(/"/g, '&quot;');
-        const safeEmoji = String(cat.emoji || '');
-        return `<button class="category-btn" data-category="${safeName}" onclick="selectActivityCategory('${safeName.replace(/'/g, "\'")}')">
+        const safeName = escapeHtml(cat.name || '');
+        const safeEmoji = escapeHtml(cat.emoji || '');
+        return `<button class="category-btn" data-category="${safeName}" onclick="selectActivityCategory('${safeName.replace(/'/g, "&#39;")}')">
                     ${safeEmoji} ${safeName}
                 </button>`;
     }).join('');
@@ -6318,12 +6323,13 @@ function renderActivityCategoryEditList() {
     const list = document.getElementById('activityCategoryEditList');
     if (!list) return;
 
-    list.innerHTML = activityCategories.map((cat, idx) => `
-        <div class="category-edit-item">
-            <span class="category-display">${cat.emoji || ''} ${cat.name || ''}</span>
+    list.innerHTML = activityCategories.map((cat, idx) => {
+        var s = escapeHtml(cat.name || ''), e = escapeHtml(cat.emoji || '');
+        return `<div class="category-edit-item">
+            <span class="category-display">${e} ${s}</span>
             <button class="btn-delete" onclick="deleteActivityCategoryItem(${idx})">削除</button>
-        </div>
-    `).join('') || '<div style="color:#666;">カテゴリがありません</div>';
+        </div>`;
+    }).join('') || '<div style="color:#666;">カテゴリがありません</div>';
 }
 
 // 追加
@@ -9517,16 +9523,13 @@ function renderJournalLogs() {
 
 function toggleJournalDetail(id) {
     const element = document.getElementById(id);
+    if (!element) return;
     const parent = element.closest('.journal-log-item');
-    const icon = parent.querySelector('.toggle-icon');
-    
-    if (element.classList.contains('show')) {
-        element.classList.remove('show');
-        icon.textContent = '▼';
-    } else {
-        element.classList.add('show');
-        icon.textContent = '▲';
-    }
+    const icon = parent ? parent.querySelector('.toggle-icon') : null;
+
+    const isVisible = element.style.display !== 'none';
+    element.style.display = isVisible ? 'none' : 'block';
+    if (icon) icon.textContent = isVisible ? '▼' : '▲';
 }
         
         // カレンダー表示
@@ -10293,7 +10296,7 @@ function drawMoneyChart(categoryData) {
             
             const categoryCounts = {};
             activityCategories.forEach(cat => {
-                categoryCounts[cat.name] = activities.filter(a => a.text.includes(cat.name)).length;
+                categoryCounts[cat.name] = activities.filter(a => a.category === cat.name || (!a.category && (a.text || '').includes(cat.name))).length;
             });
             
             if (window.activityChartInstance) {
@@ -10495,8 +10498,8 @@ function drawMoneyChart(categoryData) {
             
             const categoryCounts = {};
             activityCategories.forEach(cat => {
-                categoryCounts[cat.name] = recentActivities.filter(a => 
-                    a.text.includes(cat.name)
+                categoryCounts[cat.name] = recentActivities.filter(a =>
+                    a.category === cat.name || (!a.category && (a.text || '').includes(cat.name))
                 ).length;
             });
             
@@ -10513,7 +10516,7 @@ function drawMoneyChart(categoryData) {
             // カテゴリ別の時間統計
             const categoryTimes = {};
             activityCategories.forEach(cat => {
-                const categoryActivities = recentActivities.filter(a => a.text.includes(cat.name));
+                const categoryActivities = recentActivities.filter(a => a.category === cat.name || (!a.category && (a.text || '').includes(cat.name)));
                 const categoryMinutes = categoryActivities.reduce((sum, a) => sum + (a.durationMinutes || 0), 0);
                 if (categoryMinutes > 0) {
                     categoryTimes[cat.name] = {
@@ -10596,7 +10599,7 @@ function drawMoneyChart(categoryData) {
                 goals.push('🎯 「' + topActivity[0] + '」を' + (topActivity[1] + 2) + '回やってみる');
             }
             
-            if (recentActivities.filter(a => a.text.includes('運動')).length < 3) {
+            if (recentActivities.filter(a => a.category === '運動' || (!a.category && (a.text || '').includes('運動'))).length < 3) {
                 goals.push('🏃 週3回以上の運動にチャレンジ');
             }
             
@@ -10717,56 +10720,7 @@ function drawMoneyChart(categoryData) {
             document.getElementById('timerButton').style.background = '#4CAF50';
         }
         
-        // カテゴリ管理
-        function openCategoryManager() {
-            document.getElementById('categoryModal').classList.add('active');
-            renderCategoryList();
-        }
-        
-        function closeCategoryManager() {
-            document.getElementById('categoryModal').classList.remove('active');
-        }
-        
-        function renderCategoryList() {
-            const container = document.getElementById('categoryList');
-            container.innerHTML = activityCategories.map((cat, index) => `
-                <div class="log-item" style="display: flex; justify-content: space-between; align-items: center;">
-                    <span>${cat.emoji} ${cat.name}</span>
-                    <button onclick="deleteCategory(${index})" style="padding: 5px 10px; background: #ff4444; color: white; border: none; border-radius: 5px; cursor: pointer;">削除</button>
-                </div>
-            `).join('');
-        }
-        
-        function addCategory() {
-            const nameInput = document.getElementById('newCategoryName');
-            const emojiInput = document.getElementById('newCategoryEmoji');
-            
-            const name = nameInput.value.trim();
-            const emoji = emojiInput.value.trim();
-            
-            if (!name || !emoji) {
-                alert('名前と絵文字を入力してください');
-                return;
-            }
-            
-            activityCategories.push({ name, emoji });
-            localStorage.setItem('activityCategories', JSON.stringify(activityCategories));
-            
-            nameInput.value = '';
-            emojiInput.value = '';
-            
-            renderCategoryList();
-            renderActivityQuickButtons();
-        }
-        
-        function deleteCategory(index) {
-            if (confirm('このカテゴリを削除しますか？')) {
-                activityCategories.splice(index, 1);
-                localStorage.setItem('activityCategories', JSON.stringify(activityCategories));
-                renderCategoryList();
-                renderActivityQuickButtons();
-            }
-        }
+        // カテゴリ管理（旧実装は6398行目の新UIに統合済み）
         
         // 音声認識セットアップ
 // 音声認識の二重記入バグ修正版
@@ -19485,14 +19439,7 @@ input, select, textarea,
 </style>
 
 
-<script>
-// ===== PWA Service Worker registration (v40.18) =====
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch((e) => console.warn("SW registration failed:", e));
-  });
-}
-</script>
+<!-- SW registration は14992行目で実施済み -->
 
 
 <!-- ===== FAB (Floating Action Button) v1.0 ===== -->
@@ -21618,11 +21565,13 @@ window.handleCSVDownload = handleCSVDownload;
 
 // AI相談タブのキャラクターアイコン初期化
 (function() {
+  var _tryCount = 0;
   function tryInitIcons() {
     var srcBtn = document.querySelector('.feedback-tone-btn[data-tone="normal"]');
     if (srcBtn && srcBtn.querySelector('img')) {
       initAIConsultCharIcons();
-    } else {
+    } else if (_tryCount < 20) {
+      _tryCount++;
       setTimeout(tryInitIcons, 300);
     }
   }
@@ -21775,20 +21724,7 @@ window.updateFeedbackToneUI = updateFeedbackToneUI;
 </script>
 
 
-<script>
-// Service Worker登録
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(registration => {
-        console.log('✅ Service Worker registered:', registration);
-      })
-      .catch(error => {
-        console.log('❌ Service Worker registration failed:', error);
-      });
-  });
-}
-</script>
+<!-- SW registration は14992行目で実施済み -->
 <script src="goal-ai-breakdown.js"></script>
 <script src="voice-input-extra.js"></script>
 <script src="goals-v2.js"></script>

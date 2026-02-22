@@ -8,9 +8,9 @@
 <meta property="og:title" content="Dayce - 声で記録するライフログ">
 <meta property="og:description" content="日々の行動・お金・目標・気持ちを声で記録して、AIが振り返る。">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://gyaiiiin0727.github.io/lifelog/lp.html">
-<meta property="og:image" content="https://gyaiiiin0727.github.io/lifelog/icon.jpg">
-<meta name="twitter:card" content="summary">
+<meta property="og:url" content="https://dayce.app/lp.html">
+<meta property="og:image" content="https://dayce.app/icon.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="./icon.jpg">
 <style>
@@ -561,10 +561,13 @@ body {
 
 .lp-char-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr;
   gap: 16px;
   max-width: 800px;
   margin: 0 auto;
+}
+@media (min-width: 480px) {
+  .lp-char-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 .lp-char-card {
@@ -900,7 +903,7 @@ body {
     <img src="./icon.jpg" alt="Dayce" width="24" height="24">
     <span>Dayce</span>
   </div>
-  <p>&copy; 2025 Dayce. All rights reserved.</p>
+  <p>&copy; <script>document.write(new Date().getFullYear())</script> Dayce. All rights reserved.</p>
 </footer>
 
 <!-- Demo Modal -->
@@ -1060,6 +1063,7 @@ var DEMOS = {
 };
 
 var demoTimer = null;
+var demoStepTimeout = null;
 var currentStep = 0;
 
 function showDemo(key) {
@@ -1112,7 +1116,8 @@ function renderDemoStep(demo, stepIdx) {
   }
 
   // Create new step
-  setTimeout(function() {
+  if (demoStepTimeout) clearTimeout(demoStepTimeout);
+  demoStepTimeout = setTimeout(function() {
     body.innerHTML = '';
     var el = document.createElement('div');
     el.className = 'demo-step';
@@ -1143,6 +1148,10 @@ function closeDemo() {
   if (demoTimer) {
     clearInterval(demoTimer);
     demoTimer = null;
+  }
+  if (demoStepTimeout) {
+    clearTimeout(demoStepTimeout);
+    demoStepTimeout = null;
   }
 }
 
