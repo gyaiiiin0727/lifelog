@@ -5777,10 +5777,9 @@ const Storage = {
             } catch(e) { console.warn('selectMood save error:', e); }
         }
         
-        // タブ切り替え
+        // タブ切り替え（旧ラッパー4層を統合済み）
         function switchTab(tabName) {
   try {
-    console.log("switchTab called:", tabName);
     // タブ本体を確実に1つだけ表示
     document.querySelectorAll('.tab-content').forEach(tab => {
       tab.classList.remove('active');
@@ -5819,9 +5818,28 @@ const Storage = {
     console.error("switchTab error:", e);
   }
 
+    // --- タブ固有の初期化（旧: 元関数末尾） ---
     if (tabName === 'activity') { setTimeout(() => { try { renderActivityLogs(); initActivityHistoryDate(); } catch(e) {} }, 0); }
-    if (tabName === 'money') { setTimeout(() => { try { renderMoneyLogs(); initMoneyHistoryDate(); } catch(e) {} }, 0); }
+    if (tabName === 'money') {
+      setTimeout(() => {
+        try { renderMoneyLogs(); initMoneyHistoryDate(); } catch(e) {}
+        // 旧Wrapper#2: お金タブ音声バインド
+        try { if (typeof bindMoneyVoice === 'function') bindMoneyVoice(); } catch(e) {}
+      }, 0);
+    }
     if (tabName === 'reportMoney') { setTimeout(() => { try { renderMoneyReport(); } catch(e) {} }, 0); }
+
+    // --- 旧Wrapper#1: App.modules onShow ---
+    try {
+      var App = window.App;
+      if (App && App.modules) {
+        var mod = App.modules[tabName];
+        if (mod && typeof mod.onShow === 'function') mod.onShow();
+      }
+    } catch(e) { console.warn('[App.modules] onShow error:', e); }
+
+    // --- 旧Wrapper#4: トーンUI注入 ---
+    try { if (typeof injectToneUI === 'function') setTimeout(injectToneUI, 50); } catch(e) {}
 }
 
 // ===== スワイプでタブ切替 =====
@@ -12209,22 +12227,7 @@ try{
   App.modules.activity = { onShow(){} };
   App.modules.money = { onShow(){} };
 
-  // ---------- switchTab wrapper ----------
-  const originalSwitchTab = window.switchTab;
-  if(typeof originalSwitchTab === 'function'){
-    window.switchTab = function(tabName){
-      // 元の挙動
-      originalSwitchTab(tabName);
-
-      // モジュールのonShow
-      try{
-        const mod = App.modules[tabName];
-        if(mod && typeof mod.onShow === 'function') mod.onShow();
-      }catch(e){
-        console.warn('[App.modules] onShow error:', e);
-      }
-    };
-  }
+  // switchTab wrapper — 統合済み（元関数に組み込み済み）
 
   // ---------- future: centralized init hook ----------
   document.addEventListener('DOMContentLoaded', ()=>{
@@ -14788,16 +14791,7 @@ textarea { width: 100%; }
     setTimeout(bindMoneyVoice, 250);
   }
 
-  // タブ切り替えで「お金」表示時にも再バインド
-  var originalSwitchTab = window.switchTab;
-  if(typeof originalSwitchTab === 'function'){
-    window.switchTab = function(tabName){
-      originalSwitchTab(tabName);
-      if(tabName === 'money'){
-        setTimeout(bindMoneyVoice, 50);
-      }
-    };
-  }
+  // switchTab wrapper — 統合済み（元関数に bindMoneyVoice 組み込み済み）
 })();
 </script>
 
@@ -15589,8 +15583,13 @@ document.addEventListener('DOMContentLoaded', function(){
         el.style.color = isError ? '#c00' : '#666';
     }
 
-    // ========== 保存処理 ==========
+    // ========== 保存処理（旧ラッパー7層を統合済み） ==========
+    var _qrSaving = false; // 二重保存防止フラグ
+
     window.saveQuickRecord = function() {
+        // 二重保存防止（旧Wrapper#5）
+        if (_qrSaving) return;
+
         // [PWA/iOS対策] クイックカテゴリ選択が window 側にだけ残っている場合があるため同期
         try {
             if (!qrSelectedCategory && window.qrSelectedCategory) {
@@ -15598,24 +15597,35 @@ document.addEventListener('DOMContentLoaded', function(){
                 qrSelectedEmoji = window.qrSelectedEmoji;
             }
         } catch(_) {}
-        
-if (!qrSelectedCategory) {
+
+        if (!qrSelectedCategory) {
             alert('❌ カテゴリを選択してください');
             return;
         }
 
-        const memo = (($('qrMemoInput')?.value) || '').trim();
+        _qrSaving = true;
 
-        if (qrMode === 'activity') {
-            saveActivityRecord(memo);
-        } else {
-            const amount = parseFloat(($('qrAmountInput')?.value) || '0');
-            if (isNaN(amount) || amount <= 0) {
-                alert('❌ 金額を入力してください');
-                return;
+        try {
+            const memo = (($('qrMemoInput')?.value) || '').trim();
+
+            if (qrMode === 'activity') {
+                saveActivityRecord(memo);
+            } else {
+                const amount = parseFloat(($('qrAmountInput')?.value) || '0');
+                if (isNaN(amount) || amount <= 0) {
+                    _qrSaving = false;
+                    alert('❌ 金額を入力してください');
+                    return;
+                }
+                saveMoneyRecord(memo, amount);
             }
-            saveMoneyRecord(memo, amount);
+        } catch(e) {
+            console.error('saveQuickRecord error:', e);
         }
+
+        // モーダル閉じるまでの猶予
+        setTimeout(function(){ _qrSaving = false; }, 1000);
+
     };
 
     function saveActivityRecord(memo) {
@@ -16125,60 +16135,32 @@ const modal = $('qrModal');
 </script>
 
 <script>
-/* ===== v39.9 Fix: クイック記録→行動ログ同期 ===== */
+/* ===== v39.9 saveQuickRecordラッパー → 統合済み（元関数に組み込み済み） ===== */
+/* syncActivitiesAndRerender は saveActivityRecord 内で直接処理 */
 (function(){
   'use strict';
 
-  const originalSaveQuickRecord = window.saveQuickRecord;
-
-  // グローバル(let) activities を localStorage の最新に同期
+  // グローバル(let) activities を localStorage の最新に同期（起動時用）
   function syncActivitiesAndRerender(){
     try{
-      const key = (window.Storage && window.Storage.keys && window.Storage.keys.ACTIVITIES) ? window.Storage.keys.ACTIVITIES : 'activities';
+      const key = 'activities';
       const raw = localStorage.getItem(key);
       const arr = raw ? JSON.parse(raw) : [];
       const latest = Array.isArray(arr) ? arr : [];
-
-      // window側も更新（他UIが参照する場合用）
       try { window.activities = latest; } catch(e) {}
-
-      // 重要: 行動タブ側が参照している "let activities" を更新
       try { activities = latest; } catch(e) {}
-
-      // ログ再描画（存在する方を叩く）
       try { if (typeof window.renderActivityLogs === 'function') window.renderActivityLogs(); } catch(e) {}
       try { if (typeof window.renderActivities === 'function') window.renderActivities(); } catch(e) {}
-
-      // ダッシュボード更新
       try { if (typeof window.updateDashboard === 'function') window.updateDashboard(); } catch(e) {}
     }catch(e){
       console.warn('syncActivitiesAndRerender failed', e);
     }
   }
 
-  window.saveQuickRecord = function(){
-    // まず既存処理を実行
-    let result;
-    try{
-      if (typeof originalSaveQuickRecord === 'function'){
-        result = originalSaveQuickRecord.apply(this, arguments);
-      }
-    }finally{
-      // 行動モードのときだけ同期（判定が取れない場合も害は少ないので一応同期）
-      try{
-        const mode = window.qrMode || 'activity';
-        if (mode === 'activity') syncActivitiesAndRerender();
-      }catch(_e){}
-    }
-    return result;
-  };
-
-  // 念のため、アプリ起動時にも一度同期しておく（既存データを表示）
+  // 起動時に一度同期（既存データを表示）
   document.addEventListener('DOMContentLoaded', function(){
     setTimeout(syncActivitiesAndRerender, 300);
   });
-
-  console.log('✅ v39.9 クイック記録→行動ログ同期 修正を適用しました');
 })();
 </script>
 
@@ -16254,35 +16236,9 @@ const modal = $('qrModal');
     }).join('');
   };
 
-  // 2) クイック記録（お金保存）後に再描画
-  const originalSaveQuickRecord = window.saveQuickRecord;
-  if (typeof originalSaveQuickRecord === 'function'){
-    window.saveQuickRecord = function(){
-      const before = (window.moneyRecords || []).length;
-      const ret = originalSaveQuickRecord.apply(this, arguments);
-      try{
-        const after = (window.moneyRecords || []).length;
-        if (after !== before){
-          if (typeof window.renderMoneyLogs === 'function') window.renderMoneyLogs();
-        }
-      }catch(e){}
-      return ret;
-    };
-  }
+  // saveQuickRecordラッパー → 統合済み（元関数の saveMoneyRecord 内で renderMoneyLogs 呼び出し済み）
 
-  // 3) タブ切り替えで money を開いたら強制同期＆描画
-  const originalSwitchTab = window.switchTab;
-  if (typeof originalSwitchTab === 'function'){
-    window.switchTab = function(tabName){
-      const r = originalSwitchTab.apply(this, arguments);
-      if (tabName === 'money'){
-        setTimeout(function(){
-          if (typeof window.renderMoneyLogs === 'function') window.renderMoneyLogs();
-        }, 50);
-      }
-      return r;
-    };
-  }
+  // switchTab wrapper — 統合済み（元関数に renderMoneyLogs 組み込み済み）
 
   // 初期ロードでも一度同期
   document.addEventListener('DOMContentLoaded', function(){
@@ -17763,14 +17719,7 @@ const modal = $('qrModal');
   }
 
   // ========== 記録追加後の自動更新 ==========
-  var originalSaveQuickRecord = window.saveQuickRecord;
-  if (typeof originalSaveQuickRecord === 'function') {
-    window.saveQuickRecord = function() {
-      var result = originalSaveQuickRecord.apply(this, arguments);
-      setTimeout(updateDashboard, 100);
-      return result;
-    };
-  }
+  // saveQuickRecordラッパー → 統合済み（元関数内で updateDashboard 呼び出し済み）
 
   var originalAddActivity = window.addActivity;
   if (typeof originalAddActivity === 'function') {
@@ -19924,20 +19873,7 @@ document.addEventListener('click', function(e){
     };
   }
 
-  if (typeof origSave === 'function') {
-    window.saveQuickRecord = function(){
-      const r = origSave.apply(this, arguments);
-
-      // 保存後に同期系が走らない端末用の保険（既存のv39.9同期があっても無害）
-      try {
-        if (typeof window.updateDashboard === 'function') window.updateDashboard();
-        if (typeof window.renderActivityLogs === 'function') window.renderActivityLogs();
-        if (typeof window.renderActivities === 'function') window.renderActivities();
-      } catch(e) {}
-
-      return r;
-    };
-  }
+  // saveQuickRecordラッパー → 統合済み（元関数内で updateDashboard/renderActivityLogs 呼び出し済み）
 
   console.log('✅ Quick Record window公開ブリッジを適用');
 })();
@@ -20003,37 +19939,7 @@ window.__qrSaving = false;
 (function(){
   'use strict';
 
-  var isSaving = false; // 保存中フラグ
-
-  // 元の保存関数をラップして二重実行を阻止
-  var originalSave = window.saveQuickRecord;
-  if (typeof originalSave === 'function' && !originalSave.__wrappedV9) {
-    window.saveQuickRecord = function() {
-      if (isSaving) return;
-
-      // カテゴリ未選択チェック（window / ローカル両対応）
-      var cat = null;
-      try {
-        cat = window.qrSelectedCategory || (typeof qrSelectedCategory !== 'undefined' ? qrSelectedCategory : null);
-      } catch(_) {}
-      if (!cat) {
-        try { alert('❌ カテゴリを選択してください'); } catch(_) {}
-        return;
-      }
-
-      isSaving = true;
-      try {
-        var r = originalSave.apply(this, arguments);
-        // モーダルが閉じるまでの猶予
-        setTimeout(function(){ isSaving = false; }, 1000);
-        return r;
-      } catch (e) {
-        isSaving = false;
-        console.error(e);
-      }
-    };
-    window.saveQuickRecord.__wrappedV9 = true;
-  }
+  // 二重保存防止ラッパー → 統合済み（元関数内に _qrSaving フラグ組み込み済み）
 
   // スマホで反応を良くするための単一のリスナー（キャプチャ相で1回だけ拾う）
   // ここで preventDefault して、OS側click等の二重発火を抑止
@@ -20127,105 +20033,9 @@ window.__qrSaving = false;
 </script>
 
 <script>
-/* ===== v41.2.2 Fix: クイック記録→お金ログ同期修正 ===== */
+/* ===== v41.2.2 Fix: saveQuickRecordラッパー → 統合済み / renderMoneyLogs同期は保持 ===== */
 (function(){
   'use strict';
-
-  // 元のsaveQuickRecordを保存
-  var _origSaveQuickRecord = window.saveQuickRecord;
-
-  window.saveQuickRecord = function() {
-    // カテゴリ取得（複数の場所から同期）
-    var cat = window.qrSelectedCategory;
-    var emoji = window.qrSelectedEmoji;
-    
-    if (!cat) {
-      alert('❌ カテゴリを選択してください');
-      return;
-    }
-
-    var mode = window.qrMode || 'activity';
-    var memoInput = document.getElementById('qrMemoInput');
-    var amountInput = document.getElementById('qrAmountInput');
-    var memo = (memoInput && memoInput.value) ? memoInput.value.trim() : '';
-
-    if (mode === 'money') {
-      // お金モードの処理
-      var amount = parseFloat((amountInput && amountInput.value) ? amountInput.value : '0');
-      if (isNaN(amount) || amount <= 0) {
-        alert('❌ 金額を入力してください');
-        return;
-      }
-
-      // 1. localStorageから最新データを取得
-      var key = 'moneyRecords';
-      var raw = localStorage.getItem(key);
-      var moneyList = [];
-      try {
-        moneyList = raw ? JSON.parse(raw) : [];
-        if (!Array.isArray(moneyList)) moneyList = [];
-      } catch (e) {
-        moneyList = [];
-      }
-
-      // 2. 新しいレコードを作成（支出はマイナス）
-      var record = {
-        id: Date.now(),
-        text: memo || '',
-        amount: -Math.abs(amount),
-        category: cat,
-        categoryEmoji: emoji || '💰',
-        type: 'expense',
-        timestamp: new Date().toISOString()
-      };
-
-      // 3. 配列の先頭に追加
-      moneyList.unshift(record);
-
-      // 4. localStorageに保存
-      try {
-        localStorage.setItem(key, JSON.stringify(moneyList));
-        console.log('💰 お金記録を保存:', record);
-      } catch (e) {
-        console.error('Failed to save money:', e);
-        alert('❌ 保存に失敗しました');
-        return;
-      }
-
-      // 5. グローバル変数を同期（重要!）
-      window.moneyRecords = moneyList;
-      try { moneyRecords = moneyList; } catch (e) {}
-
-      // 6. モーダルを閉じる
-      if (typeof window.closeQuickRecordModal === 'function') {
-        window.closeQuickRecordModal();
-      } else {
-        var modal = document.getElementById('qrModal');
-        if (modal) modal.classList.remove('active');
-      }
-
-      // 7. UIを更新
-      setTimeout(function() {
-        // お金ログを更新
-        if (typeof window.renderMoneyLogs === 'function') {
-          window.renderMoneyLogs();
-        }
-        // ダッシュボードを更新
-        if (typeof window.updateDashboard === 'function') {
-          window.updateDashboard();
-        }
-      }, 50);
-
-      alert('✅ 支出を記録しました');
-      return;
-
-    } else {
-      // 行動モードは既存の処理を使用
-      if (typeof _origSaveQuickRecord === 'function') {
-        return _origSaveQuickRecord.apply(this, arguments);
-      }
-    }
-  };
 
   // renderMoneyLogsも修正（localStorageから直接読み込む）
   var _origRenderMoneyLogs = window.renderMoneyLogs;
@@ -20533,14 +20343,7 @@ window.__qrSaving = false;
 
   document.addEventListener('DOMContentLoaded', function(){
     injectToneUI();
-    if(typeof window.switchTab === 'function'){
-      var _orig = window.switchTab;
-      window.switchTab = function(name){
-        try { _orig.apply(this, arguments); } finally {
-          setTimeout(injectToneUI, 50);
-        }
-      };
-    }
+    // switchTab wrapper — 統合済み（元関数に injectToneUI 組み込み済み）
   });
 })();
 </script>
@@ -20653,14 +20456,7 @@ window.__qrSaving = false;
     return r;
   });
 
-  // Wrap saveQuickRecord: single schedule update + afterSave hooks
-  onceWrap(window, 'saveQuickRecord', '__stableWrappedSaveQuickRecord', (orig) => function(){
-    const r = orig.apply(this, arguments);
-    // Defer one dashboard refresh (avoids multiple setTimeout piles)
-    try{ scheduleDashboardUpdate(); }catch(_e){}
-    runHooks('afterSave');
-    return r;
-  });
+  // saveQuickRecordラッパー → 統合済み（元関数内に scheduleDashboardUpdate + runHooks 組み込み済み）
 
   // Also wrap common add/edit endpoints to schedule one update
   ['addActivity','addMoney','endActivity','deleteMoney','deleteActivity','editMoney','editActivity'].forEach((k) => {
