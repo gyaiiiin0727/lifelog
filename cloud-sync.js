@@ -22,6 +22,9 @@
     'aiConsultHistory'
   ];
 
+  // --- 動的キーのプレフィックス（日付ごとに生成されるキー） ---
+  var DYNAMIC_KEY_PREFIXES = ['taskChecks_'];
+
   // --- localStorage キー (認証用) ---
   var LS_TOKEN = 'syncAuthToken';
   var LS_EMAIL = 'syncAuthEmail';
@@ -121,14 +124,34 @@
       var val = localStorage.getItem(key);
       if (val !== null) data[key] = val;
     });
+    // 動的キー（taskChecks_YYYY-MM-DD 等）をスキャンして追加
+    for (var i = 0; i < localStorage.length; i++) {
+      var key = localStorage.key(i);
+      for (var p = 0; p < DYNAMIC_KEY_PREFIXES.length; p++) {
+        if (key.indexOf(DYNAMIC_KEY_PREFIXES[p]) === 0) {
+          data[key] = localStorage.getItem(key);
+          break;
+        }
+      }
+    }
     return data;
   }
 
   function applySyncData(data) {
     if (!data || typeof data !== 'object') return;
     Object.keys(data).forEach(function (key) {
-      if (SYNC_KEYS.indexOf(key) !== -1 && data[key] !== undefined) {
+      if (data[key] === undefined) return;
+      // 固定キーの場合
+      if (SYNC_KEYS.indexOf(key) !== -1) {
         localStorage.setItem(key, data[key]);
+        return;
+      }
+      // 動的キーの場合（taskChecks_* 等）
+      for (var p = 0; p < DYNAMIC_KEY_PREFIXES.length; p++) {
+        if (key.indexOf(DYNAMIC_KEY_PREFIXES[p]) === 0) {
+          localStorage.setItem(key, data[key]);
+          return;
+        }
       }
     });
   }

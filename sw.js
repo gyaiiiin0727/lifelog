@@ -1,5 +1,5 @@
-// ===== lifelog service worker (v2 - API bypass) =====
-const CACHE_NAME = 'lifelog-cache-v20260209010000';
+// ===== lifelog service worker (v3 - Network First for all app assets) =====
+const CACHE_NAME = 'lifelog-cache-v3';
 const CORE_ASSETS = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', (event) => {
@@ -29,18 +29,22 @@ self.addEventListener('fetch', (event) => {
   // LP・コミュニティはService Workerを通さない
   if (url.pathname.endsWith('/lp.html') || url.pathname.endsWith('/community.html')) return;
 
-  // HTMLナビゲーション: ネットワーク優先、失敗時はキャッシュ
-  if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
-    event.respondWith(
-      fetch(req).then(res => {
-        const copy = res.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put('./index.html', copy)).catch(() => {});
-        return res;
-      }).catch(() => caches.match('./index.html'))
-    );
+  // 画像ファイルのみキャッシュ優先（変更頻度が低い）
+  if (/\.(png|jpg|jpeg|gif|ico|svg|webp)$/i.test(url.pathname)) {
+    event.respondWith(caches.match(req).then(hit => hit || fetch(req).then(res => {
+      const copy = res.clone();
+      caches.open(CACHE_NAME).then(cache => cache.put(req, copy)).catch(() => {});
+      return res;
+    })));
     return;
   }
 
-  // その他の同一ドメインリソース: キャッシュ優先
-  event.respondWith(caches.match(req).then(hit => hit || fetch(req)));
+  // HTML・JS・CSS・その他: Network First（オフライン時のみキャッシュ）
+  event.respondWith(
+    fetch(req).then(res => {
+      const copy = res.clone();
+      caches.open(CACHE_NAME).then(cache => cache.put(req, copy)).catch(() => {});
+      return res;
+    }).catch(() => caches.match(req))
+  );
 });

@@ -12305,12 +12305,41 @@ try{
   function saveEntry(dateKey){
     const entries = safeEntries();
     const data = readForm();
+    const now = new Date().toISOString();
     entries[dateKey] = {
       ...data,
       date: dateKey,
-      updatedAt: new Date().toISOString()
+      updatedAt: now
     };
     core.storage.set(STORAGE_KEY, entries);
+
+    // V3にもデュアルライト（V3が正のデータソース）
+    try {
+      const v3All = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+      const v3Entry = v3All[dateKey] || { date: dateKey };
+      // V2のフォームデータをV3のraw/summaryに反映
+      const parts = [];
+      if (data.events) parts.push(data.events);
+      if (data.learnings) parts.push(data.learnings);
+      if (data.feelings) parts.push(data.feelings);
+      if (data.gratitude) parts.push(data.gratitude);
+      // rawが未設定 or 空の場合のみ上書き（AI結果が入っている場合は保持）
+      if (!v3Entry.raw || v3Entry.raw.trim() === '') {
+        v3Entry.raw = parts.join('\n');
+      }
+      if (!v3Entry.summary) v3Entry.summary = {};
+      if (data.must) v3Entry.summary.must = data.must;
+      if (data.want) v3Entry.summary.want = data.want;
+      if (data.events) v3Entry.summary.events = data.events;
+      if (data.learnings) v3Entry.summary.learnings = data.learnings;
+      if (data.feelings) v3Entry.summary.feelings = data.feelings;
+      if (data.gratitude) v3Entry.summary.gratitude = data.gratitude;
+      if (data.mood) v3Entry.mood = data.mood;
+      v3Entry.updatedAt = now;
+      v3All[dateKey] = v3Entry;
+      localStorage.setItem('journalEntriesV3', JSON.stringify(v3All));
+    } catch(e) { console.warn('V2→V3 dual write failed:', e); }
+
     setStatus('journalV2Status', '✓ 保存しました', false);
   }
 
@@ -12468,8 +12497,54 @@ try{
     writeForm(null);
   }
 
+  // V2→V3 マイグレーション（初回のみ実行）
+  function migrateV2toV3() {
+    if (localStorage.getItem('journalV2MigratedToV3')) return;
+    try {
+      const v2Data = core.storage.get(STORAGE_KEY, {});
+      if (!v2Data || Object.keys(v2Data).length === 0) {
+        localStorage.setItem('journalV2MigratedToV3', '1');
+        return;
+      }
+      const v3All = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+      let migrated = 0;
+      Object.keys(v2Data).forEach(dateKey => {
+        const v2 = v2Data[dateKey];
+        if (!v2) return;
+        // V3に既にデータがある場合はスキップ（V3が正）
+        if (v3All[dateKey] && v3All[dateKey].updatedAt) return;
+        const v3Entry = v3All[dateKey] || { date: dateKey };
+        const parts = [];
+        if (v2.events) parts.push(v2.events);
+        if (v2.learnings) parts.push(v2.learnings);
+        if (v2.feelings) parts.push(v2.feelings);
+        if (v2.gratitude) parts.push(v2.gratitude);
+        if (!v3Entry.raw) v3Entry.raw = parts.join('\n');
+        if (!v3Entry.summary) v3Entry.summary = {};
+        if (v2.must) v3Entry.summary.must = v2.must;
+        if (v2.want) v3Entry.summary.want = v2.want;
+        if (v2.events) v3Entry.summary.events = v2.events;
+        if (v2.learnings) v3Entry.summary.learnings = v2.learnings;
+        if (v2.feelings) v3Entry.summary.feelings = v2.feelings;
+        if (v2.gratitude) v3Entry.summary.gratitude = v2.gratitude;
+        if (v2.mood) v3Entry.mood = v2.mood;
+        v3Entry.updatedAt = v2.updatedAt || new Date().toISOString();
+        v3All[dateKey] = v3Entry;
+        migrated++;
+      });
+      if (migrated > 0) {
+        localStorage.setItem('journalEntriesV3', JSON.stringify(v3All));
+        console.log('Journal V2→V3 migration complete:', migrated, 'entries');
+      }
+      localStorage.setItem('journalV2MigratedToV3', '1');
+    } catch(e) { console.warn('V2→V3 migration error:', e); }
+  }
+
   const JournalModule = {
     init(){
+      // V2→V3マイグレーション（初回のみ）
+      migrateV2toV3();
+
       const dateInput = getEl('journalV2Date');
       if(dateInput && !dateInput.value) dateInput.value = todayKey();
 
