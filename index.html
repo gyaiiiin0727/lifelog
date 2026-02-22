@@ -5910,42 +5910,54 @@ const Storage = {
       return;
     }
 
-    // バーチャート + 各気分行
+    // 最大値を取得（棒の高さ計算用）
+    var maxCount = 0;
+    MOOD_ORDER.forEach(function(m){ if(data[m].length > maxCount) maxCount = data[m].length; });
+    var BAR_MAX_H = 120;
+
     var html = '';
-    // 横棒グラフ（全体）
-    html += '<div style="display:flex;height:10px;border-radius:5px;overflow:hidden;margin-bottom:14px;">';
+
+    // ===== 縦棒グラフ =====
+    html += '<div style="display:flex;align-items:flex-end;justify-content:center;gap:8px;padding:12px 0 4px;margin-bottom:4px;min-height:'+(BAR_MAX_H + 100)+'px;">';
     MOOD_ORDER.forEach(function(m){
-      var pct = total > 0 ? (data[m].length / total * 100) : 0;
-      if(pct > 0) html += '<div style="width:'+pct+'%;background:'+MOOD_COLORS[m]+';"></div>';
+      var count = data[m].length;
+      var barH = maxCount > 0 ? Math.max(8, Math.round(count / maxCount * BAR_MAX_H)) : 0;
+      if(count === 0) barH = 0;
+      var pct = total > 0 ? Math.round(count / total * 100) : 0;
+      var datesId = 'moodDates_' + m.replace(/[^a-zA-Z\u3000-\u9FFF]/g,'');
+
+      html += '<div style="display:flex;flex-direction:column;align-items:center;flex:1;min-width:0;cursor:pointer;" onclick="var el=document.getElementById(\''+datesId+'\');var all=document.querySelectorAll(\'.mood-dates-expand\');all.forEach(function(a){if(a.id!==\''+datesId+'\')a.style.display=\'none\';});if(el)el.style.display=el.style.display===\'none\'?\'block\':\'none\';">';
+      // 日数ラベル（棒の上）
+      html += '<span style="font-size:14px;font-weight:700;color:'+MOOD_COLORS[m]+';margin-bottom:4px;">'+(count > 0 ? count+'日' : '-')+'</span>';
+      // 棒（縦方向に伸びる）
+      if(count > 0) {
+        html += '<div style="width:36px;height:'+barH+'px;background:linear-gradient(180deg, '+MOOD_COLORS[m]+' 0%, '+MOOD_COLORS[m]+'CC 100%);border-radius:6px 6px 2px 2px;transition:height 0.4s ease;box-shadow:0 1px 3px rgba(0,0,0,0.1);"></div>';
+      } else {
+        html += '<div style="width:36px;height:2px;background:#e0e0e0;border-radius:2px;"></div>';
+      }
+      // 絵文字（棒の下）
+      html += '<span style="font-size:24px;margin-top:8px;">'+MOOD_EMOJI[m]+'</span>';
+      // パーセント
+      html += '<span style="font-size:11px;color:#888;margin-top:2px;">'+pct+'%</span>';
+      html += '</div>';
     });
     html += '</div>';
 
-    // 各気分の行
+    // ===== 展開エリア（各気分の日付チップ） =====
     MOOD_ORDER.forEach(function(m){
       var count = data[m].length;
       if(count === 0) return;
-      var pct = Math.round(count / total * 100);
       var dates = data[m].sort();
       var datesId = 'moodDates_' + m.replace(/[^a-zA-Z\u3000-\u9FFF]/g,'');
 
-      html += '<div style="margin-bottom:6px;">';
-      html += '<div onclick="var el=document.getElementById(\''+datesId+'\');if(el)el.style.display=el.style.display===\'none\'?\'block\':\'none\';" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#fafafa;border-radius:8px;cursor:pointer;user-select:none;">';
-      html += '<span style="font-size:20px;">'+MOOD_EMOJI[m]+'</span>';
-      html += '<span style="flex:1;font-size:13px;font-weight:600;color:#333;">'+m+'</span>';
-      html += '<span style="font-size:14px;font-weight:700;color:'+MOOD_COLORS[m]+';">'+count+'日</span>';
-      html += '<span style="font-size:12px;color:#999;min-width:36px;text-align:right;">'+pct+'%</span>';
-      html += '<span style="font-size:11px;color:#bbb;">▼</span>';
-      html += '</div>';
-
-      // 展開エリア（日付一覧）
-      html += '<div id="'+datesId+'" style="display:none;padding:6px 10px 6px 38px;">';
-      html += '<div style="display:flex;flex-wrap:wrap;gap:4px;">';
+      html += '<div id="'+datesId+'" class="mood-dates-expand" style="display:none;padding:10px 4px;border-top:1px solid #f0f0f0;margin-top:4px;">';
+      html += '<div style="font-size:12px;font-weight:600;color:'+MOOD_COLORS[m]+';margin-bottom:6px;">'+MOOD_EMOJI[m]+' '+m+'の日</div>';
+      html += '<div style="display:flex;flex-wrap:wrap;gap:5px;">';
       dates.forEach(function(d){
         var day = parseInt(d.split('-')[2]);
-        html += '<span onclick="window.openJournalDetail&&window.openJournalDetail(\''+d+'\')" style="font-size:12px;background:#e3f2fd;color:#1976D2;padding:3px 8px;border-radius:12px;cursor:pointer;">'+day+'日</span>';
+        html += '<span onclick="event.stopPropagation();window.openJournalDetail&&window.openJournalDetail(\''+d+'\')" style="font-size:12px;background:#e3f2fd;color:#1976D2;padding:3px 10px;border-radius:12px;cursor:pointer;">'+day+'日</span>';
       });
       html += '</div></div>';
-      html += '</div>';
     });
 
     box.innerHTML = html;
@@ -21222,7 +21234,7 @@ function getAICharIconSrc(tone) {
 }
 
 // ========== 過去データコンテキスト生成 ==========
-function summarizeActivities() {
+function summarizeActivities(detailed) {
   var activities;
   try { activities = JSON.parse(localStorage.getItem('activities') || '[]'); } catch(e) { return ''; }
   if (!Array.isArray(activities) || activities.length === 0) return '';
@@ -21248,17 +21260,80 @@ function summarizeActivities() {
   var h = Math.floor(totalMin / 60);
   var m = totalMin % 60;
   var lines = ['[今週の行動] ' + recent.length + '件 / 合計' + h + '時間' + m + '分'];
-  Object.keys(cats)
-    .sort(function(a, b) { return cats[b].minutes - cats[a].minutes; })
-    .slice(0, 5)
-    .forEach(function(cat) {
-      var c = cats[cat];
-      lines.push('  ' + cat + ': ' + c.count + '件 ' + Math.floor(c.minutes / 60) + 'h' + (c.minutes % 60) + 'm');
+
+  // カテゴリ別サマリー（全カテゴリ表示、上限10）
+  var catKeys = Object.keys(cats).sort(function(a, b) { return cats[b].minutes - cats[a].minutes; });
+  catKeys.slice(0, 10).forEach(function(cat) {
+    var c = cats[cat];
+    var pct = totalMin > 0 ? Math.round((c.minutes / totalMin) * 100) : 0;
+    lines.push('  ' + cat + ': ' + c.count + '件 ' + Math.floor(c.minutes / 60) + 'h' + (c.minutes % 60) + 'm (' + pct + '%)');
+  });
+
+  // detailedモード: 行動テーマの相談時は個別の行動記録も含める
+  if (detailed) {
+    // 日別の行動内訳（直近7日）
+    var dayMap = {};
+    recent.forEach(function(a) {
+      var d = new Date(a.startTime || a.timestamp);
+      var key = (d.getMonth()+1) + '/' + d.getDate();
+      if (!dayMap[key]) dayMap[key] = [];
+      dayMap[key].push(a);
     });
+
+    var dayKeys = Object.keys(dayMap).sort(function(a, b) {
+      // 新しい日付順
+      var pa = a.split('/').map(Number);
+      var pb = b.split('/').map(Number);
+      return (pb[0] * 100 + pb[1]) - (pa[0] * 100 + pa[1]);
+    });
+
+    lines.push('  《日別の行動記録》');
+    dayKeys.forEach(function(dayKey) {
+      var dayActs = dayMap[dayKey];
+      var dayMin = 0;
+      dayActs.forEach(function(a) { dayMin += (a.durationMinutes || 0); });
+      lines.push('  ▼ ' + dayKey + ' (' + dayActs.length + '件, ' + Math.floor(dayMin/60) + 'h' + (dayMin%60) + 'm)');
+      // 各行動を表示（時間順、上限8件）
+      dayActs.sort(function(a, b) {
+        return new Date(a.startTime || a.timestamp) - new Date(b.startTime || b.timestamp);
+      });
+      dayActs.slice(0, 8).forEach(function(a) {
+        var d = new Date(a.startTime || a.timestamp);
+        var timeStr = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+        var dur = a.durationMinutes || 0;
+        var cat = a.category || '';
+        var memo = a.memo || a.note || a.title || a.description || '';
+        var line = '    ' + timeStr + ' ' + (cat ? '[' + cat + '] ' : '') + Math.floor(dur/60) + 'h' + (dur%60) + 'm';
+        if (memo) line += ' ' + memo;
+        lines.push(line);
+      });
+      if (dayActs.length > 8) lines.push('    ...他' + (dayActs.length - 8) + '件');
+    });
+
+    // 時間帯別の行動パターン
+    var hourBuckets = { '朝(5-9)': 0, '午前(9-12)': 0, '午後(12-17)': 0, '夕方(17-21)': 0, '夜(21-5)': 0 };
+    recent.forEach(function(a) {
+      var d = new Date(a.startTime || a.timestamp);
+      var hr = d.getHours();
+      var dur = a.durationMinutes || 0;
+      if (hr >= 5 && hr < 9) hourBuckets['朝(5-9)'] += dur;
+      else if (hr >= 9 && hr < 12) hourBuckets['午前(9-12)'] += dur;
+      else if (hr >= 12 && hr < 17) hourBuckets['午後(12-17)'] += dur;
+      else if (hr >= 17 && hr < 21) hourBuckets['夕方(17-21)'] += dur;
+      else hourBuckets['夜(21-5)'] += dur;
+    });
+    lines.push('  《時間帯別》');
+    Object.keys(hourBuckets).forEach(function(slot) {
+      if (hourBuckets[slot] > 0) {
+        lines.push('  ' + slot + ': ' + Math.floor(hourBuckets[slot]/60) + 'h' + (hourBuckets[slot]%60) + 'm');
+      }
+    });
+  }
+
   return lines.join('\n');
 }
 
-function summarizeMoney() {
+function summarizeMoney(detailed) {
   var records;
   try { records = JSON.parse(localStorage.getItem('moneyRecords') || '[]'); } catch(e) { return ''; }
   if (!Array.isArray(records) || records.length === 0) return '';
@@ -21270,6 +21345,7 @@ function summarizeMoney() {
 
   var totalExpense = 0, totalIncome = 0;
   var expCats = {};
+  var incCats = {};
   monthly.forEach(function(r) {
     var amt = Number(r.amount || 0);
     if (amt < 0 || r.type === 'expense') {
@@ -21279,16 +21355,73 @@ function summarizeMoney() {
       expCats[cat] = (expCats[cat] || 0) + absAmt;
     } else {
       totalIncome += amt;
+      var icat = r.category || 'その他';
+      incCats[icat] = (incCats[icat] || 0) + amt;
     }
   });
 
-  var lines = ['[今月のお金] 支出: ¥' + totalExpense.toLocaleString() + ' / 収入: ¥' + totalIncome.toLocaleString()];
+  var lines = ['[今月のお金] 支出: ¥' + totalExpense.toLocaleString() + ' / 収入: ¥' + totalIncome.toLocaleString() + ' (記録' + monthly.length + '件)'];
+  // カテゴリ別集計
+  lines.push('  《支出カテゴリ》');
   Object.keys(expCats)
     .sort(function(a, b) { return expCats[b] - expCats[a]; })
-    .slice(0, 5)
+    .slice(0, 8)
     .forEach(function(cat) {
-      lines.push('  ' + cat + ': ¥' + expCats[cat].toLocaleString());
+      var pct = totalExpense > 0 ? Math.round((expCats[cat] / totalExpense) * 100) : 0;
+      lines.push('  ' + cat + ': ¥' + expCats[cat].toLocaleString() + ' (' + pct + '%)');
     });
+  if (Object.keys(incCats).length > 0) {
+    lines.push('  《収入カテゴリ》');
+    Object.keys(incCats)
+      .sort(function(a, b) { return incCats[b] - incCats[a]; })
+      .slice(0, 5)
+      .forEach(function(cat) {
+        lines.push('  ' + cat + ': ¥' + incCats[cat].toLocaleString());
+      });
+  }
+
+  // detailedモード: お金テーマの相談時は個別記録も含める（直近20件）
+  if (detailed) {
+    var sorted = monthly.slice().sort(function(a, b) { return new Date(b.timestamp) - new Date(a.timestamp); });
+    var recentItems = sorted.slice(0, 20);
+    if (recentItems.length > 0) {
+      lines.push('  《直近の記録（新しい順）》');
+      recentItems.forEach(function(r) {
+        var d = new Date(r.timestamp);
+        var dateStr = (d.getMonth()+1) + '/' + d.getDate();
+        var amt = Number(r.amount || 0);
+        var isExp = (amt < 0 || r.type === 'expense');
+        var prefix = isExp ? '支出' : '収入';
+        var dispAmt = Math.abs(amt);
+        var memo = r.memo || r.note || r.description || '';
+        var cat = r.category || '';
+        var line = '  ' + dateStr + ' ' + prefix + ' ¥' + dispAmt.toLocaleString();
+        if (cat) line += ' [' + cat + ']';
+        if (memo) line += ' ' + memo;
+        lines.push(line);
+      });
+    }
+
+    // 日別の支出推移（今月）
+    var dailyExp = {};
+    monthly.forEach(function(r) {
+      var amt = Number(r.amount || 0);
+      if (amt < 0 || r.type === 'expense') {
+        var d = new Date(r.timestamp);
+        var key = (d.getMonth()+1) + '/' + d.getDate();
+        dailyExp[key] = (dailyExp[key] || 0) + Math.abs(amt);
+      }
+    });
+    var dayKeys = Object.keys(dailyExp).sort();
+    if (dayKeys.length > 1) {
+      var dayOfMonth = now.getDate();
+      var dailyAvg = dayOfMonth > 0 ? Math.round(totalExpense / dayOfMonth) : 0;
+      var daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+      var projectedTotal = dailyAvg * daysInMonth;
+      lines.push('  《支出ペース》 1日平均: ¥' + dailyAvg.toLocaleString() + ' / 月末予測: ¥' + projectedTotal.toLocaleString());
+    }
+  }
+
   return lines.join('\n');
 }
 
@@ -21485,28 +21618,50 @@ function buildContextSummary(topic, opts) {
   opts = opts || {};
   var parts = [];
 
-  // 活動データ: activity, goals, other で参照
-  if (topic === 'activity' || topic === 'goals' || topic === 'other') {
-    var actS = summarizeActivities();
+  if (topic === 'activity') {
+    // 行動テーマ: 行動データをメインに詳細表示、目標は補助情報
+    var actS = summarizeActivities(true); // detailed=true
     if (actS) parts.push(actS);
-  }
-  // 支出データ: money, goals, other で参照（目標達成にお金の使い方も重要）
-  if (topic === 'money' || topic === 'goals' || topic === 'other') {
-    var monS = summarizeMoney();
-    if (monS) parts.push(monS);
-  }
-  // 目標は全トピックで含める（お金や行動の相談でも目標を踏まえたアドバイスが有用）
-  if (topic === 'goals' || topic === 'other' || topic === 'money' || topic === 'activity') {
+    // 目標は補助情報として簡潔に（あくまで参考）
     var goalS = summarizeGoals(opts.goalCategory);
-    if (goalS) parts.push(goalS);
-  }
-  // 目標と実績のクロスリファレンス（全トピックで追加）
-  if (topic === 'other' || topic === 'goals' || topic === 'money' || topic === 'activity') {
+    if (goalS) parts.push('《参考: 目標》\n' + goalS);
+    // ギャップも軽く追加
     var gapS = summarizeGoalVsReality();
     if (gapS) parts.push(gapS);
-  }
-  // ジャーナル・体重: goals, other で参照（日記の振り返りも目標フィードバックに有用）
-  if (topic === 'other' || topic === 'goals') {
+  } else if (topic === 'money') {
+    // お金テーマ: お金データをメインに詳細表示、目標は補助情報
+    var monS = summarizeMoney(true); // detailed=true
+    if (monS) parts.push(monS);
+    // 目標は補助情報
+    var goalS = summarizeGoals(opts.goalCategory);
+    if (goalS) parts.push('《参考: 目標》\n' + goalS);
+    // ギャップ
+    var gapS = summarizeGoalVsReality();
+    if (gapS) parts.push(gapS);
+  } else if (topic === 'goals') {
+    // 目標テーマ: 目標メイン、行動・お金・ジャーナルで裏付け
+    var goalS = summarizeGoals(opts.goalCategory);
+    if (goalS) parts.push(goalS);
+    var gapS = summarizeGoalVsReality();
+    if (gapS) parts.push(gapS);
+    var actS = summarizeActivities(true);
+    if (actS) parts.push(actS);
+    var monS = summarizeMoney(true);
+    if (monS) parts.push(monS);
+    var jourS = summarizeJournal();
+    if (jourS) parts.push(jourS);
+    var weiS = summarizeWeight();
+    if (weiS) parts.push(weiS);
+  } else {
+    // その他: 全データをバランスよく
+    var actS = summarizeActivities();
+    if (actS) parts.push(actS);
+    var monS = summarizeMoney();
+    if (monS) parts.push(monS);
+    var goalS = summarizeGoals(opts.goalCategory);
+    if (goalS) parts.push(goalS);
+    var gapS = summarizeGoalVsReality();
+    if (gapS) parts.push(gapS);
     var jourS = summarizeJournal();
     if (jourS) parts.push(jourS);
     var weiS = summarizeWeight();
@@ -21514,7 +21669,15 @@ function buildContextSummary(topic, opts) {
   }
 
   if (parts.length === 0) return '';
-  return '【ユーザーの過去データ（参考情報。これを踏まえてアドバイスしてください）】\n' + parts.join('\n') + '\n\n';
+
+  // テーマに応じたヘッダーで優先度を明示
+  var header = '【ユーザーの実際の記録データ（このデータに基づいてアドバイスしてください）】\n';
+  if (topic === 'activity') {
+    header = '【ユーザーの行動記録（★メインデータ: これを中心にアドバイスしてください）】\n';
+  } else if (topic === 'money') {
+    header = '【ユーザーの家計記録（★メインデータ: 実際の支出・収入を踏まえてアドバイスしてください）】\n';
+  }
+  return header + parts.join('\n') + '\n\n';
 }
 window.buildContextSummary = buildContextSummary;
 
