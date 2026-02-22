@@ -387,7 +387,7 @@ async function handleAnalyze(body, env, userEmail) {
   }
 
   const charPrompt = CHARACTER_PROMPTS[tone] || CHARACTER_PROMPTS.normal;
-  const isConsult = (type === "consult");
+  const isConsult = (type === "consult" || type === "goalCoach");
 
   let system;
   if (isConsult) {
