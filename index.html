@@ -18445,17 +18445,81 @@ const modal = $('qrModal');
     var usage = getUsage();
     var limits = getEffectiveLimits();
     var firstMonth = isFirstMonth();
+    var isPro = (plan !== 'free');
 
-    // AI相談タブ内の残回数表示
-    var badge = document.getElementById('dayce-plan-badge');
-    if (badge) {
-      badge.textContent = firstMonth ? '無料プラン（初月特典 🎁）' : PLANS[plan].label;
-      badge.className = 'dayce-plan-badge dayce-plan-' + plan;
+    // === プランカード（設定画面） ===
+    var card = document.getElementById('dayce-plan-card');
+    if (card) {
+      if (isPro) {
+        card.style.background = 'linear-gradient(135deg, #1976D2, #2196F3)';
+        card.style.color = '#fff';
+        card.innerHTML =
+          '<div style="font-size:20px;font-weight:700;margin-bottom:2px;">👑 プロプラン</div>' +
+          '<div style="font-size:13px;opacity:.85;">¥500/月 — 全機能無制限</div>';
+      } else if (firstMonth) {
+        card.style.background = 'linear-gradient(135deg, #e8f5e9, #c8e6c9)';
+        card.style.color = '#2e7d32';
+        card.innerHTML =
+          '<div style="font-size:20px;font-weight:700;margin-bottom:2px;">🎁 初月特典</div>' +
+          '<div style="font-size:13px;opacity:.85;">無料プラン — AI相談・心を整える無制限</div>';
+      } else {
+        card.style.background = '#f5f5f5';
+        card.style.color = '#333';
+        card.innerHTML =
+          '<div style="font-size:20px;font-weight:700;margin-bottom:2px;">無料プラン</div>' +
+          '<div style="font-size:13px;color:#888;">機能に回数制限があります</div>';
+      }
     }
 
-    // 各機能の残回数をバッジ表示
-    var types = ['journal', 'consult', 'goalCoach'];
-    types.forEach(function(t) {
+    // === 残り回数リスト（設定画面） ===
+    var list = document.getElementById('dayce-usage-list');
+    if (list) {
+      var typeNames = { journal: '心を整える', consult: 'AI相談', goalCoach: '目標コーチ' };
+      var typeIcons = { journal: '🧘', consult: '💬', goalCoach: '🎯' };
+      var rows = '';
+      ['journal', 'consult', 'goalCoach'].forEach(function(t) {
+        var lim = limits[t];
+        var used = usage[t] || 0;
+        var statusText = '';
+        var statusColor = '#27ae60';
+
+        if (lim === 9999) {
+          statusText = firstMonth ? '初月無制限 🎁' : '無制限';
+        } else if (firstMonth && t === 'goalCoach') {
+          var remain = Math.max(0, lim - used);
+          statusText = remain + '/' + lim + '回';
+          statusColor = remain > 0 ? '#27ae60' : '#e74c3c';
+        } else if (lim === 0) {
+          statusText = '利用不可';
+          statusColor = '#999';
+        } else if (t === 'journal' && limits.journalDaily && !firstMonth) {
+          var dailyUsed = getDailyUsage('journal');
+          var dailyRemain = Math.max(0, limits.journalDaily - dailyUsed);
+          statusText = dailyRemain > 0 ? '今日あと' + dailyRemain + '回' : '今日は使用済み';
+          statusColor = dailyRemain > 0 ? '#27ae60' : '#e74c3c';
+        } else {
+          var remain = Math.max(0, lim - used);
+          statusText = '残り' + remain + '/' + lim + '回';
+          statusColor = remain <= 2 ? '#e74c3c' : remain <= 5 ? '#f39c12' : '#27ae60';
+        }
+
+        rows +=
+          '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#fafafa;border-radius:8px;">' +
+            '<span style="font-size:13px;color:#555;">' + typeIcons[t] + ' ' + typeNames[t] + '</span>' +
+            '<span style="font-size:13px;font-weight:600;color:' + statusColor + ';">' + statusText + '</span>' +
+          '</div>';
+      });
+      list.innerHTML = rows;
+    }
+
+    // === 旧バッジ互換（他画面で使われている場合） ===
+    var badge = document.getElementById('dayce-plan-badge');
+    if (badge) {
+      badge.textContent = isPro ? 'プロ（¥500/月）' : (firstMonth ? '無料プラン（初月特典 🎁）' : '無料プラン');
+      badge.className = 'dayce-plan-badge dayce-plan-' + plan;
+    }
+    // 旧個別バッジ（他の画面で参照されている可能性）
+    ['journal', 'consult', 'goalCoach'].forEach(function(t) {
       var el = document.getElementById('dayce-usage-' + t);
       if (!el) return;
       var lim = limits[t];
@@ -18471,7 +18535,6 @@ const modal = $('qrModal');
         el.textContent = '利用不可';
         el.style.color = '#999';
       } else if (t === 'journal' && limits.journalDaily && !firstMonth) {
-        // 日次制限表示（無料プランのジャーナル、初月以降）
         var dailyUsed = getDailyUsage('journal');
         var dailyRemain = Math.max(0, limits.journalDaily - dailyUsed);
         el.textContent = dailyRemain > 0 ? '今日あと' + dailyRemain + '回' : '今日は使用済み';
@@ -21938,12 +22001,10 @@ window.updateFeedbackToneUI = updateFeedbackToneUI;
   <!-- プラン情報 -->
   <div class="settings-section">
     <h3>📋 プラン</h3>
-    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;">
-      <span id="dayce-plan-badge" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#e3f2fd;color:#1976D2;">無料プラン</span>
-      <span style="font-size:12px;color:#888;">AI相談: <span id="dayce-usage-consult" style="font-weight:600;">—</span></span>
-      <span style="font-size:12px;color:#888;">心を整える: <span id="dayce-usage-journal" style="font-weight:600;">—</span></span>
-      <span style="font-size:12px;color:#888;">目標コーチ: <span id="dayce-usage-goalCoach" style="font-weight:600;">—</span></span>
-    </div>
+    <!-- プラン名カード -->
+    <div id="dayce-plan-card" style="border-radius:12px;padding:14px 16px;margin-bottom:12px;text-align:center;"></div>
+    <!-- 残り回数 -->
+    <div id="dayce-usage-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;"></div>
     <div style="text-align:center;">
       <button type="button" onclick="if(window.DaycePlan)window.DaycePlan.showPlanUI();" style="font-size:13px;color:#2196F3;background:none;border:1px solid #2196F3;border-radius:20px;padding:5px 16px;cursor:pointer;">📋 プラン変更</button>
     </div>
