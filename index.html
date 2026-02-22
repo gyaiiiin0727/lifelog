@@ -5377,6 +5377,17 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <button class="add-button" data-only-tab="journal" onclick="saveJournalWithAI()">📝 保存</button>
 <div class="status" id="journalStatus" data-only-tab="journal"></div>
 
+<!-- 月間気分レポート -->
+<div id="moodReportSection" style="padding:0 16px 16px;">
+  <div style="margin-top:20px;background:#fff;border-radius:16px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <h3 style="margin:0;font-size:15px;font-weight:700;color:#333;">📊 今月の気分レポート</h3>
+      <select id="moodReportMonth" onchange="renderMoodReport()" style="font-size:13px;padding:4px 8px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#555;"></select>
+    </div>
+    <div id="moodReportContent"></div>
+  </div>
+</div>
+
 </div><!-- /journal tab -->
 
 <!-- 今月の目標タブ -->
@@ -5762,9 +5773,10 @@ const Storage = {
                 if (typeof window.App !== 'undefined' && window.App.core) {
                     try { window.App.core.storage.set('journalEntriesV3', allEntries); } catch(_){}
                 }
-                // カレンダー更新
+                // カレンダー＆気分レポート更新
                 if (typeof renderCalendar === 'function') renderCalendar();
                 else if (typeof window.renderCalendar === 'function') window.renderCalendar();
+                if (typeof window.renderMoodReport === 'function') window.renderMoodReport();
                 // mood-card側も同期表示
                 const cards = document.querySelectorAll('#journalMoodWrap .mood-card');
                 cards.forEach(c => {
@@ -5842,20 +5854,140 @@ const Storage = {
     try { if (typeof injectToneUI === 'function') setTimeout(injectToneUI, 50); } catch(e) {}
 }
 
-// ===== スワイプでタブ切替 =====
+// ===== 月間気分レポート =====
+(function(){
+  var MOOD_EMOJI = {'最高':'😊','良い':'🙂','普通':'😐','悪い':'😔','最悪':'😢'};
+  var MOOD_COLORS = {'最高':'#4CAF50','良い':'#8BC34A','普通':'#FFC107','悪い':'#FF9800','最悪':'#F44336'};
+  var MOOD_ORDER = ['最高','良い','普通','悪い','最悪'];
+
+  function getMonthOptions(){
+    var entries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+    var months = {};
+    Object.keys(entries).forEach(function(k){
+      if(entries[k] && entries[k].mood){ months[k.slice(0,7)] = true; }
+    });
+    var now = new Date();
+    var cur = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    months[cur] = true;
+    return Object.keys(months).sort().reverse();
+  }
+
+  function getMoodData(ym){
+    var entries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+    var result = {};
+    MOOD_ORDER.forEach(function(m){ result[m] = []; });
+    Object.keys(entries).forEach(function(k){
+      if(k.slice(0,7) !== ym) return;
+      var e = entries[k];
+      if(e && e.mood && MOOD_ORDER.indexOf(e.mood) !== -1){
+        result[e.mood].push(k);
+      }
+    });
+    return result;
+  }
+
+  window.renderMoodReport = function(){
+    var sel = document.getElementById('moodReportMonth');
+    var box = document.getElementById('moodReportContent');
+    if(!sel || !box) return;
+
+    // 月セレクタ更新
+    var months = getMonthOptions();
+    var curVal = sel.value;
+    if(!curVal || months.indexOf(curVal) === -1) curVal = months[0] || '';
+    sel.innerHTML = months.map(function(m){
+      var parts = m.split('-');
+      return '<option value="'+m+'"'+(m===curVal?' selected':'')+'>'+parts[0]+'年'+parseInt(parts[1])+'月</option>';
+    }).join('');
+    if(!curVal){ box.innerHTML='<div style="text-align:center;color:#999;padding:20px;font-size:13px;">データがありません</div>'; return; }
+
+    var data = getMoodData(curVal);
+    var total = 0;
+    MOOD_ORDER.forEach(function(m){ total += data[m].length; });
+
+    if(total === 0){
+      box.innerHTML='<div style="text-align:center;color:#999;padding:20px;font-size:13px;">この月の気分データはまだありません</div>';
+      return;
+    }
+
+    // バーチャート + 各気分行
+    var html = '';
+    // 横棒グラフ（全体）
+    html += '<div style="display:flex;height:10px;border-radius:5px;overflow:hidden;margin-bottom:14px;">';
+    MOOD_ORDER.forEach(function(m){
+      var pct = total > 0 ? (data[m].length / total * 100) : 0;
+      if(pct > 0) html += '<div style="width:'+pct+'%;background:'+MOOD_COLORS[m]+';"></div>';
+    });
+    html += '</div>';
+
+    // 各気分の行
+    MOOD_ORDER.forEach(function(m){
+      var count = data[m].length;
+      if(count === 0) return;
+      var pct = Math.round(count / total * 100);
+      var dates = data[m].sort();
+      var datesId = 'moodDates_' + m.replace(/[^a-zA-Z\u3000-\u9FFF]/g,'');
+
+      html += '<div style="margin-bottom:6px;">';
+      html += '<div onclick="var el=document.getElementById(\''+datesId+'\');if(el)el.style.display=el.style.display===\'none\'?\'block\':\'none\';" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#fafafa;border-radius:8px;cursor:pointer;user-select:none;">';
+      html += '<span style="font-size:20px;">'+MOOD_EMOJI[m]+'</span>';
+      html += '<span style="flex:1;font-size:13px;font-weight:600;color:#333;">'+m+'</span>';
+      html += '<span style="font-size:14px;font-weight:700;color:'+MOOD_COLORS[m]+';">'+count+'日</span>';
+      html += '<span style="font-size:12px;color:#999;min-width:36px;text-align:right;">'+pct+'%</span>';
+      html += '<span style="font-size:11px;color:#bbb;">▼</span>';
+      html += '</div>';
+
+      // 展開エリア（日付一覧）
+      html += '<div id="'+datesId+'" style="display:none;padding:6px 10px 6px 38px;">';
+      html += '<div style="display:flex;flex-wrap:wrap;gap:4px;">';
+      dates.forEach(function(d){
+        var day = parseInt(d.split('-')[2]);
+        html += '<span onclick="window.openJournalDetail&&window.openJournalDetail(\''+d+'\')" style="font-size:12px;background:#e3f2fd;color:#1976D2;padding:3px 8px;border-radius:12px;cursor:pointer;">'+day+'日</span>';
+      });
+      html += '</div></div>';
+      html += '</div>';
+    });
+
+    box.innerHTML = html;
+  };
+
+  // 日付タップ → ジャーナルログを開いてスクロール
+  window.openJournalDetail = function(dateStr){
+    // ジャーナルログ内で該当日のトグルを開く
+    var detailId = 'journal-' + dateStr;
+    var el = document.getElementById(detailId);
+    if(el){
+      // 閉じていたら開く
+      if(el.style.display === 'none' || !el.style.display){
+        if(typeof toggleJournalDetail === 'function') toggleJournalDetail(detailId);
+      }
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      // ジャーナルログセクション自体が見つからない場合はスクロールのみ
+      var logsSection = document.getElementById('journalLogsList') || document.getElementById('journalLogs');
+      if(logsSection) logsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // 初回レンダリング
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(window.renderMoodReport, 600); });
+  } else {
+    setTimeout(window.renderMoodReport, 600);
+  }
+})();
+
+// ===== スワイプでタブ切替（スライドアニメーション付き） =====
 (function() {
   var TAB_ORDER = ['home', 'activity', 'money', 'reportActivity', 'reportMoney', 'journal', 'goals', 'aiConsult'];
-  var swipeStartX = 0;
-  var swipeStartY = 0;
-  var swipeStartTime = 0;
-  var SWIPE_THRESHOLD = 50;   // 最低スワイプ距離(px)
-  var SWIPE_MAX_TIME = 400;   // 最大許容時間(ms)
-  var SWIPE_ANGLE_LIMIT = 30; // 水平方向からの角度制限(度)
+  var startX = 0, startY = 0, currentX = 0;
+  var tracking = false;    // 水平スワイプと確定したか
+  var decided = false;     // 水平 or 垂直を判定済みか
+  var THRESHOLD = 60;      // 切替に必要な距離(px)
 
   function getCurrentTab() {
     var active = document.querySelector('.tab-content.active');
     if (active) return active.id;
-    // フォールバック: display:block のタブを探す
     var tabs = document.querySelectorAll('.tab-content');
     for (var i = 0; i < tabs.length; i++) {
       if (tabs[i].style.display === 'block') return tabs[i].id;
@@ -5863,50 +5995,127 @@ const Storage = {
     return 'home';
   }
 
-  document.addEventListener('touchstart', function(e) {
-    // フォーム入力中・モーダル上・チャットUI上はスワイプ無効
-    var tag = e.target.tagName;
-    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
-    if (e.target.closest('.modal, .gai-container, [class*="slider"], [class*="range"]')) return;
+  function getActiveEl() {
+    return document.querySelector('.tab-content.active') || document.querySelector('.tab-content[style*="display: block"]');
+  }
 
-    swipeStartX = e.touches[0].clientX;
-    swipeStartY = e.touches[0].clientY;
-    swipeStartTime = Date.now();
+  function shouldIgnore(e) {
+    var tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+    if (e.target.closest('.modal, .gai-container, [class*="slider"], [class*="range"], .settings-panel, #journalFlowOverlay')) return true;
+    return false;
+  }
+
+  document.addEventListener('touchstart', function(e) {
+    if (shouldIgnore(e)) { tracking = false; decided = false; return; }
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    currentX = startX;
+    tracking = false;
+    decided = false;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', function(e) {
+    if (decided && !tracking) return; // 垂直スクロールと判定済み
+
+    var x = e.touches[0].clientX;
+    var y = e.touches[0].clientY;
+    currentX = x;
+
+    if (!decided) {
+      var dx = Math.abs(x - startX);
+      var dy = Math.abs(y - startY);
+      if (dx < 8 && dy < 8) return; // まだ判定しない
+      decided = true;
+      if (dy > dx) { tracking = false; return; } // 垂直 → スクロール優先
+      // 水平判定
+      var idx = TAB_ORDER.indexOf(getCurrentTab());
+      if (idx === -1) { tracking = false; return; }
+      // 端のタブで方向が合わなければ無視
+      if ((x - startX) > 0 && idx === 0) { tracking = false; return; }
+      if ((x - startX) < 0 && idx === TAB_ORDER.length - 1) { tracking = false; return; }
+      tracking = true;
+    }
+
+    if (!tracking) return;
+
+    // 現在のタブを指に追従させる（上限あり）
+    var el = getActiveEl();
+    if (el) {
+      var dx = currentX - startX;
+      var clamped = Math.max(-120, Math.min(120, dx));
+      el.style.transform = 'translateX(' + clamped + 'px)';
+      el.style.opacity = String(1 - Math.abs(clamped) / 400);
+      el.style.transition = 'none';
+    }
   }, { passive: true });
 
   document.addEventListener('touchend', function(e) {
-    if (!swipeStartTime) return;
-    var dx = e.changedTouches[0].clientX - swipeStartX;
-    var dy = e.changedTouches[0].clientY - swipeStartY;
-    var dt = Date.now() - swipeStartTime;
-    swipeStartTime = 0;
+    if (!tracking) { decided = false; return; }
+    tracking = false;
+    decided = false;
 
-    // 時間チェック
-    if (dt > SWIPE_MAX_TIME) return;
-    // 距離チェック
-    if (Math.abs(dx) < SWIPE_THRESHOLD) return;
-    // 角度チェック（水平に近いスワイプのみ）
-    var angle = Math.abs(Math.atan2(dy, dx)) * (180 / Math.PI);
-    if (angle > SWIPE_ANGLE_LIMIT && angle < (180 - SWIPE_ANGLE_LIMIT)) return;
+    var el = getActiveEl();
+    var dx = currentX - startX;
+
+    // リセット用
+    function resetTransform() {
+      if (el) {
+        el.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
+        el.style.transform = '';
+        el.style.opacity = '';
+        setTimeout(function(){ el.style.transition = ''; }, 250);
+      }
+    }
+
+    if (Math.abs(dx) < THRESHOLD) {
+      resetTransform();
+      return;
+    }
 
     var currentTab = getCurrentTab();
     var idx = TAB_ORDER.indexOf(currentTab);
-    if (idx === -1) return;
-
-    var nextIdx;
-    if (dx < 0) {
-      // 左スワイプ → 次のタブ
-      nextIdx = idx + 1;
-      if (nextIdx >= TAB_ORDER.length) return; // 最後のタブ
-    } else {
-      // 右スワイプ → 前のタブ
-      nextIdx = idx - 1;
-      if (nextIdx < 0) return; // 最初のタブ
+    var nextIdx = dx < 0 ? idx + 1 : idx - 1;
+    if (nextIdx < 0 || nextIdx >= TAB_ORDER.length) {
+      resetTransform();
+      return;
     }
 
-    if (typeof window.switchTab === 'function') {
-      window.switchTab(TAB_ORDER[nextIdx]);
+    // スライドアウトアニメーション
+    if (el) {
+      var dir = dx < 0 ? -1 : 1;
+      el.style.transition = 'transform 0.18s ease, opacity 0.18s ease';
+      el.style.transform = 'translateX(' + (dir * 100) + 'px)';
+      el.style.opacity = '0';
     }
+
+    setTimeout(function(){
+      // transform リセット（switchTab前）
+      if (el) {
+        el.style.transition = '';
+        el.style.transform = '';
+        el.style.opacity = '';
+      }
+      if (typeof window.switchTab === 'function') {
+        window.switchTab(TAB_ORDER[nextIdx]);
+        // 新しいタブをスライドインさせる
+        var newEl = getActiveEl();
+        if (newEl) {
+          var fromDir = dx < 0 ? 1 : -1;
+          newEl.style.transition = 'none';
+          newEl.style.transform = 'translateX(' + (fromDir * 60) + 'px)';
+          newEl.style.opacity = '0.3';
+          requestAnimationFrame(function(){
+            requestAnimationFrame(function(){
+              newEl.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
+              newEl.style.transform = '';
+              newEl.style.opacity = '';
+              setTimeout(function(){ newEl.style.transition = ''; }, 250);
+            });
+          });
+        }
+      }
+    }, 180);
   }, { passive: true });
 })();
 
@@ -7878,6 +8087,7 @@ function jfSubmitAI() {
             if (typeof renderJournalLogs === 'function') renderJournalLogs();
             try { if (typeof renderLog === 'function') renderLog(); } catch(_){}
             try { if (typeof renderTodaySummary === 'function') renderTodaySummary(); } catch(_){}
+            try { if (typeof window.renderMoodReport === 'function') window.renderMoodReport(); } catch(_){}
         } catch(saveErr) { console.warn('AI結果の保存に失敗:', saveErr); }
 
         // 使用回数カウント
