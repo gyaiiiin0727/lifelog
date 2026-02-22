@@ -4950,7 +4950,7 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <!-- 詳細入力 -->
 <button class="voice-button" id="activityVoiceButton" style="margin-top: 10px;">🎤 音声入力</button>
 <input class="text-input" id="activityDetailInput" placeholder="詳細（任意） 例：ジムで1時間" style="margin-top: 10px;" type="text"/>
-<div class="quick-buttons" id="activityQuickButtons"></div>
+<div class="quick-buttons" id="activityQuickButtons" style="display:none;"></div>
 <!-- 時間記録機能 -->
 <div class="time-input-section" style="margin-top: 15px; padding: 15px; background: #f9f9f9; border-radius: 12px;">
 <div style="font-weight: 600; margin-bottom: 10px; color: #000;">⏱️ 時間を記録</div>
@@ -6768,9 +6768,21 @@ function renderHomeTodayTasks() {
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = localDateKey(yesterday);
 
-    const journalEntries = (typeof safeParse === 'function')
+    var journalEntries = (typeof safeParse === 'function')
         ? safeParse('journalEntriesV3', {})
         : JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+
+    // --- 初回ユーザー向けチュートリアルタスク ---
+    if (Object.keys(journalEntries).length === 0 && !localStorage.getItem('tutorialTasksDone')) {
+        journalEntries[yesterdayStr] = {
+            summary: {
+                must: '行動を記録してみよう（行動タブ → ＋ボタン）\nジャーナルを書いてみよう（ジャーナルタブ → ＋ボタン）',
+                want: 'お金の記録をしてみよう（お金タブ → ＋ボタン）'
+            }
+        };
+        localStorage.setItem('journalEntriesV3', JSON.stringify(journalEntries));
+        localStorage.setItem('tutorialTasksDone', '1');
+    }
 
     const yesterdayJournal = journalEntries[yesterdayStr];
 
@@ -9962,9 +9974,10 @@ function drawMoneyChart(categoryData) {
                     today.getMonth() === month &&
                     today.getDate() === date;
                 
-                // タスク情報
+                // タスク情報（未来日はタスク表示しない）
+                const isFuture = currentDate > today;
                 const taskInfo = taskDates[v3Key];
-                const hasTasks = !!(taskInfo && taskInfo.total > 0);
+                const hasTasks = !isFuture && !!(taskInfo && taskInfo.total > 0);
 
                 // 無料プラン: 30日制限チェック
                 const isViewable = !(window.DaycePlan) || window.DaycePlan.isDateViewable(v3Key);
@@ -22130,6 +22143,18 @@ if ('serviceWorker' in navigator) {
       <button type="button" class="ai-data-btn" onclick="resetDayceHints()">
         <span>💡</span> ヒントを再表示
       </button>
+    </div>
+  </div>
+
+  <!-- コミュニティ -->
+  <div class="settings-section">
+    <h3>👥 コミュニティ</h3>
+    <div class="ai-consult-data-btns" style="flex-direction:column;">
+      <a href="./community.html" style="text-decoration:none;">
+        <button type="button" class="ai-data-btn" style="width:100%;">
+          <span>💬</span> コミュニティボード
+        </button>
+      </a>
     </div>
   </div>
 
