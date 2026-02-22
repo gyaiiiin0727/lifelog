@@ -7813,6 +7813,14 @@ function jfSubmitAI() {
         body: JSON.stringify({ text: textToSend, tone: tone, type: 'journal' })
     })
     .then(function(res) {
+        if (res.status === 429) {
+            return res.json().then(function(errData) {
+                if (window.DaycePlan && window.DaycePlan.showUpgradeModal) {
+                    window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'journal', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0 });
+                } else { alert(errData.error || '利用制限に達しました'); }
+                throw new Error('LIMIT_REACHED');
+            });
+        }
         if (!res.ok) throw new Error('HTTP ' + res.status);
         return res.json();
     })
@@ -11618,18 +11626,24 @@ function setupMoneyVoice(){
         // AI分析機能
         async function analyzeWithAI(text, category, type = 'journal') {
             try {
+                const aiH = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : { 'Content-Type': 'application/json' };
                 const response = await fetch(`${BACKEND_URL}/api/analyze`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: aiH,
                     body: JSON.stringify({
                         text: text || '',
                         category: category,
                         type: type
                     })
                 });
-                
+
+                if (response.status === 429) {
+                    const errData = await response.json();
+                    if (window.DaycePlan && window.DaycePlan.showUpgradeModal) {
+                        window.DaycePlan.showUpgradeModal({ type: errData.aiType || type, plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0 });
+                    }
+                    return null;
+                }
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -13378,6 +13392,14 @@ try{
             body: JSON.stringify({ text: textToSend, tone: tone, type: 'journal' })
           });
 
+          if (res.status === 429) {
+            var errData = await res.json();
+            box.textContent = errData.dailyLimit ? '本日の利用回数に達しました（1日1回まで）' : '今月の利用制限に達しました';
+            if (window.DaycePlan && window.DaycePlan.showUpgradeModal) {
+              window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'journal', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0 });
+            }
+            return;
+          }
           if(!res.ok) throw new Error('HTTP ' + res.status);
           var data = await res.json();
           var raw = (data && (data.result || data.analysis)) ? (data.result || data.analysis) : '';
@@ -13753,6 +13775,15 @@ try{
           body: JSON.stringify({ text: textToSend, tone, type: 'journal' })
         });
 
+        if (res.status === 429) {
+          const errData = await res.json();
+          btn.disabled = false;
+          btn.textContent = original;
+          if (window.DaycePlan && window.DaycePlan.showUpgradeModal) {
+            window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'journal', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0 });
+          } else { alert(errData.error || '利用制限に達しました'); }
+          return;
+        }
         if (!res.ok){
           throw new Error('HTTP ' + res.status);
         }
@@ -21269,6 +21300,13 @@ async function sendAIConsult() {
       body: JSON.stringify({ text: textToSend, tone: tone, type: 'consult' })
     });
 
+    if (res.status === 429) {
+      var errData = await res.json();
+      if (window.DaycePlan && window.DaycePlan.showUpgradeModal) {
+        window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'consult', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0 });
+      } else { alert(errData.error || '利用制限に達しました'); }
+      return;
+    }
     if (!res.ok) throw new Error('API error: ' + res.status);
 
     var data = await res.json();
