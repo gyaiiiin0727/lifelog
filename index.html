@@ -7795,13 +7795,8 @@ function jfSubmitAI() {
         jfAIBtn.style.opacity = '0.7';
     }
 
-    // トーン取得
-    var tone = 'normal';
-    if (overlay && overlay.dataset.tone) {
-        tone = overlay.dataset.tone;
-    } else if (window.journalFeedbackTone) {
-        tone = window.journalFeedbackTone;
-    }
+    // トーン取得（localStorage に保存された選択を参照）
+    var tone = localStorage.getItem('journalFeedbackTone') || 'normal';
 
     var BACKEND = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://api.dayce.app';
     var textToSend = '【ユーザーのジャーナル】\n' + text;
@@ -13750,14 +13745,14 @@ try{
           return;
         }
 
-        // トーン取得（フィードバック担当の選択状態から推定）
+        // トーン取得（DOM → localStorage の順にフォールバック）
         let tone = 'normal';
         const selected = document.querySelector('#journal .feedback-tone-btn.selected') || document.querySelector('#journal .feedback-tone-btn.active');
         if (selected){
           const t = selected.getAttribute('data-tone') || selected.getAttribute('data-type') || '';
           if (t) tone = t;
-        } else if (window.journalFeedbackTone){
-          tone = window.journalFeedbackTone;
+        } else {
+          tone = localStorage.getItem('journalFeedbackTone') || 'normal';
         }
 
         btn.disabled = true;
