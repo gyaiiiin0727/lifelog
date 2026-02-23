@@ -5963,22 +5963,102 @@ const Storage = {
     box.innerHTML = html;
   };
 
-  // 日付タップ → ジャーナルログを開いてスクロール
+  // 日付タップ → ジャーナル詳細をインラインポップアップで表示
   window.openJournalDetail = function(dateStr){
-    // ジャーナルログ内で該当日のトグルを開く
-    var detailId = 'journal-' + dateStr;
-    var el = document.getElementById(detailId);
-    if(el){
-      // 閉じていたら開く
-      if(el.style.display === 'none' || !el.style.display){
-        if(typeof toggleJournalDetail === 'function') toggleJournalDetail(detailId);
-      }
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } else {
-      // ジャーナルログセクション自体が見つからない場合はスクロールのみ
-      var logsSection = document.getElementById('journalLogsList') || document.getElementById('journalLogs');
-      if(logsSection) logsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    var entries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+    var entry = entries[dateStr];
+    if(!entry){
+      // エントリがない場合は軽くトースト
+      var t = document.createElement('div');
+      t.textContent = dateStr + ' のジャーナルはありません';
+      t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;z-index:99999;';
+      document.body.appendChild(t);
+      setTimeout(function(){ t.remove(); }, 2000);
+      return;
     }
+
+    // mood表示
+    var moodMap = {'great':'😊 最高','good':'🙂 良い','normal':'😐 普通','bad':'😔 悪い','terrible':'😢 最悪',
+                   '最高':'😊 最高','良い':'🙂 良い','普通':'😐 普通','悪い':'😔 悪い','最悪':'😢 最悪'};
+    var moodLabel = moodMap[entry.mood] || entry.mood || '';
+
+    // 日付のフォーマット
+    var dp = dateStr.split('-');
+    var dateLabel = dp[0]+'年'+parseInt(dp[1])+'月'+parseInt(dp[2])+'日';
+
+    // 本文
+    var raw = (entry.raw || '').trim();
+    var summary = entry.summary || {};
+    var hitokoto = entry.hitokoto || '';
+    var aiFeedback = entry.aiFeedback || '';
+
+    // キャラ情報
+    var ci = (typeof getCharacterInfo === 'function') ? getCharacterInfo(entry.aiFeedbackTone) : {name:'',color:'#4a90e2',img:''};
+
+    var esc = function(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); };
+
+    var html = '';
+    // ヘッダー
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">';
+    html += '<div><span style="font-size:18px;font-weight:800;">'+dateLabel+'</span>';
+    if(moodLabel) html += ' <span style="font-size:15px;">'+moodLabel+'</span>';
+    html += '</div>';
+    html += '<span onclick="this.closest(\'.mood-journal-overlay\').remove();" style="font-size:24px;cursor:pointer;padding:4px 8px;color:#999;">✕</span>';
+    html += '</div>';
+
+    // 本文
+    if(raw){
+      html += '<div style="font-size:14px;line-height:1.7;color:#333;margin-bottom:12px;padding:12px;background:#f8f8f8;border-radius:10px;max-height:200px;overflow-y:auto;">'+esc(raw)+'</div>';
+    }
+
+    // サマリー
+    var sumItems = [
+      {k:'よかったこと', v:summary.events},
+      {k:'改善したいこと', v:summary.learnings},
+      {k:'気づいたこと', v:summary.feelings},
+      {k:'もやっとしていること', v:summary.gratitude}
+    ].filter(function(i){ return i.v && i.v.trim(); });
+    if(sumItems.length > 0){
+      html += '<div style="margin-bottom:12px;">';
+      sumItems.forEach(function(item){
+        html += '<div style="margin-bottom:8px;"><div style="font-size:12px;font-weight:700;color:#888;margin-bottom:2px;">'+item.k+'</div><div style="font-size:13px;line-height:1.5;color:#444;">'+esc(item.v)+'</div></div>';
+      });
+      html += '</div>';
+    }
+
+    // MUST / WANT
+    if(summary.must && summary.must !== '—'){
+      html += '<div style="font-size:13px;margin-bottom:4px;">✅ <strong>MUST:</strong> '+esc(summary.must)+'</div>';
+    }
+    if(summary.want && summary.want !== '—'){
+      html += '<div style="font-size:13px;margin-bottom:8px;">💡 <strong>WANT:</strong> '+esc(summary.want)+'</div>';
+    }
+
+    // キャラの一言
+    if(hitokoto){
+      html += '<div style="padding:10px;background:#f0f7ff;border-radius:10px;border-left:4px solid '+ci.color+';margin-bottom:8px;">';
+      if(ci.name) html += '<div style="font-weight:700;color:'+ci.color+';font-size:12px;margin-bottom:4px;">💬 '+esc(ci.name)+' の一言</div>';
+      html += '<div style="font-size:13px;color:#333;line-height:1.5;">'+esc(hitokoto)+'</div></div>';
+    }
+
+    // AIフィードバック全文（折りたたみ）
+    if(aiFeedback){
+      html += '<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:12px;color:#888;font-weight:600;">📝 AIフィードバック全文</summary>';
+      html += '<div style="margin-top:6px;padding:10px;background:#fff;border:1px solid #eee;border-radius:8px;font-size:13px;line-height:1.6;max-height:200px;overflow-y:auto;">'+esc(aiFeedback)+'</div></details>';
+    }
+
+    // オーバーレイ作成
+    var overlay = document.createElement('div');
+    overlay.className = 'mood-journal-overlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:flex-end;justify-content:center;padding:0;';
+    overlay.onclick = function(e){ if(e.target === overlay) overlay.remove(); };
+
+    var card = document.createElement('div');
+    card.style.cssText = 'background:#fff;border-radius:20px 20px 0 0;padding:20px;max-height:80vh;overflow-y:auto;width:100%;max-width:500px;transform:translateY(100%);transition:transform 0.3s ease;';
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ card.style.transform = 'translateY(0)'; }); });
+    card.innerHTML = html;
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
   };
 
   // 初回レンダリング

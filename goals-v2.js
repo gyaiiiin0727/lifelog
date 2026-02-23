@@ -372,7 +372,7 @@
       return;
     }
 
-    // 週タスクの完了数/総数を母数にする（進捗が実感しやすい）
+    // 今月のタスク集計
     var month = getSelectedMonth();
     var totalTasks = 0, doneTasks = 0;
     current.forEach(function(g) {
@@ -385,18 +385,47 @@
     });
     var pct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
+    // 今週のタスク集計
+    var weekRange = getWeekRange(currentWeekMonday);
+    var weekTotal = 0, weekDone = 0;
+    current.forEach(function(g) {
+      (g.weeklyTasks || []).forEach(function(t) {
+        if (t.date && t.date >= weekRange.start && t.date <= weekRange.end) {
+          weekTotal++;
+          if (t.done) weekDone++;
+        }
+      });
+    });
+    var weekPct = weekTotal > 0 ? Math.round((weekDone / weekTotal) * 100) : 0;
+
+    // 今週の曜日ラベル
+    var weekLabel = weekRange.start.substring(5).replace('-', '/') + '〜' + weekRange.end.substring(5).replace('-', '/');
+
     var cats = {};
     current.forEach(function(g) { cats[g.category] = (cats[g.category]||0) + 1; });
     var catTags = Object.keys(cats).map(function(c) {
       return '<span class="gv2-summary-cat">' + catEmoji(c) + ' ' + esc(c) + ' ' + cats[c] + '</span>';
     }).join('');
 
+    // 今週の進捗バーの色（達成率で変化）
+    var weekBarColor = weekPct >= 80 ? '#4CAF50' : weekPct >= 50 ? '#FF9800' : '#2196F3';
+
     el.innerHTML = '<div class="gv2-summary">' +
+      // 今月の進捗
       '<div class="gv2-summary-top">' +
         '<div><div class="gv2-summary-title">📊 今月の進捗</div></div>' +
         '<div class="gv2-summary-num">' + pct + '% <small>' + doneTasks + '/' + totalTasks + ' タスク達成</small></div>' +
       '</div>' +
       '<div class="gv2-summary-bar"><div class="gv2-summary-fill" style="width:' + pct + '%"></div></div>' +
+      // 今週の進捗
+      '<div style="margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;">' +
+        '<div class="gv2-summary-top">' +
+          '<div><div class="gv2-summary-title" style="font-size:13px;">📅 今週の進捗 <span style="font-weight:400;color:#999;font-size:11px;">' + weekLabel + '</span></div></div>' +
+          '<div class="gv2-summary-num">' + weekPct + '% <small>' + weekDone + '/' + weekTotal + '</small></div>' +
+        '</div>' +
+        '<div class="gv2-summary-bar" style="height:6px;"><div class="gv2-summary-fill" style="width:' + weekPct + '%;background:' + weekBarColor + ';"></div></div>' +
+        (weekTotal === 0 ? '<div style="font-size:11px;color:#bbb;margin-top:4px;">今週のタスクがまだありません</div>' : '') +
+      '</div>' +
       '<div class="gv2-summary-cats">' + catTags + '</div>' +
     '</div>';
   }

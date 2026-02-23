@@ -433,6 +433,7 @@
   // ========== テキスト→HTML変換（箇条書き・改行対応） ==========
   function formatAIText(text) {
     if (!text) return '';
+    if (typeof text !== 'string') text = JSON.stringify(text);
     // HTMLエスケープ
     var escaped = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     // 行ごとに処理
