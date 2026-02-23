@@ -16885,12 +16885,11 @@ const modal = $('qrModal');
   // モード切替時にボタンも更新
   const originalSetQuickRecordMode = window.setQuickRecordMode;
   window.setQuickRecordMode = function(mode) {
+    // 元関数を呼んで内部qrModeも更新
+    if (typeof originalSetQuickRecordMode === 'function') {
+      originalSetQuickRecordMode(mode);
+    }
     window.qrMode = mode;
-
-    const actBtn = document.getElementById('quickModeActivity');
-    const moneyBtn = document.getElementById('quickModeMoney');
-    if (actBtn) actBtn.classList.toggle('active', mode === 'activity');
-    if (moneyBtn) moneyBtn.classList.toggle('active', mode === 'money');
 
     if (typeof window.renderQuickButtons === 'function') {
       window.renderQuickButtons();
