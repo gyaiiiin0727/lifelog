@@ -321,9 +321,33 @@ function isFirstMonth(createdAt) {
   return (now - created) < 30 * 24 * 60 * 60 * 1000; // 30日
 }
 
-// AI使用回数チェック（認証ユーザーのみ）
+// 未認証ユーザーの制限（IPベース）
+const ANON_LIMITS = { journal: 3, consult: 0, goalCoach: 0 }; // 1日あたり
+
+async function checkAnonUsage(env, ip, aiType) {
+  const limit = ANON_LIMITS[aiType];
+  if (limit === undefined) return { allowed: true };
+  if (limit === 0) {
+    return { allowed: false, current: 0, limit: 0, plan: "anonymous", requireAuth: true };
+  }
+
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+  const anonKey = `anon:${ip}:${dateStr}:${aiType}`;
+  const currentRaw = await env.SYNC_KV.get(anonKey);
+  const current = currentRaw ? parseInt(currentRaw, 10) : 0;
+
+  if (current >= limit) {
+    return { allowed: false, current, limit, plan: "anonymous", dailyLimit: true };
+  }
+
+  await env.SYNC_KV.put(anonKey, String(current + 1), { expirationTtl: 86400 });
+  return { allowed: true, current: current + 1, limit };
+}
+
+// AI使用回数チェック（認証ユーザー）
 async function checkAndIncrementUsage(env, email, aiType) {
-  if (!email) return { allowed: true }; // 未認証 = フロントエンド側でのみ制限
+  if (!email) return { allowed: true }; // ここには来ない（handleAnalyzeで分岐済み）
 
   const userRaw = await env.SYNC_KV.get(`user:${email}`);
   if (!userRaw) return { allowed: true };
@@ -366,7 +390,7 @@ async function checkAndIncrementUsage(env, email, aiType) {
 }
 
 // --- AI Analyze ---
-async function handleAnalyze(body, env, userEmail) {
+async function handleAnalyze(body, env, userEmail, clientIP) {
   const { text, tone, type } = body;
 
   if (!text || typeof text !== "string") {
@@ -377,12 +401,23 @@ async function handleAnalyze(body, env, userEmail) {
   const aiTypeMap = { journal: "journal", consult: "consult", goalCoach: "goalCoach" };
   const aiType = aiTypeMap[type] || "consult";
 
-  // 認証ユーザーの回数制限チェック
+  // 回数制限チェック
   if (userEmail) {
+    // 認証ユーザー: プランベースの制限
     const usageCheck = await checkAndIncrementUsage(env, userEmail, aiType);
     if (!usageCheck.allowed) {
       const errMsg = usageCheck.dailyLimit ? "本日の利用回数に達しました（1日1回まで）" : "利用制限に達しました";
       return json({ error: errMsg, limitReached: true, dailyLimit: !!usageCheck.dailyLimit, current: usageCheck.current, limit: usageCheck.limit, plan: usageCheck.plan, aiType }, 429);
+    }
+  } else {
+    // 未認証ユーザー: IPベースの制限
+    const ip = clientIP || "unknown";
+    const anonCheck = await checkAnonUsage(env, ip, aiType);
+    if (!anonCheck.allowed) {
+      if (anonCheck.requireAuth) {
+        return json({ error: "この機能を使うには無料アカウント登録が必要です", requireAuth: true, aiType }, 401);
+      }
+      return json({ error: "本日の利用回数に達しました（1日" + ANON_LIMITS[aiType] + "回まで）。アカウント登録でもっと使えます！", limitReached: true, dailyLimit: true, current: anonCheck.current, limit: anonCheck.limit, plan: "anonymous", aiType, requireAuth: true }, 429);
     }
   }
 
@@ -1071,14 +1106,16 @@ export default {
         // オプションでJWT認証（認証ユーザーは回数制限をWorker側でも管理）
         const authUser = await getAuthUser(request, env);
         const userEmail = authUser ? authUser.sub : null;
+        const clientIP = request.headers.get("CF-Connecting-IP") || request.headers.get("X-Forwarded-For") || "unknown";
         const body = await request.json();
-        return handleAnalyze(body, env, userEmail);
+        return handleAnalyze(body, env, userEmail, clientIP);
       }
 
       // Fallback for legacy root POST (backward compat)
       if (request.method === "POST" && (path === "/" || path === "")) {
+        const clientIP = request.headers.get("CF-Connecting-IP") || request.headers.get("X-Forwarded-For") || "unknown";
         const body = await request.json();
-        return handleAnalyze(body, env, null);
+        return handleAnalyze(body, env, null, clientIP);
       }
 
       // Default

@@ -8109,10 +8109,10 @@ function jfSubmitAI() {
         body: JSON.stringify({ text: textToSend, tone: tone, type: 'journal' })
     })
     .then(function(res) {
-        if (res.status === 429) {
+        if (res.status === 429 || res.status === 401) {
             return res.json().then(function(errData) {
                 if (window.DaycePlan && window.DaycePlan.showUpgradeModal) {
-                    window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'journal', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0 });
+                    window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'journal', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0, requireAuth: !!errData.requireAuth });
                 } else { alert(errData.error || '利用制限に達しました'); }
                 throw new Error('LIMIT_REACHED');
             });
@@ -11934,10 +11934,10 @@ function setupMoneyVoice(){
                     })
                 });
 
-                if (response.status === 429) {
+                if (response.status === 429 || response.status === 401) {
                     const errData = await response.json();
                     if (window.DaycePlan && window.DaycePlan.showUpgradeModal) {
-                        window.DaycePlan.showUpgradeModal({ type: errData.aiType || type, plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0 });
+                        window.DaycePlan.showUpgradeModal({ type: errData.aiType || type, plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0, requireAuth: !!errData.requireAuth });
                     }
                     return null;
                 }
@@ -13689,11 +13689,11 @@ try{
             body: JSON.stringify({ text: textToSend, tone: tone, type: 'journal' })
           });
 
-          if (res.status === 429) {
+          if (res.status === 429 || res.status === 401) {
             var errData = await res.json();
-            box.textContent = errData.dailyLimit ? '本日の利用回数に達しました（1日1回まで）' : '今月の利用制限に達しました';
+            box.textContent = errData.requireAuth ? 'アカウント登録が必要です' : errData.dailyLimit ? '本日の利用回数に達しました（1日1回まで）' : '今月の利用制限に達しました';
             if (window.DaycePlan && window.DaycePlan.showUpgradeModal) {
-              window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'journal', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0 });
+              window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'journal', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0, requireAuth: !!errData.requireAuth });
             }
             return;
           }
@@ -14072,12 +14072,12 @@ try{
           body: JSON.stringify({ text: textToSend, tone, type: 'journal' })
         });
 
-        if (res.status === 429) {
+        if (res.status === 429 || res.status === 401) {
           const errData = await res.json();
           btn.disabled = false;
           btn.textContent = original;
           if (window.DaycePlan && window.DaycePlan.showUpgradeModal) {
-            window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'journal', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0 });
+            window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'journal', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0, requireAuth: !!errData.requireAuth });
           } else { alert(errData.error || '利用制限に達しました'); }
           return;
         }
@@ -18701,6 +18701,43 @@ const modal = $('qrModal');
     var typeLabels = { journal: '心を整える', consult: 'AI相談', goalCoach: 'AI目標コーチ' };
     var typeLabel = typeLabels[info.type] || 'AI機能';
 
+    // 未認証ユーザー向けの登録誘導モーダル
+    if (info.requireAuth || info.plan === 'anonymous') {
+      var anonText = '';
+      if (info.limit === 0) {
+        anonText = '<div style="font-size:14px;color:#666;margin-bottom:16px;">「' + typeLabel + '」を使うには<b>無料アカウント登録</b>が必要です</div>';
+      } else {
+        anonText = '<div style="font-size:14px;color:#666;margin-bottom:16px;">本日の利用回数（' + info.limit + '回）に達しました。<br><b>無料登録</b>でもっと使えます！</div>';
+      }
+
+      var overlay = document.createElement('div');
+      overlay.id = 'dayce-upgrade-modal';
+      overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
+      overlay.innerHTML =
+        '<div style="background:#fff;border-radius:16px;max-width:340px;width:100%;padding:28px 24px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.15);">' +
+          '<div style="font-size:36px;margin-bottom:12px;">✨</div>' +
+          '<div style="font-size:18px;font-weight:700;margin-bottom:8px;">アカウント登録で<br>もっと使える！</div>' +
+          anonText +
+          '<div style="background:#e8f5e9;border-radius:12px;padding:16px;margin-bottom:20px;text-align:left;">' +
+            '<div style="font-weight:600;color:#2e7d32;margin-bottom:8px;">🎁 無料登録の特典（初月）</div>' +
+            '<div style="font-size:13px;color:#444;line-height:1.8;">' +
+              '• 心を整える: <b>無制限</b><br>' +
+              '• AI相談: <b>無制限</b><br>' +
+              '• 目標コーチ: <b>3回</b><br>' +
+              '• キャラクター: <b>3種から選択</b><br>' +
+              '• クラウド同期: <b>✅</b>' +
+            '</div>' +
+          '</div>' +
+          '<button onclick="document.getElementById(\'dayce-upgrade-modal\').remove();var st=document.getElementById(\'settings\');if(st){window.switchTab&&window.switchTab(\'settings\');setTimeout(function(){var rb=document.getElementById(\'registerBtn\')||document.querySelector(\'[onclick*=showRegister]\');if(rb)rb.click();},300);}" style="width:100%;padding:14px;background:#4CAF50;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;">無料で登録する</button>' +
+          '<button onclick="document.getElementById(\'dayce-upgrade-modal\').remove();" style="width:100%;padding:12px;background:none;border:1px solid #ddd;border-radius:10px;font-size:14px;color:#666;cursor:pointer;">閉じる</button>' +
+        '</div>';
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) overlay.remove();
+      });
+      document.body.appendChild(overlay);
+      return;
+    }
+
     var usageText = '';
     if (info.limit === 0) {
       usageText = '<div style="font-size:14px;color:#666;margin-bottom:16px;">「' + typeLabel + '」は無料プランでは利用できません</div>';
@@ -21811,10 +21848,10 @@ async function sendAIConsult() {
       body: JSON.stringify({ text: textToSend, tone: tone, type: 'consult' })
     });
 
-    if (res.status === 429) {
+    if (res.status === 429 || res.status === 401) {
       var errData = await res.json();
       if (window.DaycePlan && window.DaycePlan.showUpgradeModal) {
-        window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'consult', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0 });
+        window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'consult', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0, requireAuth: !!errData.requireAuth });
       } else { alert(errData.error || '利用制限に達しました'); }
       return;
     }

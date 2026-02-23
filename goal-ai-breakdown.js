@@ -574,11 +574,11 @@
         body: JSON.stringify({ text: prompt, tone: tone, type: 'goalCoach' })
       });
 
-      if (res.status === 429) {
+      if (res.status === 429 || res.status === 401) {
         var errData = await res.json();
         removeLoadingMessage();
         if (window.DaycePlan && window.DaycePlan.showUpgradeModal) {
-          window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'goalCoach', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0 });
+          window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'goalCoach', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0, requireAuth: !!errData.requireAuth });
         } else {
           alert(errData.error || '利用制限に達しました');
         }
@@ -692,11 +692,11 @@
         body: JSON.stringify({ text: prompt, tone: tone, type: 'goalCoach' })
       });
 
-      if (res.status === 429) {
+      if (res.status === 429 || res.status === 401) {
         var errData = await res.json();
         removeLoadingMessage();
         if (window.DaycePlan && window.DaycePlan.showUpgradeModal) {
-          window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'goalCoach', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0 });
+          window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'goalCoach', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0, requireAuth: !!errData.requireAuth });
         } else {
           alert(errData.error || '利用制限に達しました');
         }
