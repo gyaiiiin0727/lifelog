@@ -155,6 +155,14 @@
   }
 
   function catEmoji(c) {
+    // 行動カテゴリから動的に絵文字を取得
+    try {
+      var cats = JSON.parse(localStorage.getItem('activityCategories') || '[]');
+      for (var i = 0; i < cats.length; i++) {
+        if (cats[i].name === c) return cats[i].emoji;
+      }
+    } catch(e) {}
+    // フォールバック（既存の目標データ互換）
     return {'健康':'💪','仕事':'💼','勉強':'📚','学習':'📚',
             '趣味':'🎨','人間関係':'👥','お金':'💰','家族':'👨‍👩‍👧‍👦','その他':'📌'}[c] || '📌';
   }

@@ -1399,8 +1399,15 @@
     html += '<div style="margin-bottom:24px;">';
     html += '<label style="font-size:14px;font-weight:600;color:#333;display:block;margin-bottom:8px;">📂 カテゴリ</label>';
     html += '<select id="gaiDirectCategory" style="width:100%;padding:12px;border:1.5px solid #d1d5db;border-radius:12px;font-size:15px;background:#fff;box-sizing:border-box;">';
-    html += '<option value="健康">💪 健康</option><option value="仕事">💼 仕事</option><option value="学習">📚 学習</option>';
-    html += '<option value="家族">👨‍👩‍👧‍👦 家族</option><option value="趣味">🎨 趣味</option><option value="その他">📝 その他</option>';
+    // 行動カテゴリから動的生成
+    var aiCats = [];
+    try { aiCats = JSON.parse(localStorage.getItem('activityCategories') || '[]'); } catch(e){}
+    if (aiCats.length > 0) {
+      aiCats.forEach(function(c){ html += '<option value="'+c.name+'">'+c.emoji+' '+c.name+'</option>'; });
+    } else {
+      html += '<option value="仕事">💼 仕事</option><option value="勉強">📚 勉強</option><option value="運動">🏃 運動</option>';
+      html += '<option value="その他">📝 その他</option>';
+    }
     html += '</select></div>';
 
     // キャラクター選択

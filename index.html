@@ -26,6 +26,14 @@
 function openGoalAddModal(){
   const modal = document.getElementById('goalAddModal');
   if(modal) modal.style.display = 'block';
+  // 行動カテゴリから目標カテゴリを動的生成
+  const sel = document.getElementById('goalCategory');
+  if(sel){
+    const cats = JSON.parse(localStorage.getItem('activityCategories') || '[]');
+    if(cats.length > 0){
+      sel.innerHTML = cats.map(function(c){ return '<option value="'+c.name+'">'+c.emoji+' '+c.name+'</option>'; }).join('');
+    }
+  }
   const input = document.getElementById('goalInput');
   if(input) { input.value = ''; setTimeout(()=>input.focus(), 50); }
 }
@@ -5602,12 +5610,7 @@ body.qr-open .fab-container{ pointer-events:none !important; }
     <div class="form-group">
       <label>カテゴリ</label>
       <select class="text-input" id="goalCategory">
-        <option value="健康">💪 健康</option>
-        <option value="仕事">💼 仕事</option>
-        <option value="学習">📚 学習</option>
-        <option value="家族">👨‍👩‍👧‍👦 家族</option>
-        <option value="趣味">🎨 趣味</option>
-        <option value="その他">📝 その他</option>
+        <!-- 行動カテゴリから動的生成 -->
       </select>
     </div>
 
