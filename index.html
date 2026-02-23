@@ -5381,8 +5381,8 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <div id="moodReportSection" style="padding:0 16px 16px;">
   <div style="margin-top:20px;background:#fff;border-radius:16px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <h3 style="margin:0;font-size:15px;font-weight:700;color:#333;">📊 今月の気分レポート</h3>
-      <select id="moodReportMonth" onchange="renderMoodReport()" style="font-size:13px;padding:4px 8px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#555;"></select>
+      <h3 style="margin:0;font-size:15px;font-weight:700;color:#333;">📊 気分レポート</h3>
+      <select id="moodReportMonth" onchange="renderMoodReport()" style="display:none;"></select>
     </div>
     <div id="moodReportContent"></div>
   </div>
@@ -5889,16 +5889,19 @@ const Storage = {
   window.renderMoodReport = function(){
     var sel = document.getElementById('moodReportMonth');
     var box = document.getElementById('moodReportContent');
-    if(!sel || !box) return;
+    if(!box) return;
 
-    // 月セレクタ更新
-    var months = getMonthOptions();
-    var curVal = sel.value;
-    if(!curVal || months.indexOf(curVal) === -1) curVal = months[0] || '';
-    sel.innerHTML = months.map(function(m){
-      var parts = m.split('-');
-      return '<option value="'+m+'"'+(m===curVal?' selected':'')+'>'+parts[0]+'年'+parseInt(parts[1])+'月</option>';
-    }).join('');
+    // カレンダーの表示月と連動
+    var curVal = '';
+    if(typeof currentCalendarDate !== 'undefined' && currentCalendarDate){
+      curVal = currentCalendarDate.getFullYear() + '-' + String(currentCalendarDate.getMonth()+1).padStart(2,'0');
+    }
+    if(!curVal){
+      var now = new Date();
+      curVal = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    }
+    // hiddenセレクタも更新（互換性維持）
+    if(sel) sel.value = curVal;
     if(!curVal){ box.innerHTML='<div style="text-align:center;color:#999;padding:20px;font-size:13px;">データがありません</div>'; return; }
 
     var data = getMoodData(curVal);
@@ -10355,6 +10358,7 @@ function drawMoneyChart(categoryData) {
             }
             currentCalendarDate.setMonth(newMonth);
             renderCalendar();
+            if(typeof window.renderMoodReport === 'function') window.renderMoodReport();
         }
         
         function viewJournalByDate(dateStr) {
@@ -15681,6 +15685,7 @@ document.addEventListener('DOMContentLoaded', function(){
     // ========== モード切り替え ==========
     window.setQuickRecordMode = function(mode) {
         qrMode = mode;
+        window.qrMode = mode; // ラッパーからも参照できるようグローバルにも設定
 
         const actBtn = $('quickModeActivity');
         const moneyBtn = $('quickModeMoney');
