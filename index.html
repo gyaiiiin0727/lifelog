@@ -11959,7 +11959,7 @@ function setupMoneyVoice(){
       if(amount) amountEl.value = amount;
 
       if(status){
-        status.textContent = (memo && amount) ? `✅ 「${memo}」 / ${amount}円` : `✅ ${raw}`;
+        status.textContent = (memo && amount) ? `✅ 「${memo}」 / ${amount.toLocaleString()}円（認識: ${raw}）` : `✅ ${raw}`;
       }
     };
 
@@ -16499,9 +16499,9 @@ const modal = $('qrModal');
 
         if (status){
           if (memo && amount !== null){
-            status.textContent = `✅ 「${memo}」 / ${amount.toLocaleString()}円`;
+            status.textContent = `✅ 「${memo}」 / ${amount.toLocaleString()}円（認識: ${raw}）`;
           }else if (amount !== null){
-            status.textContent = `✅ ${amount.toLocaleString()}円`;
+            status.textContent = `✅ ${amount.toLocaleString()}円（認識: ${raw}）`;
           }else{
             status.textContent = `✅ ${raw}`;
           }
