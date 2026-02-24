@@ -22111,12 +22111,21 @@ async function sendAIConsult() {
       var stopWords = ['いくら','どれくらい','今月','先月','今週','何回','について','どうし','ほしい','ください','つかった','使った','いくつ','どのくらい','教えて','知りたい','ある','ない','する','した','している','されて','くらい','ぐらい','かかった','かかってる'];
       var queryWords = text
         .replace(/[？?！!。、「」『』（）\(\)\s]/g, ' ')
-        .replace(/([にではをがのともからまでってよりへ])(?=[^\s])/g, '$1 ')
+        .replace(/([にではをがのともからまでよりへ])(?=[^\s])/g, '$1 ')
         .split(/\s+/)
-        .map(function(w) { return w.replace(/^[にではをがのともからまでってよりへ]+|[にではをがのともからまでってよりへ]+$/g, ''); })
+        .map(function(w) { return w.replace(/^[にではをがのともからまでよりへ]+|[にではをがのともからまでよりへ]+$/g, ''); })
         .filter(function(w) {
           return w.length >= 2 && stopWords.indexOf(w) === -1;
         });
+      // stopWordsが結合したまま残るケース対策（例:「今月ラーメン」→「ラーメン」）
+      queryWords = queryWords.map(function(w) {
+        var cleaned = w;
+        stopWords.forEach(function(sw) {
+          if (cleaned.indexOf(sw) === 0) cleaned = cleaned.slice(sw.length);
+          if (cleaned.length > 0 && cleaned.indexOf(sw) === cleaned.length - sw.length) cleaned = cleaned.slice(0, -sw.length);
+        });
+        return cleaned;
+      }).filter(function(w) { return w.length >= 2; });
 
       // カタカナ↔ひらがな変換（表記揺れ対応）
       var toHiragana = function(s) { return s.replace(/[\u30A1-\u30F6]/g, function(c) { return String.fromCharCode(c.charCodeAt(0) - 0x60); }); };
