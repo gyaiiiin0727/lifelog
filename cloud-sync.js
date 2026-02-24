@@ -288,20 +288,21 @@
   function renderSyncUI(container) {
     var email = getEmail() || '';
     var lastSynced = getLastSynced();
-    var lastStr = lastSynced ? new Date(lastSynced).toLocaleString('ja-JP') : '未同期';
+    var lastStr = lastSynced ? new Date(lastSynced).toLocaleString('ja-JP') : 'まだバックアップしていません';
 
     container.innerHTML =
       '<h3 style="font-size:15px;font-weight:700;color:#333;margin:0 0 12px;">☁️ クラウド同期</h3>' +
       '<div class="cs-status">' +
         '<div class="cs-status-row"><span class="cs-label">アカウント</span><span class="cs-value">' + escHTML(email) + '</span></div>' +
-        '<div class="cs-status-row"><span class="cs-label">最終同期</span><span class="cs-value" id="csLastSyncedText">' + escHTML(lastStr) + '</span></div>' +
+        '<div class="cs-status-row"><span class="cs-label">最終バックアップ</span><span class="cs-value" id="csLastSyncedText">' + escHTML(lastStr) + '</span></div>' +
       '</div>' +
       '<div id="csError" class="cs-error" style="display:none;"></div>' +
       '<div id="csSuccess" class="cs-success" style="display:none;"></div>' +
       '<div class="cs-sync-btns">' +
-        '<button type="button" id="csUploadBtn" class="cs-btn cs-btn-upload">アップロード</button>' +
-        '<button type="button" id="csDownloadBtn" class="cs-btn cs-btn-download">ダウンロード</button>' +
+        '<button type="button" id="csUploadBtn" class="cs-btn cs-btn-upload">☁️ バックアップ</button>' +
+        '<button type="button" id="csDownloadBtn" class="cs-btn cs-btn-download">📲 復元</button>' +
       '</div>' +
+      '<p style="font-size:11px;color:#999;margin:6px 0 0;text-align:center;line-height:1.5;">バックアップ = このスマホのデータをクラウドに保存<br>復元 = クラウドのデータをこのスマホに戻す</p>' +
       '<button type="button" id="csLogoutBtn" class="cs-btn cs-btn-link cs-logout">ログアウト</button>';
 
     container.querySelector('#csUploadBtn').addEventListener('click', handleUpload);
@@ -414,13 +415,13 @@
 
   async function handleUpload() {
     hideError();
-    if (!confirm('現在のデータをクラウドにアップロードしますか？\nクラウド上のデータは上書きされます。')) return;
+    if (!confirm('このスマホのデータをクラウドにバックアップしますか？\n※クラウド上の古いバックアップは上書きされます')) return;
 
     setLoading('csUploadBtn', true);
     try {
       var res = await upload();
       document.getElementById('csLastSyncedText').textContent = new Date(res.syncedAt).toLocaleString('ja-JP');
-      showSuccess('アップロード完了');
+      showSuccess('バックアップ完了');
     } catch (e) {
       showError(e.message);
     }
@@ -429,16 +430,16 @@
 
   async function handleDownload() {
     hideError();
-    if (!confirm('クラウドのデータをこのデバイスにダウンロードしますか？\nこのデバイスのデータは上書きされます。')) return;
+    if (!confirm('クラウドのバックアップからデータを復元しますか？\n※このスマホのデータは上書きされます')) return;
 
     setLoading('csDownloadBtn', true);
     try {
       var res = await download();
       if (!res.data) {
-        showError('クラウドにデータがありません。先にアップロードしてください。');
+        showError('クラウドにバックアップがありません。先にバックアップしてください。');
       } else {
         document.getElementById('csLastSyncedText').textContent = new Date(res.syncedAt).toLocaleString('ja-JP');
-        showSuccess('ダウンロード完了 — ページを再読み込みして反映します');
+        showSuccess('復元完了 — ページを再読み込みして反映します');
         setTimeout(function () { location.reload(); }, 1500);
       }
     } catch (e) {

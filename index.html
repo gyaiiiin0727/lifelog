@@ -21433,19 +21433,29 @@ window.__qrSaving = false;
     if (!b) return;
     if (!canShowBanner()) return;
 
+    var msg = $('pwaInstallBannerMsg');
+    var installBtn = $('pwaBannerInstallBtn');
+
     if (deferredPrompt) {
-      // Android Chrome等: インストールプロンプト可能
-      var msg = $('pwaInstallBannerMsg');
-      if (msg) msg.textContent = 'ホーム画面に追加すると、アプリとして使えて快適です。';
-      var installBtn = $('pwaBannerInstallBtn');
+      // Android Chrome / PC Chrome等: インストールプロンプト可能
+      if (msg) {
+        if (isIOS() || /Android/i.test(navigator.userAgent)) {
+          msg.textContent = 'ホーム画面に追加すると、アプリとして使えて快適です。';
+        } else {
+          msg.textContent = 'アプリとしてインストールすると、独立ウィンドウで快適に使えます。';
+        }
+      }
       if (installBtn) installBtn.style.display = '';
       b.style.display = 'block';
     } else if (isIOSSafari()) {
       // iOS Safari: 手動ガイド
-      var msg = $('pwaInstallBannerMsg');
       if (msg) msg.innerHTML = '📲 ホーム画面に追加するには：<br>画面下の <span style="font-size:18px;">⬆</span>（共有）→「<b>ホーム画面に追加</b>」をタップ';
-      var installBtn = $('pwaBannerInstallBtn');
-      if (installBtn) installBtn.style.display = 'none'; // インストールボタンは非表示
+      if (installBtn) installBtn.style.display = 'none';
+      b.style.display = 'block';
+    } else if (!isIOS() && !deferredPrompt && !inStandalone()) {
+      // PC等でbeforeinstallpromptが未発火の場合: 手動ガイド
+      if (msg) msg.innerHTML = '💻 アプリとしてインストールできます：<br>ブラウザメニュー（⋮）→「<b>アプリとしてインストール</b>」';
+      if (installBtn) installBtn.style.display = 'none';
       b.style.display = 'block';
     }
   }
@@ -21502,8 +21512,8 @@ window.__qrSaving = false;
   document.addEventListener('DOMContentLoaded', function(){
     wireEvents();
     updateInstallUI();
-    // iOS Safari向け: beforeinstallpromptが発火しないので、ロード後にバナー表示
-    if (isIOSSafari()) {
+    // iOS Safari / PC等: beforeinstallpromptが発火しない環境ではロード後にバナー表示
+    if (!inStandalone()) {
       setTimeout(showBannerIfNeeded, 1200);
     }
   });
