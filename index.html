@@ -9387,11 +9387,11 @@ function renderActivityLogs() {
 function initActivityHistoryDate() {
     const input = document.getElementById('activityHistoryDate');
     if (!input) return;
-    // 初期値を昨日にセット
+    // 初期値を昨日にセット（ローカル時間で正確に）
     if (!input.value) {
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
-        input.value = yesterday.toISOString().split('T')[0];
+        input.value = yesterday.getFullYear() + '-' + String(yesterday.getMonth() + 1).padStart(2, '0') + '-' + String(yesterday.getDate()).padStart(2, '0');
     }
     // イベントリスナーを一度だけ登録
     if (!input.__histBound) {
@@ -9857,10 +9857,11 @@ function renderMoneyLogs() {
 function initMoneyHistoryDate() {
     const input = document.getElementById('moneyHistoryDate');
     if (!input) return;
+    // 初期値を昨日にセット（ローカル時間で正確に）
     if (!input.value) {
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
-        input.value = yesterday.toISOString().split('T')[0];
+        input.value = yesterday.getFullYear() + '-' + String(yesterday.getMonth() + 1).padStart(2, '0') + '-' + String(yesterday.getDate()).padStart(2, '0');
     }
     if (!input.__histBound) {
         input.__histBound = true;
