@@ -547,16 +547,37 @@
   }
 
   // アプリがバックグラウンドに入った時 or ページを離れる時にバックアップ
+  var _autoBackupTimer = null;
+
   function setupAutoBackup() {
+    // 1) バックグラウンド移行時
     document.addEventListener('visibilitychange', function() {
       if (document.visibilityState === 'hidden') {
         autoBackupIfNeeded();
       }
     });
-    // ページ離脱時（ブラウザ閉じなど）
+    // 2) ページ離脱時（ブラウザ閉じなど）— sendBeacon版でより確実に
     window.addEventListener('pagehide', function() {
-      autoBackupIfNeeded();
+      // pagehideではasync完了が保証されないのでsendBeaconを試みる
+      if (isLoggedIn() && isAutoBackupEnabled() && hasDataChanged()) {
+        try {
+          var data = collectSyncData();
+          var token = getToken();
+          var planLevel = (window.DaycePlan) ? window.DaycePlan.getPlan() : (localStorage.getItem('planLevel') || 'free');
+          var payload = JSON.stringify({ data: data, planLevel: planLevel });
+          var blob = new Blob([payload], { type: 'application/json' });
+          // sendBeaconはAuthorizationヘッダーを送れないのでURLパラメータにトークンを付与
+          navigator.sendBeacon(API_BASE + '/api/sync/upload?token=' + encodeURIComponent(token), blob);
+          console.log('☁️ sendBeaconで自動バックアップ送信');
+        } catch(e) {
+          console.warn('☁️ sendBeacon失敗:', e.message);
+        }
+      }
     });
+    // 3) 定期チェック（5分ごと）— バックグラウンド移行しない場合の保険
+    _autoBackupTimer = setInterval(function() {
+      autoBackupIfNeeded();
+    }, 5 * 60 * 1000);
   }
 
   // renderSyncUI に自動バックアップトグルを追加
