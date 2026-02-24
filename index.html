@@ -22157,17 +22157,48 @@ async function sendAIConsult() {
           });
         };
 
+        // 期間フィルタ: ユーザーの質問から期間を検出
+        var periodFilter = null;
+        var periodLabel = '';
+        var _now = new Date();
+        var rawText = text.toLowerCase();
+        var rawTextHira = toHiragana(rawText);
+        if (rawText.indexOf('先月') !== -1) {
+          var _pm = new Date(_now.getFullYear(), _now.getMonth() - 1, 1);
+          var _pmEnd = new Date(_now.getFullYear(), _now.getMonth(), 0, 23, 59, 59);
+          periodFilter = function(ts) { var d = new Date(ts); return d >= _pm && d <= _pmEnd; };
+          periodLabel = '先月';
+        } else if (rawText.indexOf('今週') !== -1) {
+          var _dow = _now.getDay();
+          var _weekStart = new Date(_now.getFullYear(), _now.getMonth(), _now.getDate() - _dow);
+          periodFilter = function(ts) { return new Date(ts) >= _weekStart; };
+          periodLabel = '今週';
+        } else if (rawText.indexOf('今月') !== -1 || rawText.indexOf('今月') !== -1) {
+          var _monthStart = new Date(_now.getFullYear(), _now.getMonth(), 1);
+          periodFilter = function(ts) { return new Date(ts) >= _monthStart; };
+          periodLabel = '今月';
+        }
+        // デフォルト: 相談テーマがmoney/activityなら今月に絞る
+        if (!periodFilter && (topic === 'money' || topic === 'activity')) {
+          var _monthStart2 = new Date(_now.getFullYear(), _now.getMonth(), 1);
+          periodFilter = function(ts) { return new Date(ts) >= _monthStart2; };
+          periodLabel = '今月';
+        }
+
         // お金記録からキーワードマッチ
         var allMoney = [];
         try { allMoney = JSON.parse(localStorage.getItem('moneyRecords') || '[]'); } catch(e) {}
         var matchedMoney = allMoney.filter(function(r) {
           var rText = r.text || r.memo || r.note || '';
           var rCat = r.category || '';
-          return matchesAny(rText) || matchesAny(rCat);
+          if (!matchesAny(rText) && !matchesAny(rCat)) return false;
+          if (periodFilter && !periodFilter(r.timestamp)) return false;
+          return true;
         });
         if (matchedMoney.length > 0) {
           var totalMatched = 0;
-          keywordContext += '\n【「' + queryWords.join('・') + '」に関連するお金の記録（全件）】\n';
+          var periodNote = periodLabel ? '（' + periodLabel + '）' : '（全期間）';
+          keywordContext += '\n【「' + queryWords.join('・') + '」に関連するお金の記録' + periodNote + '】\n';
           matchedMoney.forEach(function(r) {
             var d = new Date(r.timestamp);
             var dateStr = (d.getMonth()+1) + '/' + d.getDate();
@@ -22182,16 +22213,19 @@ async function sendAIConsult() {
           keywordContext += '→ 合計: ¥' + totalMatched.toLocaleString() + '（' + matchedMoney.length + '件）\n';
         }
 
-        // 行動記録からキーワードマッチ
+        // 行動記録からキーワードマッチ（期間フィルタ付き）
         var allActs = [];
         try { allActs = JSON.parse(localStorage.getItem('activities') || '[]'); } catch(e) {}
         var matchedActs = allActs.filter(function(a) {
           var aText = a.text || a.memo || a.note || '';
           var aCat = a.category || '';
-          return matchesAny(aText) || matchesAny(aCat);
+          if (!matchesAny(aText) && !matchesAny(aCat)) return false;
+          if (periodFilter && !periodFilter(a.startTime || a.timestamp)) return false;
+          return true;
         });
         if (matchedActs.length > 0) {
-          keywordContext += '\n【「' + queryWords.join('・') + '」に関連する行動記録（全件）】\n';
+          var periodNote2 = periodLabel ? '（' + periodLabel + '）' : '（全期間）';
+          keywordContext += '\n【「' + queryWords.join('・') + '」に関連する行動記録' + periodNote2 + '】\n';
           matchedActs.slice(0, 30).forEach(function(a) {
             var d = new Date(a.startTime || a.timestamp);
             var dateStr = (d.getMonth()+1) + '/' + d.getDate();
@@ -22204,6 +22238,11 @@ async function sendAIConsult() {
         }
       }
     } catch(e) { /* ignore */ }
+
+    // keywordContextが存在する場合、AIにデータの優先度を伝える
+    if (keywordContext) {
+      keywordContext += '★上記のキーワード検索結果は正確な記録データです。件数・金額を回答に必ず反映してください。\n';
+    }
 
     // プロンプトルール・キャラクター口調はWorker側で注入（ソースから隠蔽）
     var textToSend = topicContext + dataContext + keywordContext + '【ユーザーの相談】\n' + text;
