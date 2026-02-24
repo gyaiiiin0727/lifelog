@@ -1341,21 +1341,56 @@
 
   // ========== 「もっと話す」で会話を続ける ==========
   var _continueCount = 0;
+  // キャラ別の「もっと話す」メッセージ
+  var _continueMsgs = {
+    harsh: [
+      'ふん、まだ情報が足りないか。いいだろう、もっと詳しく話せ。',
+      'まだ決められないのか？いい、もう少し聞いてやる。具体的に話せ。',
+      'よし、もう少し深掘りするぞ。曖昧なままじゃ計画は立てられん。'
+    ],
+    normal: [
+      'おっけー！もうちょい話そうか。気になることとか何でも聞いてよ！',
+      'りょーかい！じゃあもう少し詳しく聞かせて。なんでも言ってくれていいよ！',
+      'いいね、もうちょい詰めていこう！何か気になることある？'
+    ],
+    gentle: [
+      'うん、もう少しお話ししようね。気になることがあったら何でも聞いてね😊',
+      'わかった、ゆっくり考えていこうね。何でも話してくれて大丈夫だよ😊',
+      'もちろん、焦らなくていいからね。もう少し一緒に考えていこう😊'
+    ]
+  };
   function continueChat() {
     _continueCount++;
     if (_continueCount > 3) {
-      addMessage('ai', 'たくさん話せて良かったです！この内容でタスクを決めましょう 😊');
+      var _limitMsgs = {
+        harsh: 'これ以上話しても堂々巡りだ。この内容でタスクを決めろ。',
+        normal: 'おーし、だいぶ話したね！この内容でタスク決めちゃおう！',
+        gentle: 'たくさん話せてよかったね！この内容でタスクを決めていこう😊'
+      };
+      addMessage('ai', _limitMsgs[_state.tone] || _limitMsgs.normal);
       return;
     }
     var tasksEl = document.getElementById('gaiTasks');
     var inputArea = document.getElementById('gaiInputArea');
     if (tasksEl) { tasksEl.innerHTML = ''; tasksEl.style.display = 'none'; }
     if (inputArea) inputArea.style.display = 'flex';
+    // タスク選択のアクションボタンもクリーンアップ
+    var sheet = document.querySelector('#goalAIChatModal .gai-sheet');
+    if (sheet) {
+      var oldActions = sheet.querySelector('.gai-task-actions');
+      if (oldActions) oldActions.remove();
+      var oldMore = sheet.querySelector('.gai-more-btn');
+      if (oldMore) oldMore.remove();
+    }
     var input = document.getElementById('gaiInput');
     if (input) input.focus();
-    _state.turnCount = 0;
+    // turnCountを1にリセット（0だと初回ヒアリング用プロンプトが使われてしまう）
+    _state.turnCount = 1;
     _state.maxTurns = 5;
-    addMessage('ai', '了解！もう少し詳しく教えてください。何でも聞いてくださいね 😊');
+    // キャラの口調に合ったメッセージを表示
+    var msgs = _continueMsgs[_state.tone] || _continueMsgs.normal;
+    var msgIdx = Math.min(_continueCount - 1, msgs.length - 1);
+    addMessage('ai', msgs[msgIdx]);
   }
 
   // ========== 直接AIチャットを開く（目標タブから直接） ==========
