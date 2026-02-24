@@ -350,6 +350,8 @@
     try {
       await register(email, pw);
       renderUI();
+      // 登録直後に初回バックアップを実行
+      triggerFirstBackup();
     } catch (e) {
       showError(e.message);
     }
@@ -367,6 +369,8 @@
     try {
       await login(email, pw);
       renderUI();
+      // ログイン直後に初回バックアップを実行
+      triggerFirstBackup();
     } catch (e) {
       showError(e.message);
     }
@@ -546,6 +550,22 @@
     autoBackupRunning = false;
   }
 
+  // ログイン/登録直後に初回バックアップを実行
+  async function triggerFirstBackup() {
+    if (!isLoggedIn() || !isAutoBackupEnabled()) return;
+    try {
+      var res = await upload();
+      updateSnapshot();
+      console.log('☁️ 初回自動バックアップ完了:', res.syncedAt);
+      var tsEl = document.getElementById('csLastSyncedText');
+      if (tsEl && res.syncedAt) {
+        tsEl.textContent = new Date(res.syncedAt).toLocaleString('ja-JP');
+      }
+    } catch(e) {
+      console.warn('☁️ 初回自動バックアップ失敗:', e.message);
+    }
+  }
+
   // アプリがバックグラウンドに入った時 or ページを離れる時にバックアップ
   var _autoBackupTimer = null;
   var _autoBackupDebounce = null;
@@ -653,8 +673,14 @@
     injectCSS();
     renderUI();
     setupAutoBackup();
-    // 初回スナップショットを記録（ログイン済みなら）
-    if (isLoggedIn()) updateSnapshot();
+    // ログイン済みならスナップショット記録 + 未バックアップなら初回実行
+    if (isLoggedIn()) {
+      updateSnapshot();
+      if (!getLastSynced()) {
+        // まだ一度もバックアップしていない → 初回バックアップ
+        triggerFirstBackup();
+      }
+    }
   }
 
   // DOMContentLoaded or immediate
