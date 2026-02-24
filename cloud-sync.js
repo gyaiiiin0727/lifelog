@@ -492,7 +492,23 @@
       '.cs-btn-upload:active{background:#1976D2;}' +
       '.cs-btn-download{flex:1;background:#fff;color:#2196F3;border:1.5px solid #2196F3;}' +
       '.cs-btn-download:active{background:#e3f2fd;}' +
-      '.cs-logout{margin-top:8px;color:#999;font-size:12px;}';
+      '.cs-logout{margin-top:8px;color:#999;font-size:12px;}' +
+      /* 新しいバックアップ通知バナー */
+      '.cs-sync-banner{position:fixed;top:0;left:0;right:0;z-index:10000;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.15);padding:16px 16px 14px;transform:translateY(-100%);transition:transform .3s ease;border-bottom:2px solid #2196F3;}' +
+      '.cs-sync-banner-show{transform:translateY(0);}' +
+      '.cs-sync-banner-hide{transform:translateY(-100%);}' +
+      '.cs-sync-banner-content{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;}' +
+      '.cs-sync-banner-icon{font-size:28px;line-height:1;}' +
+      '.cs-sync-banner-text{flex:1;}' +
+      '.cs-sync-banner-title{font-size:14px;font-weight:700;color:#333;}' +
+      '.cs-sync-banner-time{font-size:12px;color:#888;margin-top:2px;}' +
+      '.cs-sync-banner-actions{display:flex;gap:8px;}' +
+      '.cs-sync-banner-btn{flex:1;padding:10px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s,opacity .2s;}' +
+      '.cs-sync-banner-btn:disabled{opacity:.5;cursor:default;}' +
+      '.cs-sync-banner-btn-primary{background:#2196F3;color:#fff;}' +
+      '.cs-sync-banner-btn-primary:active{background:#1976D2;}' +
+      '.cs-sync-banner-btn-secondary{background:#f0f0f0;color:#666;}' +
+      '.cs-sync-banner-btn-secondary:active{background:#e0e0e0;}';
     document.head.appendChild(style);
   }
 
@@ -668,6 +684,99 @@
     }
   };
 
+  // === 新しいバックアップ通知 ===
+  var _notifyCheckDone = false;
+
+  async function checkForNewerBackup() {
+    if (!isLoggedIn() || _notifyCheckDone) return;
+    _notifyCheckDone = true;
+
+    try {
+      var status = await getStatus();
+      if (!status.syncedAt) return; // サーバーにバックアップなし
+
+      var serverTime = new Date(status.syncedAt).getTime();
+      var localLastSynced = getLastSynced();
+      var localTime = localLastSynced ? new Date(localLastSynced).getTime() : 0;
+
+      // サーバーの方が新しい（5秒以上差がある場合のみ — 自分のバックアップ直後を除外）
+      if (serverTime > localTime + 5000) {
+        showSyncBanner(status.syncedAt);
+      }
+    } catch (e) {
+      console.warn('☁️ バックアップ確認失敗:', e.message);
+    }
+  }
+
+  function showSyncBanner(serverSyncedAt) {
+    // 既にバナーが存在する場合は重複表示しない
+    if (document.getElementById('csSyncBanner')) return;
+
+    var timeStr = new Date(serverSyncedAt).toLocaleString('ja-JP');
+
+    var banner = document.createElement('div');
+    banner.id = 'csSyncBanner';
+    banner.className = 'cs-sync-banner';
+    banner.innerHTML =
+      '<div class="cs-sync-banner-content">' +
+        '<div class="cs-sync-banner-icon">☁️</div>' +
+        '<div class="cs-sync-banner-text">' +
+          '<div class="cs-sync-banner-title">新しいバックアップがあります</div>' +
+          '<div class="cs-sync-banner-time">別の端末で ' + escHTML(timeStr) + ' に保存</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="cs-sync-banner-actions">' +
+        '<button type="button" id="csBannerRestore" class="cs-sync-banner-btn cs-sync-banner-btn-primary">復元する</button>' +
+        '<button type="button" id="csBannerDismiss" class="cs-sync-banner-btn cs-sync-banner-btn-secondary">あとで</button>' +
+      '</div>';
+
+    // ページ上部に挿入
+    document.body.insertBefore(banner, document.body.firstChild);
+
+    // アニメーション: スライドイン
+    requestAnimationFrame(function() {
+      banner.classList.add('cs-sync-banner-show');
+    });
+
+    // 復元ボタン
+    document.getElementById('csBannerRestore').addEventListener('click', async function() {
+      var btn = this;
+      btn.disabled = true;
+      btn.textContent = '復元中...';
+      try {
+        var res = await download();
+        if (res.data) {
+          dismissSyncBanner();
+          // 復元完了 → リロード
+          location.reload();
+        } else {
+          btn.textContent = '復元する';
+          btn.disabled = false;
+          alert('バックアップデータが見つかりませんでした');
+        }
+      } catch(e) {
+        btn.textContent = '復元する';
+        btn.disabled = false;
+        alert('復元に失敗しました: ' + e.message);
+      }
+    });
+
+    // あとでボタン
+    document.getElementById('csBannerDismiss').addEventListener('click', function() {
+      dismissSyncBanner();
+    });
+  }
+
+  function dismissSyncBanner() {
+    var banner = document.getElementById('csSyncBanner');
+    if (!banner) return;
+    banner.classList.remove('cs-sync-banner-show');
+    banner.classList.add('cs-sync-banner-hide');
+    setTimeout(function() {
+      if (banner.parentNode) banner.parentNode.removeChild(banner);
+    }, 300);
+  }
+
   // === 初期化 ===
   function init() {
     injectCSS();
@@ -680,6 +789,8 @@
         // まだ一度もバックアップしていない → 初回バックアップ
         triggerFirstBackup();
       }
+      // 少し遅延してサーバーのバックアップ日時をチェック
+      setTimeout(checkForNewerBackup, 2000);
     }
   }
 
@@ -704,6 +815,7 @@
     renderUI: renderUI,
     isAutoBackupEnabled: isAutoBackupEnabled,
     setAutoBackup: setAutoBackup,
+    checkForNewerBackup: checkForNewerBackup,
   };
 
 })();
