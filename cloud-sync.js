@@ -420,6 +420,7 @@
     setLoading('csUploadBtn', true);
     try {
       var res = await upload();
+      updateSnapshot();
       document.getElementById('csLastSyncedText').textContent = new Date(res.syncedAt).toLocaleString('ja-JP');
       showSuccess('バックアップ完了');
     } catch (e) {
@@ -491,10 +492,112 @@
     document.head.appendChild(style);
   }
 
+  // === 自動バックアップ ===
+  var LS_AUTO_BACKUP = 'cloudAutoBackup'; // 'on' or 'off'
+  var LS_LAST_SNAPSHOT = 'cloudLastSnapshot'; // 前回バックアップ時のデータハッシュ
+  var autoBackupRunning = false;
+
+  function isAutoBackupEnabled() {
+    return localStorage.getItem(LS_AUTO_BACKUP) !== 'off'; // デフォルトON
+  }
+
+  function setAutoBackup(enabled) {
+    localStorage.setItem(LS_AUTO_BACKUP, enabled ? 'on' : 'off');
+  }
+
+  // 簡易ハッシュ（データが変わったか検出するだけなのでシンプルに）
+  function simpleHash(str) {
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return String(hash);
+  }
+
+  function hasDataChanged() {
+    var data = collectSyncData();
+    var currentHash = simpleHash(JSON.stringify(data));
+    var lastHash = localStorage.getItem(LS_LAST_SNAPSHOT) || '';
+    return currentHash !== lastHash;
+  }
+
+  function updateSnapshot() {
+    var data = collectSyncData();
+    localStorage.setItem(LS_LAST_SNAPSHOT, simpleHash(JSON.stringify(data)));
+  }
+
+  async function autoBackupIfNeeded() {
+    if (!isLoggedIn() || !isAutoBackupEnabled() || autoBackupRunning) return;
+    if (!hasDataChanged()) return;
+
+    autoBackupRunning = true;
+    try {
+      var res = await upload();
+      updateSnapshot();
+      console.log('☁️ 自動バックアップ完了:', res.syncedAt);
+      var tsEl = document.getElementById('csLastSyncedText');
+      if (tsEl && res.syncedAt) {
+        tsEl.textContent = new Date(res.syncedAt).toLocaleString('ja-JP');
+      }
+    } catch(e) {
+      console.warn('☁️ 自動バックアップ失敗:', e.message);
+    }
+    autoBackupRunning = false;
+  }
+
+  // アプリがバックグラウンドに入った時 or ページを離れる時にバックアップ
+  function setupAutoBackup() {
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'hidden') {
+        autoBackupIfNeeded();
+      }
+    });
+    // ページ離脱時（ブラウザ閉じなど）
+    window.addEventListener('pagehide', function() {
+      autoBackupIfNeeded();
+    });
+  }
+
+  // renderSyncUI に自動バックアップトグルを追加
+  var _origRenderSyncUI = renderSyncUI;
+  renderSyncUI = function(container) {
+    _origRenderSyncUI(container);
+    // トグルを追加
+    var logoutBtn = container.querySelector('#csLogoutBtn');
+    if (logoutBtn) {
+      var autoOn = isAutoBackupEnabled();
+      var toggleDiv = document.createElement('div');
+      toggleDiv.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding:10px 12px;background:#f8f9fa;border-radius:8px;';
+      toggleDiv.innerHTML =
+        '<div>' +
+          '<div style="font-size:13px;font-weight:600;color:#333;">🔄 自動バックアップ</div>' +
+          '<div style="font-size:11px;color:#999;margin-top:2px;">データ変更時に自動で保存</div>' +
+        '</div>' +
+        '<label style="position:relative;display:inline-block;width:44px;height:24px;cursor:pointer;">' +
+          '<input type="checkbox" id="csAutoBackupToggle" ' + (autoOn ? 'checked' : '') + ' style="opacity:0;width:0;height:0;">' +
+          '<span style="position:absolute;top:0;left:0;right:0;bottom:0;background:' + (autoOn ? '#4CAF50' : '#ccc') + ';border-radius:24px;transition:.3s;"></span>' +
+          '<span style="position:absolute;top:2px;left:' + (autoOn ? '22px' : '2px') + ';width:20px;height:20px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 1px 3px rgba(0,0,0,.2);"></span>' +
+        '</label>';
+      logoutBtn.parentNode.insertBefore(toggleDiv, logoutBtn);
+
+      var toggle = document.getElementById('csAutoBackupToggle');
+      if (toggle) {
+        toggle.addEventListener('change', function() {
+          setAutoBackup(this.checked);
+          renderUI();
+        });
+      }
+    }
+  };
+
   // === 初期化 ===
   function init() {
     injectCSS();
     renderUI();
+    setupAutoBackup();
+    // 初回スナップショットを記録（ログイン済みなら）
+    if (isLoggedIn()) updateSnapshot();
   }
 
   // DOMContentLoaded or immediate
@@ -516,6 +619,8 @@
     download: download,
     getStatus: getStatus,
     renderUI: renderUI,
+    isAutoBackupEnabled: isAutoBackupEnabled,
+    setAutoBackup: setAutoBackup,
   };
 
 })();
