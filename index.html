@@ -6545,16 +6545,86 @@ function editMoneyCategories(type) {
 function renderCategoryEditList(type) {
     const container = document.getElementById('categoryEditList');
     const categories = type === 'expense' ? expenseCategories : incomeCategories;
-    
+
     container.innerHTML = categories.map((cat, index) => {
         var s = escapeHtml(cat.name), e = escapeHtml(cat.emoji);
-        return `<div class="category-edit-item">
+        return `<div class="category-edit-item" id="moneyCatItem_${index}">
             <span class="category-edit-emoji">${e}</span>
             <span class="category-edit-name">${s}</span>
+            <button class="btn-icon" onclick="startEditMoneyCategory('${escapeHtml(type)}', ${index})" title="編集">✏️</button>
             <button class="btn-icon" onclick="deleteMoneyCategoryItem('${escapeHtml(type)}', ${index})" title="削除">🗑️</button>
         </div>`;
     }).join('');
 }
+
+// お金カテゴリのインライン編集開始
+function startEditMoneyCategory(type, index) {
+    var categories = type === 'expense' ? expenseCategories : incomeCategories;
+    var cat = categories[index];
+    if (!cat) return;
+
+    var item = document.getElementById('moneyCatItem_' + index);
+    if (!item) return;
+
+    var s = escapeHtml(cat.name), e = escapeHtml(cat.emoji);
+    item.innerHTML = '<input class="text-input-small" id="editMoneyCatEmoji_' + index + '" value="' + e + '" maxlength="2" style="width:50px;margin-right:6px;" />'
+      + '<input class="text-input" id="editMoneyCatName_' + index + '" value="' + s + '" style="flex:1;margin-right:6px;" />'
+      + '<button class="btn-icon" onclick="saveEditMoneyCategory(\'' + escapeHtml(type) + '\', ' + index + ')" title="保存" style="color:#4a90e2;">✅</button>'
+      + '<button class="btn-icon" onclick="renderCategoryEditList(\'' + escapeHtml(type) + '\')" title="キャンセル">❌</button>';
+
+    // 名前フィールドにフォーカス
+    var nameInput = document.getElementById('editMoneyCatName_' + index);
+    if (nameInput) { nameInput.focus(); nameInput.select(); }
+}
+
+// お金カテゴリの編集保存
+function saveEditMoneyCategory(type, index) {
+    var categories = type === 'expense' ? expenseCategories : incomeCategories;
+    var cat = categories[index];
+    if (!cat) return;
+
+    var emojiInput = document.getElementById('editMoneyCatEmoji_' + index);
+    var nameInput = document.getElementById('editMoneyCatName_' + index);
+    var newEmoji = (emojiInput ? emojiInput.value : '').trim() || '📌';
+    var newName = (nameInput ? nameInput.value : '').trim();
+
+    if (!newName) { alert('カテゴリ名を入力してください'); return; }
+
+    // 重複チェック（自分以外）
+    if (categories.some(function(c, i) { return i !== index && c.name === newName; })) {
+        alert('同じ名前のカテゴリが既にあります');
+        return;
+    }
+
+    var oldName = cat.name;
+    cat.name = newName;
+    cat.emoji = newEmoji;
+
+    // 保存
+    if (type === 'expense') { window.expenseCategories = expenseCategories; }
+    else { window.incomeCategories = incomeCategories; }
+    localStorage.setItem(type === 'expense' ? 'expenseCategories' : 'incomeCategories', JSON.stringify(categories));
+
+    // 既存の記録のカテゴリ名もリネーム
+    if (oldName !== newName) {
+        try {
+            var records = JSON.parse(localStorage.getItem('moneyRecords') || '[]');
+            var changed = false;
+            records.forEach(function(r) {
+                if (r.category === oldName) { r.category = newName; changed = true; }
+            });
+            if (changed) {
+                localStorage.setItem('moneyRecords', JSON.stringify(records));
+                window.moneyRecords = records;
+            }
+        } catch(e) {}
+    }
+
+    renderCategoryEditList(type);
+    renderMoneyCategories();
+}
+window.startEditMoneyCategory = startEditMoneyCategory;
+window.saveEditMoneyCategory = saveEditMoneyCategory;
 
 // カテゴリ追加
 function addMoneyCategory() {
@@ -6650,12 +6720,79 @@ function renderActivityCategoryEditList() {
 
     list.innerHTML = activityCategories.map((cat, idx) => {
         var s = escapeHtml(cat.name || ''), e = escapeHtml(cat.emoji || '');
-        return `<div class="category-edit-item">
-            <span class="category-display">${e} ${s}</span>
-            <button class="btn-delete" onclick="deleteActivityCategoryItem(${idx})">削除</button>
+        return `<div class="category-edit-item" id="actCatItem_${idx}">
+            <span class="category-edit-emoji">${e}</span>
+            <span class="category-edit-name">${s}</span>
+            <button class="btn-icon" onclick="startEditActivityCategory(${idx})" title="編集">✏️</button>
+            <button class="btn-icon" onclick="deleteActivityCategoryItem(${idx})" title="削除">🗑️</button>
         </div>`;
     }).join('') || '<div style="color:#666;">カテゴリがありません</div>';
 }
+
+// 行動カテゴリのインライン編集開始
+function startEditActivityCategory(index) {
+    var cat = activityCategories[index];
+    if (!cat) return;
+
+    var item = document.getElementById('actCatItem_' + index);
+    if (!item) return;
+
+    var s = escapeHtml(cat.name || ''), e = escapeHtml(cat.emoji || '');
+    item.innerHTML = '<input class="text-input-small" id="editActCatEmoji_' + index + '" value="' + e + '" maxlength="2" style="width:50px;margin-right:6px;" />'
+      + '<input class="text-input" id="editActCatName_' + index + '" value="' + s + '" style="flex:1;margin-right:6px;" />'
+      + '<button class="btn-icon" onclick="saveEditActivityCategory(' + index + ')" title="保存" style="color:#4a90e2;">✅</button>'
+      + '<button class="btn-icon" onclick="renderActivityCategoryEditList()" title="キャンセル">❌</button>';
+
+    var nameInput = document.getElementById('editActCatName_' + index);
+    if (nameInput) { nameInput.focus(); nameInput.select(); }
+}
+
+// 行動カテゴリの編集保存
+function saveEditActivityCategory(index) {
+    var cat = activityCategories[index];
+    if (!cat) return;
+
+    var emojiInput = document.getElementById('editActCatEmoji_' + index);
+    var nameInput = document.getElementById('editActCatName_' + index);
+    var newEmoji = (emojiInput ? emojiInput.value : '').trim() || '📝';
+    var newName = (nameInput ? nameInput.value : '').trim();
+
+    if (!newName) { alert('カテゴリ名を入力してください'); return; }
+
+    // 重複チェック（自分以外）
+    if (activityCategories.some(function(c, i) { return i !== index && (c.name || '') === newName; })) {
+        alert('同じ名前のカテゴリが既にあります');
+        return;
+    }
+
+    var oldName = cat.name;
+    cat.name = newName;
+    cat.emoji = newEmoji;
+
+    // 保存
+    localStorage.setItem('activityCategories', JSON.stringify(activityCategories));
+
+    // 既存の行動記録のカテゴリ名もリネーム
+    if (oldName !== newName) {
+        try {
+            var records = JSON.parse(localStorage.getItem('activities') || '[]');
+            var changed = false;
+            records.forEach(function(r) {
+                if (r.category === oldName) { r.category = newName; changed = true; }
+            });
+            if (changed) {
+                localStorage.setItem('activities', JSON.stringify(records));
+                window.activities = records;
+                try { activities = records; } catch(e) {}
+            }
+        } catch(e) {}
+    }
+
+    renderActivityCategoryEditList();
+    renderActivityCategories();
+}
+window.startEditActivityCategory = startEditActivityCategory;
+window.saveEditActivityCategory = saveEditActivityCategory;
 
 // 追加
 function addActivityCategory() {
@@ -8106,7 +8243,60 @@ function jfSubmitAI() {
     var tone = localStorage.getItem('journalFeedbackTone') || 'normal';
 
     var BACKEND = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://api.dayce.app';
-    var textToSend = '【ユーザーのジャーナル】\n' + text;
+
+    // 当日の行動・お金記録をコンテキストとして追加
+    var journalDateEl = document.getElementById('journalV2Date');
+    var journalDateStr = journalDateEl ? journalDateEl.value : '';
+    var todayContext = '';
+    try {
+        var jDate = journalDateStr ? new Date(journalDateStr + 'T00:00:00') : new Date();
+        var jDateEnd = new Date(jDate);
+        jDateEnd.setDate(jDateEnd.getDate() + 1);
+
+        // 行動記録
+        var acts = JSON.parse(localStorage.getItem('activities') || '[]');
+        var todayActs = acts.filter(function(a) {
+            var t = new Date(a.startTime || a.timestamp);
+            return t >= jDate && t < jDateEnd;
+        });
+        if (todayActs.length > 0) {
+            todayContext += '\n【この日の行動記録】\n';
+            todayActs.forEach(function(a) {
+                var d = new Date(a.startTime || a.timestamp);
+                var timeStr = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+                var cat = a.category || '';
+                var memo = a.text || a.memo || a.note || '';
+                var dur = a.durationMinutes || 0;
+                var line = timeStr + (cat ? ' [' + cat + ']' : '');
+                if (dur > 0) line += ' ' + Math.floor(dur/60) + 'h' + (dur%60) + 'm';
+                if (memo) line += ' ' + memo;
+                todayContext += line + '\n';
+            });
+        }
+
+        // お金記録
+        var money = JSON.parse(localStorage.getItem('moneyRecords') || '[]');
+        var todayMoney = money.filter(function(r) {
+            var t = new Date(r.timestamp);
+            return t >= jDate && t < jDateEnd;
+        });
+        if (todayMoney.length > 0) {
+            todayContext += '\n【この日のお金記録】\n';
+            todayMoney.forEach(function(r) {
+                var amt = Math.abs(Number(r.amount || 0));
+                var isExp = (Number(r.amount || 0) < 0 || r.type === 'expense');
+                var prefix = isExp ? '支出' : '収入';
+                var cat = r.category || '';
+                var memo = r.text || r.memo || r.note || '';
+                var line = prefix + ' ¥' + amt.toLocaleString();
+                if (cat) line += ' [' + cat + ']';
+                if (memo) line += ' ' + memo;
+                todayContext += line + '\n';
+            });
+        }
+    } catch(e) { /* ignore */ }
+
+    var textToSend = '【ユーザーのジャーナル】\n' + text + todayContext;
     var aiHeaders = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : {'Content-Type':'application/json'};
 
     fetch(BACKEND + '/api/analyze', {
@@ -10377,7 +10567,7 @@ function drawMoneyChart(categoryData) {
             }
             const journal = v3Entries[v3Key];
 
-            if (journal && (journal.raw || journal.summary || journal.aiFeedback)) {
+            if (journal && (journal.raw || journal.aiFeedback)) {
                 showCalendarDetailModal(dateStr, v3Key, journal);
             } else {
                 showCalendarDetailModal(dateStr, v3Key, null);
@@ -17029,6 +17219,67 @@ const modal = $('qrModal');
     if (typeof window.renderQuickButtons === 'function') window.renderQuickButtons();
   };
 
+  // お金カテゴリ名の編集保存（v39.12対応: localStorageから最新を読む）
+  window.saveEditMoneyCategory = function(type, index) {
+    const storageKey = (type === 'expense') ? 'expenseCategories' : 'incomeCategories';
+    let categories = [];
+    try {
+      const raw = localStorage.getItem(storageKey);
+      categories = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(categories)) categories = [];
+    } catch(e) { categories = []; }
+
+    var cat = categories[index];
+    if (!cat) return;
+
+    var emojiInput = document.getElementById('editMoneyCatEmoji_' + index);
+    var nameInput = document.getElementById('editMoneyCatName_' + index);
+    var newEmoji = (emojiInput ? emojiInput.value : '').trim() || '📌';
+    var newName = (nameInput ? nameInput.value : '').trim();
+
+    if (!newName) { alert('カテゴリ名を入力してください'); return; }
+
+    if (categories.some(function(c, i) { return i !== index && c.name === newName; })) {
+      alert('同じ名前のカテゴリが既にあります');
+      return;
+    }
+
+    var oldName = cat.name;
+    cat.name = newName;
+    cat.emoji = newEmoji;
+
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(categories));
+    } catch(e) { console.error('Failed to save categories:', e); return; }
+
+    if (type === 'expense') {
+      window.expenseCategories = categories;
+      try { expenseCategories = categories; } catch(e) {}
+    } else {
+      window.incomeCategories = categories;
+      try { incomeCategories = categories; } catch(e) {}
+    }
+
+    // 既存の記録のカテゴリ名もリネーム
+    if (oldName !== newName) {
+      try {
+        var records = JSON.parse(localStorage.getItem('moneyRecords') || '[]');
+        var changed = false;
+        records.forEach(function(r) {
+          if (r.category === oldName) { r.category = newName; changed = true; }
+        });
+        if (changed) {
+          localStorage.setItem('moneyRecords', JSON.stringify(records));
+          window.moneyRecords = records;
+        }
+      } catch(e) {}
+    }
+
+    if (typeof renderCategoryEditList === 'function') renderCategoryEditList(type);
+    if (typeof renderMoneyCategories === 'function') renderMoneyCategories();
+    if (typeof window.renderQuickButtons === 'function') window.renderQuickButtons();
+  };
+
   window.loadMoneyCategories = function() {
     try {
       const raw = localStorage.getItem('expenseCategories');
@@ -21426,7 +21677,7 @@ function summarizeActivities(detailed) {
         var timeStr = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
         var dur = a.durationMinutes || 0;
         var cat = a.category || '';
-        var memo = a.memo || a.note || a.title || a.description || '';
+        var memo = a.text || a.memo || a.note || a.title || a.description || '';
         var line = '    ' + timeStr + ' ' + (cat ? '[' + cat + '] ' : '') + Math.floor(dur/60) + 'h' + (dur%60) + 'm';
         if (memo) line += ' ' + memo;
         lines.push(line);
@@ -21517,7 +21768,7 @@ function summarizeMoney(detailed) {
         var isExp = (amt < 0 || r.type === 'expense');
         var prefix = isExp ? '支出' : '収入';
         var dispAmt = Math.abs(amt);
-        var memo = r.memo || r.note || r.description || '';
+        var memo = r.text || r.memo || r.note || r.description || '';
         var cat = r.category || '';
         var line = '  ' + dateStr + ' ' + prefix + ' ¥' + dispAmt.toLocaleString();
         if (cat) line += ' [' + cat + ']';
@@ -21842,8 +22093,89 @@ async function sendAIConsult() {
     // 過去データのコンテキストを生成
     var dataContext = buildContextSummary(topic);
 
+    // ユーザーの質問に含まれるキーワードで関連記録を追加検索
+    var keywordContext = '';
+    try {
+      // 質問テキストから助詞・一般語を除いてキーワード抽出（2文字以上の単語）
+      var queryWords = text.replace(/[？?！!。、\s]/g, ' ').split(' ').filter(function(w) {
+        return w.length >= 2 && ['いくら','どれくらい','今月','先月','今週','何回','について','どうし','ほしい','ください','つかった','使った'].indexOf(w) === -1;
+      });
+
+      // カタカナ↔ひらがな変換（表記揺れ対応）
+      var toHiragana = function(s) { return s.replace(/[\u30A1-\u30F6]/g, function(c) { return String.fromCharCode(c.charCodeAt(0) - 0x60); }); };
+      var toKatakana = function(s) { return s.replace(/[\u3041-\u3096]/g, function(c) { return String.fromCharCode(c.charCodeAt(0) + 0x60); }); };
+      // キーワードごとに「ひらがな版」「カタカナ版」両方を生成
+      var queryVariants = [];
+      queryWords.forEach(function(w) {
+        var lo = w.toLowerCase();
+        var hira = toHiragana(lo);
+        var kata = toKatakana(lo);
+        var variants = [lo];
+        if (hira !== lo) variants.push(hira);
+        if (kata !== lo) variants.push(kata);
+        queryVariants.push(variants);
+      });
+
+      if (queryVariants.length > 0) {
+        // テキストがいずれかのバリアントにマッチするか判定
+        var matchesAny = function(target) {
+          var t = target.toLowerCase();
+          var tHira = toHiragana(t);
+          return queryVariants.some(function(variants) {
+            return variants.some(function(v) { return t.indexOf(v) !== -1 || tHira.indexOf(toHiragana(v)) !== -1; });
+          });
+        };
+
+        // お金記録からキーワードマッチ
+        var allMoney = [];
+        try { allMoney = JSON.parse(localStorage.getItem('moneyRecords') || '[]'); } catch(e) {}
+        var matchedMoney = allMoney.filter(function(r) {
+          var rText = r.text || r.memo || r.note || '';
+          var rCat = r.category || '';
+          return matchesAny(rText) || matchesAny(rCat);
+        });
+        if (matchedMoney.length > 0) {
+          var totalMatched = 0;
+          keywordContext += '\n【「' + queryWords.join('・') + '」に関連するお金の記録（全件）】\n';
+          matchedMoney.forEach(function(r) {
+            var d = new Date(r.timestamp);
+            var dateStr = (d.getMonth()+1) + '/' + d.getDate();
+            var amt = Math.abs(Number(r.amount || 0));
+            totalMatched += amt;
+            var isExp = (Number(r.amount || 0) < 0 || r.type === 'expense');
+            var prefix = isExp ? '支出' : '収入';
+            var memo = r.text || r.memo || r.note || '';
+            var cat = r.category || '';
+            keywordContext += dateStr + ' ' + prefix + ' ¥' + amt.toLocaleString() + (cat ? ' [' + cat + ']' : '') + (memo ? ' ' + memo : '') + '\n';
+          });
+          keywordContext += '→ 合計: ¥' + totalMatched.toLocaleString() + '（' + matchedMoney.length + '件）\n';
+        }
+
+        // 行動記録からキーワードマッチ
+        var allActs = [];
+        try { allActs = JSON.parse(localStorage.getItem('activities') || '[]'); } catch(e) {}
+        var matchedActs = allActs.filter(function(a) {
+          var aText = a.text || a.memo || a.note || '';
+          var aCat = a.category || '';
+          return matchesAny(aText) || matchesAny(aCat);
+        });
+        if (matchedActs.length > 0) {
+          keywordContext += '\n【「' + queryWords.join('・') + '」に関連する行動記録（全件）】\n';
+          matchedActs.slice(0, 30).forEach(function(a) {
+            var d = new Date(a.startTime || a.timestamp);
+            var dateStr = (d.getMonth()+1) + '/' + d.getDate();
+            var memo = a.text || a.memo || a.note || '';
+            var cat = a.category || '';
+            var dur = a.durationMinutes || 0;
+            keywordContext += dateStr + (cat ? ' [' + cat + ']' : '') + (dur > 0 ? ' ' + Math.floor(dur/60) + 'h' + (dur%60) + 'm' : '') + (memo ? ' ' + memo : '') + '\n';
+          });
+          keywordContext += '→ ' + matchedActs.length + '件\n';
+        }
+      }
+    } catch(e) { /* ignore */ }
+
     // プロンプトルール・キャラクター口調はWorker側で注入（ソースから隠蔽）
-    var textToSend = topicContext + dataContext + '【ユーザーの相談】\n' + text;
+    var textToSend = topicContext + dataContext + keywordContext + '【ユーザーの相談】\n' + text;
 
     var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://api.dayce.app';
     var endpoint = BACKEND_URL + '/api/analyze';
