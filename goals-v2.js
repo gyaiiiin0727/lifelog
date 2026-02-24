@@ -509,7 +509,7 @@
       var badge = tasks.length > 0 ? ' <span style="font-size:12px;color:#888;font-weight:400;">(' + doneCount + '/' + tasks.length + ')</span>' : '';
       var arrow = collapsed ? '▶' : '▼';
 
-      html += '<div class="task-group">';
+      html += '<div class="task-group" id="gv2WeeklyGoal_' + goal.id + '">';
       html += '<div class="task-group-title" style="cursor:pointer;display:flex;align-items:center;gap:6px;" onclick="window._gv2ToggleCollapse(' + goal.id + ')">' +
         '<span style="font-size:11px;color:#aaa;transition:transform 0.2s;">' + arrow + '</span> ' + emoji + ' ' + esc(goal.text) + badge + '</div>';
 
@@ -576,7 +576,7 @@
         html += '<div class="gv2-goal ' + (goal.completed ? 'done' : '') + '">' +
           '<input type="checkbox" class="gv2-goal-cb" ' + (goal.completed ? 'checked' : '') +
           ' onchange="window._gv2ToggleGoal(' + goal.id + ')" />' +
-          '<div class="gv2-goal-body">' +
+          '<div class="gv2-goal-body" style="cursor:pointer;" onclick="window._gv2ScrollToWeekly(' + goal.id + ')">' +
             '<div class="gv2-goal-text">' + esc(goal.text) + '</div>' +
             '<div class="gv2-goal-meta">' +
               '<span class="gv2-goal-cat">' + catEmoji(goal.category) + ' ' + esc(goal.category) + '</span>' +
@@ -1069,6 +1069,27 @@
   window._gv2SubmitAddTask = submitAddTask;
   window._gv2DeleteTask = deleteTask;
   window._gv2ToggleCollapse = toggleCollapse;
+  window._gv2ScrollToWeekly = function(goalId) {
+    var target = document.getElementById('gv2WeeklyGoal_' + goalId);
+    if (target) {
+      // 折りたたまれていたら開く
+      if (_goalCollapsed[goalId]) {
+        _goalCollapsed[goalId] = false;
+        renderAll();
+        // レンダリング後にスクロール
+        setTimeout(function() {
+          var t = document.getElementById('gv2WeeklyGoal_' + goalId);
+          if (t) t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      } else {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      // ハイライトアニメーション
+      target.style.transition = 'background 0.3s';
+      target.style.background = '#e3f2fd';
+      setTimeout(function() { target.style.background = ''; }, 1500);
+    }
+  };
 
   // 既存の window.* を上書きして全体の整合性を保つ
   window.addGoal = addGoalV2;
