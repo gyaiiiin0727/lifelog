@@ -22121,8 +22121,13 @@ async function sendAIConsult() {
       queryWords = queryWords.map(function(w) {
         var cleaned = w;
         stopWords.forEach(function(sw) {
-          if (cleaned.indexOf(sw) === 0) cleaned = cleaned.slice(sw.length);
-          if (cleaned.length > 0 && cleaned.indexOf(sw) === cleaned.length - sw.length) cleaned = cleaned.slice(0, -sw.length);
+          if (cleaned.length >= sw.length && cleaned.indexOf(sw) === 0) {
+            cleaned = cleaned.slice(sw.length);
+          }
+          var tailPos = cleaned.length - sw.length;
+          if (cleaned.length >= sw.length && tailPos >= 0 && cleaned.indexOf(sw) === tailPos) {
+            cleaned = cleaned.slice(0, tailPos);
+          }
         });
         return cleaned;
       }).filter(function(w) { return w.length >= 2; });
