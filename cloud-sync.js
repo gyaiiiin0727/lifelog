@@ -548,17 +548,54 @@
 
   // アプリがバックグラウンドに入った時 or ページを離れる時にバックアップ
   var _autoBackupTimer = null;
+  var _autoBackupDebounce = null;
+
+  // localStorage.setItem を監視して、データ変更時にバックアップをスケジュール
+  function hookLocalStorage() {
+    var origSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function(key, value) {
+      origSetItem.call(this, key, value);
+      // 同期対象キーが変更されたら自動バックアップをスケジュール
+      var isSyncKey = SYNC_KEYS.indexOf(key) !== -1;
+      if (!isSyncKey) {
+        for (var p = 0; p < DYNAMIC_KEY_PREFIXES.length; p++) {
+          if (key.indexOf(DYNAMIC_KEY_PREFIXES[p]) === 0) { isSyncKey = true; break; }
+        }
+      }
+      // 内部キー（スナップショットやトグル）は除外
+      if (key === LS_LAST_SNAPSHOT || key === LS_AUTO_BACKUP || key === LS_LAST_SYNCED) return;
+      if (isSyncKey) {
+        scheduleAutoBackup();
+      }
+    };
+  }
+
+  // デバウンス付き自動バックアップ（30秒後に実行、連続変更は1回にまとめる）
+  function scheduleAutoBackup() {
+    if (!isLoggedIn() || !isAutoBackupEnabled()) return;
+    if (_autoBackupDebounce) clearTimeout(_autoBackupDebounce);
+    _autoBackupDebounce = setTimeout(function() {
+      _autoBackupDebounce = null;
+      autoBackupIfNeeded();
+    }, 30 * 1000);
+  }
 
   function setupAutoBackup() {
+    // 0) localStorage書き込み監視
+    hookLocalStorage();
     // 1) バックグラウンド移行時
     document.addEventListener('visibilitychange', function() {
       if (document.visibilityState === 'hidden') {
+        // デバウンス待ちがあれば即実行
+        if (_autoBackupDebounce) {
+          clearTimeout(_autoBackupDebounce);
+          _autoBackupDebounce = null;
+        }
         autoBackupIfNeeded();
       }
     });
     // 2) ページ離脱時（ブラウザ閉じなど）— sendBeacon版でより確実に
     window.addEventListener('pagehide', function() {
-      // pagehideではasync完了が保証されないのでsendBeaconを試みる
       if (isLoggedIn() && isAutoBackupEnabled() && hasDataChanged()) {
         try {
           var data = collectSyncData();
@@ -566,7 +603,6 @@
           var planLevel = (window.DaycePlan) ? window.DaycePlan.getPlan() : (localStorage.getItem('planLevel') || 'free');
           var payload = JSON.stringify({ data: data, planLevel: planLevel });
           var blob = new Blob([payload], { type: 'application/json' });
-          // sendBeaconはAuthorizationヘッダーを送れないのでURLパラメータにトークンを付与
           navigator.sendBeacon(API_BASE + '/api/sync/upload?token=' + encodeURIComponent(token), blob);
           console.log('☁️ sendBeaconで自動バックアップ送信');
         } catch(e) {
@@ -574,10 +610,10 @@
         }
       }
     });
-    // 3) 定期チェック（5分ごと）— バックグラウンド移行しない場合の保険
+    // 3) 定期チェック（3分ごと）— フォールバック
     _autoBackupTimer = setInterval(function() {
       autoBackupIfNeeded();
-    }, 5 * 60 * 1000);
+    }, 3 * 60 * 1000);
   }
 
   // renderSyncUI に自動バックアップトグルを追加
