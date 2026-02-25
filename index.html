@@ -3209,7 +3209,7 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 .status-text{ font-size:16px; font-weight:700; }
 
 .journal-message{ font-size:14px; color:#666; margin-bottom:12px; }
-.journal-cta{ padding:12px 24px; background:#111; color:#fff; border:none; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; }
+.journal-cta{ padding:12px 24px; background:#2196F3; color:#fff; border:none; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; }
 .journal-cta:active{ transform:scale(.97); }
 .dashboard-journal.done .journal-cta{ background:#16a34a; }
 
@@ -7240,7 +7240,7 @@ function renderHomeTodayTasks() {
         ? safeParse('journalEntriesV3', {})
         : JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
 
-    // --- 初回ユーザー向けチュートリアルタスク ---
+    // --- 初回ユーザー向けチュートリアルタスク（メモリ内のみ、localStorageに書き込まない） ---
     if (Object.keys(journalEntries).length === 0 && !localStorage.getItem('tutorialTasksDone')) {
         journalEntries[yesterdayStr] = {
             summary: {
@@ -7248,8 +7248,6 @@ function renderHomeTodayTasks() {
                 want: 'お金の記録をしてみよう（お金タブ → ＋ボタン）'
             }
         };
-        localStorage.setItem('journalEntriesV3', JSON.stringify(journalEntries));
-        localStorage.setItem('tutorialTasksDone', '1');
     }
 
     const yesterdayJournal = journalEntries[yesterdayStr];
