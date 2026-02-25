@@ -19,11 +19,13 @@
     'incomeCategories',
     'journalFeedbackTone',
     'aiConsultTone',
-    'aiConsultHistory'
+    'aiConsultHistory',
+    'planLevel',
+    'isPremium'
   ];
 
   // --- 動的キーのプレフィックス（日付ごとに生成されるキー） ---
-  var DYNAMIC_KEY_PREFIXES = ['taskChecks_'];
+  var DYNAMIC_KEY_PREFIXES = ['taskChecks_', 'aiUsage_', 'aiDaily_'];
 
   // --- localStorage キー (認証用) ---
   var LS_TOKEN = 'syncAuthToken';
@@ -172,6 +174,13 @@
     if (res.data) {
       applySyncData(res.data);
       if (res.syncedAt) localStorage.setItem(LS_LAST_SYNCED, res.syncedAt);
+    }
+    // サーバー側のplanLevelも反映
+    if (res.planLevel) {
+      localStorage.setItem('planLevel', res.planLevel);
+      if (res.planLevel === 'pro' || res.planLevel === 'premium') {
+        localStorage.setItem('isPremium', 'true');
+      }
     }
     return res;
   }
@@ -923,7 +932,23 @@
     try {
       // まずサーバーの状態を確認
       var status = await getStatus();
-      console.log('☁️ afterLogin: サーバー状態:', status.syncedAt);
+      console.log('☁️ afterLogin: サーバー状態:', status.syncedAt, 'planLevel:', status.planLevel);
+
+      // サーバー側のplanLevelをローカルに反映（復元しなくてもプランは常に同期）
+      if (status.planLevel) {
+        var localPlan = localStorage.getItem('planLevel');
+        if (localPlan !== status.planLevel) {
+          console.log('☁️ プランを同期:', localPlan, '→', status.planLevel);
+          localStorage.setItem('planLevel', status.planLevel);
+          if (status.planLevel === 'pro' || status.planLevel === 'premium') {
+            localStorage.setItem('isPremium', 'true');
+          }
+          // DaycePlanが利用可能なら再描画
+          if (window.DaycePlan && window.DaycePlan.renderPlanBadges) {
+            window.DaycePlan.renderPlanBadges();
+          }
+        }
+      }
 
       if (status.syncedAt) {
         var localLastSynced = getLastSynced();
