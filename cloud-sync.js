@@ -52,6 +52,13 @@
     return !!getToken();
   }
 
+  // タイムスタンプ安全パース（NaN防止）
+  function parseTime(str) {
+    if (!str) return 0;
+    var t = new Date(str).getTime();
+    return isNaN(t) ? 0 : t;
+  }
+
   // --- API call helper ---
   async function apiCall(path, options) {
     options = options || {};
@@ -65,7 +72,12 @@
     };
     if (options.body) fetchOpts.body = JSON.stringify(options.body);
 
-    var resp = await fetch(API_BASE + path, fetchOpts);
+    var resp;
+    try {
+      resp = await fetch(API_BASE + path, fetchOpts);
+    } catch(networkErr) {
+      throw new Error('ネットワークに接続できません');
+    }
     var data;
     try {
       data = await resp.json();
@@ -744,7 +756,15 @@
     if (!isLoggedIn()) { return; }
     if (!isAutoBackupEnabled()) { return; }
     if (autoBackupRunning) { return; }
-    if (_restorePending) { return; } // 復元バナー表示中はバックアップしない
+    // _restorePending安全弁: バナーが消えてもフラグが残っている場合リセット
+    if (_restorePending) {
+      if (!document.getElementById('csSyncBanner')) {
+        console.warn('☁️ _restorePendingリセット（バナー消失）');
+        _restorePending = false;
+      } else {
+        return;
+      }
+    }
     if (!hasDataChanged()) { return; }
 
     console.log('☁️ 自動バックアップ開始...');
@@ -759,8 +779,9 @@
       }
     } catch(e) {
       console.error('☁️ 自動バックアップ失敗:', e.message, e);
+    } finally {
+      autoBackupRunning = false;
     }
-    autoBackupRunning = false;
   }
 
   // ログイン/登録直後に初回バックアップを実行
@@ -778,8 +799,9 @@
       }
     } catch(e) {
       console.warn('☁️ 初回自動バックアップ失敗:', e.message);
+    } finally {
+      autoBackupRunning = false;
     }
-    autoBackupRunning = false;
   }
 
   // アプリがバックグラウンドに入った時 or ページを離れる時にバックアップ
@@ -788,23 +810,35 @@
 
   // localStorage.setItem を監視して、データ変更時にバックアップをスケジュール
   function hookLocalStorage() {
-    var origSetItem = Storage.prototype.setItem;
-    Storage.prototype.setItem = function(key, value) {
-      origSetItem.call(this, key, value);
-      // 同期対象キーが変更されたら自動バックアップをスケジュール
-      var isSyncKey = SYNC_KEYS.indexOf(key) !== -1;
-      if (!isSyncKey) {
-        for (var p = 0; p < DYNAMIC_KEY_PREFIXES.length; p++) {
-          if (key.indexOf(DYNAMIC_KEY_PREFIXES[p]) === 0) { isSyncKey = true; break; }
+    try {
+      var origSetItem = Storage.prototype.setItem;
+      if (typeof origSetItem !== 'function') {
+        console.warn('☁️ Storage.prototype.setItem が利用不可、hookスキップ');
+        return;
+      }
+      Storage.prototype.setItem = function(key, value) {
+        origSetItem.call(this, key, value); // storageエラーはそのまま伝播
+        try {
+          // 同期対象キーが変更されたら自動バックアップをスケジュール
+          var isSyncKey = SYNC_KEYS.indexOf(key) !== -1;
+          if (!isSyncKey) {
+            for (var p = 0; p < DYNAMIC_KEY_PREFIXES.length; p++) {
+              if (key.indexOf(DYNAMIC_KEY_PREFIXES[p]) === 0) { isSyncKey = true; break; }
+            }
+          }
+          // 内部キー（スナップショットやトグル）は除外
+          if (key === LS_LAST_SNAPSHOT || key === LS_AUTO_BACKUP || key === LS_LAST_SYNCED) return;
+          if (isSyncKey) {
+            scheduleAutoBackup();
+          }
+        } catch(hookErr) {
+          // hook処理エラーはsetItem自体を壊さない
         }
-      }
-      // 内部キー（スナップショットやトグル）は除外
-      if (key === LS_LAST_SNAPSHOT || key === LS_AUTO_BACKUP || key === LS_LAST_SYNCED) return;
-      if (isSyncKey) {
-        console.log('☁️ データ変更検出:', key);
-        scheduleAutoBackup();
-      }
-    };
+      };
+      console.log('☁️ localStorage hook設定完了');
+    } catch(e) {
+      console.warn('☁️ localStorage hook失敗:', e.message);
+    }
   }
 
   // デバウンス付き自動バックアップ（10秒後に実行、連続変更は1回にまとめる）
@@ -818,8 +852,8 @@
   }
 
   function setupAutoBackup() {
-    // 0) localStorage書き込み監視
-    hookLocalStorage();
+    // 0) localStorage書き込み監視（失敗しても他の機能は続行）
+    try { hookLocalStorage(); } catch(e) { console.warn('☁️ hook設定エラー:', e.message); }
     // 1) バックグラウンド移行時
     document.addEventListener('visibilitychange', function() {
       if (document.visibilityState === 'hidden') {
@@ -900,9 +934,9 @@
       console.log('☁️ サーバーステータス:', status.syncedAt, 'ローカル:', getLastSynced());
       if (!status.syncedAt) { _syncCheckRunning = false; return; }
 
-      var serverTime = new Date(status.syncedAt).getTime();
+      var serverTime = parseTime(status.syncedAt);
       var localLastSynced = getLastSynced();
-      var localTime = localLastSynced ? new Date(localLastSynced).getTime() : 0;
+      var localTime = parseTime(localLastSynced);
 
       // サーバーの方が新しい（5秒以上差がある場合のみ — 自分のバックアップ直後を除外）
       if (serverTime > localTime + 5000) {
@@ -937,7 +971,10 @@
   }
 
   // === ログイン/登録後の初回同期処理 ===
+  var _afterLoginRunning = false;
   async function afterLogin() {
+    if (_afterLoginRunning) { console.log('☁️ afterLogin既に実行中、スキップ'); return; }
+    _afterLoginRunning = true;
     console.log('☁️ afterLogin開始 token:', !!getToken(), 'email:', getEmail());
     updateSnapshot();
     startSyncChecks();
@@ -978,8 +1015,8 @@
           return;
         }
 
-        var serverTime = new Date(status.syncedAt).getTime();
-        var localTime = new Date(localLastSynced).getTime();
+        var serverTime = parseTime(status.syncedAt);
+        var localTime = parseTime(localLastSynced);
         console.log('☁️ afterLogin: サーバー時刻差:', Math.round((serverTime - localTime) / 1000), '秒');
 
         if (serverTime > localTime + 5000) {
@@ -1002,6 +1039,8 @@
       if (isLoggedIn()) {
         triggerFirstBackup();
       }
+    } finally {
+      _afterLoginRunning = false;
     }
   }
 
@@ -1277,7 +1316,13 @@
       showAuthWall();
     }
     renderUI();
-    setupAutoBackup();
+    // setupAutoBackup は失敗してもafterLoginは実行する
+    try {
+      setupAutoBackup();
+      console.log('☁️ setupAutoBackup完了');
+    } catch(e) {
+      console.warn('☁️ setupAutoBackupエラー（続行）:', e.message);
+    }
     // ログイン済みならサーバー確認 → 復元 or バックアップ
     if (isLoggedIn()) {
       // 少し遅延して初回同期処理（サーバー確認→復元提案 or バックアップ）
