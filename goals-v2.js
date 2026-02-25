@@ -691,8 +691,17 @@
       var fieldKey = taskType === 'want' ? 'want' : 'must';
       var existingText = entry.summary[fieldKey] || '';
       var existingTasks = String(existingText).split(/[\n・]/).map(function(s) { return s.trim(); }).filter(function(s) { return s && s !== '—'; });
+      var newIdx = existingTasks.length;
       existingTasks.push(task.text);
       entry.summary[fieldKey] = existingTasks.join('\n');
+
+      // 目標のカテゴリをタスクにも反映
+      if (g.category) {
+        if (!entry.summary.taskCategories) entry.summary.taskCategories = {};
+        var catEmoji = g.categoryEmoji || '📝';
+        entry.summary.taskCategories[taskType + '_' + newIdx] = { name: g.category, emoji: catEmoji };
+      }
+
       entries[yKey] = entry;
       localStorage.setItem('journalEntriesV3', JSON.stringify(entries));
 

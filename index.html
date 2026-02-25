@@ -7284,21 +7284,32 @@ function renderHomeTodayTasks() {
         return;
     }
 
+    const taskCats = getTaskCategories();
     let html = '';
+
+    const renderTaskItems = (tasks, type) => {
+        let out = '';
+        tasks.forEach((task, index) => {
+            const id = type === 'must' ? `homeMustTask${index}` : `homeWantTask${index}`;
+            const catKey = type + '_' + index;
+            const cat = taskCats[catKey];
+            const catBadge = cat ? `<span class="task-cat-badge" onclick="editTaskCategory('${type}',${index})" title="${escapeHtml(cat.name)}" style="font-size:14px;margin-right:2px;cursor:pointer;flex-shrink:0;">${escapeHtml(cat.emoji)}</span>` : `<span class="task-cat-badge task-cat-empty" onclick="editTaskCategory('${type}',${index})" title="カテゴリを設定" style="font-size:11px;margin-right:2px;cursor:pointer;flex-shrink:0;opacity:.4;">🏷️</span>`;
+            out += `
+                <div class="task-item" id="taskItem_${type}_${index}">
+                    <input type="checkbox" id="${id}" class="task-checkbox" onchange="saveTaskCheck('${id}', this.checked)">
+                    ${catBadge}
+                    <label for="${id}" class="task-label">${escapeHtml(task)}</label>
+                    <button type="button" class="task-edit-btn" onclick="editTask('${type}',${index})" title="編集">✏️</button>
+                </div>
+            `;
+        });
+        return out;
+    };
 
     if (mustTasks.length > 0) {
         html += '<div class="task-group">';
         html += '<div class="task-group-title">✅ MUST</div>';
-        mustTasks.forEach((task, index) => {
-            const id = `homeMustTask${index}`;
-            html += `
-                <div class="task-item" id="taskItem_must_${index}">
-                    <input type="checkbox" id="${id}" class="task-checkbox" onchange="saveTaskCheck('${id}', this.checked)">
-                    <label for="${id}" class="task-label">${escapeHtml(task)}</label>
-                    <button type="button" class="task-edit-btn" onclick="editTask('must',${index})" title="編集">✏️</button>
-                </div>
-            `;
-        });
+        html += renderTaskItems(mustTasks, 'must');
         html += '<button type="button" class="task-add-btn" onclick="addTask(\'must\')">＋ 追加</button>';
         html += '</div>';
     }
@@ -7306,16 +7317,7 @@ function renderHomeTodayTasks() {
     if (wantTasks.length > 0) {
         html += '<div class="task-group">';
         html += '<div class="task-group-title">💡 WANT</div>';
-        wantTasks.forEach((task, index) => {
-            const id = `homeWantTask${index}`;
-            html += `
-                <div class="task-item" id="taskItem_want_${index}">
-                    <input type="checkbox" id="${id}" class="task-checkbox" onchange="saveTaskCheck('${id}', this.checked)">
-                    <label for="${id}" class="task-label">${escapeHtml(task)}</label>
-                    <button type="button" class="task-edit-btn" onclick="editTask('want',${index})" title="編集">✏️</button>
-                </div>
-            `;
-        });
+        html += renderTaskItems(wantTasks, 'want');
         html += '<button type="button" class="task-add-btn" onclick="addTask(\'want\')">＋ 追加</button>';
         html += '</div>';
     }
@@ -7347,11 +7349,130 @@ function refreshHomeTodayTasks() {
     }
 }
 
+// === タスクカテゴリ管理 ===
+function getTaskCategories() {
+    const dateKey = getTaskDateKey();
+    const allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+    const entry = allEntries[dateKey];
+    if (!entry || !entry.summary) return {};
+    return entry.summary.taskCategories || {};
+}
+
+function setTaskCategory(type, index, catName, catEmoji) {
+    const dateKey = getTaskDateKey();
+    const allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+    const entry = allEntries[dateKey];
+    if (!entry) return;
+    if (!entry.summary) entry.summary = {};
+    if (!entry.summary.taskCategories) entry.summary.taskCategories = {};
+    const key = type + '_' + index;
+    if (catName) {
+        entry.summary.taskCategories[key] = { name: catName, emoji: catEmoji || '📝' };
+    } else {
+        delete entry.summary.taskCategories[key];
+    }
+    allEntries[dateKey] = entry;
+    localStorage.setItem('journalEntriesV3', JSON.stringify(allEntries));
+}
+
+function removeTaskCategory(type, index) {
+    setTaskCategory(type, index, null, null);
+}
+
+function shiftTaskCategories(type, deletedIndex) {
+    const dateKey = getTaskDateKey();
+    const allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+    const entry = allEntries[dateKey];
+    if (!entry || !entry.summary || !entry.summary.taskCategories) return;
+    const cats = entry.summary.taskCategories;
+    const newCats = {};
+    Object.keys(cats).forEach(function(k) {
+        const parts = k.split('_');
+        if (parts[0] !== type) { newCats[k] = cats[k]; return; }
+        const idx = parseInt(parts[1]);
+        if (idx < deletedIndex) { newCats[k] = cats[k]; }
+        else if (idx > deletedIndex) { newCats[type + '_' + (idx - 1)] = cats[k]; }
+        // idx === deletedIndex は削除
+    });
+    entry.summary.taskCategories = newCats;
+    allEntries[dateKey] = entry;
+    localStorage.setItem('journalEntriesV3', JSON.stringify(allEntries));
+}
+
+function renderCategoryPicker(selectedName) {
+    const cats = JSON.parse(localStorage.getItem('activityCategories') || '[]');
+    let html = '<div class="task-cat-picker" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">';
+    html += '<button type="button" class="task-cat-chip' + (!selectedName ? ' task-cat-selected' : '') + '" data-cat="" data-emoji="" onclick="selectTaskCat(this)" style="padding:4px 10px;border-radius:16px;border:1.5px solid ' + (!selectedName ? '#2196F3' : '#ddd') + ';background:' + (!selectedName ? '#e3f2fd' : '#fff') + ';font-size:12px;cursor:pointer;color:' + (!selectedName ? '#2196F3' : '#666') + ';">なし</button>';
+    cats.forEach(function(c) {
+        const sel = (c.name === selectedName);
+        html += '<button type="button" class="task-cat-chip' + (sel ? ' task-cat-selected' : '') + '" data-cat="' + escapeHtml(c.name) + '" data-emoji="' + escapeHtml(c.emoji) + '" onclick="selectTaskCat(this)" style="padding:4px 10px;border-radius:16px;border:1.5px solid ' + (sel ? '#2196F3' : '#ddd') + ';background:' + (sel ? '#e3f2fd' : '#fff') + ';font-size:12px;cursor:pointer;color:' + (sel ? '#2196F3' : '#666') + ';">' + escapeHtml(c.emoji) + ' ' + escapeHtml(c.name) + '</button>';
+    });
+    html += '</div>';
+    return html;
+}
+
+function selectTaskCat(btn) {
+    const picker = btn.parentElement;
+    picker.querySelectorAll('.task-cat-chip').forEach(function(b) {
+        b.style.borderColor = '#ddd';
+        b.style.background = '#fff';
+        b.style.color = '#666';
+        b.classList.remove('task-cat-selected');
+    });
+    btn.style.borderColor = '#2196F3';
+    btn.style.background = '#e3f2fd';
+    btn.style.color = '#2196F3';
+    btn.classList.add('task-cat-selected');
+}
+
+function getSelectedTaskCat(container) {
+    const sel = container.querySelector('.task-cat-selected');
+    if (!sel) return { name: '', emoji: '' };
+    return { name: sel.dataset.cat || '', emoji: sel.dataset.emoji || '' };
+}
+
 // タスク編集機能
 function getTaskDateKey() {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     return localDateKey(yesterday);
+}
+
+function editTaskCategory(type, index) {
+    const cats = getTaskCategories();
+    const catKey = type + '_' + index;
+    const current = cats[catKey] ? cats[catKey].name : '';
+
+    // ミニポップアップ
+    var old = document.getElementById('taskCatPopupOverlay');
+    if (old) old.remove();
+
+    var overlay = document.createElement('div');
+    overlay.id = 'taskCatPopupOverlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px;';
+
+    var html = '<div style="background:#fff;border-radius:16px;padding:20px 16px;width:100%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.15);">';
+    html += '<div style="font-size:15px;font-weight:700;margin-bottom:12px;">カテゴリを選択</div>';
+    html += renderCategoryPicker(current);
+    html += '<div style="display:flex;gap:8px;margin-top:12px;">';
+    html += '<button type="button" onclick="saveCatFromPopup(\'' + type + '\',' + index + ')" style="flex:1;padding:10px;border:none;border-radius:10px;background:#2196F3;color:#fff;font-size:14px;font-weight:600;cursor:pointer;">決定</button>';
+    html += '<button type="button" onclick="document.getElementById(\'taskCatPopupOverlay\').remove()" style="flex:1;padding:10px;border:1px solid #ddd;border-radius:10px;background:#fff;color:#666;font-size:14px;cursor:pointer;">キャンセル</button>';
+    html += '</div></div>';
+
+    overlay.innerHTML = html;
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) overlay.remove();
+    });
+    document.body.appendChild(overlay);
+}
+
+function saveCatFromPopup(type, index) {
+    var overlay = document.getElementById('taskCatPopupOverlay');
+    if (!overlay) return;
+    var sel = getSelectedTaskCat(overlay);
+    setTaskCategory(type, index, sel.name, sel.emoji);
+    overlay.remove();
+    renderHomeTodayTasks();
 }
 
 function editTask(type, index) {
@@ -7436,6 +7557,8 @@ function deleteTask(type, index) {
     entry.summary[field] = tasks.join('\n');
     allEntries[dateKey] = entry;
     localStorage.setItem('journalEntriesV3', JSON.stringify(allEntries));
+    // カテゴリのインデックスもシフト
+    shiftTaskCategories(type, index);
     renderHomeTodayTasks();
 }
 
@@ -7467,6 +7590,12 @@ function showHomeTaskAddPopup(defaultType) {
     html += '<div style="display:flex;gap:8px;margin-bottom:12px;">';
     html += '<button type="button" id="homeTaskTypeM" onclick="switchHomeTaskType(\'must\')" style="flex:1;padding:8px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:2px solid ' + (defaultType === 'must' ? '#2196F3' : '#ddd') + ';background:' + (defaultType === 'must' ? '#e3f2fd' : '#fff') + ';color:' + (defaultType === 'must' ? '#2196F3' : '#666') + ';">✅ MUST</button>';
     html += '<button type="button" id="homeTaskTypeW" onclick="switchHomeTaskType(\'want\')" style="flex:1;padding:8px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:2px solid ' + (defaultType === 'want' ? '#2196F3' : '#ddd') + ';background:' + (defaultType === 'want' ? '#e3f2fd' : '#fff') + ';color:' + (defaultType === 'want' ? '#2196F3' : '#666') + ';">💡 WANT</button>';
+    html += '</div>';
+
+    // カテゴリ選択
+    html += '<div style="margin-bottom:10px;">';
+    html += '<div style="font-size:12px;color:#888;margin-bottom:6px;">カテゴリ（任意）</div>';
+    html += '<div id="homeTaskCatPicker">' + renderCategoryPicker('') + '</div>';
     html += '</div>';
 
     // 入力 + 音声
@@ -7534,8 +7663,20 @@ function submitHomeTask() {
     var field = (type === 'must') ? 'must' : 'want';
     var existing = entry.summary[field] || '';
     var tasks = String(existing).split(/[\n・]/).map(function(s){return s.trim();}).filter(function(s){return s && s !== '—';});
+    var newIndex = tasks.length;
     tasks.push(text);
     entry.summary[field] = tasks.join('\n');
+
+    // カテゴリも保存
+    var catPicker = document.getElementById('homeTaskCatPicker');
+    if (catPicker) {
+        var sel = getSelectedTaskCat(catPicker);
+        if (sel.name) {
+            if (!entry.summary.taskCategories) entry.summary.taskCategories = {};
+            entry.summary.taskCategories[type + '_' + newIndex] = { name: sel.name, emoji: sel.emoji };
+        }
+    }
+
     allEntries[dateKey] = entry;
     localStorage.setItem('journalEntriesV3', JSON.stringify(allEntries));
 
