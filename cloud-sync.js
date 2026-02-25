@@ -66,7 +66,12 @@
     if (options.body) fetchOpts.body = JSON.stringify(options.body);
 
     var resp = await fetch(API_BASE + path, fetchOpts);
-    var data = await resp.json();
+    var data;
+    try {
+      data = await resp.json();
+    } catch(parseErr) {
+      throw new Error('サーバーエラー（応答解析失敗）');
+    }
 
     if (!resp.ok) {
       // Handle expired token
@@ -180,6 +185,8 @@
       localStorage.setItem('planLevel', res.planLevel);
       if (res.planLevel === 'pro' || res.planLevel === 'premium') {
         localStorage.setItem('isPremium', 'true');
+      } else {
+        localStorage.removeItem('isPremium');
       }
     }
     return res;
@@ -759,6 +766,8 @@
   // ログイン/登録直後に初回バックアップを実行
   async function triggerFirstBackup() {
     if (!isLoggedIn() || !isAutoBackupEnabled()) return;
+    if (autoBackupRunning) return; // 並行実行防止
+    autoBackupRunning = true;
     try {
       var res = await upload();
       updateSnapshot();
@@ -770,6 +779,7 @@
     } catch(e) {
       console.warn('☁️ 初回自動バックアップ失敗:', e.message);
     }
+    autoBackupRunning = false;
   }
 
   // アプリがバックグラウンドに入った時 or ページを離れる時にバックアップ
@@ -832,7 +842,7 @@
           var token = getToken();
           var planLevel = (window.DaycePlan) ? window.DaycePlan.getPlan() : (localStorage.getItem('planLevel') || 'free');
           var payload = JSON.stringify({ data: data, planLevel: planLevel });
-          var blob = new Blob([payload], { type: 'application/json' });
+          var blob = new Blob([payload], { type: 'text/plain' });
           navigator.sendBeacon(API_BASE + '/api/sync/upload?token=' + encodeURIComponent(token), blob);
           console.log('☁️ sendBeaconで自動バックアップ送信');
         } catch(e) {
@@ -1042,6 +1052,7 @@
           alert('バックアップデータが見つかりませんでした');
         }
       } catch(e) {
+        _restorePending = false; // 復元失敗時は自動バックアップを再開
         btn.textContent = '復元する';
         btn.disabled = false;
         alert('復元に失敗しました: ' + e.message);
