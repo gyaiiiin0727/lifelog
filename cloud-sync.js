@@ -807,6 +807,7 @@
   // アプリがバックグラウンドに入った時 or ページを離れる時にバックアップ
   var _autoBackupTimer = null;
   var _autoBackupDebounce = null;
+  var _hookInstalled = false; // localStorage hookが成功したかどうか
 
   // localStorage.setItem を監視して、データ変更時にバックアップをスケジュール
   function hookLocalStorage() {
@@ -835,9 +836,11 @@
           // hook処理エラーはsetItem自体を壊さない
         }
       };
+      _hookInstalled = true;
       console.log('☁️ localStorage hook設定完了');
     } catch(e) {
       console.warn('☁️ localStorage hook失敗:', e.message);
+      _hookInstalled = false;
     }
   }
 
@@ -854,6 +857,7 @@
   function setupAutoBackup() {
     // 0) localStorage書き込み監視（失敗しても他の機能は続行）
     try { hookLocalStorage(); } catch(e) { console.warn('☁️ hook設定エラー:', e.message); }
+
     // 1) バックグラウンド移行時
     document.addEventListener('visibilitychange', function() {
       if (document.visibilityState === 'hidden') {
@@ -868,6 +872,7 @@
         setTimeout(function() { autoBackupIfNeeded(); }, 2000);
       }
     });
+
     // 2) ページ離脱時（ブラウザ閉じなど）— sendBeacon版でより確実に
     window.addEventListener('pagehide', function() {
       if (isLoggedIn() && isAutoBackupEnabled() && !_restorePending && hasDataChanged()) {
@@ -884,10 +889,30 @@
         }
       }
     });
-    // 3) 定期チェック（3分ごと）— フォールバック
+
+    // 3) 定期チェック — hookが動かない場合は30秒、動く場合は3分
+    var pollingInterval = _hookInstalled ? (3 * 60 * 1000) : (30 * 1000);
+    console.log('☁️ ポーリング間隔:', _hookInstalled ? '3分（hook有効）' : '30秒（hookなしフォールバック）');
     _autoBackupTimer = setInterval(function() {
       autoBackupIfNeeded();
-    }, 3 * 60 * 1000);
+    }, pollingInterval);
+
+    // 4) ユーザー操作トリガー（hookなし時の追加検知）
+    //    タッチ/クリック後にデータ変更されている可能性が高いので、5秒後にチェック
+    if (!_hookInstalled) {
+      var _interactionDebounce = null;
+      var interactionHandler = function() {
+        if (!isLoggedIn() || !isAutoBackupEnabled()) return;
+        if (_interactionDebounce) clearTimeout(_interactionDebounce);
+        _interactionDebounce = setTimeout(function() {
+          _interactionDebounce = null;
+          autoBackupIfNeeded();
+        }, 5000); // 操作から5秒後にチェック（連続操作はまとめる）
+      };
+      document.addEventListener('touchend', interactionHandler, { passive: true });
+      document.addEventListener('click', interactionHandler, { passive: true });
+      console.log('☁️ ユーザー操作トリガー設定（hookなしフォールバック）');
+    }
   }
 
   // renderSyncUI に自動バックアップトグルを追加

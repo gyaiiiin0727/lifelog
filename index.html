@@ -19208,8 +19208,8 @@ const modal = $('qrModal');
         var statusColor = '#27ae60';
 
         if (lim === 9999) {
-          statusText = firstMonth ? '初月無制限 🎁' : '無制限';
-        } else if (firstMonth && (t === 'goalCoach' || t === 'consult')) {
+          statusText = (firstMonth && !isPro) ? '初月無制限 🎁' : '無制限';
+        } else if (firstMonth && !isPro && (t === 'goalCoach' || t === 'consult')) {
           var remain = Math.max(0, lim - used);
           statusText = remain + '/' + lim + '回 🎁';
           statusColor = remain > 0 ? '#27ae60' : '#e74c3c';
@@ -19249,9 +19249,9 @@ const modal = $('qrModal');
       var lim = limits[t];
       var used = usage[t] || 0;
       if (lim === 9999) {
-        el.textContent = firstMonth ? '初月無制限 🎁' : '無制限';
+        el.textContent = (firstMonth && !isPro) ? '初月無制限 🎁' : '無制限';
         el.style.color = '#27ae60';
-      } else if (firstMonth && (t === 'goalCoach' || t === 'consult')) {
+      } else if (firstMonth && !isPro && (t === 'goalCoach' || t === 'consult')) {
         var remain = Math.max(0, lim - used);
         el.textContent = '初月' + remain + '/' + lim + '回 🎁';
         el.style.color = remain > 0 ? '#27ae60' : '#e74c3c';
