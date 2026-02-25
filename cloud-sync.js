@@ -350,8 +350,8 @@
     try {
       await register(email, pw);
       renderUI();
-      // 登録直後に初回バックアップを実行
-      triggerFirstBackup();
+      // サーバー確認→復元 or バックアップ
+      afterLogin();
       // アンケート表示（少し遅延して自然に）
       setTimeout(function() { showSurveyModal(); }, 800);
     } catch (e) {
@@ -371,8 +371,8 @@
     try {
       await login(email, pw);
       renderUI();
-      // ログイン直後に初回バックアップを実行
-      triggerFirstBackup();
+      // サーバー確認→復元 or バックアップ
+      afterLogin();
     } catch (e) {
       showError(e.message);
     }
@@ -724,9 +724,12 @@
   }
 
   async function autoBackupIfNeeded() {
-    if (!isLoggedIn() || !isAutoBackupEnabled() || autoBackupRunning) return;
-    if (!hasDataChanged()) return;
+    if (!isLoggedIn()) { return; }
+    if (!isAutoBackupEnabled()) { return; }
+    if (autoBackupRunning) { return; }
+    if (!hasDataChanged()) { return; }
 
+    console.log('☁️ 自動バックアップ開始...');
     autoBackupRunning = true;
     try {
       var res = await upload();
@@ -737,7 +740,7 @@
         tsEl.textContent = new Date(res.syncedAt).toLocaleString('ja-JP');
       }
     } catch(e) {
-      console.warn('☁️ 自動バックアップ失敗:', e.message);
+      console.error('☁️ 自動バックアップ失敗:', e.message, e);
     }
     autoBackupRunning = false;
   }
@@ -873,6 +876,7 @@
 
     try {
       var status = await getStatus();
+      console.log('☁️ サーバーステータス:', status.syncedAt, 'ローカル:', getLastSynced());
       if (!status.syncedAt) { _syncCheckRunning = false; return; }
 
       var serverTime = new Date(status.syncedAt).getTime();
@@ -881,6 +885,7 @@
 
       // サーバーの方が新しい（5秒以上差がある場合のみ — 自分のバックアップ直後を除外）
       if (serverTime > localTime + 5000) {
+        console.log('☁️ サーバーの方が新しい! 差分:', Math.round((serverTime - localTime) / 1000), '秒');
         // バナーが未表示なら表示
         if (!document.getElementById('csSyncBanner')) {
           showSyncBanner(status.syncedAt);
@@ -890,6 +895,65 @@
       console.warn('☁️ バックアップ確認失敗:', e.message);
     }
     _syncCheckRunning = false;
+  }
+
+  // === 定期同期チェック開始 ===
+  var _syncChecksStarted = false;
+
+  function startSyncChecks() {
+    if (_syncChecksStarted) return;
+    _syncChecksStarted = true;
+
+    // 定期的にサーバーの新しいバックアップをチェック（2分ごと）
+    setInterval(checkForNewerBackup, 2 * 60 * 1000);
+    // フォアグラウンド復帰時にもチェック
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'visible' && isLoggedIn()) {
+        setTimeout(checkForNewerBackup, 1000);
+      }
+    });
+    console.log('☁️ 定期同期チェック開始');
+  }
+
+  // === ログイン/登録後の初回同期処理 ===
+  async function afterLogin() {
+    updateSnapshot();
+    startSyncChecks();
+
+    try {
+      // まずサーバーの状態を確認
+      var status = await getStatus();
+      console.log('☁️ afterLogin: サーバー状態:', status.syncedAt);
+
+      if (status.syncedAt) {
+        var localLastSynced = getLastSynced();
+
+        if (!localLastSynced) {
+          // このデバイスで初めてログイン＆サーバーにデータあり → 復元を提案（アップロードしない！）
+          console.log('☁️ サーバーにバックアップあり、このデバイス初回。復元バナーを表示');
+          showSyncBanner(status.syncedAt);
+          return;
+        }
+
+        var serverTime = new Date(status.syncedAt).getTime();
+        var localTime = new Date(localLastSynced).getTime();
+
+        if (serverTime > localTime + 5000) {
+          // サーバーの方が新しい → 復元を提案（アップロードしない！）
+          console.log('☁️ サーバーの方が新しいバックアップ。復元バナーを表示');
+          showSyncBanner(status.syncedAt);
+          return;
+        }
+      }
+
+      // サーバーにデータなし or ローカルの方が新しい → バックアップ
+      console.log('☁️ バックアップを実行');
+      triggerFirstBackup();
+    } catch(e) {
+      console.warn('☁️ 初回同期チェック失敗:', e.message);
+      // エラー時はバックアップを試みる
+      triggerFirstBackup();
+    }
   }
 
   function showSyncBanner(serverSyncedAt) {
@@ -1092,7 +1156,7 @@
       await register(email, pw);
       hideAuthWall();
       renderUI();
-      triggerFirstBackup();
+      afterLogin();
       setTimeout(function() { showSurveyModal(); }, 800);
     } catch(e) {
       showAwError(e.message);
@@ -1111,7 +1175,7 @@
       await login(email, pw);
       hideAuthWall();
       renderUI();
-      triggerFirstBackup();
+      afterLogin();
     } catch(e) {
       showAwError(e.message);
       btn.disabled = false; btn.textContent = 'ログイン';
@@ -1146,7 +1210,7 @@
       await resetConfirm(_awResetEmail, code, newPw);
       hideAuthWall();
       renderUI();
-      triggerFirstBackup();
+      afterLogin();
     } catch(e) {
       showAwError(e.message);
       btn.disabled = false; btn.textContent = 'パスワードを変更';
@@ -1162,23 +1226,10 @@
     }
     renderUI();
     setupAutoBackup();
-    // ログイン済みならスナップショット記録 + 未バックアップなら初回実行
+    // ログイン済みならサーバー確認 → 復元 or バックアップ
     if (isLoggedIn()) {
-      updateSnapshot();
-      if (!getLastSynced()) {
-        // まだ一度もバックアップしていない → 初回バックアップ
-        triggerFirstBackup();
-      }
-      // 少し遅延してサーバーのバックアップ日時をチェック
-      setTimeout(checkForNewerBackup, 2000);
-      // 定期的にサーバーの新しいバックアップをチェック（2分ごと）
-      setInterval(checkForNewerBackup, 2 * 60 * 1000);
-      // フォアグラウンド復帰時にもチェック
-      document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible' && isLoggedIn()) {
-          setTimeout(checkForNewerBackup, 1000);
-        }
-      });
+      // 少し遅延して初回同期処理（サーバー確認→復元提案 or バックアップ）
+      setTimeout(afterLogin, 1500);
     }
   }
 
