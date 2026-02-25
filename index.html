@@ -15542,23 +15542,15 @@ textarea { width: 100%; }
         const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
         console.log('✅ SW registered:', reg.scope);
 
-        // Update prompt (optional)
-        reg.addEventListener('updatefound', ()=>{
-          const nw = reg.installing;
-          if(!nw) return;
-          nw.addEventListener('statechange', ()=>{
-            if(nw.state === 'installed' && navigator.serviceWorker.controller){
-              // Simple prompt
-              if (confirm('新しいバージョンがあります。更新しますか？')) {
-                // ★ 更新前に現在のタブを保存（更新後に復元するため）
-                const activeTab = document.querySelector('.tab-content.active')?.id;
-                if (activeTab) {
-                  localStorage.setItem('lastActiveTab', activeTab);
-                }
-                window.location.reload();
-              }
-            }
-          });
+        // 自動更新: controllerchange で1回だけリロード
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', ()=>{
+          if(refreshing) return;
+          refreshing = true;
+          // 更新前に現在のタブを保存
+          const activeTab = document.querySelector('.tab-content.active')?.id;
+          if (activeTab) localStorage.setItem('lastActiveTab', activeTab);
+          window.location.reload();
         });
       }catch(e){
         console.warn('❌ SW registration failed', e);

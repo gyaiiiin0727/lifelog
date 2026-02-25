@@ -352,6 +352,8 @@
       renderUI();
       // 登録直後に初回バックアップを実行
       triggerFirstBackup();
+      // アンケート表示（少し遅延して自然に）
+      setTimeout(function() { showSurveyModal(); }, 800);
     } catch (e) {
       showError(e.message);
     }
@@ -465,6 +467,144 @@
     return d.innerHTML;
   }
 
+  // === アンケート ===
+  var LS_SURVEY_DONE = 'surveyDone';
+
+  function isSurveyDone() {
+    return localStorage.getItem(LS_SURVEY_DONE) === '1';
+  }
+
+  function showSurveyModal() {
+    if (isSurveyDone()) return;
+    // 既にモーダルが存在する場合は重複表示しない
+    if (document.getElementById('csSurveyOverlay')) return;
+
+    var overlay = document.createElement('div');
+    overlay.id = 'csSurveyOverlay';
+    overlay.className = 'cs-survey-overlay';
+    overlay.innerHTML =
+      '<div class="cs-survey-modal">' +
+        '<div class="cs-survey-header">' +
+          '<div style="font-size:28px;margin-bottom:8px;">📋</div>' +
+          '<h3>アカウント登録ありがとうございます！</h3>' +
+          '<p>より良いサービスにするため、簡単なアンケートにご協力ください（30秒）</p>' +
+        '</div>' +
+        '<div class="cs-survey-body">' +
+          '<div class="cs-survey-q">' +
+            '<label class="cs-survey-label">年代 <span class="cs-survey-req">必須</span></label>' +
+            '<div class="cs-survey-options" id="csqAge">' +
+              '<button type="button" class="cs-survey-opt" data-q="age" data-v="10s">10代</button>' +
+              '<button type="button" class="cs-survey-opt" data-q="age" data-v="20s">20代</button>' +
+              '<button type="button" class="cs-survey-opt" data-q="age" data-v="30s">30代</button>' +
+              '<button type="button" class="cs-survey-opt" data-q="age" data-v="40s">40代</button>' +
+              '<button type="button" class="cs-survey-opt" data-q="age" data-v="50s+">50代〜</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="cs-survey-q">' +
+            '<label class="cs-survey-label">職業 <span class="cs-survey-req">必須</span></label>' +
+            '<div class="cs-survey-options" id="csqJob">' +
+              '<button type="button" class="cs-survey-opt" data-q="job" data-v="office">会社員</button>' +
+              '<button type="button" class="cs-survey-opt" data-q="job" data-v="student">学生</button>' +
+              '<button type="button" class="cs-survey-opt" data-q="job" data-v="self">自営業</button>' +
+              '<button type="button" class="cs-survey-opt" data-q="job" data-v="homemaker">主婦/主夫</button>' +
+              '<button type="button" class="cs-survey-opt" data-q="job" data-v="other">その他</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="cs-survey-q">' +
+            '<label class="cs-survey-label">Dayceを知ったきっかけ <span class="cs-survey-opt-label">任意</span></label>' +
+            '<div class="cs-survey-options" id="csqSource">' +
+              '<button type="button" class="cs-survey-opt" data-q="source" data-v="sns">SNS</button>' +
+              '<button type="button" class="cs-survey-opt" data-q="source" data-v="friend">友人の紹介</button>' +
+              '<button type="button" class="cs-survey-opt" data-q="source" data-v="search">Web検索</button>' +
+              '<button type="button" class="cs-survey-opt" data-q="source" data-v="article">記事/ブログ</button>' +
+              '<button type="button" class="cs-survey-opt" data-q="source" data-v="other">その他</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="cs-survey-q">' +
+            '<label class="cs-survey-label">一番期待する機能 <span class="cs-survey-opt-label">任意</span></label>' +
+            '<div class="cs-survey-options" id="csqExpect">' +
+              '<button type="button" class="cs-survey-opt" data-q="expect" data-v="journal">声の日記</button>' +
+              '<button type="button" class="cs-survey-opt" data-q="expect" data-v="money">お金管理</button>' +
+              '<button type="button" class="cs-survey-opt" data-q="expect" data-v="activity">行動記録</button>' +
+              '<button type="button" class="cs-survey-opt" data-q="expect" data-v="goal">目標管理</button>' +
+              '<button type="button" class="cs-survey-opt" data-q="expect" data-v="ai">AI相談</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="cs-survey-footer">' +
+          '<div id="csSurveyError" style="color:#e74c3c;font-size:12px;text-align:center;display:none;margin-bottom:8px;"></div>' +
+          '<button type="button" id="csSurveySubmit" class="cs-btn cs-btn-primary" style="width:100%;">送信する</button>' +
+          '<button type="button" id="csSurveySkip" class="cs-btn cs-btn-link" style="width:100%;margin-top:4px;color:#999;font-size:12px;">スキップ</button>' +
+        '</div>' +
+      '</div>';
+
+    document.body.appendChild(overlay);
+
+    // 選択肢のトグル
+    var surveyAnswers = {};
+    overlay.addEventListener('click', function(e) {
+      var btn = e.target.closest('.cs-survey-opt');
+      if (!btn) return;
+      var q = btn.getAttribute('data-q');
+      var v = btn.getAttribute('data-v');
+      // 同グループの選択を解除
+      var siblings = btn.parentNode.querySelectorAll('.cs-survey-opt');
+      for (var i = 0; i < siblings.length; i++) {
+        siblings[i].classList.remove('cs-survey-opt-selected');
+      }
+      btn.classList.add('cs-survey-opt-selected');
+      surveyAnswers[q] = v;
+    });
+
+    // 送信
+    document.getElementById('csSurveySubmit').addEventListener('click', function() {
+      var errEl = document.getElementById('csSurveyError');
+      // 必須チェック
+      if (!surveyAnswers.age || !surveyAnswers.job) {
+        errEl.textContent = '年代と職業を選択してください';
+        errEl.style.display = 'block';
+        return;
+      }
+      errEl.style.display = 'none';
+      submitSurvey(surveyAnswers);
+    });
+
+    // スキップ
+    document.getElementById('csSurveySkip').addEventListener('click', function() {
+      localStorage.setItem(LS_SURVEY_DONE, '1');
+      closeSurveyModal();
+    });
+
+    // アニメーション
+    requestAnimationFrame(function() {
+      overlay.classList.add('cs-survey-overlay-show');
+    });
+  }
+
+  function closeSurveyModal() {
+    var overlay = document.getElementById('csSurveyOverlay');
+    if (!overlay) return;
+    overlay.classList.remove('cs-survey-overlay-show');
+    setTimeout(function() {
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    }, 300);
+  }
+
+  async function submitSurvey(answers) {
+    var btn = document.getElementById('csSurveySubmit');
+    if (btn) { btn.disabled = true; btn.textContent = '送信中...'; }
+    try {
+      await apiCall('/api/survey', {
+        method: 'POST',
+        body: { answers: answers }
+      });
+    } catch(e) {
+      console.warn('アンケート送信失敗:', e.message);
+    }
+    localStorage.setItem(LS_SURVEY_DONE, '1');
+    closeSurveyModal();
+  }
+
   // === CSS 注入 ===
   function injectCSS() {
     if (document.getElementById('cloud-sync-css')) return;
@@ -508,7 +648,24 @@
       '.cs-sync-banner-btn-primary{background:#2196F3;color:#fff;}' +
       '.cs-sync-banner-btn-primary:active{background:#1976D2;}' +
       '.cs-sync-banner-btn-secondary{background:#f0f0f0;color:#666;}' +
-      '.cs-sync-banner-btn-secondary:active{background:#e0e0e0;}';
+      '.cs-sync-banner-btn-secondary:active{background:#e0e0e0;}' +
+      /* アンケートモーダル */
+      '.cs-survey-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:10001;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity .3s;}' +
+      '.cs-survey-overlay-show{opacity:1;}' +
+      '.cs-survey-modal{background:#fff;border-radius:16px;max-width:400px;width:100%;max-height:85vh;overflow-y:auto;padding:24px 20px;}' +
+      '.cs-survey-header{text-align:center;margin-bottom:16px;}' +
+      '.cs-survey-header h3{font-size:16px;font-weight:800;color:#333;margin:0 0 6px;}' +
+      '.cs-survey-header p{font-size:12px;color:#888;margin:0;line-height:1.5;}' +
+      '.cs-survey-body{display:flex;flex-direction:column;gap:16px;}' +
+      '.cs-survey-q{display:flex;flex-direction:column;gap:6px;}' +
+      '.cs-survey-label{font-size:13px;font-weight:700;color:#333;}' +
+      '.cs-survey-req{font-size:10px;color:#e74c3c;font-weight:600;margin-left:4px;}' +
+      '.cs-survey-opt-label{font-size:10px;color:#999;font-weight:400;margin-left:4px;}' +
+      '.cs-survey-options{display:flex;flex-wrap:wrap;gap:6px;}' +
+      '.cs-survey-opt{padding:7px 12px;border:1.5px solid #e0e0e0;border-radius:20px;background:#fff;font-size:13px;color:#555;cursor:pointer;transition:all .2s;}' +
+      '.cs-survey-opt:active{transform:scale(.95);}' +
+      '.cs-survey-opt-selected{border-color:#2196F3;background:#e3f2fd;color:#1976D2;font-weight:600;}' +
+      '.cs-survey-footer{margin-top:20px;}';
     document.head.appendChild(style);
   }
 
