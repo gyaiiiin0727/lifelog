@@ -25,7 +25,7 @@
   ];
 
   // --- 動的キーのプレフィックス（日付ごとに生成されるキー） ---
-  var DYNAMIC_KEY_PREFIXES = ['taskChecks_', 'aiUsage_', 'aiDaily_'];
+  var DYNAMIC_KEY_PREFIXES = ['taskChecks_'];
 
   // --- localStorage キー (認証用) ---
   var LS_TOKEN = 'syncAuthToken';
@@ -701,6 +701,7 @@
   var LS_AUTO_BACKUP = 'cloudAutoBackup'; // 'on' or 'off'
   var LS_LAST_SNAPSHOT = 'cloudLastSnapshot'; // 前回バックアップ時のデータハッシュ
   var autoBackupRunning = false;
+  var _restorePending = false; // 復元バナー表示中は自動バックアップ抑制
 
   function isAutoBackupEnabled() {
     return localStorage.getItem(LS_AUTO_BACKUP) !== 'off'; // デフォルトON
@@ -736,6 +737,7 @@
     if (!isLoggedIn()) { return; }
     if (!isAutoBackupEnabled()) { return; }
     if (autoBackupRunning) { return; }
+    if (_restorePending) { return; } // 復元バナー表示中はバックアップしない
     if (!hasDataChanged()) { return; }
 
     console.log('☁️ 自動バックアップ開始...');
@@ -824,7 +826,7 @@
     });
     // 2) ページ離脱時（ブラウザ閉じなど）— sendBeacon版でより確実に
     window.addEventListener('pagehide', function() {
-      if (isLoggedIn() && isAutoBackupEnabled() && hasDataChanged()) {
+      if (isLoggedIn() && isAutoBackupEnabled() && !_restorePending && hasDataChanged()) {
         try {
           var data = collectSyncData();
           var token = getToken();
@@ -926,13 +928,14 @@
 
   // === ログイン/登録後の初回同期処理 ===
   async function afterLogin() {
+    console.log('☁️ afterLogin開始 token:', !!getToken(), 'email:', getEmail());
     updateSnapshot();
     startSyncChecks();
 
     try {
       // まずサーバーの状態を確認
       var status = await getStatus();
-      console.log('☁️ afterLogin: サーバー状態:', status.syncedAt, 'planLevel:', status.planLevel);
+      console.log('☁️ afterLogin: サーバー状態 syncedAt:', status.syncedAt, 'planLevel:', status.planLevel);
 
       // サーバー側のplanLevelをローカルに反映（復元しなくてもプランは常に同期）
       if (status.planLevel) {
@@ -942,6 +945,9 @@
           localStorage.setItem('planLevel', status.planLevel);
           if (status.planLevel === 'pro' || status.planLevel === 'premium') {
             localStorage.setItem('isPremium', 'true');
+          } else {
+            // ダウングレード: isPremiumをクリア
+            localStorage.removeItem('isPremium');
           }
           // DaycePlanが利用可能なら再描画
           if (window.DaycePlan && window.DaycePlan.renderPlanBadges) {
@@ -952,32 +958,40 @@
 
       if (status.syncedAt) {
         var localLastSynced = getLastSynced();
+        console.log('☁️ afterLogin: ローカル最終同期:', localLastSynced);
 
         if (!localLastSynced) {
           // このデバイスで初めてログイン＆サーバーにデータあり → 復元を提案（アップロードしない！）
           console.log('☁️ サーバーにバックアップあり、このデバイス初回。復元バナーを表示');
+          _restorePending = true;
           showSyncBanner(status.syncedAt);
           return;
         }
 
         var serverTime = new Date(status.syncedAt).getTime();
         var localTime = new Date(localLastSynced).getTime();
+        console.log('☁️ afterLogin: サーバー時刻差:', Math.round((serverTime - localTime) / 1000), '秒');
 
         if (serverTime > localTime + 5000) {
           // サーバーの方が新しい → 復元を提案（アップロードしない！）
           console.log('☁️ サーバーの方が新しいバックアップ。復元バナーを表示');
+          _restorePending = true;
           showSyncBanner(status.syncedAt);
           return;
         }
+      } else {
+        console.log('☁️ afterLogin: サーバーにバックアップなし');
       }
 
       // サーバーにデータなし or ローカルの方が新しい → バックアップ
       console.log('☁️ バックアップを実行');
       triggerFirstBackup();
     } catch(e) {
-      console.warn('☁️ 初回同期チェック失敗:', e.message);
-      // エラー時はバックアップを試みる
-      triggerFirstBackup();
+      console.warn('☁️ afterLogin失敗:', e.message, e);
+      // エラー時はバックアップを試みる（ただしログインが有効な場合のみ）
+      if (isLoggedIn()) {
+        triggerFirstBackup();
+      }
     }
   }
 
@@ -1041,6 +1055,7 @@
   }
 
   function dismissSyncBanner() {
+    _restorePending = false; // 自動バックアップを再開
     var banner = document.getElementById('csSyncBanner');
     if (!banner) return;
     banner.classList.remove('cs-sync-banner-show');
@@ -1244,6 +1259,7 @@
 
   // === 初期化 ===
   function init() {
+    console.log('☁️ CloudSync init開始 loggedIn:', isLoggedIn());
     injectCSS();
     // 未ログインなら認証ウォール表示
     if (!isLoggedIn()) {
@@ -1254,6 +1270,7 @@
     // ログイン済みならサーバー確認 → 復元 or バックアップ
     if (isLoggedIn()) {
       // 少し遅延して初回同期処理（サーバー確認→復元提案 or バックアップ）
+      console.log('☁️ 1.5秒後にafterLogin実行予定');
       setTimeout(afterLogin, 1500);
     }
   }

@@ -711,7 +711,7 @@
       var checkKey = 'taskChecks_' + todayKey;
       var checks = JSON.parse(localStorage.getItem(checkKey) || '{}');
       var prefix = taskType === 'want' ? 'homeWantTask' : 'homeMustTask';
-      var newIdx = existingTasks.length - 1;
+      newIdx = existingTasks.length - 1;
       checks[prefix + newIdx] = false;
       localStorage.setItem(checkKey, JSON.stringify(checks));
 
