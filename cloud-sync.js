@@ -601,19 +601,20 @@
       // 内部キー（スナップショットやトグル）は除外
       if (key === LS_LAST_SNAPSHOT || key === LS_AUTO_BACKUP || key === LS_LAST_SYNCED) return;
       if (isSyncKey) {
+        console.log('☁️ データ変更検出:', key);
         scheduleAutoBackup();
       }
     };
   }
 
-  // デバウンス付き自動バックアップ（30秒後に実行、連続変更は1回にまとめる）
+  // デバウンス付き自動バックアップ（10秒後に実行、連続変更は1回にまとめる）
   function scheduleAutoBackup() {
     if (!isLoggedIn() || !isAutoBackupEnabled()) return;
     if (_autoBackupDebounce) clearTimeout(_autoBackupDebounce);
     _autoBackupDebounce = setTimeout(function() {
       _autoBackupDebounce = null;
       autoBackupIfNeeded();
-    }, 30 * 1000);
+    }, 10 * 1000);
   }
 
   function setupAutoBackup() {
@@ -628,6 +629,9 @@
           _autoBackupDebounce = null;
         }
         autoBackupIfNeeded();
+      } else if (document.visibilityState === 'visible') {
+        // フォアグラウンドに戻った時もチェック（バックグラウンドでタイマーが止まった場合の救済）
+        setTimeout(function() { autoBackupIfNeeded(); }, 2000);
       }
     });
     // 2) ページ離脱時（ブラウザ閉じなど）— sendBeacon版でより確実に
