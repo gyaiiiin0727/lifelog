@@ -864,16 +864,16 @@
     }
   };
 
-  // === 新しいバックアップ通知 ===
-  var _notifyCheckDone = false;
+  // === 新しいバックアップ検出 & 自動復元 ===
+  var _syncCheckRunning = false;
 
   async function checkForNewerBackup() {
-    if (!isLoggedIn() || _notifyCheckDone) return;
-    _notifyCheckDone = true;
+    if (!isLoggedIn() || _syncCheckRunning) return;
+    _syncCheckRunning = true;
 
     try {
       var status = await getStatus();
-      if (!status.syncedAt) return; // サーバーにバックアップなし
+      if (!status.syncedAt) { _syncCheckRunning = false; return; }
 
       var serverTime = new Date(status.syncedAt).getTime();
       var localLastSynced = getLastSynced();
@@ -881,11 +881,15 @@
 
       // サーバーの方が新しい（5秒以上差がある場合のみ — 自分のバックアップ直後を除外）
       if (serverTime > localTime + 5000) {
-        showSyncBanner(status.syncedAt);
+        // バナーが未表示なら表示
+        if (!document.getElementById('csSyncBanner')) {
+          showSyncBanner(status.syncedAt);
+        }
       }
     } catch (e) {
       console.warn('☁️ バックアップ確認失敗:', e.message);
     }
+    _syncCheckRunning = false;
   }
 
   function showSyncBanner(serverSyncedAt) {
@@ -1167,6 +1171,14 @@
       }
       // 少し遅延してサーバーのバックアップ日時をチェック
       setTimeout(checkForNewerBackup, 2000);
+      // 定期的にサーバーの新しいバックアップをチェック（2分ごと）
+      setInterval(checkForNewerBackup, 2 * 60 * 1000);
+      // フォアグラウンド復帰時にもチェック
+      document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible' && isLoggedIn()) {
+          setTimeout(checkForNewerBackup, 1000);
+        }
+      });
     }
   }
 
