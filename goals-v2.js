@@ -695,11 +695,11 @@
       existingTasks.push(task.text);
       entry.summary[fieldKey] = existingTasks.join('\n');
 
-      // 目標のカテゴリをタスクにも反映
+      // 目標のカテゴリをタスクにも反映（絵文字は動的取得）
       if (g.category) {
         if (!entry.summary.taskCategories) entry.summary.taskCategories = {};
-        var catEmoji = g.categoryEmoji || '📝';
-        entry.summary.taskCategories[taskType + '_' + newIdx] = { name: g.category, emoji: catEmoji };
+        var emoji = catEmoji(g.category);
+        entry.summary.taskCategories[taskType + '_' + newIdx] = { name: g.category, emoji: emoji };
       }
 
       entries[yKey] = entry;
