@@ -459,6 +459,7 @@
     if (!confirm('ログアウトしますか？')) return;
     logout();
     renderUI();
+    showAuthWall();
   }
 
   function escHTML(s) {
@@ -665,7 +666,25 @@
       '.cs-survey-opt{padding:7px 12px;border:1.5px solid #e0e0e0;border-radius:20px;background:#fff;font-size:13px;color:#555;cursor:pointer;transition:all .2s;}' +
       '.cs-survey-opt:active{transform:scale(.95);}' +
       '.cs-survey-opt-selected{border-color:#2196F3;background:#e3f2fd;color:#1976D2;font-weight:600;}' +
-      '.cs-survey-footer{margin-top:20px;}';
+      '.cs-survey-footer{margin-top:20px;}' +
+      /* 認証ウォール */
+      '.cs-auth-wall{position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999;background:#fff;display:flex;align-items:center;justify-content:center;padding:24px;opacity:1;transition:opacity .3s;}' +
+      '.cs-aw-container{width:100%;max-width:360px;}' +
+      '.cs-aw-logo{text-align:center;margin-bottom:12px;}' +
+      '.cs-aw-title{text-align:center;font-size:28px;font-weight:900;color:#333;margin:0 0 4px;letter-spacing:-.5px;}' +
+      '.cs-aw-subtitle{text-align:center;font-size:13px;color:#999;margin:0 0 28px;}' +
+      '.cs-aw-tabs{display:flex;background:#f0f0f0;border-radius:10px;padding:3px;margin-bottom:20px;}' +
+      '.cs-aw-tab{flex:1;padding:9px;border:none;background:none;border-radius:8px;font-size:14px;font-weight:600;color:#888;cursor:pointer;transition:all .2s;}' +
+      '.cs-aw-tab-active{background:#fff;color:#333;box-shadow:0 1px 4px rgba(0,0,0,.1);}' +
+      '.cs-aw-form{display:flex;flex-direction:column;gap:10px;}' +
+      '.cs-aw-input{width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:15px;box-sizing:border-box;outline:none;transition:border .2s;}' +
+      '.cs-aw-input:focus{border-color:#2196F3;}' +
+      '.cs-aw-error{color:#e74c3c;font-size:12px;padding:8px 10px;background:#ffeaea;border-radius:8px;text-align:center;}' +
+      '.cs-aw-btn{width:100%;padding:13px;border:none;border-radius:10px;background:#2196F3;color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s;}' +
+      '.cs-aw-btn:active{background:#1976D2;}' +
+      '.cs-aw-btn:disabled{opacity:.5;cursor:default;}' +
+      '.cs-aw-link{background:none;border:none;color:#2196F3;font-size:13px;cursor:pointer;padding:4px 0;text-align:center;}' +
+      '.cs-aw-terms{font-size:11px;color:#aaa;text-align:center;line-height:1.5;margin-top:4px;}';
     document.head.appendChild(style);
   }
 
@@ -938,9 +957,205 @@
     }, 300);
   }
 
+  // === 認証ウォール（登録必須） ===
+  function showAuthWall() {
+    if (isLoggedIn()) return;
+    if (document.getElementById('csAuthWall')) return;
+
+    var wall = document.createElement('div');
+    wall.id = 'csAuthWall';
+    wall.className = 'cs-auth-wall';
+    wall.innerHTML =
+      '<div class="cs-aw-container">' +
+        '<div class="cs-aw-logo">' +
+          '<img src="./icon.jpg" alt="Dayce" style="width:64px;height:64px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.1);">' +
+        '</div>' +
+        '<h1 class="cs-aw-title">Dayce</h1>' +
+        '<p class="cs-aw-subtitle">声で記録するライフログ</p>' +
+        '<div class="cs-aw-tabs">' +
+          '<button type="button" class="cs-aw-tab cs-aw-tab-active" id="csAwTabRegister">新規登録</button>' +
+          '<button type="button" class="cs-aw-tab" id="csAwTabLogin">ログイン</button>' +
+        '</div>' +
+        '<div class="cs-aw-form" id="csAwFormArea">' +
+        '</div>' +
+      '</div>';
+
+    document.body.appendChild(wall);
+
+    // タブ切り替え
+    document.getElementById('csAwTabRegister').addEventListener('click', function() {
+      setAwTab('register');
+    });
+    document.getElementById('csAwTabLogin').addEventListener('click', function() {
+      setAwTab('login');
+    });
+
+    // 初期表示: 新規登録
+    setAwTab('register');
+  }
+
+  function setAwTab(mode) {
+    var regTab = document.getElementById('csAwTabRegister');
+    var loginTab = document.getElementById('csAwTabLogin');
+    var formArea = document.getElementById('csAwFormArea');
+    if (!formArea) return;
+
+    if (mode === 'register') {
+      regTab.classList.add('cs-aw-tab-active');
+      loginTab.classList.remove('cs-aw-tab-active');
+      formArea.innerHTML =
+        '<input type="email" id="csAwEmail" class="cs-aw-input" placeholder="メールアドレス" autocomplete="email">' +
+        '<input type="password" id="csAwPw" class="cs-aw-input" placeholder="パスワード（6文字以上）" autocomplete="new-password">' +
+        '<input type="password" id="csAwPw2" class="cs-aw-input" placeholder="パスワード（確認）" autocomplete="new-password">' +
+        '<div id="csAwError" class="cs-aw-error" style="display:none;"></div>' +
+        '<button type="button" id="csAwSubmit" class="cs-aw-btn">アカウント作成</button>' +
+        '<div class="cs-aw-terms">アカウント作成により<a href="javascript:void(0)" onclick="showLegalModal(\'terms\')" style="color:#4A90D9;">利用規約</a>と<a href="javascript:void(0)" onclick="showLegalModal(\'privacy\')" style="color:#4A90D9;">プライバシーポリシー</a>に同意します</div>';
+      document.getElementById('csAwSubmit').addEventListener('click', handleAwRegister);
+    } else {
+      loginTab.classList.add('cs-aw-tab-active');
+      regTab.classList.remove('cs-aw-tab-active');
+      formArea.innerHTML =
+        '<input type="email" id="csAwEmail" class="cs-aw-input" placeholder="メールアドレス" autocomplete="email">' +
+        '<input type="password" id="csAwPw" class="cs-aw-input" placeholder="パスワード" autocomplete="current-password">' +
+        '<div id="csAwError" class="cs-aw-error" style="display:none;"></div>' +
+        '<button type="button" id="csAwSubmit" class="cs-aw-btn">ログイン</button>' +
+        '<button type="button" id="csAwForgot" class="cs-aw-link">パスワードを忘れた方</button>';
+      document.getElementById('csAwSubmit').addEventListener('click', handleAwLogin);
+      document.getElementById('csAwForgot').addEventListener('click', function() {
+        setAwTab('reset');
+      });
+    }
+
+    if (mode === 'reset') {
+      loginTab.classList.add('cs-aw-tab-active');
+      regTab.classList.remove('cs-aw-tab-active');
+      formArea.innerHTML =
+        '<p style="font-size:13px;color:#666;margin:0 0 12px;text-align:center;">登録メールアドレスにリセットコードを送信します</p>' +
+        '<input type="email" id="csAwEmail" class="cs-aw-input" placeholder="メールアドレス" autocomplete="email">' +
+        '<div id="csAwError" class="cs-aw-error" style="display:none;"></div>' +
+        '<button type="button" id="csAwSubmit" class="cs-aw-btn">リセットコードを送信</button>' +
+        '<button type="button" id="csAwBack" class="cs-aw-link">ログインに戻る</button>';
+      document.getElementById('csAwSubmit').addEventListener('click', handleAwSendReset);
+      document.getElementById('csAwBack').addEventListener('click', function() {
+        setAwTab('login');
+      });
+    }
+
+    if (mode === 'reset-confirm') {
+      loginTab.classList.add('cs-aw-tab-active');
+      regTab.classList.remove('cs-aw-tab-active');
+      formArea.innerHTML =
+        '<p style="font-size:13px;color:#666;margin:0 0 12px;text-align:center;">メールに届いた6桁のコードを入力してください</p>' +
+        '<input type="text" id="csAwCode" class="cs-aw-input" placeholder="6桁のコード" maxlength="6" inputmode="numeric">' +
+        '<input type="password" id="csAwNewPw" class="cs-aw-input" placeholder="新しいパスワード（6文字以上）" autocomplete="new-password">' +
+        '<div id="csAwError" class="cs-aw-error" style="display:none;"></div>' +
+        '<button type="button" id="csAwSubmit" class="cs-aw-btn">パスワードを変更</button>' +
+        '<button type="button" id="csAwBack" class="cs-aw-link">ログインに戻る</button>';
+      document.getElementById('csAwSubmit').addEventListener('click', handleAwConfirmReset);
+      document.getElementById('csAwBack').addEventListener('click', function() {
+        setAwTab('login');
+      });
+    }
+  }
+
+  function showAwError(msg) {
+    var el = document.getElementById('csAwError');
+    if (el) { el.textContent = msg; el.style.display = 'block'; }
+  }
+
+  function hideAuthWall() {
+    var wall = document.getElementById('csAuthWall');
+    if (!wall) return;
+    wall.style.opacity = '0';
+    setTimeout(function() {
+      if (wall.parentNode) wall.parentNode.removeChild(wall);
+    }, 300);
+  }
+
+  var _awResetEmail = '';
+
+  async function handleAwRegister() {
+    var email = (document.getElementById('csAwEmail').value || '').trim();
+    var pw = document.getElementById('csAwPw').value || '';
+    var pw2 = document.getElementById('csAwPw2').value || '';
+    if (!email || !pw) { showAwError('メールアドレスとパスワードを入力してください'); return; }
+    if (pw !== pw2) { showAwError('パスワードが一致しません'); return; }
+    if (pw.length < 6) { showAwError('パスワードは6文字以上で設定してください'); return; }
+
+    var btn = document.getElementById('csAwSubmit');
+    btn.disabled = true; btn.textContent = '登録中...';
+    try {
+      await register(email, pw);
+      hideAuthWall();
+      renderUI();
+      triggerFirstBackup();
+      setTimeout(function() { showSurveyModal(); }, 800);
+    } catch(e) {
+      showAwError(e.message);
+      btn.disabled = false; btn.textContent = 'アカウント作成';
+    }
+  }
+
+  async function handleAwLogin() {
+    var email = (document.getElementById('csAwEmail').value || '').trim();
+    var pw = document.getElementById('csAwPw').value || '';
+    if (!email || !pw) { showAwError('メールアドレスとパスワードを入力してください'); return; }
+
+    var btn = document.getElementById('csAwSubmit');
+    btn.disabled = true; btn.textContent = 'ログイン中...';
+    try {
+      await login(email, pw);
+      hideAuthWall();
+      renderUI();
+      triggerFirstBackup();
+    } catch(e) {
+      showAwError(e.message);
+      btn.disabled = false; btn.textContent = 'ログイン';
+    }
+  }
+
+  async function handleAwSendReset() {
+    var email = (document.getElementById('csAwEmail').value || '').trim();
+    if (!email) { showAwError('メールアドレスを入力してください'); return; }
+
+    var btn = document.getElementById('csAwSubmit');
+    btn.disabled = true; btn.textContent = '送信中...';
+    try {
+      await resetPassword(email);
+      _awResetEmail = email;
+      setAwTab('reset-confirm');
+    } catch(e) {
+      showAwError(e.message);
+      btn.disabled = false; btn.textContent = 'リセットコードを送信';
+    }
+  }
+
+  async function handleAwConfirmReset() {
+    var code = (document.getElementById('csAwCode').value || '').trim();
+    var newPw = document.getElementById('csAwNewPw').value || '';
+    if (!code || !newPw) { showAwError('コードと新しいパスワードを入力してください'); return; }
+    if (newPw.length < 6) { showAwError('パスワードは6文字以上で設定してください'); return; }
+
+    var btn = document.getElementById('csAwSubmit');
+    btn.disabled = true; btn.textContent = '変更中...';
+    try {
+      await resetConfirm(_awResetEmail, code, newPw);
+      hideAuthWall();
+      renderUI();
+      triggerFirstBackup();
+    } catch(e) {
+      showAwError(e.message);
+      btn.disabled = false; btn.textContent = 'パスワードを変更';
+    }
+  }
+
   // === 初期化 ===
   function init() {
     injectCSS();
+    // 未ログインなら認証ウォール表示
+    if (!isLoggedIn()) {
+      showAuthWall();
+    }
     renderUI();
     setupAutoBackup();
     // ログイン済みならスナップショット記録 + 未バックアップなら初回実行
@@ -977,6 +1192,7 @@
     isAutoBackupEnabled: isAutoBackupEnabled,
     setAutoBackup: setAutoBackup,
     checkForNewerBackup: checkForNewerBackup,
+    showAuthWall: showAuthWall,
   };
 
 })();
