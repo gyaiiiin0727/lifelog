@@ -753,15 +753,16 @@
   }
 
   async function autoBackupIfNeeded() {
-    if (!isLoggedIn()) { return; }
-    if (!isAutoBackupEnabled()) { return; }
-    if (autoBackupRunning) { return; }
+    if (!isLoggedIn()) { console.log('☁️ [skip] 未ログイン'); return; }
+    if (!isAutoBackupEnabled()) { console.log('☁️ [skip] 自動バックアップOFF'); return; }
+    if (autoBackupRunning) { console.log('☁️ [skip] バックアップ実行中'); return; }
     // _restorePending安全弁: バナーが消えてもフラグが残っている場合リセット
     if (_restorePending) {
       if (!document.getElementById('csSyncBanner')) {
         console.warn('☁️ _restorePendingリセット（バナー消失）');
         _restorePending = false;
       } else {
+        console.log('☁️ [skip] 復元バナー表示中');
         return;
       }
     }
@@ -811,23 +812,17 @@
 
   // localStorage.setItem を監視して、データ変更時にバックアップをスケジュール
   function hookLocalStorage() {
-    try {
-      var origSetItem = Storage.prototype.setItem;
-      if (typeof origSetItem !== 'function') {
-        console.warn('☁️ Storage.prototype.setItem が利用不可、hookスキップ');
-        return;
-      }
-      Storage.prototype.setItem = function(key, value) {
-        origSetItem.call(this, key, value); // storageエラーはそのまま伝播
+    // フック処理: setItem呼び出し後にバックアップをスケジュール
+    function createHookedSetItem(origFn, context) {
+      return function(key, value) {
+        origFn.call(context || this, key, value); // 元のsetItemを実行（prototype用はthis、instance用はcontext）
         try {
-          // 同期対象キーが変更されたら自動バックアップをスケジュール
           var isSyncKey = SYNC_KEYS.indexOf(key) !== -1;
           if (!isSyncKey) {
             for (var p = 0; p < DYNAMIC_KEY_PREFIXES.length; p++) {
               if (key.indexOf(DYNAMIC_KEY_PREFIXES[p]) === 0) { isSyncKey = true; break; }
             }
           }
-          // 内部キー（スナップショットやトグル）は除外
           if (key === LS_LAST_SNAPSHOT || key === LS_AUTO_BACKUP || key === LS_LAST_SYNCED) return;
           if (isSyncKey) {
             scheduleAutoBackup();
@@ -836,12 +831,36 @@
           // hook処理エラーはsetItem自体を壊さない
         }
       };
-      _hookInstalled = true;
-      console.log('☁️ localStorage hook設定完了');
-    } catch(e) {
-      console.warn('☁️ localStorage hook失敗:', e.message);
-      _hookInstalled = false;
     }
+
+    // 方法1: Storage.prototype.setItem をフック（標準的な方法）
+    try {
+      var protoSetItem = Storage.prototype.setItem;
+      if (typeof protoSetItem === 'function') {
+        Storage.prototype.setItem = createHookedSetItem(protoSetItem, null);
+        _hookInstalled = true;
+        console.log('☁️ localStorage hook設定完了（prototype）');
+        return;
+      }
+    } catch(e) {
+      console.warn('☁️ prototype hook失敗:', e.message);
+    }
+
+    // 方法2: localStorage.setItem を直接フック（prototypeが使えない環境用）
+    try {
+      var instanceSetItem = localStorage.setItem;
+      if (typeof instanceSetItem === 'function') {
+        localStorage.setItem = createHookedSetItem(instanceSetItem, localStorage);
+        _hookInstalled = true;
+        console.log('☁️ localStorage hook設定完了（instance）');
+        return;
+      }
+    } catch(e2) {
+      console.warn('☁️ instance hook失敗:', e2.message);
+    }
+
+    console.warn('☁️ localStorage hook利用不可（ポーリングフォールバック使用）');
+    _hookInstalled = false;
   }
 
   // デバウンス付き自動バックアップ（10秒後に実行、連続変更は1回にまとめる）
@@ -890,15 +909,31 @@
       }
     });
 
-    // 3) 定期チェック — hookが動かない場合は30秒、動く場合は3分
-    var pollingInterval = _hookInstalled ? (3 * 60 * 1000) : (30 * 1000);
-    console.log('☁️ ポーリング間隔:', _hookInstalled ? '3分（hook有効）' : '30秒（hookなしフォールバック）');
+    // 3) 定期バックアップ実行（フォールバック: hook有無に関わらず）
     _autoBackupTimer = setInterval(function() {
       autoBackupIfNeeded();
-    }, pollingInterval);
+    }, _hookInstalled ? (3 * 60 * 1000) : (60 * 1000));
+    console.log('☁️ 定期バックアップ:', _hookInstalled ? '3分間隔（hook有効）' : '1分間隔（hookなし）');
 
-    // 4) ユーザー操作トリガー（hookなし時の追加検知）
-    //    タッチ/クリック後にデータ変更されている可能性が高いので、5秒後にチェック
+    // 4) 高速変更検知ポーリング（hookの代替: 5秒ごとにデータ変更を検出→10秒デバウンスで自動バックアップ）
+    if (!_hookInstalled) {
+      var _lastDetectHash = localStorage.getItem(LS_LAST_SNAPSHOT) || '';
+      setInterval(function() {
+        if (!isLoggedIn() || !isAutoBackupEnabled()) return;
+        try {
+          var data = collectSyncData();
+          var hash = simpleHash(JSON.stringify(data));
+          if (_lastDetectHash && hash !== _lastDetectHash) {
+            console.log('☁️ データ変更検知（5秒ポーリング）');
+            scheduleAutoBackup(); // 10秒デバウンス後にバックアップ
+          }
+          _lastDetectHash = hash;
+        } catch(e) { /* silent */ }
+      }, 5000);
+      console.log('☁️ 高速変更検知ポーリング開始（5秒間隔）');
+    }
+
+    // 5) ユーザー操作トリガー（hookなし時の追加検知）
     if (!_hookInstalled) {
       var _interactionDebounce = null;
       var interactionHandler = function() {
@@ -907,11 +942,11 @@
         _interactionDebounce = setTimeout(function() {
           _interactionDebounce = null;
           autoBackupIfNeeded();
-        }, 5000); // 操作から5秒後にチェック（連続操作はまとめる）
+        }, 5000);
       };
       document.addEventListener('touchend', interactionHandler, { passive: true });
       document.addEventListener('click', interactionHandler, { passive: true });
-      console.log('☁️ ユーザー操作トリガー設定（hookなしフォールバック）');
+      console.log('☁️ ユーザー操作トリガー設定');
     }
   }
 
@@ -1363,6 +1398,14 @@
     init();
   }
 
+  // === データ変更通知（外部から呼び出し用） ===
+  // hookLocalStorageが動かない環境で、index.html等のデータ保存箇所から直接呼ぶ
+  function notifyChange() {
+    if (!isLoggedIn() || !isAutoBackupEnabled()) return;
+    console.log('☁️ notifyChange: データ変更通知');
+    scheduleAutoBackup();
+  }
+
   // === Public API ===
   window.CloudSync = {
     isLoggedIn: isLoggedIn,
@@ -1379,6 +1422,7 @@
     setAutoBackup: setAutoBackup,
     checkForNewerBackup: checkForNewerBackup,
     showAuthWall: showAuthWall,
+    notifyChange: notifyChange,
   };
 
 })();

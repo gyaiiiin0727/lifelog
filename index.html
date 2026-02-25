@@ -5694,6 +5694,10 @@ const Storage = {
   set(key, value){
     try{
       localStorage.setItem(key, JSON.stringify(value));
+      // クラウド自動バックアップに変更を通知
+      if (window.CloudSync && window.CloudSync.notifyChange) {
+        window.CloudSync.notifyChange();
+      }
     }catch(e){
       console.warn('Storage.set failed', key, e);
     }
