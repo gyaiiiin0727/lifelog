@@ -18815,8 +18815,8 @@ const modal = $('qrModal');
   function getEffectiveLimits() {
     var plan = getPlan();
     if (plan === 'free' && isFirstMonth()) {
-      // 初月: ジャーナル無制限、AI相談無制限、コーチ3回、キャラ全員OK
-      return { label: '無料プラン（初月特典）', journal: 9999, consult: 9999, goalCoach: 3, charLimit: false, csv: false, cloudSync: true };
+      // 初月: ジャーナル無制限、AI相談5回、コーチ3回、キャラ全員OK
+      return { label: '無料プラン（初月特典）', journal: 9999, consult: 5, goalCoach: 3, charLimit: false, csv: false, cloudSync: true };
     }
     return PLANS[plan];
   }
@@ -18971,7 +18971,7 @@ const modal = $('qrModal');
             '<div style="font-weight:600;color:#2e7d32;margin-bottom:8px;">🎁 無料登録の特典（初月）</div>' +
             '<div style="font-size:13px;color:#444;line-height:1.8;">' +
               '• 心を整える: <b>無制限</b><br>' +
-              '• AI相談: <b>無制限</b><br>' +
+              '• AI相談: <b>5回</b><br>' +
               '• 目標コーチ: <b>3回</b><br>' +
               '• キャラクター: <b>3種から選択</b><br>' +
               '• クラウド同期: <b>✅</b>' +
@@ -19044,7 +19044,7 @@ const modal = $('qrModal');
         card.style.color = '#2e7d32';
         card.innerHTML =
           '<div style="font-size:20px;font-weight:700;margin-bottom:2px;">🎁 初月特典</div>' +
-          '<div style="font-size:13px;opacity:.85;">無料プラン — AI相談・心を整える無制限</div>';
+          '<div style="font-size:13px;opacity:.85;">無料プラン — 心を整える無制限・AI相談5回</div>';
       } else {
         card.style.background = '#f5f5f5';
         card.style.color = '#333';
@@ -19068,9 +19068,9 @@ const modal = $('qrModal');
 
         if (lim === 9999) {
           statusText = firstMonth ? '初月無制限 🎁' : '無制限';
-        } else if (firstMonth && t === 'goalCoach') {
+        } else if (firstMonth && (t === 'goalCoach' || t === 'consult')) {
           var remain = Math.max(0, lim - used);
-          statusText = remain + '/' + lim + '回';
+          statusText = remain + '/' + lim + '回 🎁';
           statusColor = remain > 0 ? '#27ae60' : '#e74c3c';
         } else if (lim === 0) {
           statusText = '利用不可';
@@ -19110,7 +19110,7 @@ const modal = $('qrModal');
       if (lim === 9999) {
         el.textContent = firstMonth ? '初月無制限 🎁' : '無制限';
         el.style.color = '#27ae60';
-      } else if (firstMonth && t === 'goalCoach') {
+      } else if (firstMonth && (t === 'goalCoach' || t === 'consult')) {
         var remain = Math.max(0, lim - used);
         el.textContent = '初月' + remain + '/' + lim + '回 🎁';
         el.style.color = remain > 0 ? '#27ae60' : '#e74c3c';
@@ -19143,7 +19143,7 @@ const modal = $('qrModal');
 
     var cards = [
       { key: 'free', name: '無料', price: '¥0', color: '#78909c', features: [
-        '🎁 初月: AI相談無制限で体験OK！',
+        '🎁 初月: AI相談5回・心を整える無制限！',
         '記録・カレンダー・レポート: ✅',
         '過去データ閲覧: 30日分',
         '心を整える: 月10回（1日1回）',
