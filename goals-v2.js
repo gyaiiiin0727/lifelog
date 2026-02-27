@@ -1085,18 +1085,23 @@
       if (_goalCollapsed[goalId]) {
         _goalCollapsed[goalId] = false;
         renderAll();
-        // レンダリング後にスクロール
+        // レンダリング後にスクロール＋ハイライト
         setTimeout(function() {
           var t = document.getElementById('gv2WeeklyGoal_' + goalId);
-          if (t) t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          if (t) {
+            t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            t.style.transition = 'background 0.3s';
+            t.style.background = '#e3f2fd';
+            setTimeout(function() { t.style.background = ''; }, 1500);
+          }
         }, 100);
       } else {
         target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // ハイライトアニメーション
+        target.style.transition = 'background 0.3s';
+        target.style.background = '#e3f2fd';
+        setTimeout(function() { target.style.background = ''; }, 1500);
       }
-      // ハイライトアニメーション
-      target.style.transition = 'background 0.3s';
-      target.style.background = '#e3f2fd';
-      setTimeout(function() { target.style.background = ''; }, 1500);
     }
   };
 

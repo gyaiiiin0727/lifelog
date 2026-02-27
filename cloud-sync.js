@@ -455,7 +455,8 @@
     try {
       var res = await upload();
       updateSnapshot();
-      document.getElementById('csLastSyncedText').textContent = new Date(res.syncedAt).toLocaleString('ja-JP');
+      var tsEl = document.getElementById('csLastSyncedText');
+      if (tsEl && res.syncedAt) tsEl.textContent = new Date(res.syncedAt).toLocaleString('ja-JP');
       showSuccess('バックアップ完了');
     } catch (e) {
       showError(e.message);
@@ -473,7 +474,8 @@
       if (!res.data) {
         showError('クラウドにバックアップがありません。先にバックアップしてください。');
       } else {
-        document.getElementById('csLastSyncedText').textContent = new Date(res.syncedAt).toLocaleString('ja-JP');
+        var tsEl = document.getElementById('csLastSyncedText');
+        if (tsEl && res.syncedAt) tsEl.textContent = new Date(res.syncedAt).toLocaleString('ja-JP');
         showSuccess('復元完了 — ページを再読み込みして反映します');
         setTimeout(function () { location.reload(); }, 1500);
       }
@@ -812,6 +814,7 @@
 
   // localStorage.setItem を監視して、データ変更時にバックアップをスケジュール
   function hookLocalStorage() {
+    if (_hookInstalled) return; // 二重フック防止
     // フック処理: setItem呼び出し後にバックアップをスケジュール
     function createHookedSetItem(origFn, context) {
       return function(key, value) {
@@ -1401,8 +1404,8 @@
   // === データ変更通知（外部から呼び出し用） ===
   // hookLocalStorageが動かない環境で、index.html等のデータ保存箇所から直接呼ぶ
   function notifyChange() {
+    if (_hookInstalled) return; // hookが動いていれば二重通知不要
     if (!isLoggedIn() || !isAutoBackupEnabled()) return;
-    console.log('☁️ notifyChange: データ変更通知');
     scheduleAutoBackup();
   }
 
