@@ -4843,7 +4843,7 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <body>
 <div class="container">
 <div style="display:flex;align-items:center;justify-content:center;position:relative;margin-top:12px;">
-  <h1 style="display:flex;align-items:center;gap:0;margin:0;"><img src="icon.jpg" alt="D" style="width:52px;height:52px;margin-right:-6px;">ayce</h1>
+  <h1 onclick="switchTab('home')" style="display:flex;align-items:center;gap:0;margin:0;cursor:pointer;"><img src="icon.jpg" alt="D" style="width:52px;height:52px;margin-right:-6px;">ayce</h1>
   <button id="settingsToggleBtn" onclick="openSettingsPanel()" style="position:absolute;right:0;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:8px;color:#666;" aria-label="設定">
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
   </button>
@@ -13553,7 +13553,7 @@ try{
     const events=[], learnings=[], feelings=[], gratitude=[], must=[], want=[];
     s.forEach(line=>{
       const low=line;
-      if(/[感謝|ありがとう|助かった|ありがた]/.test(low)) gratitude.push(line);
+      if(/[モヤ|もやっと|不安|心配|気がかり|つら|しんど|悩|焦]/.test(low)) gratitude.push(line);
       if(/[反省|学び|気づ|分かった|思う|なので|べき|大きかった]/.test(low)) learnings.push(line);
       if(/[嬉|焦|モヤ|つら|しんど|不安|楽しい|悲しい|イライラ]/.test(low)) feelings.push(line);
       if(/[MUST|必ず|やらなきゃ|しないと]/i.test(low)) must.push(line);
@@ -14079,7 +14079,8 @@ try{
               if(parsed.events) entry.summary.events = _ensureBullets(parsed.events);
               if(parsed.learnings) entry.summary.learnings = _ensureBullets(parsed.learnings);
               if(parsed.feelings) entry.summary.feelings = _ensureBullets(parsed.feelings);
-              if(parsed.gratitude) entry.summary.gratitude = _ensureBullets(parsed.gratitude);
+              if(parsed.concerns) entry.summary.gratitude = _ensureBullets(parsed.concerns);
+              else if(parsed.gratitude) entry.summary.gratitude = _ensureBullets(parsed.gratitude);
               if(parsed.oneLiner) entry.hitokoto = parsed.oneLiner;
             } else {
               var mustMatch = out.match(/【明日のMUST】\n([\s\S]*?)(?=【|$)/);
