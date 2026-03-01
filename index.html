@@ -21701,6 +21701,7 @@ function selectAIConsultTone(tone) {
   }
   aiConsultTone = tone;
   localStorage.setItem('aiConsultTone', tone);
+  if (typeof resetAIConsultChat === 'function') resetAIConsultChat();
   var btns = document.querySelectorAll('.ai-char-btn');
   btns.forEach(function(btn) {
     if (btn.getAttribute('data-ai-tone') === tone) {
@@ -21728,6 +21729,7 @@ window.selectAIConsultTone = selectAIConsultTone;
 
 function selectAIConsultTopic(topic) {
   aiConsultTopic = topic;
+  if (typeof resetAIConsultChat === 'function') resetAIConsultChat();
   var btns = document.querySelectorAll('.ai-topic-btn');
   btns.forEach(function(btn) {
     if (btn.getAttribute('data-topic') === topic) {
@@ -21894,9 +21896,7 @@ function summarizeMoney(detailed, periodOpts) {
     periodEnd = now;
     periodLabel = '今月';
   }
-  console.log('summarizeMoney期間:', periodLabel, periodStart.toLocaleString(), '〜', periodEnd.toLocaleString(), 'periodOpts:', periodOpts);
   var monthly = records.filter(function(r) { var d = new Date(r.timestamp); return d >= periodStart && d <= periodEnd; });
-  console.log('summarizeMoney結果:', monthly.length, '件 / 全', records.length, '件');
   if (monthly.length === 0) return '';
 
   var totalExpense = 0, totalIncome = 0;
@@ -22275,6 +22275,9 @@ async function sendAIConsult() {
   var loading = document.getElementById('aiConsultLoading');
   var chatArea = document.getElementById('aiConsultChat');
 
+  // 会話履歴にユーザーメッセージを追加
+  _aiConsultHistory.push({ role: 'user', text: text });
+
   // UI: ユーザーメッセージを吹き出しで表示
   if (chatArea) {
     var userMsg = document.createElement('div');
@@ -22292,34 +22295,39 @@ async function sendAIConsult() {
   try {
     var tone = aiConsultTone || 'normal';
     var topic = aiConsultTopic || 'other';
+    var isFirstTurn = (_aiConsultHistory.filter(function(m) { return m.role === 'user'; }).length === 1);
 
     // テーマコンテキストを追加
     var topicLabels = { activity: '行動・習慣', money: 'お金・家計', goals: '目標・計画', other: '一般的な相談' };
     var topicContext = '【相談テーマ】' + (topicLabels[topic] || 'その他') + '\n';
 
-    // ユーザーの質問から期間を検出してデータコンテキストに反映
-    var _ctxNow = new Date();
-    var _ctxPeriodOpts = null;
-    if (text.indexOf('先月') !== -1) {
-      _ctxPeriodOpts = {
-        start: new Date(_ctxNow.getFullYear(), _ctxNow.getMonth() - 1, 1),
-        end: new Date(_ctxNow.getFullYear(), _ctxNow.getMonth(), 0, 23, 59, 59),
-        label: '先月'
-      };
-    } else if (text.indexOf('今週') !== -1) {
-      var _ctxDow = _ctxNow.getDay();
-      _ctxPeriodOpts = {
-        start: new Date(_ctxNow.getFullYear(), _ctxNow.getMonth(), _ctxNow.getDate() - _ctxDow),
-        end: _ctxNow,
-        label: '今週'
-      };
+    var dataContext = '';
+    var keywordContextBlock = '';
+    if (isFirstTurn) {
+      // 初回: ユーザーの質問から期間を検出してデータコンテキストに反映
+      var _ctxNow = new Date();
+      var _ctxPeriodOpts = null;
+      if (text.indexOf('先月') !== -1) {
+        _ctxPeriodOpts = {
+          start: new Date(_ctxNow.getFullYear(), _ctxNow.getMonth() - 1, 1),
+          end: new Date(_ctxNow.getFullYear(), _ctxNow.getMonth(), 0, 23, 59, 59),
+          label: '先月'
+        };
+      } else if (text.indexOf('今週') !== -1) {
+        var _ctxDow = _ctxNow.getDay();
+        _ctxPeriodOpts = {
+          start: new Date(_ctxNow.getFullYear(), _ctxNow.getMonth(), _ctxNow.getDate() - _ctxDow),
+          end: _ctxNow,
+          label: '今週'
+        };
+      }
+      // 過去データのコンテキストを生成
+      dataContext = buildContextSummary(topic, { periodOpts: _ctxPeriodOpts });
     }
-    // 過去データのコンテキストを生成
-    var dataContext = buildContextSummary(topic, { periodOpts: _ctxPeriodOpts });
 
-    // ユーザーの質問に含まれるキーワードで関連記録を追加検索
+    // ユーザーの質問に含まれるキーワードで関連記録を追加検索（初回のみ）
     var keywordContext = '';
-    try {
+    if (isFirstTurn) try {
       // 質問テキストから助詞・一般語を除いてキーワード抽出
       // 日本語は助詞・接続詞で分割してキーワードを取り出す
       var stopWords = ['いくら','どれくらい','今月','先月','今週','何回','について','どうし','ほしい','ください','つかった','使った','いくつ','どのくらい','教えて','知りたい','ある','ない','する','した','している','されて','くらい','ぐらい','かかった','かかってる'];
@@ -22458,8 +22466,22 @@ async function sendAIConsult() {
       keywordContext += '★上記のキーワード検索結果は正確な記録データです。件数・金額を回答に必ず反映してください。\n';
     }
 
+    // 会話履歴をテキスト化
+    var historyText = '';
+    if (!isFirstTurn) {
+      historyText = '【これまでの会話】\n';
+      _aiConsultHistory.forEach(function(m) {
+        if (m === _aiConsultHistory[_aiConsultHistory.length - 1]) return; // 最新のユーザー発言は別途追加
+        historyText += (m.role === 'user' ? 'ユーザー' : 'AI') + ': ' + m.text + '\n';
+      });
+      historyText += '\n';
+    }
+
     // プロンプトルール・キャラクター口調はWorker側で注入（ソースから隠蔽）
-    var textToSend = topicContext + dataContext + keywordContext + '【ユーザーの相談】\n' + text;
+    var textToSend = topicContext + dataContext + keywordContext + historyText + '【ユーザーの相談】\n' + text;
+    if (!isFirstTurn) {
+      textToSend += '\n★上記の会話の流れを踏まえて、自然に会話を続けてください。前の回答を繰り返さず、新しい質問や深掘りに応じてください。';
+    }
 
     var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://api.dayce.app';
     var endpoint = BACKEND_URL + '/api/analyze';
@@ -22514,12 +22536,17 @@ async function sendAIConsult() {
       chatArea.scrollTop = chatArea.scrollHeight;
     }
 
-    // 使用回数カウント
-    if (window.DaycePlan) { window.DaycePlan.incrementUsage('consult'); window.DaycePlan.renderPlanBadges(); }
+    // 会話履歴にAI応答を追加
+    _aiConsultHistory.push({ role: 'ai', text: responseText });
 
-    // 履歴に保存
-    saveConsultHistory(text, responseText, charInfo.name, tone);
-    renderConsultHistory();
+    // 使用回数カウント（初回のみ。2回目以降は同一相談の続き）
+    if (isFirstTurn && window.DaycePlan) { window.DaycePlan.incrementUsage('consult'); window.DaycePlan.renderPlanBadges(); }
+
+    // 履歴に保存（初回のみ保存。フォローアップは保存しない）
+    if (isFirstTurn) {
+      saveConsultHistory(text, responseText, charInfo.name, tone);
+      renderConsultHistory();
+    }
 
   } catch(e) {
     console.error('AI consult error:', e);
