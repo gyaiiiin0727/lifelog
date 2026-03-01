@@ -4483,6 +4483,169 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
   color: #2196F3;
 }
 
+/* ===== AIチャット ===== */
+.ai-chat-container{
+  background: #f5f5f5;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  max-height: 420px;
+  min-height: 140px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.ai-chat-messages{
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ai-chat-welcome{
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+  padding: 40px 16px;
+  line-height: 1.6;
+}
+.ai-chat-bubble{
+  max-width: 82%;
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.65;
+  word-break: break-word;
+  white-space: pre-wrap;
+  animation: ai-chat-fadein 0.25s ease;
+}
+@keyframes ai-chat-fadein{
+  from{ opacity:0; transform:translateY(6px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+.ai-chat-bubble.user{
+  align-self: flex-end;
+  background: #2196F3;
+  color: #fff;
+  border-radius: 16px 16px 4px 16px;
+}
+.ai-chat-bubble.ai{
+  align-self: flex-start;
+  background: #fff;
+  color: #333;
+  border: 1px solid #e0e0e0;
+  border-radius: 16px 16px 16px 4px;
+}
+.ai-chat-ai-row{
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  align-self: flex-start;
+  max-width: 88%;
+}
+.ai-chat-ai-avatar{
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.ai-chat-ai-avatar img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ai-chat-ai-row .ai-chat-bubble.ai{
+  max-width: 100%;
+}
+.ai-chat-ai-name{
+  font-size: 11px;
+  font-weight: 600;
+  color: #2196F3;
+  margin-bottom: 3px;
+}
+.ai-chat-input-area{
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+.ai-chat-textarea{
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 20px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: none;
+  outline: none;
+  max-height: 100px;
+  overflow-y: auto;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  line-height: 1.4;
+}
+.ai-chat-textarea:focus{
+  border-color: #2196F3;
+}
+.ai-chat-send-btn{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  color: #fff;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.ai-chat-send-btn:hover{ opacity:0.85; }
+.ai-chat-send-btn:active{ transform:scale(0.93); }
+.ai-chat-send-btn:disabled{
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.ai-chat-send-btn svg{ display:block; }
+.ai-chat-new-btn{
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ai-chat-new-btn:hover{ background:#eef0f2; border-color:#ccc; }
+.ai-chat-new-btn:active{ transform:scale(0.98); }
+.ai-chat-typing{
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 16px 16px 16px 4px;
+}
+.ai-chat-typing-dot{
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #aaa;
+  animation: ai-typing 1.4s ease-in-out infinite;
+}
+.ai-chat-typing-dot:nth-child(2){ animation-delay:0.2s; }
+.ai-chat-typing-dot:nth-child(3){ animation-delay:0.4s; }
+@keyframes ai-typing{
+  0%,100%{ opacity:0.3; transform:scale(0.8); }
+  50%{ opacity:1; transform:scale(1.1); }
+}
+
 /* ===== CSVダウンロード ===== */
 .ai-consult-csv-section{
   margin-top: 24px;
@@ -5428,7 +5591,6 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 <div class="tab-content" id="aiConsult">
 <div class="ai-consult-tab-container">
     <h2 class="section-title" style="text-align:center;">🤖 AIに相談</h2>
-    <p style="text-align:center; color:#666; font-size:13px; margin:0 0 16px;">キャラクターを選んで、なんでも相談してみよう</p>
 
     <!-- キャラクター選択（アイコン付き） -->
     <div class="ai-consult-chars" id="aiConsultChars">
@@ -5451,7 +5613,7 @@ body.qr-open .fab-container{ pointer-events:none !important; }
 
     <!-- テーマ選択 -->
     <div class="ai-consult-topic-section">
-        <p class="ai-consult-topic-label">どのテーマについて相談する？</p>
+        <p class="ai-consult-topic-label">テーマ</p>
         <div class="ai-consult-topics" id="aiConsultTopics">
             <button type="button" class="ai-topic-btn active" data-topic="activity" onclick="selectAIConsultTopic('activity')">
                 <span class="ai-topic-icon">⏱️</span>
@@ -5472,34 +5634,31 @@ body.qr-open .fab-container{ pointer-events:none !important; }
         </div>
     </div>
 
-    <!-- テキスト入力 -->
-    <div class="ai-consult-input-area">
-        <textarea id="aiConsultInput" class="ai-consult-textarea" rows="3" placeholder="何でも気軽に相談してね！&#10;例：最近モチベーションが上がらない..."></textarea>
-    </div>
-
-    <!-- 送信ボタン -->
-    <button type="button" class="ai-consult-send-btn" id="aiConsultSendBtn" onclick="sendAIConsult()">
-        💬 相談する
-    </button>
-
-    <!-- ローディング -->
-    <div class="ai-consult-loading" id="aiConsultLoading" style="display:none;">
-        <div class="ai-consult-loading-spinner"></div>
-        <span>考え中...</span>
-    </div>
-
-    <!-- 回答エリア -->
-    <div class="ai-consult-answer" id="aiConsultAnswer" style="display:none;">
-        <div class="ai-consult-answer-header">
-            <span class="ai-consult-answer-icon" id="aiConsultAnswerIcon"></span>
-            <span class="ai-consult-answer-name" id="aiConsultAnswerName"></span>
+    <!-- チャットエリア -->
+    <div class="ai-chat-container" id="aiChatContainer">
+        <div class="ai-chat-messages" id="aiChatMessages">
+            <div class="ai-chat-welcome" id="aiChatWelcome">
+                <p>キャラクターとテーマを選んで、<br>何でも気軽に聞いてみよう！</p>
+            </div>
         </div>
-        <div class="ai-consult-answer-text" id="aiConsultAnswerText"></div>
     </div>
+
+    <!-- 入力エリア（チャット形式） -->
+    <div class="ai-chat-input-area">
+        <textarea id="aiConsultInput" class="ai-chat-textarea" rows="1" placeholder="メッセージを入力..."></textarea>
+        <button type="button" class="ai-chat-send-btn" id="aiConsultSendBtn" onclick="sendAIConsult()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+    </div>
+
+    <!-- 新しい会話ボタン -->
+    <button type="button" class="ai-chat-new-btn" id="aiChatNewBtn" onclick="startNewAIChat()" style="display:none;">
+        新しい会話を始める
+    </button>
 
     <!-- AI相談履歴セクション -->
     <div class="ai-consult-history-section" id="aiConsultHistorySection" style="display:none;">
-      <h3 style="font-size:15px; font-weight:700; color:#333; margin:0 0 12px;">💬 相談履歴</h3>
+      <h3 style="font-size:15px; font-weight:700; color:#333; margin:0 0 12px;">過去の相談</h3>
       <div id="aiConsultHistoryList"></div>
     </div>
 
@@ -21755,16 +21914,30 @@ function getAICharIconSrc(tone) {
 }
 
 // ========== 過去データコンテキスト生成 ==========
-function summarizeActivities(detailed) {
+function summarizeActivities(detailed, targetYear, targetMonth) {
   var activities;
   try { activities = JSON.parse(localStorage.getItem('activities') || '[]'); } catch(e) { return ''; }
   if (!Array.isArray(activities) || activities.length === 0) return '';
 
   var now = new Date();
-  var weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-  var recent = activities.filter(function(a) {
-    return new Date(a.startTime || a.timestamp) >= weekAgo;
-  });
+  var recent;
+  var periodLabel;
+  if (targetYear != null && targetMonth != null) {
+    // 特定月の行動を取得
+    var mStart = new Date(targetYear, targetMonth, 1);
+    var mEnd = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
+    recent = activities.filter(function(a) {
+      var d = new Date(a.startTime || a.timestamp);
+      return d >= mStart && d <= mEnd;
+    });
+    periodLabel = (targetMonth + 1) + '月の行動';
+  } else {
+    var weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    recent = activities.filter(function(a) {
+      return new Date(a.startTime || a.timestamp) >= weekAgo;
+    });
+    periodLabel = '今週の行動';
+  }
   if (recent.length === 0) return '';
 
   var cats = {};
@@ -21780,7 +21953,7 @@ function summarizeActivities(detailed) {
 
   var h = Math.floor(totalMin / 60);
   var m = totalMin % 60;
-  var lines = ['[今週の行動] ' + recent.length + '件 / 合計' + h + '時間' + m + '分'];
+  var lines = ['[' + periodLabel + '] ' + recent.length + '件 / 合計' + h + '時間' + m + '分'];
 
   // カテゴリ別サマリー（全カテゴリ表示、上限10）
   var catKeys = Object.keys(cats).sort(function(a, b) { return cats[b].minutes - cats[a].minutes; });
@@ -21854,15 +22027,24 @@ function summarizeActivities(detailed) {
   return lines.join('\n');
 }
 
-function summarizeMoney(detailed) {
+function summarizeMoney(detailed, targetYear, targetMonth) {
   var records;
   try { records = JSON.parse(localStorage.getItem('moneyRecords') || '[]'); } catch(e) { return ''; }
   if (!Array.isArray(records) || records.length === 0) return '';
 
   var now = new Date();
-  var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  var monthly = records.filter(function(r) { return new Date(r.timestamp) >= monthStart; });
+  var refYear = targetYear != null ? targetYear : now.getFullYear();
+  var refMonth = targetMonth != null ? targetMonth : now.getMonth();
+  var monthStart = new Date(refYear, refMonth, 1);
+  var monthEnd = new Date(refYear, refMonth + 1, 0, 23, 59, 59);
+  var monthly = records.filter(function(r) {
+    var d = new Date(r.timestamp);
+    return d >= monthStart && d <= monthEnd;
+  });
   if (monthly.length === 0) return '';
+
+  var monthLabel = (refMonth + 1) + '月';
+  if (targetYear != null && targetYear !== now.getFullYear()) monthLabel = targetYear + '年' + monthLabel;
 
   var totalExpense = 0, totalIncome = 0;
   var expCats = {};
@@ -21881,7 +22063,7 @@ function summarizeMoney(detailed) {
     }
   });
 
-  var lines = ['[今月のお金] 支出: ¥' + totalExpense.toLocaleString() + ' / 収入: ¥' + totalIncome.toLocaleString() + ' (記録' + monthly.length + '件)'];
+  var lines = ['[' + monthLabel + 'のお金] 支出: ¥' + totalExpense.toLocaleString() + ' / 収入: ¥' + totalIncome.toLocaleString() + ' (記録' + monthly.length + '件)'];
   // カテゴリ別集計
   lines.push('  《支出カテゴリ》');
   Object.keys(expCats)
@@ -22138,10 +22320,12 @@ function summarizeGoalVsReality() {
 function buildContextSummary(topic, opts) {
   opts = opts || {};
   var parts = [];
+  var ty = opts.targetYear != null ? opts.targetYear : undefined;
+  var tm = opts.targetMonth != null ? opts.targetMonth : undefined;
 
   if (topic === 'activity') {
     // 行動テーマ: 行動データをメインに詳細表示、目標は補助情報
-    var actS = summarizeActivities(true); // detailed=true
+    var actS = summarizeActivities(true, ty, tm); // detailed=true
     if (actS) parts.push(actS);
     // 目標は補助情報として簡潔に（あくまで参考）
     var goalS = summarizeGoals(opts.goalCategory);
@@ -22151,7 +22335,7 @@ function buildContextSummary(topic, opts) {
     if (gapS) parts.push(gapS);
   } else if (topic === 'money') {
     // お金テーマ: お金データをメインに詳細表示、目標は補助情報
-    var monS = summarizeMoney(true); // detailed=true
+    var monS = summarizeMoney(true, ty, tm); // detailed=true
     if (monS) parts.push(monS);
     // 目標は補助情報
     var goalS = summarizeGoals(opts.goalCategory);
@@ -22165,9 +22349,9 @@ function buildContextSummary(topic, opts) {
     if (goalS) parts.push(goalS);
     var gapS = summarizeGoalVsReality();
     if (gapS) parts.push(gapS);
-    var actS = summarizeActivities(true);
+    var actS = summarizeActivities(true, ty, tm);
     if (actS) parts.push(actS);
-    var monS = summarizeMoney(true);
+    var monS = summarizeMoney(true, ty, tm);
     if (monS) parts.push(monS);
     var jourS = summarizeJournal();
     if (jourS) parts.push(jourS);
@@ -22175,9 +22359,9 @@ function buildContextSummary(topic, opts) {
     if (weiS) parts.push(weiS);
   } else {
     // その他: 全データをバランスよく
-    var actS = summarizeActivities();
+    var actS = summarizeActivities(false, ty, tm);
     if (actS) parts.push(actS);
-    var monS = summarizeMoney();
+    var monS = summarizeMoney(false, ty, tm);
     if (monS) parts.push(monS);
     var goalS = summarizeGoals(opts.goalCategory);
     if (goalS) parts.push(goalS);
@@ -22202,13 +22386,117 @@ function buildContextSummary(topic, opts) {
 }
 window.buildContextSummary = buildContextSummary;
 
+// ========== AI チャット会話管理 ==========
+var aiChatConversation = []; // [{role:'user',text:''},{role:'ai',text:'',char:'',tone:''}]
+
+function addChatBubble(role, text, tone) {
+  var container = document.getElementById('aiChatMessages');
+  if (!container) return;
+  // ウェルカムメッセージを消す
+  var welcome = document.getElementById('aiChatWelcome');
+  if (welcome) welcome.style.display = 'none';
+
+  if (role === 'user') {
+    var bubble = document.createElement('div');
+    bubble.className = 'ai-chat-bubble user';
+    bubble.textContent = text;
+    container.appendChild(bubble);
+  } else {
+    var charMap = { harsh: 'マネージャー', normal: 'タクヤ先輩', gentle: 'ハナさん' };
+    var charName = charMap[tone] || 'タクヤ先輩';
+    var iconSrc = getAICharIconSrc(tone);
+    var fallbackEmojis = { harsh: '👔', normal: '😎', gentle: '🌸' };
+
+    var row = document.createElement('div');
+    row.className = 'ai-chat-ai-row';
+
+    var avatar = document.createElement('div');
+    avatar.className = 'ai-chat-ai-avatar';
+    if (iconSrc) {
+      avatar.innerHTML = '<img src="' + iconSrc + '" alt="' + charName + '">';
+    } else {
+      avatar.textContent = fallbackEmojis[tone] || '😎';
+      avatar.style.fontSize = '18px';
+      avatar.style.display = 'flex';
+      avatar.style.alignItems = 'center';
+      avatar.style.justifyContent = 'center';
+      avatar.style.background = '#f0f0f0';
+    }
+    row.appendChild(avatar);
+
+    var bubbleWrap = document.createElement('div');
+    var nameEl = document.createElement('div');
+    nameEl.className = 'ai-chat-ai-name';
+    nameEl.textContent = charName;
+    bubbleWrap.appendChild(nameEl);
+
+    var bubble = document.createElement('div');
+    bubble.className = 'ai-chat-bubble ai';
+    bubble.textContent = text;
+    bubbleWrap.appendChild(bubble);
+    row.appendChild(bubbleWrap);
+    container.appendChild(row);
+  }
+  scrollChatToBottom();
+}
+
+function showChatTyping() {
+  var container = document.getElementById('aiChatMessages');
+  if (!container) return;
+  var typing = document.createElement('div');
+  typing.className = 'ai-chat-typing';
+  typing.id = 'aiChatTypingIndicator';
+  typing.innerHTML = '<div class="ai-chat-typing-dot"></div><div class="ai-chat-typing-dot"></div><div class="ai-chat-typing-dot"></div>';
+  container.appendChild(typing);
+  scrollChatToBottom();
+}
+
+function hideChatTyping() {
+  var el = document.getElementById('aiChatTypingIndicator');
+  if (el) el.remove();
+}
+
+function scrollChatToBottom() {
+  var container = document.getElementById('aiChatContainer');
+  if (container) {
+    setTimeout(function() { container.scrollTop = container.scrollHeight; }, 50);
+  }
+}
+
+function startNewAIChat() {
+  aiChatConversation = [];
+  var container = document.getElementById('aiChatMessages');
+  if (container) {
+    container.innerHTML = '<div class="ai-chat-welcome" id="aiChatWelcome"><p>キャラクターとテーマを選んで、<br>何でも気軽に聞いてみよう！</p></div>';
+  }
+  var newBtn = document.getElementById('aiChatNewBtn');
+  if (newBtn) newBtn.style.display = 'none';
+  // 現在の会話を履歴に保存
+  saveCurrentChatToHistory();
+}
+window.startNewAIChat = startNewAIChat;
+
+// 「N月」検出ヘルパー（「先月」「今月」は除外）
+function detectSpecificMonth(rawText) {
+  var _now = new Date();
+  // 「先月」「今月」「来月」を含む場合はスキップ（別ロジックで処理）
+  // 「N月」パターンを検出
+  var monthMatch = rawText.match(/(\d{1,2})月/);
+  if (!monthMatch) return null;
+  var targetM = parseInt(monthMatch[1]);
+  if (targetM < 1 || targetM > 12) return null;
+  // 年を検出（例: 「2025年2月」）
+  var yearMatch = rawText.match(/(20\d{2})年/);
+  var targetY = yearMatch ? parseInt(yearMatch[1]) : _now.getFullYear();
+  // 年の指定がなく、指定月が未来なら去年と判断
+  if (!yearMatch && targetM > _now.getMonth() + 1) targetY--;
+  return { year: targetY, month: targetM - 1 }; // month は 0-indexed
+}
+
 async function sendAIConsult() {
   var input = document.getElementById('aiConsultInput');
   var text = (input ? input.value : '').trim();
-  if (!text) {
-    alert('相談内容を入力してください');
-    return;
-  }
+  if (!text) return;
 
   // プラン制限チェック
   if (window.DaycePlan) {
@@ -22220,13 +22508,17 @@ async function sendAIConsult() {
   }
 
   var sendBtn = document.getElementById('aiConsultSendBtn');
-  var loading = document.getElementById('aiConsultLoading');
-  var answer = document.getElementById('aiConsultAnswer');
 
-  // UI: ローディング表示
+  // ユーザーメッセージをチャットに追加
+  addChatBubble('user', text);
+  aiChatConversation.push({ role: 'user', text: text });
+  if (input) { input.value = ''; input.style.height = 'auto'; }
+
+  // UI
   if (sendBtn) sendBtn.disabled = true;
-  if (loading) loading.style.display = 'flex';
-  if (answer) answer.style.display = 'none';
+  showChatTyping();
+  var newBtn = document.getElementById('aiChatNewBtn');
+  if (newBtn) newBtn.style.display = 'none';
 
   try {
     var tone = aiConsultTone || 'normal';
@@ -22236,14 +22528,25 @@ async function sendAIConsult() {
     var topicLabels = { activity: '行動・習慣', money: 'お金・家計', goals: '目標・計画', other: '一般的な相談' };
     var topicContext = '【相談テーマ】' + (topicLabels[topic] || 'その他') + '\n';
 
+    // 「N月」検出 → buildContextSummary に渡す
+    var rawText = text.toLowerCase();
+    var detectedMonth = null;
+    if (rawText.indexOf('先月') === -1 && rawText.indexOf('今月') === -1) {
+      detectedMonth = detectSpecificMonth(rawText);
+    }
+
+    var contextOpts = {};
+    if (detectedMonth) {
+      contextOpts.targetYear = detectedMonth.year;
+      contextOpts.targetMonth = detectedMonth.month;
+    }
+
     // 過去データのコンテキストを生成
-    var dataContext = buildContextSummary(topic);
+    var dataContext = buildContextSummary(topic, contextOpts);
 
     // ユーザーの質問に含まれるキーワードで関連記録を追加検索
     var keywordContext = '';
     try {
-      // 質問テキストから助詞・一般語を除いてキーワード抽出
-      // 日本語は助詞・接続詞で分割してキーワードを取り出す
       var stopWords = ['いくら','どれくらい','今月','先月','今週','何回','について','どうし','ほしい','ください','つかった','使った','いくつ','どのくらい','教えて','知りたい','ある','ない','する','した','している','されて','くらい','ぐらい','かかった','かかってる'];
       var queryWords = text
         .replace(/[？?！!。、「」『』（）\(\)\s]/g, ' ')
@@ -22253,7 +22556,6 @@ async function sendAIConsult() {
         .filter(function(w) {
           return w.length >= 2 && stopWords.indexOf(w) === -1;
         });
-      // stopWordsが結合したまま残るケース対策（例:「今月ラーメン」→「ラーメン」）
       queryWords = queryWords.map(function(w) {
         var cleaned = w;
         stopWords.forEach(function(sw) {
@@ -22268,10 +22570,8 @@ async function sendAIConsult() {
         return cleaned;
       }).filter(function(w) { return w.length >= 2; });
 
-      // カタカナ↔ひらがな変換（表記揺れ対応）
       var toHiragana = function(s) { return s.replace(/[\u30A1-\u30F6]/g, function(c) { return String.fromCharCode(c.charCodeAt(0) - 0x60); }); };
       var toKatakana = function(s) { return s.replace(/[\u3041-\u3096]/g, function(c) { return String.fromCharCode(c.charCodeAt(0) + 0x60); }); };
-      // キーワードごとに「ひらがな版」「カタカナ版」両方を生成
       var queryVariants = [];
       queryWords.forEach(function(w) {
         var lo = w.toLowerCase();
@@ -22284,7 +22584,6 @@ async function sendAIConsult() {
       });
 
       if (queryVariants.length > 0) {
-        // テキストがいずれかのバリアントにマッチするか判定
         var matchesAny = function(target) {
           var t = target.toLowerCase();
           var tHira = toHiragana(t);
@@ -22293,12 +22592,10 @@ async function sendAIConsult() {
           });
         };
 
-        // 期間フィルタ: ユーザーの質問から期間を検出
+        // 期間フィルタ
         var periodFilter = null;
         var periodLabel = '';
         var _now = new Date();
-        var rawText = text.toLowerCase();
-        var rawTextHira = toHiragana(rawText);
         if (rawText.indexOf('先月') !== -1) {
           var _pm = new Date(_now.getFullYear(), _now.getMonth() - 1, 1);
           var _pmEnd = new Date(_now.getFullYear(), _now.getMonth(), 0, 23, 59, 59);
@@ -22309,10 +22606,16 @@ async function sendAIConsult() {
           var _weekStart = new Date(_now.getFullYear(), _now.getMonth(), _now.getDate() - _dow);
           periodFilter = function(ts) { return new Date(ts) >= _weekStart; };
           periodLabel = '今週';
-        } else if (rawText.indexOf('今月') !== -1 || rawText.indexOf('今月') !== -1) {
+        } else if (rawText.indexOf('今月') !== -1) {
           var _monthStart = new Date(_now.getFullYear(), _now.getMonth(), 1);
           periodFilter = function(ts) { return new Date(ts) >= _monthStart; };
           periodLabel = '今月';
+        } else if (detectedMonth) {
+          // 「N月」が検出された場合
+          var _dmStart = new Date(detectedMonth.year, detectedMonth.month, 1);
+          var _dmEnd = new Date(detectedMonth.year, detectedMonth.month + 1, 0, 23, 59, 59);
+          periodFilter = function(ts) { var d = new Date(ts); return d >= _dmStart && d <= _dmEnd; };
+          periodLabel = (detectedMonth.month + 1) + '月';
         }
         // デフォルト: 相談テーマがmoney/activityなら今月に絞る
         if (!periodFilter && (topic === 'money' || topic === 'activity')) {
@@ -22349,7 +22652,7 @@ async function sendAIConsult() {
           keywordContext += '→ 合計: ¥' + totalMatched.toLocaleString() + '（' + matchedMoney.length + '件）\n';
         }
 
-        // 行動記録からキーワードマッチ（期間フィルタ付き）
+        // 行動記録からキーワードマッチ
         var allActs = [];
         try { allActs = JSON.parse(localStorage.getItem('activities') || '[]'); } catch(e) {}
         var matchedActs = allActs.filter(function(a) {
@@ -22375,13 +22678,31 @@ async function sendAIConsult() {
       }
     } catch(e) { /* ignore */ }
 
-    // keywordContextが存在する場合、AIにデータの優先度を伝える
     if (keywordContext) {
       keywordContext += '★上記のキーワード検索結果は正確な記録データです。件数・金額を回答に必ず反映してください。\n';
     }
 
-    // プロンプトルール・キャラクター口調はWorker側で注入（ソースから隠蔽）
-    var textToSend = topicContext + dataContext + keywordContext + '【ユーザーの相談】\n' + text;
+    // 会話履歴をコンテキストに追加（直前のやりとりを最大4往復分）
+    var historyContext = '';
+    if (aiChatConversation.length > 1) {
+      var charMap = { harsh: 'マネージャー', normal: 'タクヤ先輩', gentle: 'ハナさん' };
+      var prevMessages = aiChatConversation.slice(0, -1); // 最新のユーザーメッセージは除く
+      var startIdx = Math.max(0, prevMessages.length - 8); // 最大8メッセージ（4往復）
+      var historyParts = [];
+      for (var hi = startIdx; hi < prevMessages.length; hi++) {
+        var msg = prevMessages[hi];
+        if (msg.role === 'user') {
+          historyParts.push('ユーザー: ' + msg.text);
+        } else {
+          historyParts.push((charMap[msg.tone] || 'AI') + ': ' + msg.text);
+        }
+      }
+      if (historyParts.length > 0) {
+        historyContext = '【会話履歴（これまでのやりとり）】\n' + historyParts.join('\n') + '\n\n';
+      }
+    }
+
+    var textToSend = topicContext + dataContext + keywordContext + historyContext + '【ユーザーの相談】\n' + text;
 
     var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://api.dayce.app';
     var endpoint = BACKEND_URL + '/api/analyze';
@@ -22398,6 +22719,9 @@ async function sendAIConsult() {
       if (window.DaycePlan && window.DaycePlan.showUpgradeModal) {
         window.DaycePlan.showUpgradeModal({ type: errData.aiType || 'consult', plan: errData.plan || 'free', current: errData.current || 0, limit: errData.limit || 0, requireAuth: !!errData.requireAuth });
       } else { alert(errData.error || '利用制限に達しました'); }
+      hideChatTyping();
+      // エラー時はユーザーメッセージの会話履歴を戻す
+      aiChatConversation.pop();
       return;
     }
     if (!res.ok) throw new Error('API error: ' + res.status);
@@ -22411,64 +22735,59 @@ async function sendAIConsult() {
     }
     if (!responseText) responseText = 'すみません、回答を取得できませんでした。';
 
-    // キャラ情報
-    var charMap = {
-      harsh:  { name: 'マネージャー' },
-      normal: { name: 'タクヤ先輩' },
-      gentle: { name: 'ハナさん' }
-    };
-    var charInfo = charMap[tone] || charMap['normal'];
+    hideChatTyping();
 
-    // 回答表示（アイコン付き）
-    var iconEl = document.getElementById('aiConsultAnswerIcon');
-    var nameEl = document.getElementById('aiConsultAnswerName');
-    var textEl = document.getElementById('aiConsultAnswerText');
-    if (iconEl) {
-      var iconSrc = getAICharIconSrc(tone);
-      if (iconSrc) {
-        iconEl.innerHTML = '<img src="' + iconSrc + '" alt="' + charInfo.name + '">';
-      } else {
-        var fallbackEmojis = { harsh: '👔', normal: '😎', gentle: '🌸' };
-        iconEl.textContent = fallbackEmojis[tone] || '😎';
-        iconEl.style.fontSize = '24px';
-      }
-    }
-    if (nameEl) nameEl.textContent = charInfo.name;
-    if (textEl) textEl.textContent = responseText;
-    if (answer) answer.style.display = 'block';
+    // AIメッセージをチャットに追加
+    addChatBubble('ai', responseText, tone);
+    aiChatConversation.push({ role: 'ai', text: responseText, tone: tone });
+
+    // 新しい会話ボタンを表示
+    if (newBtn) newBtn.style.display = 'block';
 
     // 使用回数カウント
     if (window.DaycePlan) { window.DaycePlan.incrementUsage('consult'); window.DaycePlan.renderPlanBadges(); }
 
-    // 履歴に保存
-    saveConsultHistory(text, responseText, charInfo.name, tone);
-    renderConsultHistory();
-
   } catch(e) {
     console.error('AI consult error:', e);
-    alert('AI相談でエラーが発生しました: ' + e.message);
+    hideChatTyping();
+    addChatBubble('ai', 'エラーが発生しました。もう一度お試しください。', tone || 'normal');
+    aiChatConversation.pop(); // エラー時はユーザーメッセージを戻す
   } finally {
     if (sendBtn) sendBtn.disabled = false;
-    if (loading) loading.style.display = 'none';
   }
 }
 window.sendAIConsult = sendAIConsult;
 
 // ========== AI相談履歴 ==========
-function saveConsultHistory(question, answer, charName, tone) {
+function saveCurrentChatToHistory() {
+  if (aiChatConversation.length < 2) return; // 最低1往復ないと保存しない
   try {
     var history = JSON.parse(localStorage.getItem('aiConsultHistory') || '[]');
+    var firstQ = '';
+    var firstA = '';
+    var charName = '';
+    var chatTone = '';
+    for (var i = 0; i < aiChatConversation.length; i++) {
+      if (!firstQ && aiChatConversation[i].role === 'user') firstQ = aiChatConversation[i].text;
+      if (!firstA && aiChatConversation[i].role === 'ai') {
+        firstA = aiChatConversation[i].text;
+        chatTone = aiChatConversation[i].tone || 'normal';
+        var cm = { harsh: 'マネージャー', normal: 'タクヤ先輩', gentle: 'ハナさん' };
+        charName = cm[chatTone] || 'タクヤ先輩';
+      }
+    }
     history.unshift({
-      q: question,
-      a: answer,
+      q: firstQ,
+      a: firstA,
+      messages: aiChatConversation.slice(),
       char: charName,
-      tone: tone,
+      tone: chatTone,
       date: new Date().toISOString()
     });
-    // 最大5件保持
     if (history.length > 5) history = history.slice(0, 5);
     localStorage.setItem('aiConsultHistory', JSON.stringify(history));
   } catch(e) { console.error('履歴保存エラー:', e); }
+  renderConsultHistory();
 }
 
 function renderConsultHistory() {
@@ -22489,11 +22808,12 @@ function renderConsultHistory() {
   history.forEach(function(item, idx) {
     var d = new Date(item.date);
     var dateStr = (d.getMonth()+1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    var msgCount = item.messages ? Math.floor(item.messages.length / 2) : 1;
     var shortA = item.a || '';
     html += '<div class="ai-history-item">' +
       '<div class="ai-history-header">' +
-        '<span class="ai-history-char">' + (item.char || '') + '</span>' +
-        '<span class="ai-history-date">' + dateStr + '</span>' +
+        '<span class="ai-history-char">' + escapeHtml(item.char || '') + '</span>' +
+        '<span class="ai-history-date">' + dateStr + (msgCount > 1 ? ' (' + msgCount + '往復)' : '') + '</span>' +
       '</div>' +
       '<div class="ai-history-q">Q: ' + escapeHtml(item.q || '') + '</div>' +
       '<div class="ai-history-a" id="histA' + idx + '">' + escapeHtml(shortA) + '</div>' +
@@ -22516,8 +22836,22 @@ function escapeHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ページ読み込み時に履歴を表示
-setTimeout(function(){ renderConsultHistory(); }, 600);
+// チャット入力欄の初期化（Enter送信 + 自動リサイズ）
+function initAIChatInput() {
+  var input = document.getElementById('aiConsultInput');
+  if (!input) return;
+  input.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+  });
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendAIConsult();
+    }
+  });
+}
+setTimeout(function(){ renderConsultHistory(); initAIChatInput(); }, 600);
 
 // CSVダウンロードハンドラー（有料会員チェック付き）
 function handleCSVDownload(type) {
