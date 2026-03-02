@@ -1,5 +1,5 @@
 # Dayce 開発セッションログ
-最終更新: 2026-02-28 セッション12
+最終更新: 2026-03-02 セッション13
 
 ## 引き継ぎ用サマリー
 次のセッションでは、このファイルとプロジェクト全体の状況を読み込んで作業を再開してください。
@@ -86,6 +86,13 @@ manifest.json   sw.js           takumi_senpai.png voice-input-extra.js
 - #35 目標カテゴリを行動カテゴリと統一（3ファイル、activityCategoriesから動的生成）
 - SNS投稿コンテンツ作成（X & Instagram向け、パターンB採用）
 
+### セッション13 (2026-03-02) ← 最新
+- #58 AI相談の会話履歴改善（全ターン保存＋チャットバブル表示）
+- #59 AI相談にチャット会話中の音声入力機能追加（Web Speech API）
+- #60 AI相談の返答を短文チャット形式に変更（Worker側プロンプト修正: 400-600文字→80-150文字）
+- SNSデモ動画HTMLファイル5本作成（money-voice, goal-ai, ai-consult, today-tasks, mood-report）
+- SWキャッシュ v7→v8
+
 ### セッション8 (2026-02-24〜25)
 - #36〜#46 各種バグ修正・改善（前コンテキストで完了）
 - #47 目標AIコーチ「もっと話してから決める」のキャラ口調バグ修正
@@ -119,6 +126,58 @@ manifest.json   sw.js           takumi_senpai.png voice-input-extra.js
 ### セッション9 (2026-02-25)
 - #51 コミュニティサイトにジャーナル有用性記事追加（BUILTIN_ARTICLES機能 + Unsplash画像4枚）
 - X投稿テキスト作成（ジャーナルの有用性訴求）
+
+---
+
+## セッション13 詳細 (2026-03-02)
+
+### #58 AI相談の会話履歴改善
+**問題**: AI相談の履歴が初回の質問と回答しか保存されず、複数ターン会話の内容が失われていた
+**修正内容**:
+- `saveConsultHistory()` を全面書き換え: messages配列全体を保存、セッションIDで同一会話の更新に対応
+- `renderConsultHistory()` を書き換え: 展開式のチャットバブル表示（`.ai-history-thread`）、往復数バッジ
+- `_aiConsultSessionId` 変数追加
+- 後方互換: 旧形式（q/aフィールド）のデータも正しく表示
+**ファイル**: index.html
+
+### #59 AI相談に音声入力機能追加
+**機能**: AI相談のチャットモーダルと初期画面の両方に🎤音声入力ボタンを追加
+**実装**:
+- チャットモーダル: `toggleAICVoice()` / `stopAICVoice()` — 送信欄左に🎤ボタン、録音中パルスアニメーション
+- 初期画面: `toggleAIConsultInitVoice()` / `stopAIConsultInitVoice()` — テキストエリア上に「🎤 音声入力」ボタン
+- Web Speech API（SpeechRecognition）、日本語対応、中間結果リアルタイム表示
+**ファイル**: index.html
+
+### #60 AI相談の返答を短文チャット形式に変更
+**問題**: AIの返答が400〜600文字の長文で、チャット形式のUIに合わない
+**根本原因**: Worker側のsystem promptで「400〜600文字」と指定していた
+**修正内容**:
+- **Worker**: consultタイプのsystem promptを全面書き換え
+  - 旧: 「400〜600文字を目安に、しっかり答える」
+  - 新: 「1回の返答は2〜3文（80〜150文字）を目安に短く返す。長文禁止。」
+  - 会話継続指示: 質問や話題の投げかけで会話を続ける
+  - 箇条書き・見出し・番号リスト禁止、話し言葉のみ
+- **クライアント**: 追い回しの会話ターンに「短く返して、前の回答を繰り返さないで」を追加
+**ファイル**: worker.js, index.html
+
+### SNSデモ動画HTMLファイル作成（5本）
+**概要**: SNS投稿用のアニメーションデモ動画をHTMLで作成
+| ファイル | 内容 | シーン数 |
+|---------|------|---------|
+| demo-money-voice.html | お金の音声記録 | 4 |
+| demo-goal-ai.html | 目標設定＋AIタスク分解 | 4 |
+| demo-ai-consult.html | AI相談チャット | 4 |
+| demo-today-tasks.html | 今日のタスク管理 | 4 |
+| demo-mood-report.html | 月間気分レポート | 4 |
+（既存: demo-quick-record.html — 行動のクイック記録）
+
+### デプロイ状況
+| ファイル | 状態 |
+|---------|------|
+| index.html | github_upload_v2にコピー済み → **GitHubアップロード待ち** |
+| sw.js (v8) | github_upload_v2にコピー済み → **GitHubアップロード待ち** |
+| worker.js | ローカル修正済み → **⚠️ wrangler deploy 必要** |
+| demo-*.html (6本) | github_upload_v2にコピー済み → **GitHubアップロード待ち** |
 
 ---
 
@@ -425,30 +484,32 @@ manifest.json   sw.js           takumi_senpai.png voice-input-extra.js
 
 | ファイル | Worker | GitHub | github_upload_v2 |
 |---------|--------|--------|------------------|
-| worker.js | ✅ デプロイ済み | — | — |
-| index.html | — | ✅ アップロード済み | ✅ 最新（#52〜#53反映） |
-| cloud-sync.js | — | ✅ アップロード済み | ✅ 最新（#52,#54〜#56反映） |
-| goal-ai-breakdown.js | — | ✅ アップロード済み | ✅ 最新（#47反映） |
-| goals-v2.js | — | ✅ アップロード済み | ✅ 最新（#57反映） |
-| sw.js | — | ✅ アップロード済み | ✅ v5 |
-| community.html | — | ✅ アップロード済み | ✅ 最新（#51,#38反映） |
-| SESSION_LOG.md | — | ⏳ アップロード待ち | ✅ セッション12反映 |
-| sns_content.md | — | ⏳ アップロード待ち | ✅ 14本投稿追加 |
+| worker.js | ⚠️ **要デプロイ**（#60 チャット短文化） | — | — |
+| index.html | — | ⏳ アップロード待ち | ✅ 最新（#58〜#60反映） |
+| sw.js | — | ⏳ アップロード待ち | ✅ v8 |
+| demo-*.html (6本) | — | ⏳ アップロード待ち | ✅ コピー済み |
+| cloud-sync.js | — | ✅ アップロード済み | ✅ 最新 |
+| goal-ai-breakdown.js | — | ✅ アップロード済み | ✅ 最新 |
+| goals-v2.js | — | ✅ アップロード済み | ✅ 最新 |
+| community.html | — | ✅ アップロード済み | ✅ 最新 |
+| SESSION_LOG.md | — | ⏳ アップロード待ち | ✅ セッション13反映 |
+
+### 🔴 次にやること（2ステップ）
+1. **Worker デプロイ** (`wrangler deploy`) — これをやらないとAI相談の返答が長文のまま
+2. **GitHubアップロード** — index.html, sw.js, demo-*.html (6本), SESSION_LOG.md
 
 ### X広告・マーケティング状況
-- **X広告キャンペーン**: 「Dayce デモ動画 - 2月テスト」作成済み、プレミアム認証待ち
-- **Xプレミアム**: 加入済み（¥459/月）、認証バッジ審査中（48時間〜数日）
-- **認証バッジ付与後**: キャンペーンが自動的に配信開始される
+- **X広告キャンペーン**: 「Dayce デモ動画 - 2月テスト」作成済み
+- **Xプレミアム**: 加入済み（¥459/月）
 - **投稿カレンダー**: 3/1〜3/14の14本分の投稿文作成済み（sns_content.md）
 - **広告期間**: 2/28〜3/14（¥500/日、総額¥3,500）
 
 ### 残タスク・今後の課題
-- **🔴 要確認**: Xプレミアム認証バッジの付与状況（48時間〜数日後）→ 付与されたらX広告が自動配信開始
 - **📋 3/1〜**: X投稿カレンダーに沿って毎日投稿開始
 - AI相談の回答安定性は改善されたが、GPTの性質上100%安定ではない
 - 今後の記事は BUILTIN_ARTICLES 配列に追加するだけで掲載可能
 - アクセス解析: Cloudflareダッシュボードで基本データ確認可、Google Analytics導入は未実施
-- 技術的な残タスクは現時点でなし
+- SNSデモ動画6本をMP4に変換して投稿に使用可能
 
 ---
 
@@ -460,7 +521,7 @@ manifest.json   sw.js           takumi_senpai.png voice-input-extra.js
 ## 注意事項
 - index.html は約22000行超の巨大ファイル（PWA全機能が1ファイルに集約）
 - Chrome拡張（Claude in Chrome）は接続が不安定になることがある
-- PWAのService Worker（sw.js）のキャッシュが効いている場合、更新が反映されないことがある → CACHE_NAMEのバージョンをバンプすること（現在v5）
+- PWAのService Worker（sw.js）のキャッシュが効いている場合、更新が反映されないことがある → CACHE_NAMEのバージョンをバンプすること（現在v8）
 - **構造的リファクタリング前には必ず現在のファイルをバックアップすること**
 - `copyToTodayAs`(goals-v2.js)が昨日の日付に書き込むのは正しい動作（バグではない）
 - toISOString()はUTCを返すので日本時間と日付がズレる。日付文字列生成にはgetFullYear/getMonth/getDateを使うこと
