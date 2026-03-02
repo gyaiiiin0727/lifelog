@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dayce Demo - 今日のタスク</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;overflow:hidden;background:#000;}
+
+.demo-bg{width:100vw;height:100vh;background:linear-gradient(135deg,#0a0a1a 0%,#1a1a3e 40%,#0d1b2a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding-bottom:4vh;}
+.bg-blob{position:absolute;border-radius:50%;filter:blur(100px);opacity:0.12;pointer-events:none;animation:blobFloat 20s ease-in-out infinite;}
+.bg-blob:nth-child(1){width:350px;height:350px;background:#2196F3;top:5%;left:-8%;}
+.bg-blob:nth-child(2){width:280px;height:280px;background:#1976D2;bottom:15%;right:-10%;animation-delay:-7s;}
+@keyframes blobFloat{0%,100%{transform:translate(0,0);}33%{transform:translate(30px,-25px);}66%{transform:translate(-20px,30px);}}
+
+.phone-frame{width:320px;height:640px;background:#000;border-radius:44px;padding:10px;position:relative;box-shadow:0 0 0 2px #333,0 20px 80px rgba(0,0,0,0.5);}
+.phone-screen{width:100%;height:100%;background:#fff;border-radius:36px;overflow:hidden;position:relative;}
+.phone-notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:90px;height:24px;background:#000;border-radius:20px;z-index:100;}
+.phone-status{position:absolute;top:0;left:0;right:0;height:48px;z-index:90;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 4px;font-size:11px;font-weight:600;color:#111;}
+
+.scene{position:absolute;top:0;left:0;right:0;bottom:0;opacity:0;transform:translateX(30px);transition:all 0.5s cubic-bezier(0.4,0,0.2,1);pointer-events:none;padding:54px 16px 16px;display:flex;flex-direction:column;}
+.scene.active{opacity:1;transform:translateX(0);pointer-events:auto;}
+
+.scene-progress{display:flex;gap:6px;justify-content:center;margin-top:20px;z-index:2;}
+.scene-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);transition:all 0.3s;}
+.scene-dot.active{background:#2196F3;width:20px;border-radius:3px;}
+
+.step{opacity:0;transform:translateY(8px);transition:all 0.4s cubic-bezier(0.4,0,0.2,1);}
+.step.in{opacity:1;transform:translateY(0);}
+
+.app-header{display:flex;align-items:center;gap:2px;padding-bottom:8px;}
+.app-header .logo{width:28px;height:28px;background:#111;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;}
+.app-header .app-name{font-size:18px;font-weight:800;color:#111;letter-spacing:-0.5px;}
+
+/* Date header */
+.date-header{font-size:14px;font-weight:700;color:#111;margin:4px 0 10px;display:flex;align-items:center;gap:6px;}
+.date-badge{background:#2196F3;color:#fff;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:600;}
+
+/* Task section */
+.task-section{margin-bottom:12px;}
+.task-section-title{font-size:12px;font-weight:700;color:#888;margin-bottom:6px;display:flex;align-items:center;gap:4px;}
+.task-section-title .badge{background:#e53935;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;}
+.task-section-title .badge.want{background:#FF9800;}
+
+.task-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f8f9fa;border-radius:12px;margin-bottom:6px;transition:all 0.3s;}
+.task-item.checked{background:#e8f5e9;}
+.task-check{width:22px;height:22px;border:2px solid #d1d5db;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.3s;}
+.task-check.done{background:#4caf50;border-color:#4caf50;color:#fff;font-size:12px;}
+.task-text{font-size:13px;color:#333;line-height:1.3;}
+.task-text .from{font-size:10px;color:#2196F3;display:block;}
+.task-item.checked .task-text{text-decoration:line-through;color:#999;}
+
+/* Dashboard mini */
+.dash-mini{display:flex;gap:8px;margin:12px 0;}
+.dash-mini-card{flex:1;background:#f8f9fa;border-radius:10px;padding:10px 6px;text-align:center;}
+.dash-mini-card .icon{font-size:18px;}
+.dash-mini-card .val{font-size:16px;font-weight:800;color:#111;margin-top:2px;}
+.dash-mini-card .label{font-size:9px;color:#888;}
+
+/* Completion */
+.completion{text-align:center;margin:20px 0;}
+.completion-circle{width:100px;height:100px;border-radius:50%;background:conic-gradient(#4caf50 0%,#e0e0e0 0%);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;transition:background 1s;}
+.completion-inner{width:80px;height:80px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.completion-pct{font-size:24px;font-weight:800;color:#111;}
+.completion-label{font-size:9px;color:#888;}
+.completion-msg{font-size:13px;font-weight:600;color:#4caf50;}
+
+/* End card */
+.end-card{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;background:linear-gradient(180deg,#fff 0%,#e8f4fd 100%);}
+.end-logo{font-size:48px;font-weight:900;color:#111;margin-bottom:4px;letter-spacing:-2px;}
+.end-logo span{color:#2196F3;}
+.end-tagline{font-size:13px;color:#666;margin-bottom:16px;}
+.end-feature{display:inline-block;background:#e8f4fd;color:#2196F3;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600;margin:2px;}
+.end-cta{margin-top:20px;background:#2196F3;color:#fff;padding:10px 28px;border-radius:12px;font-size:14px;font-weight:700;}
+.end-url{margin-top:8px;font-size:12px;color:#999;letter-spacing:1px;}
+</style>
+</head>
+<body>
+<div class="demo-bg">
+  <div class="bg-blob"></div>
+  <div class="bg-blob"></div>
+
+  <div class="phone-frame">
+    <div class="phone-screen">
+      <div class="phone-notch"></div>
+      <div class="phone-status"><span>7:00</span><span>📶 🔋</span></div>
+
+      <!-- Scene 1: ホーム画面 + 今日のタスク -->
+      <div class="scene active" id="s1">
+        <div class="app-header">
+          <div class="logo">D</div><span class="app-name">ayce</span>
+        </div>
+        <div class="date-header step" id="s1a">📅 3月2日(日) <span class="date-badge">今日</span></div>
+        <div class="dash-mini step" id="s1b">
+          <div class="dash-mini-card"><div class="icon">📋</div><div class="val">5</div><div class="label">今日のタスク</div></div>
+          <div class="dash-mini-card"><div class="icon">✅</div><div class="val">0</div><div class="label">完了</div></div>
+          <div class="dash-mini-card"><div class="icon">🎯</div><div class="val">45%</div><div class="label">月間進捗</div></div>
+        </div>
+        <div class="task-section">
+          <div class="task-section-title step" id="s1c">🔴 MUST（やるべきこと） <span class="badge">3</span></div>
+          <div class="task-item step" id="t1"><div class="task-check" id="tc1"></div><div class="task-text">企画書の修正を提出<span class="from">🎯 仕事の目標より</span></div></div>
+          <div class="task-item step" id="t2"><div class="task-check" id="tc2"></div><div class="task-text">30分ランニング<span class="from">🎯 運動目標より</span></div></div>
+          <div class="task-item step" id="t3"><div class="task-check" id="tc3"></div><div class="task-text">家賃の振込み</div></div>
+        </div>
+        <div class="task-section">
+          <div class="task-section-title step" id="s1d">🟡 WANT（やりたいこと） <span class="badge want">2</span></div>
+          <div class="task-item step" id="t4"><div class="task-check" id="tc4"></div><div class="task-text">新しいカフェに行く</div></div>
+          <div class="task-item step" id="t5"><div class="task-check" id="tc5"></div><div class="task-text">読書30分</div></div>
+        </div>
+      </div>
+
+      <!-- Scene 2: タスクをチェックしていく -->
+      <div class="scene" id="s2">
+        <div class="app-header">
+          <div class="logo">D</div><span class="app-name">ayce</span>
+        </div>
+        <div class="date-header">📅 3月2日(日) <span class="date-badge">今日</span></div>
+        <div class="task-section">
+          <div class="task-section-title">🔴 MUST <span class="badge">3</span></div>
+          <div class="task-item" id="t2a"><div class="task-check" id="tc2a"></div><div class="task-text" id="tt2a">企画書の修正を提出</div></div>
+          <div class="task-item" id="t2b"><div class="task-check" id="tc2b"></div><div class="task-text" id="tt2b">30分ランニング</div></div>
+          <div class="task-item" id="t2c"><div class="task-check" id="tc2c"></div><div class="task-text" id="tt2c">家賃の振込み</div></div>
+        </div>
+        <div class="task-section">
+          <div class="task-section-title">🟡 WANT <span class="badge want">2</span></div>
+          <div class="task-item" id="t2d"><div class="task-check" id="tc2d"></div><div class="task-text" id="tt2d">新しいカフェに行く</div></div>
+          <div class="task-item" id="t2e"><div class="task-check" id="tc2e"></div><div class="task-text" id="tt2e">読書30分</div></div>
+        </div>
+      </div>
+
+      <!-- Scene 3: 完了画面 -->
+      <div class="scene" id="s3">
+        <div class="app-header">
+          <div class="logo">D</div><span class="app-name">ayce</span>
+        </div>
+        <div class="completion step" id="s3a">
+          <div class="completion-circle" id="compCircle">
+            <div class="completion-inner">
+              <div class="completion-pct" id="compPct">0%</div>
+              <div class="completion-label">完了率</div>
+            </div>
+          </div>
+          <div class="completion-msg" id="compMsg"></div>
+        </div>
+        <div class="task-section">
+          <div class="task-item checked step" id="s3t1"><div class="task-check done">✓</div><div class="task-text" style="text-decoration:line-through;color:#999;">企画書の修正を提出</div></div>
+          <div class="task-item checked step" id="s3t2"><div class="task-check done">✓</div><div class="task-text" style="text-decoration:line-through;color:#999;">30分ランニング</div></div>
+          <div class="task-item checked step" id="s3t3"><div class="task-check done">✓</div><div class="task-text" style="text-decoration:line-through;color:#999;">家賃の振込み</div></div>
+          <div class="task-item checked step" id="s3t4"><div class="task-check done">✓</div><div class="task-text" style="text-decoration:line-through;color:#999;">新しいカフェに行く</div></div>
+          <div class="task-item step" id="s3t5"><div class="task-check"></div><div class="task-text">読書30分</div></div>
+        </div>
+      </div>
+
+      <!-- Scene 4: End card -->
+      <div class="scene" id="s4">
+        <div class="end-card">
+          <div class="end-logo"><span>D</span>ayce</div>
+          <div class="end-tagline">毎日のタスクを見える化</div>
+          <div>
+            <span class="end-feature step" id="ef1">📋 MUST / WANT分類</span>
+            <span class="end-feature step" id="ef2">🎯 目標から自動生成</span>
+            <span class="end-feature step" id="ef3">✅ ワンタップで完了</span>
+          </div>
+          <div class="end-cta step" id="ef4">無料ではじめる →</div>
+          <div class="end-url step" id="ef5">dayce.app</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="scene-progress" id="dots"></div>
+</div>
+
+<script>
+var scenes=[{id:'s1',dur:4500},{id:'s2',dur:5500},{id:'s3',dur:4500},{id:'s4',dur:4000}];
+var cur=0;
+var dotsEl=document.getElementById('dots');
+scenes.forEach(function(){var d=document.createElement('div');d.className='scene-dot';dotsEl.appendChild(d);});
+
+function stepIn(id,delay){setTimeout(function(){var el=document.getElementById(id);if(el)el.classList.add('in');},delay);}
+function stepReset(id){var el=document.getElementById(id);if(el)el.classList.remove('in');}
+
+function checkTask(checkId, itemId, textId, delay){
+  setTimeout(function(){
+    var c=document.getElementById(checkId);
+    var item=document.getElementById(itemId);
+    var txt=document.getElementById(textId);
+    if(c){c.classList.add('done');c.textContent='✓';}
+    if(item) item.classList.add('checked');
+    if(txt){txt.style.textDecoration='line-through';txt.style.color='#999';}
+  },delay);
+}
+
+function showScene(idx){
+  scenes.forEach(function(s,i){document.getElementById(s.id).className='scene'+(i===idx?' active':'');});
+  dotsEl.querySelectorAll('.scene-dot').forEach(function(d,i){d.className='scene-dot'+(i===idx?' active':'');});
+  if(idx===0) animS1();
+  if(idx===1) animS2();
+  if(idx===2) animS3();
+  if(idx===3) animS4();
+}
+
+function animS1(){
+  ['s1a','s1b','s1c','s1d','t1','t2','t3','t4','t5'].forEach(stepReset);
+  stepIn('s1a',200); stepIn('s1b',400);
+  stepIn('s1c',700);
+  stepIn('t1',900); stepIn('t2',1050); stepIn('t3',1200);
+  stepIn('s1d',1500);
+  stepIn('t4',1700); stepIn('t5',1850);
+}
+
+function animS2(){
+  // Reset checks
+  ['tc2a','tc2b','tc2c','tc2d','tc2e'].forEach(function(id){
+    var el=document.getElementById(id);if(el){el.classList.remove('done');el.textContent='';}
+  });
+  ['t2a','t2b','t2c','t2d','t2e'].forEach(function(id){
+    var el=document.getElementById(id);if(el) el.classList.remove('checked');
+  });
+  ['tt2a','tt2b','tt2c','tt2d','tt2e'].forEach(function(id){
+    var el=document.getElementById(id);if(el){el.style.textDecoration='none';el.style.color='#333';}
+  });
+
+  checkTask('tc2a','t2a','tt2a',800);
+  checkTask('tc2b','t2b','tt2b',1800);
+  checkTask('tc2c','t2c','tt2c',2800);
+  checkTask('tc2d','t2d','tt2d',3800);
+}
+
+function animS3(){
+  ['s3a','s3t1','s3t2','s3t3','s3t4','s3t5'].forEach(stepReset);
+  stepIn('s3a',300);
+  stepIn('s3t1',600); stepIn('s3t2',750); stepIn('s3t3',900); stepIn('s3t4',1050); stepIn('s3t5',1200);
+
+  var circle=document.getElementById('compCircle');
+  var pct=document.getElementById('compPct');
+  var msg=document.getElementById('compMsg');
+
+  // Animate percentage
+  var target=80;
+  var current=0;
+  var timer=setInterval(function(){
+    current+=2;
+    if(current>target){current=target;clearInterval(timer);}
+    pct.textContent=current+'%';
+    circle.style.background='conic-gradient(#4caf50 '+current+'%, #e0e0e0 '+current+'%)';
+  },30);
+
+  setTimeout(function(){ msg.textContent='🎉 今日も頑張ったね！あと1つ！'; },2500);
+}
+
+function animS4(){
+  ['ef1','ef2','ef3','ef4','ef5'].forEach(stepReset);
+  stepIn('ef1',400);stepIn('ef2',600);stepIn('ef3',800);
+  stepIn('ef4',1200);stepIn('ef5',1600);
+}
+
+function nextScene(){cur=(cur+1)%scenes.length;showScene(cur);setTimeout(nextScene,scenes[cur].dur);}
+showScene(0);
+setTimeout(nextScene,scenes[0].dur);
+</script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dayce Demo - AI相談</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;overflow:hidden;background:#000;}
+
+.demo-bg{width:100vw;height:100vh;background:linear-gradient(135deg,#0a0a1a 0%,#1a1a3e 40%,#0d1b2a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding-bottom:4vh;}
+.bg-blob{position:absolute;border-radius:50%;filter:blur(100px);opacity:0.12;pointer-events:none;animation:blobFloat 20s ease-in-out infinite;}
+.bg-blob:nth-child(1){width:350px;height:350px;background:#2196F3;top:5%;left:-8%;}
+.bg-blob:nth-child(2){width:280px;height:280px;background:#1976D2;bottom:15%;right:-10%;animation-delay:-7s;}
+@keyframes blobFloat{0%,100%{transform:translate(0,0);}33%{transform:translate(30px,-25px);}66%{transform:translate(-20px,30px);}}
+
+.phone-frame{width:320px;height:640px;background:#000;border-radius:44px;padding:10px;position:relative;box-shadow:0 0 0 2px #333,0 20px 80px rgba(0,0,0,0.5);}
+.phone-screen{width:100%;height:100%;background:#fff;border-radius:36px;overflow:hidden;position:relative;}
+.phone-notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:90px;height:24px;background:#000;border-radius:20px;z-index:100;}
+.phone-status{position:absolute;top:0;left:0;right:0;height:48px;z-index:90;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 4px;font-size:11px;font-weight:600;color:#111;}
+
+.scene{position:absolute;top:0;left:0;right:0;bottom:0;opacity:0;transform:translateX(30px);transition:all 0.5s cubic-bezier(0.4,0,0.2,1);pointer-events:none;padding:54px 16px 16px;display:flex;flex-direction:column;}
+.scene.active{opacity:1;transform:translateX(0);pointer-events:auto;}
+
+.scene-progress{display:flex;gap:6px;justify-content:center;margin-top:20px;z-index:2;}
+.scene-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);transition:all 0.3s;}
+.scene-dot.active{background:#2196F3;width:20px;border-radius:3px;}
+
+.step{opacity:0;transform:translateY(8px);transition:all 0.4s cubic-bezier(0.4,0,0.2,1);}
+.step.in{opacity:1;transform:translateY(0);}
+
+/* Character selection */
+.char-title{font-size:15px;font-weight:700;color:#111;text-align:center;margin:8px 0 12px;}
+.char-row{display:flex;gap:10px;justify-content:center;margin-bottom:16px;}
+.char-card{width:80px;text-align:center;padding:10px 4px;border:2px solid #e0e0e0;border-radius:14px;transition:all 0.3s;}
+.char-card.active{border-color:#2196F3;background:#e8f4fd;}
+.char-icon{font-size:32px;margin-bottom:4px;}
+.char-name{font-size:11px;font-weight:700;color:#333;}
+.char-desc{font-size:8px;color:#888;}
+
+/* Topic selection */
+.topic-row{display:flex;gap:6px;justify-content:center;margin-bottom:12px;}
+.topic-btn{padding:6px 12px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:10px;color:#666;transition:all 0.2s;}
+.topic-btn.active{border-color:#2196F3;background:#e8f4fd;color:#2196F3;font-weight:600;}
+
+/* Input area */
+.consult-input{width:100%;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:10px;font-size:13px;color:#333;background:#f8f9fa;min-height:48px;}
+.consult-btn{width:100%;padding:11px;background:#2196F3;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;text-align:center;margin-top:8px;}
+
+/* Chat modal */
+.chat-header{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #eee;margin-bottom:8px;}
+.chat-header-icon{width:32px;height:32px;border-radius:50%;background:#e8f4fd;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.chat-header-name{font-size:14px;font-weight:700;}
+
+.chat-area{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px 0;}
+.chat-msg{display:flex;gap:8px;max-width:92%;}
+.chat-msg.user{margin-left:auto;flex-direction:row-reverse;}
+.chat-bubble{padding:10px 12px;border-radius:14px;font-size:12px;line-height:1.5;}
+.chat-msg.ai .chat-bubble{background:#f0f4f8;color:#333;border-bottom-left-radius:4px;}
+.chat-msg.user .chat-bubble{background:#2196F3;color:#fff;border-bottom-right-radius:4px;}
+.chat-avatar{width:28px;height:28px;border-radius:50%;background:#e8f4fd;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+
+.chat-input-area{display:flex;gap:8px;padding:8px 0;border-top:1px solid #eee;align-items:flex-end;}
+.chat-input{flex:1;padding:8px 12px;border:1.5px solid #d1d5db;border-radius:10px;font-size:12px;color:#333;}
+.chat-send{padding:8px 14px;background:#2196F3;color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;}
+
+.loading-dots span{animation:dotBlink 1.4s infinite;opacity:0;}
+.loading-dots span:nth-child(1){animation-delay:0s;}
+.loading-dots span:nth-child(2){animation-delay:0.2s;}
+.loading-dots span:nth-child(3){animation-delay:0.4s;}
+@keyframes dotBlink{0%,60%,100%{opacity:0;}30%{opacity:1;}}
+
+/* End card */
+.end-card{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;background:linear-gradient(180deg,#fff 0%,#e8f4fd 100%);}
+.end-logo{font-size:48px;font-weight:900;color:#111;margin-bottom:4px;letter-spacing:-2px;}
+.end-logo span{color:#2196F3;}
+.end-tagline{font-size:13px;color:#666;margin-bottom:16px;}
+.end-feature{display:inline-block;background:#e8f4fd;color:#2196F3;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600;margin:2px;}
+.end-cta{margin-top:20px;background:#2196F3;color:#fff;padding:10px 28px;border-radius:12px;font-size:14px;font-weight:700;}
+.end-url{margin-top:8px;font-size:12px;color:#999;letter-spacing:1px;}
+</style>
+</head>
+<body>
+<div class="demo-bg">
+  <div class="bg-blob"></div>
+  <div class="bg-blob"></div>
+
+  <div class="phone-frame">
+    <div class="phone-screen">
+      <div class="phone-notch"></div>
+      <div class="phone-status"><span>21:30</span><span>📶 🔋</span></div>
+
+      <!-- Scene 1: キャラ選択 + 相談入力 -->
+      <div class="scene active" id="s1">
+        <div class="char-title">🤖 AIに相談</div>
+        <div class="char-row">
+          <div class="char-card step" id="ch1"><div class="char-icon">👔</div><div class="char-name">マネージャー</div><div class="char-desc">厳しい元コンサル</div></div>
+          <div class="char-card step" id="ch2"><div class="char-icon">😎</div><div class="char-name">タクヤ先輩</div><div class="char-desc">フランクな兄貴</div></div>
+          <div class="char-card step" id="ch3"><div class="char-icon">🌸</div><div class="char-name">ハナさん</div><div class="char-desc">寄り添うカウンセラー</div></div>
+        </div>
+        <div class="topic-row">
+          <div class="topic-btn step" id="tp1">⏱ 行動</div>
+          <div class="topic-btn step" id="tp2">💰 お金</div>
+          <div class="topic-btn step" id="tp3">🎯 目標</div>
+          <div class="topic-btn step" id="tp4">💬 その他</div>
+        </div>
+        <div class="consult-input step" id="s1input">最近お金使いすぎてる気がする...</div>
+        <div class="consult-btn step" id="s1btn">💬 相談する</div>
+      </div>
+
+      <!-- Scene 2: チャット画面（1往復目） -->
+      <div class="scene" id="s2">
+        <div class="chat-header">
+          <div class="chat-header-icon">😎</div>
+          <div class="chat-header-name">タクヤ先輩</div>
+        </div>
+        <div class="chat-area">
+          <div class="chat-msg user step" id="um1">
+            <div class="chat-bubble">最近お金使いすぎてる気がする...</div>
+          </div>
+          <div class="chat-msg ai step" id="am1">
+            <div class="chat-avatar">😎</div>
+            <div>
+              <div class="chat-bubble" id="aiR1">考え中<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <div class="chat-input" style="color:#999;">メッセージを入力...</div>
+          <div class="chat-send">送信</div>
+        </div>
+      </div>
+
+      <!-- Scene 3: チャット続き（2往復目） -->
+      <div class="scene" id="s3">
+        <div class="chat-header">
+          <div class="chat-header-icon">😎</div>
+          <div class="chat-header-name">タクヤ先輩</div>
+        </div>
+        <div class="chat-area">
+          <div class="chat-msg user"><div class="chat-bubble" style="font-size:11px;">最近お金使いすぎてる気がする...</div></div>
+          <div class="chat-msg ai">
+            <div class="chat-avatar">😎</div>
+            <div><div class="chat-bubble" style="font-size:11px;">記録を見たけど、今月の外食が¥18,000超えてるな。先月より¥5,000増えてるぞ。</div></div>
+          </div>
+          <div class="chat-msg user step" id="um2">
+            <div class="chat-bubble">外食多いのは自覚ある...どうすればいい？</div>
+          </div>
+          <div class="chat-msg ai step" id="am2">
+            <div class="chat-avatar">😎</div>
+            <div>
+              <div class="chat-bubble" id="aiR2">考え中<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <div class="chat-input" style="color:#999;">メッセージを入力...</div>
+          <div class="chat-send">送信</div>
+        </div>
+      </div>
+
+      <!-- Scene 4: End card -->
+      <div class="scene" id="s4">
+        <div class="end-card">
+          <div class="end-logo"><span>D</span>ayce</div>
+          <div class="end-tagline">あなた専用のAIライフコーチ</div>
+          <div>
+            <span class="end-feature step" id="ef1">🤖 3キャラから選べる</span>
+            <span class="end-feature step" id="ef2">📊 記録データを自動分析</span>
+            <span class="end-feature step" id="ef3">💬 何往復でも相談OK</span>
+          </div>
+          <div class="end-cta step" id="ef4">無料ではじめる →</div>
+          <div class="end-url step" id="ef5">dayce.app</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="scene-progress" id="dots"></div>
+</div>
+
+<script>
+var scenes=[{id:'s1',dur:4500},{id:'s2',dur:5000},{id:'s3',dur:5500},{id:'s4',dur:4000}];
+var cur=0;
+var dotsEl=document.getElementById('dots');
+scenes.forEach(function(){var d=document.createElement('div');d.className='scene-dot';dotsEl.appendChild(d);});
+
+function stepIn(id,delay){setTimeout(function(){var el=document.getElementById(id);if(el)el.classList.add('in');},delay);}
+function stepReset(id){var el=document.getElementById(id);if(el)el.classList.remove('in');}
+
+function showScene(idx){
+  scenes.forEach(function(s,i){document.getElementById(s.id).className='scene'+(i===idx?' active':'');});
+  dotsEl.querySelectorAll('.scene-dot').forEach(function(d,i){d.className='scene-dot'+(i===idx?' active':'');});
+  if(idx===0) animS1();
+  if(idx===1) animS2();
+  if(idx===2) animS3();
+  if(idx===3) animS4();
+}
+
+function animS1(){
+  ['ch1','ch2','ch3','tp1','tp2','tp3','tp4','s1input','s1btn'].forEach(stepReset);
+  stepIn('ch1',200); stepIn('ch2',350); stepIn('ch3',500);
+  // Select タクヤ先輩
+  setTimeout(function(){document.getElementById('ch2').classList.add('active');},900);
+  stepIn('tp1',1000); stepIn('tp2',1100); stepIn('tp3',1200); stepIn('tp4',1300);
+  setTimeout(function(){document.getElementById('tp2').classList.add('active');},1600);
+  stepIn('s1input',1800);
+  stepIn('s1btn',2200);
+  // Tap
+  setTimeout(function(){
+    var btn=document.getElementById('s1btn');
+    if(btn){btn.style.opacity='0.8';setTimeout(function(){btn.style.opacity='1';},200);}
+  },3400);
+}
+
+function animS2(){
+  ['um1','am1'].forEach(stepReset);
+  document.getElementById('aiR1').innerHTML='考え中<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>';
+  stepIn('um1',300);
+  stepIn('am1',800);
+  setTimeout(function(){
+    document.getElementById('aiR1').textContent='お、記録を見たけどさ、今月の外食が¥18,000超えてるな。先月より¥5,000も増えてるぞ。ちょっと意識してみ？';
+  },2200);
+}
+
+function animS3(){
+  ['um2','am2'].forEach(stepReset);
+  document.getElementById('aiR2').innerHTML='考え中<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>';
+  stepIn('um2',400);
+  stepIn('am2',1000);
+  setTimeout(function(){
+    document.getElementById('aiR2').textContent='週2回は弁当持っていくとかどう？それだけで月¥6,000くらい浮くぞ。来月から試してみ！';
+  },2500);
+}
+
+function animS4(){
+  ['ef1','ef2','ef3','ef4','ef5'].forEach(stepReset);
+  stepIn('ef1',400);stepIn('ef2',600);stepIn('ef3',800);
+  stepIn('ef4',1200);stepIn('ef5',1600);
+}
+
+function nextScene(){cur=(cur+1)%scenes.length;showScene(cur);setTimeout(nextScene,scenes[cur].dur);}
+showScene(0);
+setTimeout(nextScene,scenes[0].dur);
+</script>
+</body>
+</html>

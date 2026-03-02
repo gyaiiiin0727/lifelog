@@ -4248,6 +4248,16 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
   color: #999;
   margin-top: 2px;
 }
+.ai-consult-voice-btn{
+  display:block; width:100%; padding:12px; margin-bottom:10px;
+  background:#f0f4f8; border:2px solid #e0e0e0; border-radius:12px;
+  font-size:14px; font-weight:600; color:#333; cursor:pointer;
+  transition:all 0.3s; text-align:center;
+}
+.ai-consult-voice-btn.recording{
+  background:#fce4ec; border-color:#e53935; color:#e53935;
+  animation:aicVoicePulse 1s ease-in-out infinite;
+}
 .ai-consult-input-area{
   margin-bottom: 12px;
 }
@@ -4344,6 +4354,15 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
   line-height:1.4; font-family:inherit; overflow-y:auto;
 }
 .aic-input:focus{ border-color:#2196F3; }
+.aic-voice{
+  width:44px; height:44px; border:none; background:#f0f4f8; border-radius:50%;
+  font-size:20px; cursor:pointer; flex-shrink:0; display:flex; align-items:center;
+  justify-content:center; transition:all 0.3s;
+}
+.aic-voice.recording{
+  background:#e53935; animation:aicVoicePulse 1s ease-in-out infinite;
+}
+@keyframes aicVoicePulse{0%,100%{box-shadow:0 0 0 0 rgba(229,57,53,0.3);}50%{box-shadow:0 0 0 10px rgba(229,57,53,0);}}
 .aic-send{
   padding:10px 16px; background:#2196F3; color:#fff; border:none;
   border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap;
@@ -4417,7 +4436,7 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 }
 .ai-history-item{
   background:#f9f9f9; border:1px solid #e8e8e8; border-radius:12px;
-  padding:12px 14px; margin-bottom:10px;
+  padding:12px 14px; margin-bottom:10px; cursor:pointer;
 }
 .ai-history-header{
   display:flex; align-items:center; gap:8px; margin-bottom:6px;
@@ -4425,20 +4444,37 @@ button.add-button[onclick*="saveJournalWithAI"]{ display:none !important; } /* l
 .ai-history-char{
   font-size:13px; font-weight:700; color:#2196F3;
 }
+.ai-history-turns{
+  font-size:11px; color:#fff; background:#2196F3; border-radius:8px;
+  padding:1px 6px; font-weight:600;
+}
 .ai-history-date{
   font-size:11px; color:#999; margin-left:auto;
 }
 .ai-history-q{
-  font-size:12px; color:#666; margin-bottom:4px; line-height:1.4;
+  font-size:13px; color:#333; line-height:1.4; font-weight:500;
 }
-.ai-history-a{
-  font-size:13px; color:#333; line-height:1.5; white-space:pre-wrap;
-  max-height:80px; overflow:hidden; position:relative;
+.ai-history-thread{
+  display:none; margin-top:10px; padding-top:10px;
+  border-top:1px solid #e8e8e8;
 }
-.ai-history-a.expanded{ max-height:none; }
-.ai-history-toggle{
-  font-size:12px; color:#2196F3; cursor:pointer; font-weight:600;
-  background:none; border:none; padding:4px 0; margin-top:4px;
+.ai-history-thread.open{ display:block; }
+.hist-msg{ margin-bottom:8px; display:flex; }
+.hist-msg.hist-user{ justify-content:flex-end; }
+.hist-msg.hist-ai{ justify-content:flex-start; }
+.hist-bubble{
+  font-size:12px; line-height:1.5; padding:8px 12px;
+  border-radius:12px; max-width:85%; white-space:pre-wrap; word-break:break-word;
+}
+.hist-user .hist-bubble{
+  background:#2196F3; color:#fff; border-bottom-right-radius:4px;
+}
+.hist-ai .hist-bubble{
+  background:#fff; color:#333; border:1px solid #e0e0e0; border-bottom-left-radius:4px;
+}
+.ai-history-expand{
+  font-size:12px; color:#2196F3; text-align:center; margin-top:8px;
+  font-weight:600;
 }
 
 .ai-consult-data-section{
@@ -5543,6 +5579,11 @@ body.qr-open .fab-container{ pointer-events:none !important; }
             </button>
         </div>
     </div>
+
+    <!-- 🎤 音声入力ボタン -->
+    <button type="button" class="ai-consult-voice-btn" id="aiConsultVoiceBtn" onclick="toggleAIConsultInitVoice()">
+        🎤 音声入力
+    </button>
 
     <!-- テキスト入力 -->
     <div class="ai-consult-input-area">
@@ -22283,15 +22324,115 @@ window.buildContextSummary = buildContextSummary;
 // AI相談チャット: 会話履歴管理（最大5往復）
 var _aiConsultHistory = [];
 var _aiConsultMaxTurns = 5;
-var _aiConsultDataContext = ''; // 初回のデータコンテキストを保持
+var _aiConsultDataContext = '';
+var _aiConsultSessionId = ''; // 初回のデータコンテキストを保持
 function _aicEsc(s) { return String(s||'').replace(/[&<>"']/g, function(m) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]; }); }
 
 function resetAIConsultChat() {
   _aiConsultHistory = [];
   _aiConsultDataContext = '';
+  _aiConsultSessionId = '';
   var chatArea = document.getElementById('aiConsultChat');
   if (chatArea) chatArea.innerHTML = '';
 }
+
+// AI相談チャット: 音声入力
+var _aicRecognition = null;
+var _aicIsRecording = false;
+function toggleAICVoice() {
+  var btn = document.getElementById('aicVoiceBtn');
+  var inp = document.getElementById('aicChatInput');
+  if (_aicIsRecording) {
+    // 録音停止
+    if (_aicRecognition) _aicRecognition.stop();
+    return;
+  }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('お使いのブラウザは音声入力に対応していません'); return; }
+  _aicRecognition = new SR();
+  _aicRecognition.lang = 'ja-JP';
+  _aicRecognition.interimResults = true;
+  _aicRecognition.continuous = true;
+  _aicIsRecording = true;
+  if (btn) btn.classList.add('recording');
+  if (inp) inp.placeholder = '🎤 話してください...';
+  var finalText = inp ? inp.value : '';
+  _aicRecognition.onresult = function(e) {
+    var interim = '';
+    for (var i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) {
+        finalText += e.results[i][0].transcript;
+      } else {
+        interim += e.results[i][0].transcript;
+      }
+    }
+    if (inp) {
+      inp.value = finalText + interim;
+      inp.style.height = 'auto';
+      inp.style.height = Math.min(inp.scrollHeight, 120) + 'px';
+    }
+  };
+  _aicRecognition.onerror = function(e) {
+    console.warn('AIC voice error:', e.error);
+    stopAICVoice();
+  };
+  _aicRecognition.onend = function() {
+    stopAICVoice();
+    if (inp) inp.value = finalText;
+  };
+  _aicRecognition.start();
+}
+function stopAICVoice() {
+  _aicIsRecording = false;
+  var btn = document.getElementById('aicVoiceBtn');
+  var inp = document.getElementById('aicChatInput');
+  if (btn) btn.classList.remove('recording');
+  if (inp) inp.placeholder = 'メッセージを入力...';
+  _aicRecognition = null;
+}
+window.toggleAICVoice = toggleAICVoice;
+
+// 初期画面の音声入力
+var _aicInitRecognition = null;
+var _aicInitRecording = false;
+function toggleAIConsultInitVoice() {
+  var btn = document.getElementById('aiConsultVoiceBtn');
+  var inp = document.getElementById('aiConsultInput');
+  if (_aicInitRecording) {
+    if (_aicInitRecognition) _aicInitRecognition.stop();
+    return;
+  }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('お使いのブラウザは音声入力に対応していません'); return; }
+  _aicInitRecognition = new SR();
+  _aicInitRecognition.lang = 'ja-JP';
+  _aicInitRecognition.interimResults = true;
+  _aicInitRecognition.continuous = true;
+  _aicInitRecording = true;
+  if (btn) { btn.classList.add('recording'); btn.textContent = '🔴 録音中...タップで停止'; }
+  var finalText = inp ? inp.value : '';
+  _aicInitRecognition.onresult = function(e) {
+    var interim = '';
+    for (var i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) { finalText += e.results[i][0].transcript; }
+      else { interim += e.results[i][0].transcript; }
+    }
+    if (inp) inp.value = finalText + interim;
+  };
+  _aicInitRecognition.onerror = function() { stopAIConsultInitVoice(); };
+  _aicInitRecognition.onend = function() {
+    stopAIConsultInitVoice();
+    if (inp) inp.value = finalText;
+  };
+  _aicInitRecognition.start();
+}
+function stopAIConsultInitVoice() {
+  _aicInitRecording = false;
+  var btn = document.getElementById('aiConsultVoiceBtn');
+  if (btn) { btn.classList.remove('recording'); btn.textContent = '🎤 音声入力'; }
+  _aicInitRecognition = null;
+}
+window.toggleAIConsultInitVoice = toggleAIConsultInitVoice;
 
 function openAIConsultChat() {
   var modal = document.getElementById('aiConsultChatModal');
@@ -22568,7 +22709,7 @@ async function _doSendAIConsult(text) {
     // プロンプトルール・キャラクター口調はWorker側で注入（ソースから隠蔽）
     var textToSend = topicContext + dataContext + keywordContext + historyText + '【ユーザーの相談】\n' + text;
     if (!isFirstTurn) {
-      textToSend += '\n★上記の会話の流れを踏まえて、自然に会話を続けてください。前の回答を繰り返さず、新しい質問や深掘りに応じてください。';
+      textToSend += '\n★会話の続き。短く返して、前の回答を繰り返さないで。';
     }
 
     var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://api.dayce.app';
@@ -22634,11 +22775,9 @@ async function _doSendAIConsult(text) {
     // 使用回数カウント（初回のみ。2回目以降は同一相談の続き）
     if (isFirstTurn && window.DaycePlan) { window.DaycePlan.incrementUsage('consult'); window.DaycePlan.renderPlanBadges(); }
 
-    // 履歴に保存（初回のみ保存。フォローアップは保存しない）
-    if (isFirstTurn) {
-      saveConsultHistory(text, responseText, charInfo.name, tone);
-      renderConsultHistory();
-    }
+    // 履歴に保存（毎ターン更新）
+    saveConsultHistory(charInfo.name, tone, _aiConsultHistory, !isFirstTurn);
+    renderConsultHistory();
 
   } catch(e) {
     console.error('AI consult error:', e);
@@ -22655,18 +22794,36 @@ async function _doSendAIConsult(text) {
 }
 
 // ========== AI相談履歴 ==========
-function saveConsultHistory(question, answer, charName, tone) {
+function saveConsultHistory(charName, tone, messages, isUpdate) {
   try {
     var history = JSON.parse(localStorage.getItem('aiConsultHistory') || '[]');
-    history.unshift({
-      q: question,
-      a: answer,
-      char: charName,
-      tone: tone,
-      date: new Date().toISOString()
-    });
-    // 最大5件保持
-    if (history.length > 5) history = history.slice(0, 5);
+    if (isUpdate && history.length > 0 && history[0]._sessionId === _aiConsultSessionId) {
+      // 既存エントリを更新（同じセッション）
+      history[0].messages = messages.map(function(m) { return { role: m.role, text: m.text }; });
+      history[0].date = new Date().toISOString();
+    } else {
+      // 新規エントリ作成
+      _aiConsultSessionId = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      var firstQ = '';
+      for (var i = 0; i < messages.length; i++) {
+        if (messages[i].role === 'user') { firstQ = messages[i].text; break; }
+      }
+      history.unshift({
+        _sessionId: _aiConsultSessionId,
+        firstQ: firstQ,
+        messages: messages.map(function(m) { return { role: m.role, text: m.text }; }),
+        char: charName,
+        tone: tone,
+        date: new Date().toISOString()
+      });
+      // 旧形式との互換: q/aフィールドも入れておく
+      if (messages.length >= 2) {
+        history[0].q = messages[0].text;
+        history[0].a = messages[1].text;
+      }
+    }
+    // 最大10件保持
+    if (history.length > 10) history = history.slice(0, 10);
     localStorage.setItem('aiConsultHistory', JSON.stringify(history));
   } catch(e) { console.error('履歴保存エラー:', e); }
 }
@@ -22689,26 +22846,46 @@ function renderConsultHistory() {
   history.forEach(function(item, idx) {
     var d = new Date(item.date);
     var dateStr = (d.getMonth()+1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
-    var shortA = item.a || '';
-    html += '<div class="ai-history-item">' +
+
+    // 新形式(messages配列)と旧形式(q/a)の両対応
+    var msgs = item.messages || [];
+    if (msgs.length === 0 && item.q) {
+      msgs = [{ role: 'user', text: item.q }];
+      if (item.a) msgs.push({ role: 'ai', text: item.a });
+    }
+    var firstQ = item.firstQ || item.q || (msgs.length > 0 ? msgs[0].text : '');
+    var turnCount = Math.floor(msgs.length / 2);
+
+    html += '<div class="ai-history-item" onclick="toggleHistoryItem(' + idx + ')">' +
       '<div class="ai-history-header">' +
-        '<span class="ai-history-char">' + (item.char || '') + '</span>' +
+        '<span class="ai-history-char">' + escapeHtml(item.char || '') + '</span>' +
+        (turnCount > 1 ? '<span class="ai-history-turns">' + turnCount + '往復</span>' : '') +
         '<span class="ai-history-date">' + dateStr + '</span>' +
       '</div>' +
-      '<div class="ai-history-q">Q: ' + escapeHtml(item.q || '') + '</div>' +
-      '<div class="ai-history-a" id="histA' + idx + '">' + escapeHtml(shortA) + '</div>' +
-      (shortA.length > 120 ? '<button class="ai-history-toggle" onclick="toggleHistoryItem(' + idx + ')">もっと見る</button>' : '') +
+      '<div class="ai-history-q">' + escapeHtml(firstQ) + '</div>' +
+      '<div class="ai-history-thread" id="histThread' + idx + '">';
+
+    // ミニチャット吹き出し
+    msgs.forEach(function(m) {
+      var isUser = m.role === 'user';
+      html += '<div class="hist-msg ' + (isUser ? 'hist-user' : 'hist-ai') + '">' +
+        '<div class="hist-bubble">' + escapeHtml(m.text || '') + '</div>' +
+      '</div>';
+    });
+
+    html += '</div>' +
+      '<div class="ai-history-expand" id="histExpBtn' + idx + '">会話を見る ▾</div>' +
     '</div>';
   });
   list.innerHTML = html;
 }
 
 function toggleHistoryItem(idx) {
-  var el = document.getElementById('histA' + idx);
-  if (!el) return;
-  el.classList.toggle('expanded');
-  var btn = el.nextElementSibling;
-  if (btn) btn.textContent = el.classList.contains('expanded') ? '閉じる' : 'もっと見る';
+  var thread = document.getElementById('histThread' + idx);
+  var btn = document.getElementById('histExpBtn' + idx);
+  if (!thread) return;
+  var isOpen = thread.classList.toggle('open');
+  if (btn) btn.textContent = isOpen ? '閉じる ▴' : '会話を見る ▾';
 }
 window.toggleHistoryItem = toggleHistoryItem;
 
@@ -23339,6 +23516,7 @@ window.addEventListener('popstate', function(e) {
   </div>
   <div class="ai-consult-chat" id="aiConsultChat"></div>
   <div class="aic-input-area">
+    <button class="aic-voice" id="aicVoiceBtn" onclick="toggleAICVoice()">🎤</button>
     <textarea class="aic-input" id="aicChatInput" rows="1" placeholder="メッセージを入力..."></textarea>
     <button class="aic-send" id="aicChatSend" onclick="sendAIConsult()">送信</button>
   </div>

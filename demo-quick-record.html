@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dayce Demo - クイック記録</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;overflow:hidden;background:#000;}
+
+.demo-bg{
+  width:100vw;height:100vh;
+  background:linear-gradient(135deg,#0a0a1a 0%,#1a1a3e 40%,#0d1b2a 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;padding-bottom:4vh;
+}
+.bg-blob{position:absolute;border-radius:50%;filter:blur(100px);opacity:0.12;pointer-events:none;animation:blobFloat 20s ease-in-out infinite;}
+.bg-blob:nth-child(1){width:350px;height:350px;background:#2196F3;top:5%;left:-8%;}
+.bg-blob:nth-child(2){width:280px;height:280px;background:#1976D2;bottom:15%;right:-10%;animation-delay:-7s;}
+@keyframes blobFloat{0%,100%{transform:translate(0,0);}33%{transform:translate(30px,-25px);}66%{transform:translate(-20px,30px);}}
+
+/* Phone */
+.phone-frame{width:320px;height:640px;background:#000;border-radius:44px;padding:10px;position:relative;box-shadow:0 0 0 2px #333,0 20px 80px rgba(0,0,0,0.5);}
+.phone-screen{width:100%;height:100%;background:#fff;border-radius:36px;overflow:hidden;position:relative;}
+.phone-notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:90px;height:24px;background:#000;border-radius:20px;z-index:100;}
+.phone-status{position:absolute;top:0;left:0;right:0;height:48px;z-index:90;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 4px;font-size:11px;font-weight:600;color:#111;}
+.phone-home-bar{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:120px;height:4px;background:#000;border-radius:2px;z-index:100;}
+
+/* Scenes */
+.scene{position:absolute;top:0;left:0;right:0;bottom:0;opacity:0;transform:translateX(30px);transition:all 0.5s cubic-bezier(0.4,0,0.2,1);pointer-events:none;padding:54px 16px 28px;display:flex;flex-direction:column;}
+.scene.active{opacity:1;transform:translateX(0);pointer-events:auto;}
+.scene.exit{opacity:0;transform:translateX(-30px);}
+
+/* Progress */
+.scene-progress{display:flex;gap:6px;justify-content:center;margin-top:20px;z-index:2;}
+.scene-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);transition:all 0.3s;}
+.scene-dot.active{background:#2196F3;width:20px;border-radius:3px;}
+
+/* App header */
+.app-header{display:flex;align-items:center;gap:2px;padding-bottom:8px;}
+.app-header .logo{width:28px;height:28px;background:#111;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;}
+.app-header .app-name{font-size:18px;font-weight:800;color:#111;letter-spacing:-0.5px;}
+
+/* Tab bar */
+.tab-bar{display:flex;border-bottom:2px solid #e0e0e0;margin-bottom:10px;}
+.tab-bar .tab{flex:1;padding:7px 2px;font-size:9.5px;text-align:center;color:#999;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;font-weight:500;}
+.tab-bar .tab.active{color:#111;border-bottom-color:#111;font-weight:700;}
+
+/* Dashboard cards */
+.dash-section{font-size:13px;font-weight:700;color:#111;margin:6px 0 4px;}
+.dash-cards{display:flex;gap:6px;margin-bottom:8px;}
+.dash-card{flex:1;background:#f8f9fa;border-radius:10px;padding:8px 6px;text-align:center;}
+.dash-card .icon{font-size:16px;}
+.dash-card .label{font-size:8px;color:#888;margin-top:1px;}
+.dash-card .val{font-size:14px;font-weight:800;color:#111;margin-top:2px;}
+
+/* FAB */
+.fab{position:absolute;bottom:70px;right:16px;width:50px;height:50px;background:#111;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;font-weight:300;box-shadow:0 4px 16px rgba(0,0,0,0.3);z-index:50;transition:all 0.3s;}
+.fab.open{background:#2196F3;transform:rotate(45deg);}
+
+/* FAB menu */
+.fab-menu{position:absolute;bottom:130px;right:16px;z-index:50;display:flex;flex-direction:column;gap:8px;opacity:0;transform:translateY(10px);transition:all 0.3s;pointer-events:none;}
+.fab-menu.show{opacity:1;transform:translateY(0);pointer-events:auto;}
+.fab-item{display:flex;align-items:center;gap:8px;justify-content:flex-end;}
+.fab-item .fab-label{background:#111;color:#fff;padding:6px 10px;border-radius:8px;font-size:11px;font-weight:600;white-space:nowrap;}
+.fab-item .fab-icon{width:42px;height:42px;background:#fff;border:2px solid #e0e0e0;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+
+/* Bottom nav */
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;height:60px;background:#fff;border-top:1px solid #eee;display:flex;z-index:40;padding:0 8px;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:8px;color:#999;gap:1px;}
+.nav-item .nav-icon{font-size:16px;}
+.nav-item.active{color:#111;font-weight:700;}
+
+/* Quick record form */
+.qr-form{background:#fff;border-radius:16px;padding:16px;box-shadow:0 -4px 20px rgba(0,0,0,0.1);margin-top:auto;}
+.qr-title{font-size:14px;font-weight:700;color:#111;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.qr-mode{display:flex;gap:6px;margin-bottom:10px;}
+.qr-mode-btn{flex:1;padding:8px;border:2px solid #e0e0e0;border-radius:10px;text-align:center;font-size:12px;font-weight:600;background:#fff;transition:all 0.2s;}
+.qr-mode-btn.active{border-color:#2196F3;background:#e8f4fd;color:#2196F3;}
+.qr-input{width:100%;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:10px;font-size:14px;margin-bottom:8px;color:#333;}
+.qr-input.amount{font-size:20px;font-weight:700;text-align:center;color:#111;}
+.qr-cats{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;}
+.qr-cat{padding:5px 10px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:10px;color:#666;transition:all 0.2s;}
+.qr-cat.active{border-color:#2196F3;background:#e8f4fd;color:#2196F3;font-weight:600;}
+.qr-submit{width:100%;padding:12px;background:#2196F3;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;text-align:center;}
+
+/* Tap indicator */
+.tap-ring{position:absolute;width:50px;height:50px;border-radius:50%;background:rgba(33,150,243,0.25);transform:scale(0);animation:tapRipple 0.8s ease-out forwards;pointer-events:none;z-index:200;}
+@keyframes tapRipple{0%{transform:scale(0.5);opacity:1;}100%{transform:scale(2.5);opacity:0;}}
+
+/* Success toast */
+.toast{position:absolute;top:60px;left:50%;transform:translateX(-50%) translateY(-20px);background:#4caf50;color:#fff;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:700;opacity:0;transition:all 0.4s;z-index:200;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* End card */
+.end-card{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;background:linear-gradient(180deg,#fff 0%,#e8f4fd 100%);}
+.end-logo{font-size:48px;font-weight:900;color:#111;margin-bottom:4px;letter-spacing:-2px;}
+.end-logo span{color:#2196F3;}
+.end-tagline{font-size:13px;color:#666;margin-bottom:16px;}
+.end-feature{display:inline-block;background:#e8f4fd;color:#2196F3;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600;margin:2px;}
+.end-cta{margin-top:20px;background:#2196F3;color:#fff;padding:10px 28px;border-radius:12px;font-size:14px;font-weight:700;}
+.end-url{margin-top:8px;font-size:12px;color:#999;letter-spacing:1px;}
+
+/* Step-in animation helper */
+.step{opacity:0;transform:translateY(8px);transition:all 0.4s cubic-bezier(0.4,0,0.2,1);}
+.step.in{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<div class="demo-bg">
+  <div class="bg-blob"></div>
+  <div class="bg-blob"></div>
+
+  <div class="phone-frame">
+    <div class="phone-screen">
+      <div class="phone-notch"></div>
+      <div class="phone-status">
+        <span>6:47</span>
+        <span>📶 🔋</span>
+      </div>
+
+      <!-- Scene 1: ホーム画面 + FABタップ -->
+      <div class="scene active" id="s1">
+        <div class="app-header">
+          <div class="logo">D</div>
+          <span class="app-name">ayce</span>
+        </div>
+        <div class="tab-bar">
+          <div class="tab active">🏠 ホーム</div>
+          <div class="tab">⏱️ 行動</div>
+          <div class="tab">💰 お金</div>
+          <div class="tab">📔 日記</div>
+        </div>
+        <div class="dash-section">📊 3月1日(土)の概要</div>
+        <div class="dash-cards">
+          <div class="dash-card"><div class="icon">⏱️</div><div class="label">行動</div><div class="val">3件</div></div>
+          <div class="dash-card"><div class="icon">💰</div><div class="label">支出</div><div class="val">¥1,280</div></div>
+          <div class="dash-card"><div class="icon">🎯</div><div class="label">目標</div><div class="val">45%</div></div>
+        </div>
+        <div class="fab" id="fab1">＋</div>
+        <div class="fab-menu" id="fabMenu">
+          <div class="fab-item step" id="fi1"><span class="fab-label">🤖 AI相談</span><span class="fab-icon">🤖</span></div>
+          <div class="fab-item step" id="fi2"><span class="fab-label">📔 ジャーナル</span><span class="fab-icon">📔</span></div>
+          <div class="fab-item step" id="fi3"><span class="fab-label">🎯 目標</span><span class="fab-icon">🎯</span></div>
+          <div class="fab-item step" id="fi4"><span class="fab-label">🏠 ホーム</span><span class="fab-icon">🏠</span></div>
+          <div class="fab-item step" id="fi5"><span class="fab-label">⏱️ 行動記録</span><span class="fab-icon">⏱️</span></div>
+          <div class="fab-item step" id="fi6"><span class="fab-label">💰 支出記録</span><span class="fab-icon">💰</span></div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item active"><span class="nav-icon">🤖</span>AI相談</div>
+          <div class="nav-item"><span class="nav-icon">📔</span>ジャーナル</div>
+          <div class="nav-item"><span class="nav-icon">🎯</span>目標</div>
+          <div class="nav-item active"><span class="nav-icon">🏠</span>ホーム</div>
+          <div class="nav-item"><span class="nav-icon">⏱️</span>行動記録</div>
+          <div class="nav-item"><span class="nav-icon">💰</span>支出記録</div>
+        </div>
+      </div>
+
+      <!-- Scene 2: 支出記録フォーム -->
+      <div class="scene" id="s2">
+        <div class="qr-form" style="margin-top:60px;">
+          <div class="qr-title">💰 支出を記録</div>
+          <div class="qr-mode">
+            <div class="qr-mode-btn active">支出</div>
+            <div class="qr-mode-btn">収入</div>
+          </div>
+          <div class="qr-input amount step" id="amt">¥850</div>
+          <div class="qr-input step" id="memo" style="font-size:13px;color:#666;">豚山のラーメン</div>
+          <div class="qr-cats">
+            <div class="qr-cat step" id="c1">🍽️ 食費</div>
+            <div class="qr-cat step" id="c2">🚃 交通費</div>
+            <div class="qr-cat step" id="c3">🎮 娯楽</div>
+            <div class="qr-cat step" id="c4">📱 通信</div>
+            <div class="qr-cat step" id="c5">🏥 医療</div>
+          </div>
+          <div class="qr-submit step" id="submitBtn">記録する</div>
+        </div>
+        <div class="toast" id="toast1">✅ 支出 ¥850 を記録しました</div>
+      </div>
+
+      <!-- Scene 3: 行動記録フォーム -->
+      <div class="scene" id="s3">
+        <div class="qr-form" style="margin-top:60px;">
+          <div class="qr-title">⏱️ 行動を記録</div>
+          <div class="qr-input step" id="actMemo" style="font-size:13px;color:#666;">カフェで読書</div>
+          <div class="qr-cats">
+            <div class="qr-cat step" id="ac1">📖 読書</div>
+            <div class="qr-cat step" id="ac2">💪 運動</div>
+            <div class="qr-cat step" id="ac3">💼 仕事</div>
+            <div class="qr-cat step" id="ac4">📝 勉強</div>
+            <div class="qr-cat step" id="ac5">🍳 家事</div>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:10px;">
+            <div class="qr-input step" id="dur" style="flex:1;text-align:center;font-weight:700;">1時間30分</div>
+          </div>
+          <div class="qr-submit step" id="submitBtn2">記録する</div>
+        </div>
+        <div class="toast" id="toast2">✅ 読書 1h30m を記録しました</div>
+      </div>
+
+      <!-- Scene 4: End card -->
+      <div class="scene" id="s4">
+        <div class="end-card">
+          <div class="end-logo"><span>D</span>ayce</div>
+          <div class="end-tagline">ワンタップで行動もお金も即記録</div>
+          <div>
+            <span class="end-feature step" id="ef1">＋ボタンで即記録</span>
+            <span class="end-feature step" id="ef2">支出も行動も</span>
+            <span class="end-feature step" id="ef3">カテゴリ自動分類</span>
+          </div>
+          <div class="end-cta step" id="ef4">無料ではじめる →</div>
+          <div class="end-url step" id="ef5">dayce.app</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="scene-progress" id="dots"></div>
+</div>
+
+<script>
+var scenes = [
+  { id:'s1', dur:3500 },
+  { id:'s2', dur:5000 },
+  { id:'s3', dur:5000 },
+  { id:'s4', dur:4000 }
+];
+var cur = 0;
+var dotsEl = document.getElementById('dots');
+scenes.forEach(function(_,i){ var d = document.createElement('div'); d.className='scene-dot'; dotsEl.appendChild(d); });
+
+function showScene(idx) {
+  scenes.forEach(function(s,i){
+    var el = document.getElementById(s.id);
+    el.className = 'scene' + (i===idx?' active':'');
+  });
+  dotsEl.querySelectorAll('.scene-dot').forEach(function(d,i){ d.className='scene-dot'+(i===idx?' active':''); });
+
+  // Animations per scene
+  if (idx===0) animateScene1();
+  if (idx===1) animateScene2();
+  if (idx===2) animateScene3();
+  if (idx===3) animateScene4();
+}
+
+function stepIn(id, delay) {
+  setTimeout(function(){ var el=document.getElementById(id); if(el) el.classList.add('in'); }, delay);
+}
+function stepReset(id) {
+  var el=document.getElementById(id); if(el) el.classList.remove('in');
+}
+
+function animateScene1() {
+  var fab = document.getElementById('fab1');
+  var menu = document.getElementById('fabMenu');
+  // Reset
+  fab.classList.remove('open'); menu.classList.remove('show');
+  ['fi1','fi2','fi3','fi4','fi5','fi6'].forEach(stepReset);
+  // 1s: tap FAB
+  setTimeout(function(){ fab.classList.add('open'); menu.classList.add('show'); }, 1000);
+  // Stagger menu items
+  setTimeout(function(){ stepIn('fi6',0); stepIn('fi5',80); stepIn('fi4',160); stepIn('fi3',240); stepIn('fi2',320); stepIn('fi1',400); }, 1200);
+  // Highlight 支出記録
+  setTimeout(function(){
+    var el=document.getElementById('fi6');
+    if(el) el.querySelector('.fab-icon').style.background='#e8f4fd';
+  }, 2500);
+}
+
+function animateScene2() {
+  ['amt','memo','c1','c2','c3','c4','c5','submitBtn'].forEach(stepReset);
+  var t=document.getElementById('toast1'); t.classList.remove('show');
+  // Step in elements
+  stepIn('amt', 300);
+  stepIn('memo', 600);
+  stepIn('c1', 900); stepIn('c2', 1000); stepIn('c3', 1100); stepIn('c4', 1200); stepIn('c5', 1300);
+  // Select 食費
+  setTimeout(function(){ document.getElementById('c1').classList.add('active'); }, 1500);
+  stepIn('submitBtn', 1800);
+  // Tap submit
+  setTimeout(function(){
+    document.getElementById('submitBtn').style.background='#1976D2';
+    setTimeout(function(){ document.getElementById('submitBtn').style.background='#2196F3'; },200);
+  }, 3000);
+  // Toast
+  setTimeout(function(){ t.classList.add('show'); }, 3500);
+  setTimeout(function(){ t.classList.remove('show'); }, 4600);
+}
+
+function animateScene3() {
+  ['actMemo','ac1','ac2','ac3','ac4','ac5','dur','submitBtn2'].forEach(stepReset);
+  var t=document.getElementById('toast2'); t.classList.remove('show');
+  stepIn('actMemo', 300);
+  stepIn('ac1', 600); stepIn('ac2', 700); stepIn('ac3', 800); stepIn('ac4', 900); stepIn('ac5', 1000);
+  setTimeout(function(){ document.getElementById('ac1').classList.add('active'); }, 1200);
+  stepIn('dur', 1500);
+  stepIn('submitBtn2', 1800);
+  setTimeout(function(){
+    document.getElementById('submitBtn2').style.background='#1976D2';
+    setTimeout(function(){ document.getElementById('submitBtn2').style.background='#2196F3'; },200);
+  }, 3000);
+  setTimeout(function(){ t.classList.add('show'); }, 3500);
+  setTimeout(function(){ t.classList.remove('show'); }, 4600);
+}
+
+function animateScene4() {
+  ['ef1','ef2','ef3','ef4','ef5'].forEach(stepReset);
+  stepIn('ef1', 400); stepIn('ef2', 600); stepIn('ef3', 800);
+  stepIn('ef4', 1200); stepIn('ef5', 1600);
+}
+
+function nextScene() {
+  cur = (cur + 1) % scenes.length;
+  showScene(cur);
+  setTimeout(nextScene, scenes[cur].dur);
+}
+
+showScene(0);
+setTimeout(nextScene, scenes[0].dur);
+</script>
+</body>
+</html>

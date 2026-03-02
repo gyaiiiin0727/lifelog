@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dayce Demo - 目標設定＆AI分解</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;overflow:hidden;background:#000;}
+
+.demo-bg{width:100vw;height:100vh;background:linear-gradient(135deg,#0a0a1a 0%,#1a1a3e 40%,#0d1b2a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding-bottom:4vh;}
+.bg-blob{position:absolute;border-radius:50%;filter:blur(100px);opacity:0.12;pointer-events:none;animation:blobFloat 20s ease-in-out infinite;}
+.bg-blob:nth-child(1){width:350px;height:350px;background:#2196F3;top:5%;left:-8%;}
+.bg-blob:nth-child(2){width:280px;height:280px;background:#1976D2;bottom:15%;right:-10%;animation-delay:-7s;}
+@keyframes blobFloat{0%,100%{transform:translate(0,0);}33%{transform:translate(30px,-25px);}66%{transform:translate(-20px,30px);}}
+
+.phone-frame{width:320px;height:640px;background:#000;border-radius:44px;padding:10px;position:relative;box-shadow:0 0 0 2px #333,0 20px 80px rgba(0,0,0,0.5);}
+.phone-screen{width:100%;height:100%;background:#fff;border-radius:36px;overflow:hidden;position:relative;}
+.phone-notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:90px;height:24px;background:#000;border-radius:20px;z-index:100;}
+.phone-status{position:absolute;top:0;left:0;right:0;height:48px;z-index:90;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 4px;font-size:11px;font-weight:600;color:#111;}
+
+.scene{position:absolute;top:0;left:0;right:0;bottom:0;opacity:0;transform:translateX(30px);transition:all 0.5s cubic-bezier(0.4,0,0.2,1);pointer-events:none;padding:54px 16px 16px;display:flex;flex-direction:column;}
+.scene.active{opacity:1;transform:translateX(0);pointer-events:auto;}
+
+.scene-progress{display:flex;gap:6px;justify-content:center;margin-top:20px;z-index:2;}
+.scene-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);transition:all 0.3s;}
+.scene-dot.active{background:#2196F3;width:20px;border-radius:3px;}
+
+.step{opacity:0;transform:translateY(8px);transition:all 0.4s cubic-bezier(0.4,0,0.2,1);}
+.step.in{opacity:1;transform:translateY(0);}
+
+.app-header{display:flex;align-items:center;gap:2px;padding-bottom:8px;}
+.app-header .logo{width:28px;height:28px;background:#111;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;}
+.app-header .app-name{font-size:18px;font-weight:800;color:#111;letter-spacing:-0.5px;}
+
+.section-title{font-size:15px;font-weight:700;color:#111;margin:6px 0 10px;display:flex;align-items:center;gap:6px;}
+
+/* Goal card */
+.goal-input{width:100%;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:10px;font-size:13px;margin-bottom:8px;color:#333;background:#f8f9fa;}
+.goal-cat-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;}
+.goal-cat{padding:5px 10px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:10px;color:#666;transition:all 0.2s;}
+.goal-cat.active{border-color:#FF9800;background:#fff3e0;color:#e65100;font-weight:600;}
+.ai-btn{width:100%;padding:11px;background:linear-gradient(135deg,#2196F3,#1565C0);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px;}
+
+/* AI chat */
+.chat-area{flex:1;overflow-y:auto;padding:4px 0;display:flex;flex-direction:column;gap:10px;}
+.chat-msg{display:flex;gap:8px;max-width:92%;}
+.chat-msg.user{margin-left:auto;flex-direction:row-reverse;}
+.chat-bubble{padding:10px 12px;border-radius:14px;font-size:12px;line-height:1.5;}
+.chat-msg.ai .chat-bubble{background:#f0f4f8;color:#333;border-bottom-left-radius:4px;}
+.chat-msg.user .chat-bubble{background:#2196F3;color:#fff;border-bottom-right-radius:4px;}
+.chat-avatar{width:28px;height:28px;border-radius:50%;background:#e8f4fd;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.chat-name{font-size:10px;color:#888;margin-bottom:2px;}
+
+/* Task list from AI */
+.task-list{margin:6px 0;}
+.task-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:#f8f9fa;border-radius:10px;margin-bottom:4px;font-size:11px;line-height:1.4;color:#333;}
+.task-check{width:18px;height:18px;border:2px solid #2196F3;border-radius:4px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#2196F3;}
+.task-check.done{background:#2196F3;color:#fff;}
+
+/* Progress */
+.progress-section{margin:10px 0;}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:#666;margin-bottom:4px;}
+.progress-bar{height:8px;background:#e0e0e0;border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#2196F3,#1565C0);border-radius:4px;transition:width 1s ease;}
+
+/* End card */
+.end-card{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;background:linear-gradient(180deg,#fff 0%,#e8f4fd 100%);}
+.end-logo{font-size:48px;font-weight:900;color:#111;margin-bottom:4px;letter-spacing:-2px;}
+.end-logo span{color:#2196F3;}
+.end-tagline{font-size:13px;color:#666;margin-bottom:16px;}
+.end-feature{display:inline-block;background:#e8f4fd;color:#2196F3;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600;margin:2px;}
+.end-cta{margin-top:20px;background:#2196F3;color:#fff;padding:10px 28px;border-radius:12px;font-size:14px;font-weight:700;}
+.end-url{margin-top:8px;font-size:12px;color:#999;letter-spacing:1px;}
+
+/* Loading dots */
+.loading-dots span{animation:dotBlink 1.4s infinite;opacity:0;}
+.loading-dots span:nth-child(1){animation-delay:0s;}
+.loading-dots span:nth-child(2){animation-delay:0.2s;}
+.loading-dots span:nth-child(3){animation-delay:0.4s;}
+@keyframes dotBlink{0%,60%,100%{opacity:0;}30%{opacity:1;}}
+</style>
+</head>
+<body>
+<div class="demo-bg">
+  <div class="bg-blob"></div>
+  <div class="bg-blob"></div>
+
+  <div class="phone-frame">
+    <div class="phone-screen">
+      <div class="phone-notch"></div>
+      <div class="phone-status"><span>10:30</span><span>📶 🔋</span></div>
+
+      <!-- Scene 1: 目標入力 -->
+      <div class="scene active" id="s1">
+        <div class="app-header">
+          <div class="logo">D</div><span class="app-name">ayce</span>
+        </div>
+        <div class="section-title">🎯 今月の目標を設定</div>
+        <div class="goal-input step" id="s1a">毎日30分ランニングする</div>
+        <div class="goal-cat-row">
+          <div class="goal-cat step" id="gc1">💪 運動</div>
+          <div class="goal-cat step" id="gc2">📝 勉強</div>
+          <div class="goal-cat step" id="gc3">💰 節約</div>
+          <div class="goal-cat step" id="gc4">📖 読書</div>
+        </div>
+        <div class="ai-btn step" id="s1b">🤖 AIにタスクを分解してもらう</div>
+      </div>
+
+      <!-- Scene 2: AIチャットでタスク分解 -->
+      <div class="scene" id="s2">
+        <div style="display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:1px solid #eee;margin-bottom:8px;">
+          <span style="font-size:14px;">🤖</span>
+          <span style="font-size:14px;font-weight:700;">AIゴールコーチ</span>
+        </div>
+        <div class="chat-area" id="chatArea">
+          <div class="chat-msg user step" id="cm1">
+            <div class="chat-bubble">「毎日30分ランニングする」を達成するためのタスクを教えて</div>
+          </div>
+          <div class="chat-msg ai step" id="cm2">
+            <div class="chat-avatar">🤖</div>
+            <div>
+              <div class="chat-name">AIコーチ</div>
+              <div class="chat-bubble" id="aiReply">考え中<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scene 3: タスク一覧 + 進捗 -->
+      <div class="scene" id="s3">
+        <div class="app-header">
+          <div class="logo">D</div><span class="app-name">ayce</span>
+        </div>
+        <div class="section-title">🎯 毎日30分ランニングする</div>
+        <div class="progress-section step" id="s3p">
+          <div class="progress-label"><span>今週の進捗</span><span id="progPct">0%</span></div>
+          <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+        </div>
+        <div class="task-list">
+          <div class="task-item step" id="t1"><div class="task-check" id="tc1">✓</div><div>ランニングシューズを準備する</div></div>
+          <div class="task-item step" id="t2"><div class="task-check" id="tc2">✓</div><div>まず15分のウォーキングから始める</div></div>
+          <div class="task-item step" id="t3"><div class="task-check" id="tc3"></div><div>走るコースを決める（近所の公園）</div></div>
+          <div class="task-item step" id="t4"><div class="task-check" id="tc4"></div><div>朝6:30にアラームをセットする</div></div>
+          <div class="task-item step" id="t5"><div class="task-check" id="tc5"></div><div>週3回→週5回に段階的に増やす</div></div>
+        </div>
+      </div>
+
+      <!-- Scene 4: End card -->
+      <div class="scene" id="s4">
+        <div class="end-card">
+          <div class="end-logo"><span>D</span>ayce</div>
+          <div class="end-tagline">AIが目標達成をサポート</div>
+          <div>
+            <span class="end-feature step" id="ef1">🎯 目標設定</span>
+            <span class="end-feature step" id="ef2">🤖 AIタスク分解</span>
+            <span class="end-feature step" id="ef3">📊 進捗トラッキング</span>
+          </div>
+          <div class="end-cta step" id="ef4">無料ではじめる →</div>
+          <div class="end-url step" id="ef5">dayce.app</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="scene-progress" id="dots"></div>
+</div>
+
+<script>
+var scenes=[{id:'s1',dur:4000},{id:'s2',dur:5500},{id:'s3',dur:5500},{id:'s4',dur:4000}];
+var cur=0;
+var dotsEl=document.getElementById('dots');
+scenes.forEach(function(){var d=document.createElement('div');d.className='scene-dot';dotsEl.appendChild(d);});
+
+function stepIn(id,delay){setTimeout(function(){var el=document.getElementById(id);if(el)el.classList.add('in');},delay);}
+function stepReset(id){var el=document.getElementById(id);if(el)el.classList.remove('in');}
+
+function showScene(idx){
+  scenes.forEach(function(s,i){document.getElementById(s.id).className='scene'+(i===idx?' active':'');});
+  dotsEl.querySelectorAll('.scene-dot').forEach(function(d,i){d.className='scene-dot'+(i===idx?' active':'');});
+  if(idx===0) animS1();
+  if(idx===1) animS2();
+  if(idx===2) animS3();
+  if(idx===3) animS4();
+}
+
+function animS1(){
+  ['s1a','gc1','gc2','gc3','gc4','s1b'].forEach(stepReset);
+  stepIn('s1a',300);
+  stepIn('gc1',600); stepIn('gc2',700); stepIn('gc3',800); stepIn('gc4',900);
+  setTimeout(function(){document.getElementById('gc1').classList.add('active');},1200);
+  stepIn('s1b',1500);
+  // Tap AI button
+  setTimeout(function(){
+    var btn=document.getElementById('s1b');
+    if(btn){btn.style.opacity='0.8';setTimeout(function(){btn.style.opacity='1';},200);}
+  },2800);
+}
+
+function animS2(){
+  ['cm1','cm2'].forEach(stepReset);
+  var reply=document.getElementById('aiReply');
+  reply.innerHTML='考え中<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>';
+  stepIn('cm1',400);
+  stepIn('cm2',1000);
+  // Show real reply
+  setTimeout(function(){
+    reply.innerHTML='いい目標ですね！🏃‍♂️<br>まず今週のタスクを5つ作りました：<br><br>✅ ランニングシューズを準備<br>✅ 15分ウォーキングから開始<br>⬜ コースを決める<br>⬜ 朝6:30にアラーム設定<br>⬜ 週3→週5に段階的に増やす';
+  },2500);
+}
+
+function animS3(){
+  ['s3p','t1','t2','t3','t4','t5'].forEach(stepReset);
+  var pct=document.getElementById('progPct');
+  var fill=document.getElementById('progFill');
+  pct.textContent='0%'; fill.style.width='0%';
+  // Reset checks
+  ['tc1','tc2','tc3','tc4','tc5'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.classList.remove('done');
+  });
+  stepIn('s3p',200);
+  stepIn('t1',400); stepIn('t2',600); stepIn('t3',800); stepIn('t4',1000); stepIn('t5',1200);
+  // Check tasks one by one
+  setTimeout(function(){
+    document.getElementById('tc1').classList.add('done');
+    pct.textContent='20%'; fill.style.width='20%';
+  },2000);
+  setTimeout(function(){
+    document.getElementById('tc2').classList.add('done');
+    pct.textContent='40%'; fill.style.width='40%';
+  },3000);
+  setTimeout(function(){
+    document.getElementById('tc3').classList.add('done');
+    pct.textContent='60%'; fill.style.width='60%';
+  },4000);
+}
+
+function animS4(){
+  ['ef1','ef2','ef3','ef4','ef5'].forEach(stepReset);
+  stepIn('ef1',400);stepIn('ef2',600);stepIn('ef3',800);
+  stepIn('ef4',1200);stepIn('ef5',1600);
+}
+
+function nextScene(){cur=(cur+1)%scenes.length;showScene(cur);setTimeout(nextScene,scenes[cur].dur);}
+showScene(0);
+setTimeout(nextScene,scenes[0].dur);
+</script>
+</body>
+</html>

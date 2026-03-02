@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dayce Demo - 音声でお金記録</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;overflow:hidden;background:#000;}
+
+.demo-bg{
+  width:100vw;height:100vh;
+  background:linear-gradient(135deg,#0a0a1a 0%,#1a1a3e 40%,#0d1b2a 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;padding-bottom:4vh;
+}
+.bg-blob{position:absolute;border-radius:50%;filter:blur(100px);opacity:0.12;pointer-events:none;animation:blobFloat 20s ease-in-out infinite;}
+.bg-blob:nth-child(1){width:350px;height:350px;background:#2196F3;top:5%;left:-8%;}
+.bg-blob:nth-child(2){width:280px;height:280px;background:#1976D2;bottom:15%;right:-10%;animation-delay:-7s;}
+@keyframes blobFloat{0%,100%{transform:translate(0,0);}33%{transform:translate(30px,-25px);}66%{transform:translate(-20px,30px);}}
+
+.phone-frame{width:320px;height:640px;background:#000;border-radius:44px;padding:10px;position:relative;box-shadow:0 0 0 2px #333,0 20px 80px rgba(0,0,0,0.5);}
+.phone-screen{width:100%;height:100%;background:#fff;border-radius:36px;overflow:hidden;position:relative;}
+.phone-notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:90px;height:24px;background:#000;border-radius:20px;z-index:100;}
+.phone-status{position:absolute;top:0;left:0;right:0;height:48px;z-index:90;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 4px;font-size:11px;font-weight:600;color:#111;}
+.phone-home-bar{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:120px;height:4px;background:#000;border-radius:2px;z-index:100;}
+
+.scene{position:absolute;top:0;left:0;right:0;bottom:0;opacity:0;transform:translateX(30px);transition:all 0.5s cubic-bezier(0.4,0,0.2,1);pointer-events:none;padding:54px 16px 28px;display:flex;flex-direction:column;}
+.scene.active{opacity:1;transform:translateX(0);pointer-events:auto;}
+
+.scene-progress{display:flex;gap:6px;justify-content:center;margin-top:20px;z-index:2;}
+.scene-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);transition:all 0.3s;}
+.scene-dot.active{background:#2196F3;width:20px;border-radius:3px;}
+
+.step{opacity:0;transform:translateY(8px);transition:all 0.4s cubic-bezier(0.4,0,0.2,1);}
+.step.in{opacity:1;transform:translateY(0);}
+
+/* App header */
+.app-header{display:flex;align-items:center;gap:2px;padding-bottom:8px;}
+.app-header .logo{width:28px;height:28px;background:#111;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;}
+.app-header .app-name{font-size:18px;font-weight:800;color:#111;letter-spacing:-0.5px;}
+
+/* Tab bar */
+.tab-bar{display:flex;border-bottom:2px solid #e0e0e0;margin-bottom:10px;overflow-x:auto;}
+.tab-bar .tab{flex:none;padding:7px 8px;font-size:9.5px;text-align:center;color:#999;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;font-weight:500;}
+.tab-bar .tab.active{color:#111;border-bottom-color:#111;font-weight:700;}
+
+/* Money tab */
+.money-header{text-align:center;margin:16px 0 12px;}
+.money-total-label{font-size:11px;color:#888;}
+.money-total{font-size:28px;font-weight:800;color:#e53935;margin:2px 0;}
+.money-sub{font-size:11px;color:#999;}
+
+/* Voice button */
+.voice-area{display:flex;flex-direction:column;align-items:center;margin:16px 0;}
+.voice-btn{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#2196F3,#1976D2);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(33,150,243,0.35);position:relative;transition:all 0.3s;}
+.voice-btn .mic{font-size:28px;color:#fff;}
+.voice-btn.recording{animation:pulseRec 1.2s ease-in-out infinite;}
+.voice-hint{font-size:11px;color:#888;margin-top:8px;}
+@keyframes pulseRec{0%,100%{box-shadow:0 4px 20px rgba(33,150,243,0.35);}50%{box-shadow:0 4px 30px rgba(33,150,243,0.6),0 0 0 12px rgba(33,150,243,0.1);}}
+
+/* Voice listening */
+.voice-listening{text-align:center;margin:8px 0;}
+.voice-wave{display:flex;gap:3px;justify-content:center;align-items:center;height:30px;margin:8px 0;}
+.voice-bar{width:3px;background:#2196F3;border-radius:2px;animation:waveBar 0.8s ease-in-out infinite;}
+.voice-bar:nth-child(1){height:12px;animation-delay:0s;}
+.voice-bar:nth-child(2){height:20px;animation-delay:0.1s;}
+.voice-bar:nth-child(3){height:28px;animation-delay:0.2s;}
+.voice-bar:nth-child(4){height:20px;animation-delay:0.3s;}
+.voice-bar:nth-child(5){height:12px;animation-delay:0.4s;}
+@keyframes waveBar{0%,100%{transform:scaleY(0.4);}50%{transform:scaleY(1);}}
+.voice-text{font-size:16px;font-weight:700;color:#111;min-height:24px;}
+.voice-sub{font-size:11px;color:#2196F3;font-weight:600;}
+
+/* Parsed result */
+.parsed-card{background:#f8f9fa;border-radius:14px;padding:14px;margin:8px 0;}
+.parsed-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee;}
+.parsed-row:last-child{border-bottom:none;}
+.parsed-label{font-size:11px;color:#888;}
+.parsed-val{font-size:14px;font-weight:700;color:#111;}
+.parsed-val.amount{color:#e53935;font-size:18px;}
+.parsed-badge{display:inline-block;background:#e8f4fd;color:#2196F3;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;}
+
+.submit-btn{width:100%;padding:12px;background:#2196F3;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;text-align:center;margin-top:10px;}
+
+.toast{position:absolute;top:60px;left:50%;transform:translateX(-50%) translateY(-20px);background:#4caf50;color:#fff;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:700;opacity:0;transition:all 0.4s;z-index:200;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* End card */
+.end-card{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;background:linear-gradient(180deg,#fff 0%,#e8f4fd 100%);}
+.end-logo{font-size:48px;font-weight:900;color:#111;margin-bottom:4px;letter-spacing:-2px;}
+.end-logo span{color:#2196F3;}
+.end-tagline{font-size:13px;color:#666;margin-bottom:16px;}
+.end-feature{display:inline-block;background:#e8f4fd;color:#2196F3;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600;margin:2px;}
+.end-cta{margin-top:20px;background:#2196F3;color:#fff;padding:10px 28px;border-radius:12px;font-size:14px;font-weight:700;}
+.end-url{margin-top:8px;font-size:12px;color:#999;letter-spacing:1px;}
+</style>
+</head>
+<body>
+<div class="demo-bg">
+  <div class="bg-blob"></div>
+  <div class="bg-blob"></div>
+
+  <div class="phone-frame">
+    <div class="phone-screen">
+      <div class="phone-notch"></div>
+      <div class="phone-status"><span>9:15</span><span>📶 🔋</span></div>
+
+      <!-- Scene 1: お金タブ + 音声ボタン -->
+      <div class="scene active" id="s1">
+        <div class="app-header">
+          <div class="logo">D</div><span class="app-name">ayce</span>
+        </div>
+        <div class="tab-bar">
+          <div class="tab">🏠 ホーム</div>
+          <div class="tab">⏱ 行動</div>
+          <div class="tab active">💰 お金</div>
+          <div class="tab">📊 レポート</div>
+        </div>
+        <div class="money-header step" id="s1a">
+          <div class="money-total-label">3月の支出</div>
+          <div class="money-total">-¥24,560</div>
+          <div class="money-sub">収入 ¥285,000 ／ 残り ¥260,440</div>
+        </div>
+        <div class="voice-area">
+          <div class="voice-btn step" id="s1b"><span class="mic">🎤</span></div>
+          <div class="voice-hint step" id="s1c">タップして音声で記録</div>
+        </div>
+      </div>
+
+      <!-- Scene 2: 音声認識中 -->
+      <div class="scene" id="s2">
+        <div class="app-header">
+          <div class="logo">D</div><span class="app-name">ayce</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div class="voice-btn recording" id="s2mic"><span class="mic">🎤</span></div>
+          <div class="voice-wave" style="margin-top:16px;">
+            <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
+          </div>
+          <div class="voice-sub step" id="s2a">聞き取り中...</div>
+          <div class="voice-text step" id="s2b"></div>
+        </div>
+      </div>
+
+      <!-- Scene 3: AI解析結果 + 記録 -->
+      <div class="scene" id="s3">
+        <div class="app-header">
+          <div class="logo">D</div><span class="app-name">ayce</span>
+        </div>
+        <div style="padding:8px 0;">
+          <div class="voice-text" style="text-align:center;margin-bottom:8px;opacity:1;transform:none;">🎤 「コンビニで650円」</div>
+          <div class="parsed-card step" id="s3a">
+            <div style="font-size:12px;font-weight:700;color:#2196F3;margin-bottom:6px;">🤖 AI解析結果</div>
+            <div class="parsed-row">
+              <span class="parsed-label">金額</span>
+              <span class="parsed-val amount">¥650</span>
+            </div>
+            <div class="parsed-row">
+              <span class="parsed-label">内容</span>
+              <span class="parsed-val">コンビニ</span>
+            </div>
+            <div class="parsed-row">
+              <span class="parsed-label">カテゴリ</span>
+              <span class="parsed-badge">🛒 日用品</span>
+            </div>
+            <div class="parsed-row">
+              <span class="parsed-label">種別</span>
+              <span class="parsed-badge" style="background:#fce4ec;color:#e53935;">支出</span>
+            </div>
+          </div>
+          <div class="submit-btn step" id="s3b">この内容で記録する</div>
+        </div>
+        <div class="toast" id="toast1">✅ 支出 ¥650 を記録しました</div>
+      </div>
+
+      <!-- Scene 4: End card -->
+      <div class="scene" id="s4">
+        <div class="end-card">
+          <div class="end-logo"><span>D</span>ayce</div>
+          <div class="end-tagline">声でサクッとお金を記録</div>
+          <div>
+            <span class="end-feature step" id="ef1">🎤 話すだけで入力</span>
+            <span class="end-feature step" id="ef2">🤖 AI自動解析</span>
+            <span class="end-feature step" id="ef3">📊 カテゴリ自動分類</span>
+          </div>
+          <div class="end-cta step" id="ef4">無料ではじめる →</div>
+          <div class="end-url step" id="ef5">dayce.app</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="scene-progress" id="dots"></div>
+</div>
+
+<script>
+var scenes = [
+  { id:'s1', dur:3500 },
+  { id:'s2', dur:4500 },
+  { id:'s3', dur:5000 },
+  { id:'s4', dur:4000 }
+];
+var cur = 0;
+var dotsEl = document.getElementById('dots');
+scenes.forEach(function(){ var d=document.createElement('div'); d.className='scene-dot'; dotsEl.appendChild(d); });
+
+function stepIn(id,delay){ setTimeout(function(){ var el=document.getElementById(id); if(el) el.classList.add('in'); },delay); }
+function stepReset(id){ var el=document.getElementById(id); if(el) el.classList.remove('in'); }
+
+function showScene(idx){
+  scenes.forEach(function(s,i){
+    document.getElementById(s.id).className = 'scene'+(i===idx?' active':'');
+  });
+  dotsEl.querySelectorAll('.scene-dot').forEach(function(d,i){ d.className='scene-dot'+(i===idx?' active':''); });
+  if(idx===0) animS1();
+  if(idx===1) animS2();
+  if(idx===2) animS3();
+  if(idx===3) animS4();
+}
+
+function animS1(){
+  ['s1a','s1b','s1c'].forEach(stepReset);
+  stepIn('s1a',300); stepIn('s1b',600); stepIn('s1c',900);
+  // Pulse hint
+  setTimeout(function(){
+    var btn=document.getElementById('s1b');
+    if(btn) btn.style.transform='translateY(0) scale(1.08)';
+    setTimeout(function(){ if(btn) btn.style.transform=''; },300);
+  },2200);
+}
+
+function animS2(){
+  ['s2a','s2b'].forEach(stepReset);
+  var txt=document.getElementById('s2b');
+  if(txt) txt.textContent='';
+  stepIn('s2a',300);
+  // Typing effect
+  var words = 'コンビニで650円';
+  var i=0;
+  stepIn('s2b',800);
+  var timer=setInterval(function(){
+    if(i<words.length){ txt.textContent+=words[i]; i++; }
+    else clearInterval(timer);
+  },150);
+}
+
+function animS3(){
+  ['s3a','s3b'].forEach(stepReset);
+  var t=document.getElementById('toast1'); t.classList.remove('show');
+  stepIn('s3a',400);
+  stepIn('s3b',1200);
+  // Tap submit
+  setTimeout(function(){
+    var btn=document.getElementById('s3b');
+    if(btn){ btn.style.background='#1976D2'; setTimeout(function(){ btn.style.background='#2196F3'; },200); }
+  },2800);
+  setTimeout(function(){ t.classList.add('show'); },3300);
+  setTimeout(function(){ t.classList.remove('show'); },4500);
+}
+
+function animS4(){
+  ['ef1','ef2','ef3','ef4','ef5'].forEach(stepReset);
+  stepIn('ef1',400); stepIn('ef2',600); stepIn('ef3',800);
+  stepIn('ef4',1200); stepIn('ef5',1600);
+}
+
+function nextScene(){
+  cur=(cur+1)%scenes.length;
+  showScene(cur);
+  setTimeout(nextScene, scenes[cur].dur);
+}
+showScene(0);
+setTimeout(nextScene, scenes[0].dur);
+</script>
+</body>
+</html>
