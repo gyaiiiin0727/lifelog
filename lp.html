@@ -150,6 +150,15 @@ body {
   box-shadow: 0 8px 30px rgba(33,150,243,0.4);
 }
 
+.lp-cta-primary {
+  animation: ctaPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes ctaPulse {
+  0%, 100% { box-shadow: 0 4px 20px rgba(33,150,243,0.3); }
+  50% { box-shadow: 0 4px 30px rgba(33,150,243,0.55); }
+}
+
 .lp-hero-note {
   margin-top: 16px;
   font-size: 0.85rem;
@@ -720,6 +729,158 @@ body {
   color: rgba(255,255,255,0.35);
 }
 
+/* === Floating Mobile CTA === */
+.lp-float-cta {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  padding: 12px 20px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(0,0,0,0.06);
+  text-align: center;
+}
+
+.lp-float-cta a {
+  display: block;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
+  color: var(--white);
+  text-decoration: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(33,150,243,0.3);
+}
+
+.lp-float-cta .lp-float-sub {
+  font-size: 0.7rem;
+  color: var(--gray-400);
+  margin-top: 4px;
+}
+
+@media (max-width: 767px) {
+  .lp-float-cta.visible { display: block; }
+  .lp-final-cta { padding-bottom: 120px; }
+}
+
+/* === PWA Install Section === */
+.lp-pwa-install {
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+}
+
+.lp-pwa-install-inner {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.lp-pwa-install-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+.lp-pwa-install h3 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--black);
+  margin-bottom: 8px;
+}
+
+.lp-pwa-install p {
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.lp-pwa-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.lp-pwa-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 0.88rem;
+  color: var(--gray-800);
+}
+
+.lp-pwa-step-num {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  background: var(--blue);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.lp-pwa-tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.lp-pwa-tab {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 2px solid var(--gray-100);
+  background: var(--white);
+  color: var(--gray-600);
+  transition: all 0.2s;
+}
+
+.lp-pwa-tab.active {
+  background: var(--blue);
+  color: var(--white);
+  border-color: var(--blue);
+}
+
+/* === Social Proof === */
+.lp-social-proof {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.lp-proof-item {
+  text-align: center;
+}
+
+.lp-proof-num {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--blue);
+}
+
+.lp-proof-label {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+}
+
 /* === Animations === */
 .lp-fade {
   opacity: 0;
@@ -772,7 +933,21 @@ body {
     <h1 class="lp-fade">声で記録する、<br>毎日のライフログ。</h1>
     <p class="lp-hero-sub lp-fade">日々の行動・お金・目標・気持ちを<br>声で記録して、AIが振り返る。</p>
     <a href="./index.html" class="lp-cta-primary lp-fade">🎤 無料で始める</a>
-    <p class="lp-hero-note lp-fade">PWA対応・インストール不要・登録不要</p>
+    <p class="lp-hero-note lp-fade">PWA対応・インストール不要・無料で使える</p>
+    <div class="lp-social-proof lp-fade">
+      <div class="lp-proof-item">
+        <div class="lp-proof-num">5分</div>
+        <div class="lp-proof-label">1日の記録時間</div>
+      </div>
+      <div class="lp-proof-item">
+        <div class="lp-proof-num">4つ</div>
+        <div class="lp-proof-label">記録カテゴリ</div>
+      </div>
+      <div class="lp-proof-item">
+        <div class="lp-proof-num">3人</div>
+        <div class="lp-proof-label">AIキャラクター</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -885,7 +1060,30 @@ body {
       <div class="lp-trust-badge"><span>🔒</span><span>完全無料</span></div>
       <div class="lp-trust-badge"><span>📱</span><span>PWA対応</span></div>
       <div class="lp-trust-badge"><span>🔐</span><span>データは端末に保存</span></div>
-      <div class="lp-trust-badge"><span>⚡</span><span>登録不要・即起動</span></div>
+      <div class="lp-trust-badge"><span>⚡</span><span>かんたん登録・即起動</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PWA Install Guide -->
+<section class="lp-pwa-install lp-fade">
+  <div class="lp-pwa-install-inner">
+    <div class="lp-pwa-install-icon">📲</div>
+    <h3>ホーム画面に追加してアプリのように使おう</h3>
+    <p>Dayceはブラウザで動くPWA。ホーム画面に追加すればアプリストア不要で、いつでもワンタップで起動できます。</p>
+    <div class="lp-pwa-tabs">
+      <div class="lp-pwa-tab active" onclick="showPwaGuide('ios')">iPhone</div>
+      <div class="lp-pwa-tab" onclick="showPwaGuide('android')">Android</div>
+    </div>
+    <div class="lp-pwa-steps" id="pwaStepsIos">
+      <div class="lp-pwa-step"><div class="lp-pwa-step-num">1</div>Safariで dayce.app を開く</div>
+      <div class="lp-pwa-step"><div class="lp-pwa-step-num">2</div>画面下の「共有」ボタン（□↑）をタップ</div>
+      <div class="lp-pwa-step"><div class="lp-pwa-step-num">3</div>「ホーム画面に追加」を選択</div>
+    </div>
+    <div class="lp-pwa-steps" id="pwaStepsAndroid" style="display:none;">
+      <div class="lp-pwa-step"><div class="lp-pwa-step-num">1</div>Chromeで dayce.app を開く</div>
+      <div class="lp-pwa-step"><div class="lp-pwa-step-num">2</div>右上の「︙」メニューをタップ</div>
+      <div class="lp-pwa-step"><div class="lp-pwa-step-num">3</div>「ホーム画面に追加」または「アプリをインストール」を選択</div>
     </div>
   </div>
 </section>
@@ -894,8 +1092,14 @@ body {
 <section class="lp-final-cta">
   <h2 class="lp-fade">今日から、声で記録しよう。</h2>
   <a href="./index.html" class="lp-cta-inverted lp-fade">🎤 Dayceを使ってみる</a>
-  <p class="lp-final-note lp-fade">ブラウザで動作・登録不要</p>
+  <p class="lp-final-note lp-fade">ブラウザで動作・無料で使える</p>
 </section>
+
+<!-- Floating Mobile CTA -->
+<div class="lp-float-cta" id="floatCta">
+  <a href="./index.html">🎤 今すぐ無料で始める</a>
+  <div class="lp-float-sub">無料・ブラウザで動作</div>
+</div>
 
 <!-- Footer -->
 <footer class="lp-footer">
@@ -1161,6 +1365,37 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeDemo();
 });
 
+// PWA Install Guide Tab Switch
+function showPwaGuide(platform) {
+  var tabs = document.querySelectorAll('.lp-pwa-tab');
+  tabs.forEach(function(t) { t.classList.remove('active'); });
+  event.target.classList.add('active');
+  document.getElementById('pwaStepsIos').style.display = platform === 'ios' ? 'flex' : 'none';
+  document.getElementById('pwaStepsAndroid').style.display = platform === 'android' ? 'flex' : 'none';
+}
+
+// Floating CTA visibility
+function initFloatCta() {
+  var floatCta = document.getElementById('floatCta');
+  if (!floatCta) return;
+  var heroSection = document.querySelector('.lp-hero');
+  var finalSection = document.querySelector('.lp-final-cta');
+
+  function checkFloat() {
+    var heroBottom = heroSection.getBoundingClientRect().bottom;
+    var finalTop = finalSection.getBoundingClientRect().top;
+    var windowH = window.innerHeight;
+    if (heroBottom < 0 && finalTop > windowH) {
+      floatCta.classList.add('visible');
+    } else {
+      floatCta.classList.remove('visible');
+    }
+  }
+
+  window.addEventListener('scroll', checkFloat, { passive: true });
+  checkFloat();
+}
+
 // Scroll fade-in animation
 document.addEventListener('DOMContentLoaded', function() {
   var fades = document.querySelectorAll('.lp-fade');
@@ -1177,6 +1412,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
   fades.forEach(function(el) { observer.observe(el); });
+
+  // Init floating CTA
+  initFloatCta();
 });
 </script>
 </body>
