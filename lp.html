@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Y3XKSJCC42"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-Y3XKSJCC42');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dayce - 声で記録するライフログ</title>
@@ -1415,6 +1423,48 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Init floating CTA
   initFloatCta();
+
+  // === GA4 CTA click tracking ===
+  document.querySelectorAll('a[href*="index.html"], .lp-header-cta, .lp-cta-primary, .lp-cta-inverted').forEach(function(el) {
+    el.addEventListener('click', function() {
+      if (typeof gtag === 'function') {
+        gtag('event', 'cta_click', {
+          event_category: 'engagement',
+          event_label: el.textContent.trim(),
+          link_url: el.href
+        });
+      }
+    });
+  });
+
+  // === UTM parameter forwarding ===
+  // Pass UTM params from LP URL to app links
+  var params = new URLSearchParams(window.location.search);
+  var utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+  var utmParams = '';
+  utmKeys.forEach(function(key) {
+    if (params.get(key)) {
+      utmParams += (utmParams ? '&' : '?') + key + '=' + encodeURIComponent(params.get(key));
+    }
+  });
+  if (utmParams) {
+    document.querySelectorAll('a[href*="index.html"]').forEach(function(el) {
+      el.href = el.href.split('?')[0] + utmParams;
+    });
+  }
+
+  // === Scroll depth tracking ===
+  var scrollMilestones = [25, 50, 75, 100];
+  var firedMilestones = {};
+  window.addEventListener('scroll', function() {
+    var scrollPct = Math.round((window.scrollY + window.innerHeight) / document.body.scrollHeight * 100);
+    scrollMilestones.forEach(function(m) {
+      if (scrollPct >= m && !firedMilestones[m] && typeof gtag === 'function') {
+        firedMilestones[m] = true;
+        gtag('event', 'scroll_depth', { event_category: 'engagement', event_label: m + '%' });
+      }
+    });
+  });
 });
 </script>
 </body>
