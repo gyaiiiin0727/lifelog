@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Y3XKSJCC42"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-Y3XKSJCC42');
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dayce Demo Video</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  overflow:hidden;
+  background:#000;
+}
+
+/* === Background === */
+.demo-bg{
+  width:100vw;height:100vh;
+  background:linear-gradient(135deg,#0a0a1a 0%,#1a1a3e 40%,#0d1b2a 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  padding-bottom:4vh;
+}
+
+.bg-blob{
+  position:absolute;border-radius:50%;filter:blur(100px);opacity:0.12;pointer-events:none;
+  animation:blobFloat 20s ease-in-out infinite;
+}
+.bg-blob:nth-child(1){width:350px;height:350px;background:#2196F3;top:5%;left:-8%;animation-delay:0s;}
+.bg-blob:nth-child(2){width:280px;height:280px;background:#1976D2;bottom:15%;right:-10%;animation-delay:-7s;}
+.bg-blob:nth-child(3){width:200px;height:200px;background:#64B5F6;top:60%;left:50%;animation-delay:-14s;}
+
+@keyframes blobFloat{
+  0%,100%{transform:translate(0,0);}
+  33%{transform:translate(30px,-25px);}
+  66%{transform:translate(-20px,30px);}
+}
+
+/* === Phone Frame === */
+.phone-wrap{
+  position:relative;
+  z-index:2;
+}
+
+.phone-frame{
+  width:320px;height:640px;
+  background:#000;border-radius:44px;padding:10px;
+  position:relative;
+  box-shadow:
+    0 0 0 2px #333,
+    0 20px 80px rgba(0,0,0,0.5),
+    0 0 60px rgba(33,150,243,0.1);
+}
+
+.phone-screen{
+  width:100%;height:100%;
+  background:#fff;border-radius:36px;
+  overflow:hidden;position:relative;
+}
+
+/* Dynamic Island */
+.phone-notch{
+  position:absolute;top:8px;left:50%;transform:translateX(-50%);
+  width:90px;height:24px;background:#000;border-radius:20px;z-index:100;
+}
+
+/* Status bar */
+.phone-status{
+  position:absolute;top:0;left:0;right:0;height:48px;z-index:90;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  padding:0 24px 4px;font-size:11px;font-weight:600;color:#111;
+}
+
+/* Home indicator */
+.phone-home-bar{
+  position:absolute;bottom:6px;left:50%;transform:translateX(-50%);
+  width:120px;height:4px;background:#000;border-radius:2px;z-index:100;
+}
+
+/* === Scenes === */
+.scene{
+  position:absolute;
+  top:0;left:0;right:0;bottom:0;
+  opacity:0;transform:translateX(30px);
+  transition:all 0.5s cubic-bezier(0.4,0,0.2,1);
+  pointer-events:none;
+  padding:54px 16px 28px;
+  display:flex;flex-direction:column;
+  will-change:transform,opacity;
+}
+.scene.active{opacity:1;transform:translateX(0);pointer-events:auto;}
+.scene.exit{opacity:0;transform:translateX(-30px);}
+
+/* === Scene progress dots === */
+.scene-progress{
+  display:flex;gap:6px;justify-content:center;margin-top:20px;z-index:2;
+}
+.scene-dot{
+  width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);
+  transition:all 0.3s;
+}
+.scene-dot.active{background:#2196F3;width:20px;border-radius:3px;}
+
+/* === Common UI Components === */
+
+/* App header */
+.app-header{
+  display:flex;align-items:center;gap:2px;
+  padding-bottom:8px;
+}
+.app-header img{width:28px;height:28px;border-radius:6px;}
+.app-header .app-name{font-size:18px;font-weight:800;color:#111;letter-spacing:-0.5px;}
+
+/* Tab bar */
+.tab-bar{display:flex;border-bottom:2px solid #e0e0e0;margin-bottom:10px;}
+.tab-bar .tab{
+  flex:1;padding:7px 2px;font-size:9.5px;text-align:center;
+  color:#999;border-bottom:2px solid transparent;
+  margin-bottom:-2px;white-space:nowrap;font-weight:500;
+  transition:all 0.3s;
+}
+.tab-bar .tab.active{color:#111;border-bottom-color:#111;font-weight:700;}
+
+/* Voice button */
+.voice-btn{
+  width:100%;padding:13px;
+  background:#111;color:#fff;
+  border:none;border-radius:12px;
+  font-size:14px;font-weight:700;text-align:center;
+  position:relative;overflow:hidden;
+  transition:all 0.3s;
+}
+.voice-btn.listening{
+  background:linear-gradient(135deg,#2196F3 0%,#1976D2 100%);
+  animation:btnPulse 1.5s infinite;
+}
+@keyframes btnPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(33,150,243,0.4);}
+  50%{box-shadow:0 0 0 10px rgba(33,150,243,0);}
+}
+
+/* Tap ripple */
+.tap-ring{
+  position:absolute;
+  width:50px;height:50px;border-radius:50%;
+  background:rgba(33,150,243,0.25);
+  top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
+  animation:tapRipple 0.8s ease-out forwards;
+  pointer-events:none;
+}
+@keyframes tapRipple{
+  0%{transform:translate(-50%,-50%) scale(0.5);opacity:1;}
+  100%{transform:translate(-50%,-50%) scale(2.5);opacity:0;}
+}
+
+/* Voice wave */
+.voice-wave{
+  display:flex;gap:4px;align-items:center;justify-content:center;
+  height:44px;margin:12px 0;
+}
+.voice-bar{
+  width:5px;border-radius:3px;
+  background:linear-gradient(180deg,#2196F3 0%,#1976D2 100%);
+  animation:vWave 0.8s ease-in-out infinite;
+}
+.voice-bar:nth-child(1){height:14px;animation-delay:0s;}
+.voice-bar:nth-child(2){height:26px;animation-delay:0.1s;}
+.voice-bar:nth-child(3){height:34px;animation-delay:0.2s;}
+.voice-bar:nth-child(4){height:20px;animation-delay:0.3s;}
+.voice-bar:nth-child(5){height:30px;animation-delay:0.15s;}
+@keyframes vWave{
+  0%,100%{transform:scaleY(0.3);}
+  50%{transform:scaleY(1);}
+}
+
+/* Typing cursor */
+.cursor{
+  display:inline-block;width:2px;height:1em;
+  background:#2196F3;margin-left:1px;vertical-align:text-bottom;
+  animation:curBlink 0.7s infinite;
+}
+@keyframes curBlink{
+  0%,50%{opacity:1;}
+  51%,100%{opacity:0;}
+}
+
+/* Mood selector */
+.mood-row{
+  display:flex;gap:6px;margin:8px 0;
+}
+.mood-card{
+  flex:1;text-align:center;padding:6px 2px;
+  border:2px solid #e0e0e0;border-radius:10px;
+  transition:all 0.3s;background:#fff;
+}
+.mood-card .emoji{font-size:18px;}
+.mood-card .label{font-size:8px;color:#888;margin-top:2px;}
+.mood-card.selected{border-color:#2196F3;background:#e8f4fd;}
+
+/* Text area mock */
+.textarea-mock{
+  width:100%;padding:10px 12px;
+  border:2px solid #e0e0e0;border-radius:12px;
+  font-size:12px;color:#333;line-height:1.7;
+  background:#f8f9fa;min-height:80px;
+  text-align:left;white-space:pre-wrap;
+}
+.textarea-mock .placeholder{color:#bbb;font-size:12px;}
+
+/* AI button */
+.ai-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 20px;
+  background:linear-gradient(135deg,#2196F3 0%,#1976D2 100%);
+  color:#fff;border-radius:24px;
+  font-size:12px;font-weight:600;
+  margin-top:10px;align-self:center;
+  box-shadow:0 4px 16px rgba(33,150,243,0.3);
+}
+
+/* AI feedback card */
+.ai-feedback{
+  background:linear-gradient(135deg,#e8f5e9 0%,#f1f8e9 100%);
+  border-radius:14px;padding:12px;
+  border-left:4px solid #27ae60;
+  margin-top:8px;
+}
+.ai-char-row{
+  display:flex;align-items:center;gap:8px;margin-bottom:8px;
+}
+.ai-avatar{
+  width:36px;height:36px;border-radius:50%;
+  border:2px solid #27ae60;background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.ai-name{font-size:12px;font-weight:700;color:#27ae60;}
+.ai-role{font-size:9px;color:#888;}
+.ai-bubble{
+  background:#fff;border-radius:12px;padding:10px 12px;
+  font-size:11px;line-height:1.7;color:#444;
+  white-space:pre-wrap;
+}
+
+/* AI Summary card */
+.ai-summary{
+  background:linear-gradient(135deg,#f0f7ff 0%,#e8f4fd 100%);
+  border-radius:14px;padding:10px 12px;
+  border-left:4px solid #2196F3;
+  margin-bottom:8px;
+}
+.ai-summary-header{
+  font-size:11px;font-weight:700;color:#1976D2;margin-bottom:6px;
+  display:flex;align-items:center;gap:4px;
+}
+.ai-summary-item{
+  font-size:10.5px;color:#333;padding:5px 8px;line-height:1.5;
+  background:rgba(255,255,255,0.7);border-radius:8px;
+  margin-bottom:4px;
+  opacity:0;transform:translateX(12px);
+  transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.ai-summary-item:last-child{margin-bottom:0;}
+.ai-summary-item.show{opacity:1;transform:translateX(0);}
+
+/* Analyzing animation */
+.analyzing-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:20px 0;
+  max-height:100px;overflow:hidden;
+  transition:all 0.4s ease;
+}
+.analyzing-wrap.collapsed{
+  max-height:0;padding:0;opacity:0;
+}
+.analyzing-spinner{
+  width:32px;height:32px;border:3px solid #e3f2fd;
+  border-top-color:#2196F3;border-radius:50%;
+  animation:analyzeSpin 0.8s linear infinite;
+}
+@keyframes analyzeSpin{to{transform:rotate(360deg);}}
+.analyzing-label{
+  font-size:11px;color:#1976D2;font-weight:600;
+  margin-top:8px;
+}
+
+/* Raw text preview (mini) */
+.raw-text-mini{
+  font-size:9px;color:#999;line-height:1.5;
+  padding:6px 8px;background:#f5f5f5;border-radius:8px;
+  margin-bottom:8px;max-height:40px;overflow:hidden;
+  opacity:0;transition:all 0.4s ease;
+  position:relative;
+}
+.raw-text-mini.show{opacity:1;}
+.raw-text-mini.fade{opacity:0;max-height:0;padding:0 8px;margin:0;}
+
+/* Summary cards */
+.summary-cards{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
+.summary-card{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;border-radius:10px;
+  font-size:11px;font-weight:500;
+  opacity:0;transform:translateY(12px);
+  transition:all 0.4s ease;
+}
+.summary-card.show{opacity:1;transform:translateY(0);}
+.summary-card.must{background:#e8f5e9;color:#2e7d32;}
+.summary-card.want{background:#e3f2fd;color:#1565c0;}
+.summary-card .tag{
+  font-size:9px;font-weight:700;
+  padding:2px 6px;border-radius:4px;color:#fff;flex-shrink:0;
+}
+.summary-card.must .tag{background:#4CAF50;}
+.summary-card.want .tag{background:#2196F3;}
+
+/* Dashboard cards */
+.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0;}
+.dash-card{
+  border:2px solid #111;border-radius:10px;
+  padding:10px 4px;text-align:center;background:#fff;
+  opacity:0;transform:translateY(10px);
+  transition:all 0.4s ease;
+}
+.dash-card.show{opacity:1;transform:translateY(0);}
+.dash-card .icon{font-size:18px;}
+.dash-card .dlabel{font-size:8px;color:#888;margin:2px 0;}
+.dash-card .dval{font-size:14px;font-weight:800;color:#111;}
+
+/* Journal status */
+.journal-status{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 12px;background:#f0f8ff;border-radius:10px;
+  font-size:11px;font-weight:600;color:#1976D2;
+  margin:6px 0;
+}
+
+/* Recent records */
+.recent-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;background:#f8f9fa;border-radius:8px;
+  font-size:11px;color:#333;margin-bottom:4px;
+  opacity:0;transform:translateY(8px);
+  transition:all 0.4s ease;
+}
+.recent-item.show{opacity:1;transform:translateY(0);}
+.recent-item .rtag{
+  padding:2px 6px;border-radius:4px;
+  font-size:9px;font-weight:600;color:#fff;flex-shrink:0;
+}
+.recent-item .rtime{margin-left:auto;color:#999;font-size:10px;}
+
+/* === End Card === */
+.end-card{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;padding:20px;
+  background:linear-gradient(180deg,#fff 0%,#f0f7ff 100%);
+}
+.end-logo{
+  font-size:44px;font-weight:800;color:#111;
+  opacity:0;transform:scale(0.7);
+  transition:all 0.6s cubic-bezier(0.34,1.56,0.64,1);
+}
+.end-logo.show{opacity:1;transform:scale(1);}
+.end-logo img{width:44px;height:44px;border-radius:10px;vertical-align:middle;margin-right:-2px;}
+
+.end-tagline{
+  font-size:13px;color:#666;margin-top:8px;
+  opacity:0;transform:translateY(12px);
+  transition:all 0.5s ease;
+}
+.end-tagline.show{opacity:1;transform:translateY(0);}
+
+.end-features{
+  display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center;
+  opacity:0;transform:translateY(12px);
+  transition:all 0.5s ease;
+}
+.end-features.show{opacity:1;transform:translateY(0);}
+.end-features span{
+  font-size:10px;color:#555;padding:4px 8px;
+  background:#f0f0f0;border-radius:8px;font-weight:500;
+}
+
+.end-cta{
+  padding:12px 32px;
+  background:linear-gradient(135deg,#2196F3 0%,#1976D2 100%);
+  color:#fff;border-radius:24px;font-size:13px;font-weight:700;
+  margin-top:24px;
+  box-shadow:0 4px 20px rgba(33,150,243,0.3);
+  opacity:0;transform:translateY(12px);
+  transition:all 0.5s ease;
+}
+.end-cta.show{opacity:1;transform:translateY(0);}
+
+.end-url{
+  font-size:14px;font-weight:700;color:#2196F3;margin-top:12px;
+  letter-spacing:0.5px;
+  opacity:0;transition:all 0.5s ease;
+}
+.end-url.show{opacity:1;}
+
+/* === Utility animations === */
+.stagger{opacity:0;transform:translateY(12px);transition:all 0.4s ease;}
+.stagger.show{opacity:1;transform:translateY(0);}
+
+.listening-label{
+  font-size:12px;color:#2196F3;font-weight:600;text-align:center;
+  margin-top:8px;
+}
+
+/* Date header */
+.date-header{
+  font-size:13px;font-weight:700;color:#111;margin-bottom:6px;
+}
+
+/* Dash title */
+.dash-title{font-size:13px;font-weight:700;color:#111;margin-bottom:4px;}
+
+/* Screen overlay for loop transition */
+.screen-fade{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  background:#fff;z-index:50;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.4s ease;
+}
+.screen-fade.active{opacity:1;}
+</style>
+</head>
+<body>
+<div class="demo-bg">
+  <!-- Background blobs -->
+  <div class="bg-blob"></div>
+  <div class="bg-blob"></div>
+  <div class="bg-blob"></div>
+
+  <div class="phone-wrap">
+    <div class="phone-frame">
+      <div class="phone-screen" id="phoneScreen">
+        <div class="phone-notch"></div>
+        <div class="phone-status">
+          <span>9:41</span>
+          <span style="font-size:10px;">5G &nbsp;📶 🔋</span>
+        </div>
+        <div class="phone-home-bar"></div>
+        <div class="screen-fade" id="screenFade"></div>
+
+        <!-- Scene 1: Journal Home -->
+        <div class="scene" id="scene1">
+          <div class="app-header stagger">
+            <img src="./icon.jpg" alt="D" onerror="this.style.display='none'">
+            <span class="app-name">ayce</span>
+          </div>
+          <div class="tab-bar stagger">
+            <div class="tab">🏠 ホーム</div>
+            <div class="tab active">📔 ジャーナル</div>
+            <div class="tab">⏱️ 行動</div>
+            <div class="tab">💰 お金</div>
+          </div>
+          <div class="date-header stagger">📅 2月26日（水）</div>
+          <div class="mood-row stagger">
+            <div class="mood-card" id="mood1"><div class="emoji">😊</div><div class="label">最高</div></div>
+            <div class="mood-card"><div class="emoji">🙂</div><div class="label">良い</div></div>
+            <div class="mood-card"><div class="emoji">😐</div><div class="label">普通</div></div>
+            <div class="mood-card"><div class="emoji">😔</div><div class="label">悪い</div></div>
+            <div class="mood-card"><div class="emoji">😢</div><div class="label">最悪</div></div>
+          </div>
+          <div class="textarea-mock stagger">
+            <span class="placeholder">今日の振り返りをそのまま話してください...</span>
+          </div>
+          <div style="flex:1;"></div>
+          <div class="voice-btn stagger" id="voiceBtn1">🎤 声で記録する</div>
+        </div>
+
+        <!-- Scene 2: Voice Recording -->
+        <div class="scene" id="scene2">
+          <div class="app-header stagger">
+            <img src="./icon.jpg" alt="D" onerror="this.style.display='none'">
+            <span class="app-name">ayce</span>
+          </div>
+          <div class="tab-bar stagger">
+            <div class="tab">🏠 ホーム</div>
+            <div class="tab active">📔 ジャーナル</div>
+            <div class="tab">⏱️ 行動</div>
+            <div class="tab">💰 お金</div>
+          </div>
+          <div class="date-header stagger">📅 2月26日（水）</div>
+          <div class="mood-row stagger">
+            <div class="mood-card selected"><div class="emoji">😊</div><div class="label">最高</div></div>
+            <div class="mood-card"><div class="emoji">🙂</div><div class="label">良い</div></div>
+            <div class="mood-card"><div class="emoji">😐</div><div class="label">普通</div></div>
+            <div class="mood-card"><div class="emoji">😔</div><div class="label">悪い</div></div>
+            <div class="mood-card"><div class="emoji">😢</div><div class="label">最悪</div></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <div class="voice-wave stagger">
+              <div class="voice-bar"></div>
+              <div class="voice-bar"></div>
+              <div class="voice-bar"></div>
+              <div class="voice-bar"></div>
+              <div class="voice-bar"></div>
+            </div>
+            <div class="listening-label stagger">聞いています...</div>
+          </div>
+          <div class="voice-btn listening stagger">🎤 聞いています...</div>
+        </div>
+
+        <!-- Scene 3: Transcription -->
+        <div class="scene" id="scene3">
+          <div class="app-header stagger">
+            <img src="./icon.jpg" alt="D" onerror="this.style.display='none'">
+            <span class="app-name">ayce</span>
+          </div>
+          <div class="tab-bar stagger">
+            <div class="tab">🏠 ホーム</div>
+            <div class="tab active">📔 ジャーナル</div>
+            <div class="tab">⏱️ 行動</div>
+            <div class="tab">💰 お金</div>
+          </div>
+          <div class="date-header stagger">📅 2月26日（水）</div>
+          <div class="mood-row stagger">
+            <div class="mood-card selected"><div class="emoji">😊</div><div class="label">最高</div></div>
+            <div class="mood-card"><div class="emoji">🙂</div><div class="label">良い</div></div>
+            <div class="mood-card"><div class="emoji">😐</div><div class="label">普通</div></div>
+            <div class="mood-card"><div class="emoji">😔</div><div class="label">悪い</div></div>
+            <div class="mood-card"><div class="emoji">😢</div><div class="label">最悪</div></div>
+          </div>
+          <div class="textarea-mock stagger" style="flex:1;">
+            <span id="typingText"></span><span class="cursor"></span>
+          </div>
+          <div class="ai-btn stagger" id="aiBtn" style="opacity:0;transform:translateY(12px);">✨ AIにまとめてもらう</div>
+        </div>
+
+        <!-- Scene 4: AI Summary & Feedback -->
+        <div class="scene" id="scene4">
+          <div class="app-header stagger">
+            <img src="./icon.jpg" alt="D" onerror="this.style.display='none'">
+            <span class="app-name">ayce</span>
+          </div>
+          <div class="tab-bar stagger">
+            <div class="tab">🏠 ホーム</div>
+            <div class="tab active">📔 ジャーナル</div>
+            <div class="tab">⏱️ 行動</div>
+            <div class="tab">💰 お金</div>
+          </div>
+
+          <!-- Raw text mini (shown briefly then fades) -->
+          <div class="raw-text-mini" id="rawTextMini">今日はカフェで読書した。新しい本が面白くて3時間も読んでしまった。明日は友達とランチの予定。</div>
+
+          <!-- Analyzing spinner -->
+          <div class="analyzing-wrap stagger" id="analyzingWrap">
+            <div class="analyzing-spinner"></div>
+            <div class="analyzing-label">AIが要約しています...</div>
+          </div>
+
+          <!-- AI Summary card -->
+          <div class="ai-summary" id="aiSummary" style="opacity:0;max-height:0;overflow:hidden;transition:all 0.5s cubic-bezier(0.4,0,0.2,1);">
+            <div class="ai-summary-header">📝 今日のまとめ</div>
+            <div class="ai-summary-item" id="si1">📚 カフェで3時間読書 — 新しい本に夢中になった</div>
+            <div class="ai-summary-item" id="si2">🍽️ 明日は友達とランチの予定</div>
+            <div class="ai-summary-item" id="si3">😊 気分: 最高 — 充実した1日</div>
+          </div>
+
+          <!-- AI character feedback -->
+          <div class="ai-feedback" id="aiFeedback" style="opacity:0;transform:translateY(10px);transition:all 0.4s ease;">
+            <div class="ai-char-row">
+              <div class="ai-avatar">🌸</div>
+              <div>
+                <div class="ai-name">ハナさん</div>
+                <div class="ai-role">寄り添うカウンセラー</div>
+              </div>
+            </div>
+            <div class="ai-bubble">
+              <span id="feedbackText"></span><span class="cursor"></span>
+            </div>
+          </div>
+
+          <!-- MUST/WANT task extraction -->
+          <div class="summary-cards">
+            <div class="summary-card must" id="mustCard">
+              <span class="tag">MUST</span>
+              <span>読んだ本の感想をメモする</span>
+            </div>
+            <div class="summary-card want" id="wantCard">
+              <span class="tag">WANT</span>
+              <span>お気に入りのカフェを友達に紹介</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scene 5: Dashboard -->
+        <div class="scene" id="scene5">
+          <div class="app-header stagger">
+            <img src="./icon.jpg" alt="D" onerror="this.style.display='none'">
+            <span class="app-name">ayce</span>
+          </div>
+          <div class="tab-bar stagger">
+            <div class="tab active">🏠 ホーム</div>
+            <div class="tab">📔 ジャーナル</div>
+            <div class="tab">⏱️ 行動</div>
+            <div class="tab">💰 お金</div>
+          </div>
+          <div class="dash-title stagger">📊 今日の概要</div>
+          <div class="dash-grid">
+            <div class="dash-card" id="dc1"><div class="icon">⏱️</div><div class="dlabel">行動</div><div class="dval">5件</div></div>
+            <div class="dash-card" id="dc2"><div class="icon">💰</div><div class="dlabel">支出</div><div class="dval">¥2,340</div></div>
+            <div class="dash-card" id="dc3"><div class="icon">🎯</div><div class="dlabel">目標</div><div class="dval">68%</div></div>
+          </div>
+          <div class="journal-status stagger">📔 ジャーナル記録済み 😊</div>
+          <div style="margin-top:6px;">
+            <div class="recent-item" id="ri1">
+              <span class="rtag" style="background:#4CAF50;">趣味</span>
+              <span>カフェで読書</span>
+              <span class="rtime">3h</span>
+            </div>
+            <div class="recent-item" id="ri2">
+              <span class="rtag" style="background:#FF5722;">食費</span>
+              <span>ランチ</span>
+              <span class="rtime">-¥850</span>
+            </div>
+            <div class="recent-item" id="ri3">
+              <span class="rtag" style="background:#2196F3;">運動</span>
+              <span>筋トレ</span>
+              <span class="rtime">30分</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scene 6: End Card -->
+        <div class="scene" id="scene6">
+          <div class="end-card">
+            <div class="end-logo" id="endLogo">
+              <img src="./icon.jpg" alt="D" onerror="this.outerHTML='D'" style="width:44px;height:44px;border-radius:10px;vertical-align:middle;margin-right:-2px;">ayce
+            </div>
+            <div class="end-tagline" id="endTagline">声で記録するライフログ</div>
+            <div class="end-features" id="endFeatures">
+              <span>📔 日記</span>
+              <span>⏱️ 行動</span>
+              <span>💰 お金</span>
+              <span>🎯 目標</span>
+              <span>🤖 AI分析</span>
+            </div>
+            <div class="end-cta" id="endCta">無料ではじめる →</div>
+            <div class="end-url" id="endUrl">dayce.app</div>
+          </div>
+        </div>
+
+      </div><!-- /phone-screen -->
+    </div><!-- /phone-frame -->
+
+    <!-- Progress dots -->
+    <div class="scene-progress" id="sceneProgress"></div>
+  </div><!-- /phone-wrap -->
+</div><!-- /demo-bg -->
+
+<script>
+(function(){
+  'use strict';
+
+  var SCENES = [
+    { id:'scene1', duration:3200, enter:enterScene1 },
+    { id:'scene2', duration:3500, enter:enterScene2 },
+    { id:'scene3', duration:5000, enter:enterScene3 },
+    { id:'scene4', duration:8500, enter:enterScene4 },
+    { id:'scene5', duration:3800, enter:enterScene5 },
+    { id:'scene6', duration:4500, enter:enterScene6 }
+  ];
+
+  var currentScene = -1;
+  var sceneTimer = null;
+  var timers = [];
+
+  // Utility: clear all pending timers
+  function clearTimers(){
+    timers.forEach(function(t){ clearTimeout(t); });
+    timers = [];
+  }
+
+  // Utility: schedule a timer and track it
+  function schedule(fn, ms){
+    var t = setTimeout(fn, ms);
+    timers.push(t);
+    return t;
+  }
+
+  // Utility: typing effect
+  function typeText(el, text, speed, cb){
+    var i = 0;
+    el.textContent = '';
+    function tick(){
+      if(i < text.length){
+        el.textContent += text.charAt(i);
+        i++;
+        schedule(tick, speed);
+      } else if(cb){
+        schedule(cb, 300);
+      }
+    }
+    tick();
+  }
+
+  // Utility: stagger show elements
+  function staggerShow(container, selector, startDelay){
+    var items = container.querySelectorAll(selector);
+    items.forEach(function(item, i){
+      item.classList.remove('show');
+      schedule(function(){
+        item.classList.add('show');
+      }, startDelay + i * 120);
+    });
+  }
+
+  // Transition to a scene
+  function goToScene(idx){
+    clearTimers();
+
+    // Exit current
+    var all = document.querySelectorAll('.scene');
+    all.forEach(function(el){
+      if(el.classList.contains('active')){
+        el.classList.remove('active');
+        el.classList.add('exit');
+      }
+    });
+
+    schedule(function(){
+      all.forEach(function(el){ el.classList.remove('exit'); });
+
+      // Reset and enter
+      var sceneEl = document.getElementById(SCENES[idx].id);
+
+      // Reset stagger items
+      sceneEl.querySelectorAll('.stagger').forEach(function(s){
+        s.classList.remove('show');
+      });
+
+      SCENES[idx].enter(sceneEl);
+
+      // Use rAF with setTimeout fallback for background tabs
+      var activated = false;
+      var activate = function(){ if(!activated){ activated=true; sceneEl.classList.add('active'); } };
+      requestAnimationFrame(activate);
+      setTimeout(activate, 30);
+
+      updateDots(idx);
+      currentScene = idx;
+    }, 300);
+  }
+
+  function nextScene(){
+    var next = (currentScene + 1) % SCENES.length;
+
+    // Loop transition: brief white flash between last and first
+    if(next === 0 && currentScene === SCENES.length - 1){
+      var fade = document.getElementById('screenFade');
+      fade.classList.add('active');
+      schedule(function(){
+        goToScene(next);
+        schedule(function(){
+          fade.classList.remove('active');
+        }, 400);
+        sceneTimer = schedule(nextScene, SCENES[next].duration);
+      }, 400);
+    } else {
+      goToScene(next);
+      sceneTimer = schedule(nextScene, SCENES[next].duration);
+    }
+  }
+
+  function updateDots(idx){
+    var dots = document.querySelectorAll('.scene-dot');
+    dots.forEach(function(d, i){
+      d.classList.toggle('active', i === idx);
+    });
+  }
+
+  // === Scene enter functions ===
+
+  function enterScene1(el){
+    staggerShow(el, '.stagger', 100);
+
+    // Tap hint on voice button
+    schedule(function(){
+      var btn = document.getElementById('voiceBtn1');
+      if(btn){
+        var ring = document.createElement('div');
+        ring.className = 'tap-ring';
+        btn.appendChild(ring);
+        schedule(function(){
+          if(ring.parentNode) ring.parentNode.removeChild(ring);
+        }, 900);
+      }
+    }, 2000);
+
+    // Select mood
+    schedule(function(){
+      var m = document.getElementById('mood1');
+      if(m) m.classList.add('selected');
+    }, 1200);
+  }
+
+  function enterScene2(el){
+    staggerShow(el, '.stagger', 50);
+  }
+
+  function enterScene3(el){
+    staggerShow(el, '.stagger', 50);
+
+    var textEl = document.getElementById('typingText');
+    var text = '今日はカフェで読書した。\n新しい本が面白くて3時間も\n読んでしまった。\n明日は友達とランチの予定。';
+
+    schedule(function(){
+      typeText(textEl, text, 50, function(){
+        var btn = document.getElementById('aiBtn');
+        if(btn){
+          btn.style.transition = 'all 0.4s ease';
+          btn.style.opacity = '1';
+          btn.style.transform = 'translateY(0)';
+        }
+      });
+    }, 300);
+  }
+
+  function enterScene4(el){
+    staggerShow(el, '.stagger', 100);
+
+    // Phase 1: Show raw text briefly (0.3s)
+    schedule(function(){
+      var raw = document.getElementById('rawTextMini');
+      if(raw) raw.classList.add('show');
+    }, 200);
+
+    // Phase 2: Raw text fades, analyzing spinner is visible (already via stagger)
+    schedule(function(){
+      var raw = document.getElementById('rawTextMini');
+      if(raw) raw.classList.add('fade');
+    }, 1200);
+
+    // Phase 3: Collapse spinner, reveal summary card
+    schedule(function(){
+      var wrap = document.getElementById('analyzingWrap');
+      if(wrap){ wrap.classList.add('collapsed'); }
+
+      var summary = document.getElementById('aiSummary');
+      if(summary){ summary.style.opacity='1'; summary.style.maxHeight='200px'; }
+    }, 2200);
+
+    // Phase 4: Summary items appear one by one
+    schedule(function(){
+      var si1 = document.getElementById('si1');
+      if(si1) si1.classList.add('show');
+    }, 2600);
+    schedule(function(){
+      var si2 = document.getElementById('si2');
+      if(si2) si2.classList.add('show');
+    }, 2900);
+    schedule(function(){
+      var si3 = document.getElementById('si3');
+      if(si3) si3.classList.add('show');
+    }, 3200);
+
+    // Phase 5: AI feedback card appears
+    schedule(function(){
+      var fb = document.getElementById('aiFeedback');
+      if(fb){ fb.style.opacity='1'; fb.style.transform='translateY(0)'; }
+    }, 3800);
+
+    // Phase 6: Type AI comment (shorter, since summary handles the content)
+    var feedbackEl = document.getElementById('feedbackText');
+    var text = '3時間も夢中になれるなんて、素敵な1日だったね！明日のランチも楽しんで 😊';
+
+    schedule(function(){
+      typeText(feedbackEl, text, 35, function(){
+        // Phase 7: MUST/WANT cards
+        schedule(function(){
+          var m = document.getElementById('mustCard');
+          if(m) m.classList.add('show');
+        }, 200);
+        schedule(function(){
+          var w = document.getElementById('wantCard');
+          if(w) w.classList.add('show');
+        }, 500);
+      });
+    }, 4000);
+  }
+
+  function enterScene5(el){
+    staggerShow(el, '.stagger', 80);
+
+    // Dashboard cards
+    schedule(function(){
+      var dc1 = document.getElementById('dc1');
+      if(dc1) dc1.classList.add('show');
+    }, 300);
+    schedule(function(){
+      var dc2 = document.getElementById('dc2');
+      if(dc2) dc2.classList.add('show');
+    }, 450);
+    schedule(function(){
+      var dc3 = document.getElementById('dc3');
+      if(dc3) dc3.classList.add('show');
+    }, 600);
+
+    // Recent items
+    schedule(function(){
+      var r1 = document.getElementById('ri1');
+      if(r1) r1.classList.add('show');
+    }, 1000);
+    schedule(function(){
+      var r2 = document.getElementById('ri2');
+      if(r2) r2.classList.add('show');
+    }, 1200);
+    schedule(function(){
+      var r3 = document.getElementById('ri3');
+      if(r3) r3.classList.add('show');
+    }, 1400);
+  }
+
+  function enterScene6(el){
+    schedule(function(){
+      var logo = document.getElementById('endLogo');
+      if(logo) logo.classList.add('show');
+    }, 200);
+    schedule(function(){
+      var tl = document.getElementById('endTagline');
+      if(tl) tl.classList.add('show');
+    }, 600);
+    schedule(function(){
+      var ft = document.getElementById('endFeatures');
+      if(ft) ft.classList.add('show');
+    }, 1000);
+    schedule(function(){
+      var cta = document.getElementById('endCta');
+      if(cta) cta.classList.add('show');
+    }, 1400);
+    schedule(function(){
+      var url = document.getElementById('endUrl');
+      if(url) url.classList.add('show');
+    }, 1800);
+  }
+
+  // === Reset scene elements (for loop) ===
+  function resetAllScenes(){
+    // Reset mood selection
+    document.querySelectorAll('.mood-card').forEach(function(m){ m.classList.remove('selected'); });
+
+    // Reset AI button
+    var aiBtn = document.getElementById('aiBtn');
+    if(aiBtn){ aiBtn.style.opacity='0'; aiBtn.style.transform='translateY(12px)'; aiBtn.style.transition='none'; }
+
+    // Reset typing
+    var tt = document.getElementById('typingText');
+    if(tt) tt.textContent = '';
+    var ft = document.getElementById('feedbackText');
+    if(ft) ft.textContent = '';
+
+    // Reset raw text mini
+    var raw = document.getElementById('rawTextMini');
+    if(raw){ raw.classList.remove('show','fade'); }
+
+    // Reset analyzing spinner
+    var aw = document.getElementById('analyzingWrap');
+    if(aw){ aw.classList.remove('collapsed'); aw.style.transition='none'; aw.style.opacity='1'; }
+
+    // Reset AI summary card
+    var aiS = document.getElementById('aiSummary');
+    if(aiS){ aiS.style.transition='none'; aiS.style.opacity='0'; aiS.style.maxHeight='0'; }
+    document.querySelectorAll('.ai-summary-item').forEach(function(c){ c.classList.remove('show'); });
+
+    // Reset AI feedback card
+    var aiFb = document.getElementById('aiFeedback');
+    if(aiFb){ aiFb.style.transition='none'; aiFb.style.opacity='0'; aiFb.style.transform='translateY(10px)'; }
+
+    // Reset summary cards
+    document.querySelectorAll('.summary-card').forEach(function(c){ c.classList.remove('show'); });
+
+    // Reset dash cards
+    document.querySelectorAll('.dash-card').forEach(function(c){ c.classList.remove('show'); });
+
+    // Reset recent items
+    document.querySelectorAll('.recent-item').forEach(function(c){ c.classList.remove('show'); });
+
+    // Reset end card
+    ['endLogo','endTagline','endFeatures','endCta','endUrl'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.classList.remove('show');
+    });
+  }
+
+  // === Init ===
+  function init(){
+    // Build progress dots
+    var prog = document.getElementById('sceneProgress');
+    for(var i = 0; i < SCENES.length; i++){
+      var dot = document.createElement('div');
+      dot.className = 'scene-dot';
+      prog.appendChild(dot);
+    }
+
+    // Wrap goToScene to reset on loop
+    var origGoTo = goToScene;
+    goToScene = function(idx){
+      if(idx === 0) resetAllScenes();
+      origGoTo(idx);
+    };
+
+    // Start
+    goToScene(0);
+    sceneTimer = schedule(nextScene, SCENES[0].duration);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
