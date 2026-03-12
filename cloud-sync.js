@@ -730,6 +730,15 @@
 
   function setAutoBackup(enabled) {
     localStorage.setItem(LS_AUTO_BACKUP, enabled ? 'on' : 'off');
+    if (enabled) {
+      // OFFからONに戻す場合、再セットアップ
+      if (!_autoBackupSetup && isLoggedIn()) {
+        setupAutoBackup();
+      }
+    } else {
+      // OFFにする場合、全タイマー・リスナーを停止
+      stopAutoBackup();
+    }
   }
 
   // 簡易ハッシュ（データが変わったか検出するだけなのでシンプルに）
@@ -811,6 +820,31 @@
   var _autoBackupTimer = null;
   var _autoBackupDebounce = null;
   var _hookInstalled = false; // localStorage hookが成功したかどうか
+  var _pollingTimer = null; // 5秒ポーリング用
+  var _visibilityHandler = null; // visibilitychange用
+  var _pagehideHandler = null; // pagehide用
+  var _interactionHandler = null; // click/touchend用
+  var _autoBackupSetup = false; // setupAutoBackup実行済みフラグ
+
+  // 全タイマー・リスナーを停止する
+  function stopAutoBackup() {
+    // デバウンスタイマー
+    if (_autoBackupDebounce) { clearTimeout(_autoBackupDebounce); _autoBackupDebounce = null; }
+    // 定期バックアップ
+    if (_autoBackupTimer) { clearInterval(_autoBackupTimer); _autoBackupTimer = null; }
+    // 5秒ポーリング
+    if (_pollingTimer) { clearInterval(_pollingTimer); _pollingTimer = null; }
+    // イベントリスナー
+    if (_visibilityHandler) { document.removeEventListener('visibilitychange', _visibilityHandler); _visibilityHandler = null; }
+    if (_pagehideHandler) { window.removeEventListener('pagehide', _pagehideHandler); _pagehideHandler = null; }
+    if (_interactionHandler) {
+      document.removeEventListener('touchend', _interactionHandler);
+      document.removeEventListener('click', _interactionHandler);
+      _interactionHandler = null;
+    }
+    _autoBackupSetup = false;
+    console.log('☁️ 自動バックアップ停止完了');
+  }
 
   // localStorage.setItem を監視して、データ変更時にバックアップをスケジュール
   function hookLocalStorage() {
@@ -877,11 +911,14 @@
   }
 
   function setupAutoBackup() {
+    if (_autoBackupSetup) return; // 二重セットアップ防止
+    _autoBackupSetup = true;
+
     // 0) localStorage書き込み監視（失敗しても他の機能は続行）
     try { hookLocalStorage(); } catch(e) { console.warn('☁️ hook設定エラー:', e.message); }
 
-    // 1) バックグラウンド移行時
-    document.addEventListener('visibilitychange', function() {
+    // 1) バックグラウンド移行時（名前付き関数で参照保持）
+    _visibilityHandler = function() {
       if (document.visibilityState === 'hidden') {
         // デバウンス待ちがあれば即実行
         if (_autoBackupDebounce) {
@@ -893,10 +930,11 @@
         // フォアグラウンドに戻った時もチェック（バックグラウンドでタイマーが止まった場合の救済）
         setTimeout(function() { autoBackupIfNeeded(); }, 2000);
       }
-    });
+    };
+    document.addEventListener('visibilitychange', _visibilityHandler);
 
     // 2) ページ離脱時（ブラウザ閉じなど）— sendBeacon版でより確実に
-    window.addEventListener('pagehide', function() {
+    _pagehideHandler = function() {
       if (isLoggedIn() && isAutoBackupEnabled() && !_restorePending && hasDataChanged()) {
         try {
           var data = collectSyncData();
@@ -910,7 +948,8 @@
           console.warn('☁️ sendBeacon失敗:', e.message);
         }
       }
-    });
+    };
+    window.addEventListener('pagehide', _pagehideHandler);
 
     // 3) 定期バックアップ実行（フォールバック: hook有無に関わらず）
     _autoBackupTimer = setInterval(function() {
@@ -921,7 +960,7 @@
     // 4) 高速変更検知ポーリング（hookの代替: 5秒ごとにデータ変更を検出→10秒デバウンスで自動バックアップ）
     if (!_hookInstalled) {
       var _lastDetectHash = localStorage.getItem(LS_LAST_SNAPSHOT) || '';
-      setInterval(function() {
+      _pollingTimer = setInterval(function() {
         if (!isLoggedIn() || !isAutoBackupEnabled()) return;
         try {
           var data = collectSyncData();
@@ -939,7 +978,7 @@
     // 5) ユーザー操作トリガー（hookなし時の追加検知）
     if (!_hookInstalled) {
       var _interactionDebounce = null;
-      var interactionHandler = function() {
+      _interactionHandler = function() {
         if (!isLoggedIn() || !isAutoBackupEnabled()) return;
         if (_interactionDebounce) clearTimeout(_interactionDebounce);
         _interactionDebounce = setTimeout(function() {
@@ -947,10 +986,12 @@
           autoBackupIfNeeded();
         }, 5000);
       };
-      document.addEventListener('touchend', interactionHandler, { passive: true });
-      document.addEventListener('click', interactionHandler, { passive: true });
+      document.addEventListener('touchend', _interactionHandler, { passive: true });
+      document.addEventListener('click', _interactionHandler, { passive: true });
       console.log('☁️ ユーザー操作トリガー設定');
     }
+
+    console.log('☁️ 自動バックアップセットアップ完了');
   }
 
   // renderSyncUI に自動バックアップトグルを追加

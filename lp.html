@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+<meta charset="UTF-8">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y3XKSJCC42"></script>
 <script>
@@ -9,16 +10,19 @@
   gtag('js', new Date());
   gtag('config', 'G-Y3XKSJCC42');
 </script>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dayce - 声で記録するライフログ</title>
 <meta name="description" content="Dayce（デイス）は声で記録するライフログPWA。日記・行動・お金・目標をAIキャラクターと一緒に管理。">
+<link rel="canonical" href="https://dayce.app/lp.html">
 <meta property="og:title" content="Dayce - 声で記録するライフログ">
 <meta property="og:description" content="日々の行動・お金・目標・気持ちを声で記録して、AIが振り返る。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://dayce.app/lp.html">
 <meta property="og:image" content="https://dayce.app/icon.jpg">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Dayce - 声で記録するライフログ">
+<meta name="twitter:description" content="日々の行動・お金・目標・気持ちを声で記録して、AIが振り返る。">
+<meta name="twitter:image" content="https://dayce.app/icon.jpg">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="./icon.jpg">
 <style>
@@ -1080,8 +1084,8 @@ body {
     <h3>ホーム画面に追加してアプリのように使おう</h3>
     <p>Dayceはブラウザで動くPWA。ホーム画面に追加すればアプリストア不要で、いつでもワンタップで起動できます。</p>
     <div class="lp-pwa-tabs">
-      <div class="lp-pwa-tab active" onclick="showPwaGuide('ios')">iPhone</div>
-      <div class="lp-pwa-tab" onclick="showPwaGuide('android')">Android</div>
+      <div class="lp-pwa-tab active" onclick="showPwaGuide('ios', event)">iPhone</div>
+      <div class="lp-pwa-tab" onclick="showPwaGuide('android', event)">Android</div>
     </div>
     <div class="lp-pwa-steps" id="pwaStepsIos">
       <div class="lp-pwa-step"><div class="lp-pwa-step-num">1</div>Safariで dayce.app を開く</div>
@@ -1116,7 +1120,7 @@ body {
     <span>Dayce</span>
   </div>
   <p>&copy; <script>document.write(new Date().getFullYear())</script> Dayce. All rights reserved.</p>
-  <p style="margin-top:10px;"><a href="./tokushoho.html" style="color:#888;font-size:12px;text-decoration:none;">特定商取引法に基づく表記</a></p>
+  <p style="margin-top:10px;"><a href="./community.html" style="color:#888;font-size:12px;text-decoration:none;">コミュニティ</a> ｜ <a href="./tokushoho.html" style="color:#888;font-size:12px;text-decoration:none;">特定商取引法に基づく表記</a></p>
 </footer>
 
 <!-- Demo Modal -->
@@ -1374,10 +1378,10 @@ document.addEventListener('keydown', function(e) {
 });
 
 // PWA Install Guide Tab Switch
-function showPwaGuide(platform) {
+function showPwaGuide(platform, e) {
   var tabs = document.querySelectorAll('.lp-pwa-tab');
   tabs.forEach(function(t) { t.classList.remove('active'); });
-  event.target.classList.add('active');
+  e.target.classList.add('active');
   document.getElementById('pwaStepsIos').style.display = platform === 'ios' ? 'flex' : 'none';
   document.getElementById('pwaStepsAndroid').style.display = platform === 'android' ? 'flex' : 'none';
 }
