@@ -37,7 +37,30 @@
   function getEmail() { return localStorage.getItem(LS_EMAIL); }
   function getLastSynced() { return localStorage.getItem(LS_LAST_SYNCED); }
 
+  function clearAppData() {
+    // SYNC_KEYSのデータを全削除
+    SYNC_KEYS.forEach(function(k) { localStorage.removeItem(k); });
+    // 動的キー（taskChecks_xxxx など）を全削除
+    var keysToRemove = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && DYNAMIC_KEY_PREFIXES.some(function(p){ return k.indexOf(p) === 0; })) {
+        keysToRemove.push(k);
+      }
+    }
+    keysToRemove.forEach(function(k){ localStorage.removeItem(k); });
+    // その他アプリ固有キー
+    ['journalV2MigratedToV3','journals','gv2_collapsed','aiUsage_' + (function(){
+      var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    })()].forEach(function(k){ localStorage.removeItem(k); });
+  }
+
   function saveAuth(token, email, createdAt) {
+    // メールアドレスが変わった場合（アカウント切り替え）はアプリデータをクリア
+    var prevEmail = localStorage.getItem(LS_EMAIL);
+    if (prevEmail && prevEmail !== email) {
+      clearAppData();
+    }
     localStorage.setItem(LS_TOKEN, token);
     localStorage.setItem(LS_EMAIL, email);
     if (createdAt) localStorage.setItem('syncAuthRegisteredAt', createdAt);
@@ -46,11 +69,10 @@
     localStorage.removeItem('isPremium');
   }
   function clearAuth() {
+    clearAppData();
     localStorage.removeItem(LS_TOKEN);
     localStorage.removeItem(LS_EMAIL);
     localStorage.removeItem('syncAuthRegisteredAt');
-    localStorage.removeItem('planLevel');
-    localStorage.removeItem('isPremium');
   }
 
   function isLoggedIn() {
