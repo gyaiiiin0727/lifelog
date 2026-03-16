@@ -568,10 +568,11 @@
 
       var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://api.dayce.app';
       var _gaiH = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : { 'Content-Type': 'application/json' };
+      // セッションの最初のターンのみカウント（isFirstTurn）
       var res = await fetch(BACKEND_URL + '/api/analyze', {
         method: 'POST',
         headers: _gaiH,
-        body: JSON.stringify({ text: prompt, tone: tone, type: 'goalCoach' })
+        body: JSON.stringify({ text: prompt, tone: tone, type: 'goalCoach', isFirstTurn: _state.turnCount === 0 })
       });
 
       if (res.status === 429 || res.status === 401) {
@@ -686,10 +687,11 @@
 
       var BACKEND_URL = window.BACKEND_URL || window.__BACKEND_URL__ || 'https://api.dayce.app';
       var _gaiH = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : { 'Content-Type': 'application/json' };
+      // isFirstTurn=falseでサーバー側のカウントをスキップ（セッション内の2回目以降）
       var res = await fetch(BACKEND_URL + '/api/analyze', {
         method: 'POST',
         headers: _gaiH,
-        body: JSON.stringify({ text: prompt, tone: tone, type: 'goalCoach' })
+        body: JSON.stringify({ text: prompt, tone: tone, type: 'goalCoach', isFirstTurn: false })
       });
 
       if (res.status === 429 || res.status === 401) {
