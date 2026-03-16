@@ -41,11 +41,16 @@
     localStorage.setItem(LS_TOKEN, token);
     localStorage.setItem(LS_EMAIL, email);
     if (createdAt) localStorage.setItem('syncAuthRegisteredAt', createdAt);
+    // ログイン時はプランをリセット（サーバーから正確な値を再取得するまでfreeにする）
+    localStorage.removeItem('planLevel');
+    localStorage.removeItem('isPremium');
   }
   function clearAuth() {
     localStorage.removeItem(LS_TOKEN);
     localStorage.removeItem(LS_EMAIL);
     localStorage.removeItem('syncAuthRegisteredAt');
+    localStorage.removeItem('planLevel');
+    localStorage.removeItem('isPremium');
   }
 
   function isLoggedIn() {
