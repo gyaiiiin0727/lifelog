@@ -205,11 +205,36 @@
   async function upload() {
     var data = collectSyncData();
     var planLevel = (window.DaycePlan) ? window.DaycePlan.getPlan() : (localStorage.getItem('planLevel') || 'free');
-    var res = await apiCall('/api/sync/upload', {
-      method: 'POST',
-      body: { data: data, planLevel: planLevel }
-    });
+    var res;
+    try {
+      res = await apiCall('/api/sync/upload', {
+        method: 'POST',
+        body: { data: data, planLevel: planLevel }
+      });
+    } catch(e) {
+      // 空データ上書き防止エラーは握りつぶさず呼び出し元に伝える
+      if (e.message && e.message.indexOf('empty_override') !== -1) {
+        throw new Error('empty_override');
+      }
+      throw e;
+    }
     localStorage.setItem(LS_LAST_SYNCED, res.syncedAt);
+    return res;
+  }
+
+  async function getHistory() {
+    return apiCall('/api/sync/history');
+  }
+
+  async function restoreVersion(key) {
+    var res = await apiCall('/api/sync/restore-version', {
+      method: 'POST',
+      body: { key: key }
+    });
+    if (res.data) {
+      applySyncData(res.data);
+      if (res.syncedAt) localStorage.setItem(LS_LAST_SYNCED, res.syncedAt);
+    }
     return res;
   }
 
@@ -358,11 +383,67 @@
         '<button type="button" id="csDownloadBtn" class="cs-btn cs-btn-download">📲 復元</button>' +
       '</div>' +
       '<p style="font-size:11px;color:#999;margin:6px 0 0;text-align:center;line-height:1.5;">バックアップ = このスマホのデータをクラウドに保存<br>復元 = クラウドのデータをこのスマホに戻す</p>' +
+      '<div style="margin-top:12px;border-top:1px solid #eee;padding-top:12px;">' +
+        '<button type="button" id="csHistoryBtn" class="cs-btn cs-btn-link" style="font-size:12px;color:#888;">🕐 過去のバックアップ履歴</button>' +
+        '<div id="csHistoryList" style="display:none;margin-top:8px;"></div>' +
+      '</div>' +
       '<button type="button" id="csLogoutBtn" class="cs-btn cs-btn-link cs-logout">ログアウト</button>';
 
     container.querySelector('#csUploadBtn').addEventListener('click', handleUpload);
     container.querySelector('#csDownloadBtn').addEventListener('click', handleDownload);
     container.querySelector('#csLogoutBtn').addEventListener('click', handleLogout);
+    container.querySelector('#csHistoryBtn').addEventListener('click', handleShowHistory);
+  }
+
+  async function handleShowHistory() {
+    var listEl = document.getElementById('csHistoryList');
+    if (!listEl) return;
+    if (listEl.style.display !== 'none') { listEl.style.display = 'none'; return; }
+
+    listEl.style.display = 'block';
+    listEl.innerHTML = '<p style="font-size:12px;color:#999;text-align:center;">読み込み中...</p>';
+
+    try {
+      var res = await getHistory();
+      var versions = res.versions || [];
+      if (versions.length === 0) {
+        listEl.innerHTML = '<p style="font-size:12px;color:#999;text-align:center;">履歴がありません</p>';
+        return;
+      }
+      var html = '<p style="font-size:11px;color:#999;margin:0 0 6px;">過去のバックアップから復元できます（最大7件）</p>';
+      versions.forEach(function(v) {
+        var dt = v.syncedAt ? new Date(v.syncedAt).toLocaleString('ja-JP') : '不明';
+        var summary = '行動' + v.actCount + '件 / 日記' + v.journalCount + '日分 / お金' + v.moneyCount + '件';
+        html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px;background:#f8f9fa;border-radius:8px;margin-bottom:6px;">' +
+          '<div style="flex:1;">' +
+            '<div style="font-size:12px;font-weight:600;color:#333;">' + escHTML(dt) + '</div>' +
+            '<div style="font-size:11px;color:#888;margin-top:2px;">' + escHTML(summary) + '</div>' +
+          '</div>' +
+          '<button type="button" class="cs-restore-version-btn cs-btn" style="font-size:11px;padding:4px 10px;margin-left:8px;background:#f0f0f0;color:#333;" data-key="' + escHTML(v.key) + '" data-dt="' + escHTML(dt) + '">この時点に戻す</button>' +
+        '</div>';
+      });
+      listEl.innerHTML = html;
+      listEl.querySelectorAll('.cs-restore-version-btn').forEach(function(btn) {
+        btn.addEventListener('click', async function() {
+          var key = this.getAttribute('data-key');
+          var dt = this.getAttribute('data-dt');
+          if (!confirm(dt + ' のデータに戻しますか？\n現在のデータは上書きされます。')) return;
+          this.disabled = true;
+          this.textContent = '復元中...';
+          try {
+            await restoreVersion(key);
+            alert('復元完了！ページを再読み込みします。');
+            location.reload();
+          } catch(e) {
+            alert('復元に失敗しました: ' + e.message);
+            this.disabled = false;
+            this.textContent = 'この時点に戻す';
+          }
+        });
+      });
+    } catch(e) {
+      listEl.innerHTML = '<p style="font-size:12px;color:#e53e3e;">履歴の取得に失敗しました: ' + escHTML(e.message) + '</p>';
+    }
   }
 
   // === イベントハンドラ ===
@@ -842,7 +923,12 @@
         tsEl.textContent = new Date(res.syncedAt).toLocaleString('ja-JP');
       }
     } catch(e) {
-      console.error('☁️ 自動バックアップ失敗:', e.message, e);
+      if (e.message === 'empty_override') {
+        // 空データ上書き防止: スナップショットだけ更新して次回も同じ判定を避ける
+        console.warn('☁️ 空データ上書き防止: バックアップをスキップしました');
+      } else {
+        console.error('☁️ 自動バックアップ失敗:', e.message, e);
+      }
     } finally {
       autoBackupRunning = false;
     }
@@ -862,7 +948,11 @@
         tsEl.textContent = new Date(res.syncedAt).toLocaleString('ja-JP');
       }
     } catch(e) {
-      console.warn('☁️ 初回自動バックアップ失敗:', e.message);
+      if (e.message === 'empty_override') {
+        console.warn('☁️ 空データ上書き防止（初回バックアップスキップ）');
+      } else {
+        console.warn('☁️ 初回自動バックアップ失敗:', e.message);
+      }
     } finally {
       autoBackupRunning = false;
     }
@@ -1513,6 +1603,8 @@
     upload: upload,
     download: download,
     getStatus: getStatus,
+    getHistory: getHistory,
+    restoreVersion: restoreVersion,
     renderUI: renderUI,
     isAutoBackupEnabled: isAutoBackupEnabled,
     setAutoBackup: setAutoBackup,
