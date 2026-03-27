@@ -488,7 +488,7 @@
       renderUI();
       // サーバー確認→復元 or バックアップ
       afterLogin();
-      // アンケート表示（少し遅延して自然に）
+      // アンケート表示（少し遅延して自然に）→完了/スキップ後にウェルカムモーダル→ジャーナルへ
       setTimeout(function() { showSurveyModal(); }, 800);
     } catch (e) {
       showError(e.message);
@@ -756,16 +756,12 @@
         '<div style="font-size:48px;margin-bottom:12px;">🎉</div>' +
         '<h2 style="font-size:20px;font-weight:700;color:#333;margin:0 0 10px;">Dayceへようこそ！</h2>' +
         '<p style="font-size:14px;color:#666;line-height:1.6;margin:0 0 24px;">まず今日あったことを<strong>声で記録</strong>してみましょう。<br>話すだけでAIが自動で要約してくれます。</p>' +
-        '<button id="csWelcomeGoBtn" type="button" style="width:100%;padding:14px;background:#2196F3;color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:10px;">🎤 さっそく記録する</button>' +
-        '<button id="csWelcomeSkipBtn" type="button" style="width:100%;padding:8px;background:none;border:none;color:#999;font-size:13px;cursor:pointer;">あとで探索する</button>' +
+        '<button id="csWelcomeGoBtn" type="button" style="width:100%;padding:14px;background:#2196F3;color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;">🎤 さっそく記録する</button>' +
       '</div>';
     document.body.appendChild(overlay);
     document.getElementById('csWelcomeGoBtn').addEventListener('click', function() {
       overlay.parentNode && overlay.parentNode.removeChild(overlay);
       if (typeof switchTab === 'function') switchTab('journal');
-    });
-    document.getElementById('csWelcomeSkipBtn').addEventListener('click', function() {
-      overlay.parentNode && overlay.parentNode.removeChild(overlay);
     });
   }
 
