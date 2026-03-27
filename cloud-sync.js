@@ -1288,7 +1288,84 @@
     } finally {
       _afterLoginRunning = false;
     }
+    // ログイン後にプッシュ通知を設定（既に許可済みなら即サブスク、未設定なら数秒後にプロンプト）
+    setTimeout(function() { setupPushNotifications(false); }, 3000);
   }
+
+  // ===== Push Notifications =====
+  var VAPID_PUBLIC_KEY = 'BPri9MxuqWyE_VTPeWMPCzXxOXB7BaYO2zmdhQiqG88eZttWPpccJ5XWTz3hbDUihKZplhqZ-se7N1i6zwzS3e0';
+
+  function urlBase64ToUint8Array(base64String) {
+    var padding = '='.repeat((4 - base64String.length % 4) % 4);
+    var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    var rawData = atob(base64);
+    return Uint8Array.from(rawData, function(c) { return c.charCodeAt(0); });
+  }
+
+  async function subscribePush() {
+    try {
+      var reg = await navigator.serviceWorker.ready;
+      var sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+      });
+      var token = getToken();
+      if (!token) return;
+      await fetch(API_BASE + '/api/push/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ subscription: sub.toJSON() }),
+      });
+      console.log('🔔 プッシュ通知を登録しました');
+    } catch(e) {
+      console.warn('🔔 プッシュ通知の登録失敗:', e.message);
+    }
+  }
+
+  async function setupPushNotifications(forcePrompt) {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    if (!isLoggedIn()) return;
+    var perm = Notification.permission;
+    if (perm === 'granted') {
+      await subscribePush();
+    } else if (perm === 'default' && forcePrompt) {
+      var granted = await Notification.requestPermission();
+      if (granted === 'granted') await subscribePush();
+    } else if (perm === 'default' && !forcePrompt) {
+      showPushPrompt();
+    }
+  }
+
+  function showPushPrompt() {
+    if (document.getElementById('csPushPrompt')) return;
+    if (localStorage.getItem('pushPromptDismissed')) return;
+    var el = document.createElement('div');
+    el.id = 'csPushPrompt';
+    el.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a2e;color:#fff;border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;max-width:340px;width:calc(100% - 40px);font-size:14px;';
+    el.innerHTML = '<span style="font-size:20px">🔔</span><div style="flex:1"><div style="font-weight:600;margin-bottom:2px">毎晩リマインドしますか？</div><div style="font-size:12px;opacity:.7">21時に記録を促す通知を送ります</div></div><button id="csPushYes" style="background:#6c63ff;color:#fff;border:none;border-radius:8px;padding:8px 14px;cursor:pointer;font-size:13px;white-space:nowrap">はい</button><button id="csPushNo" style="background:transparent;color:#aaa;border:none;cursor:pointer;font-size:20px;line-height:1;padding:0 4px">×</button>';
+    document.body.appendChild(el);
+    document.getElementById('csPushYes').onclick = async function() {
+      el.remove();
+      await setupPushNotifications(true);
+    };
+    document.getElementById('csPushNo').onclick = function() {
+      el.remove();
+      localStorage.setItem('pushPromptDismissed', '1');
+    };
+    setTimeout(function() { if (el.parentNode) el.remove(); }, 15000);
+  }
+
+  // pushプロンプトをリセットして再表示するAPI（設定画面から呼べる）
+  window.DayceNotification = {
+    enable: function() { localStorage.removeItem('pushPromptDismissed'); setupPushNotifications(true); },
+    disable: async function() {
+      var reg = await navigator.serviceWorker.ready;
+      var sub = await reg.pushManager.getSubscription();
+      if (sub) await sub.unsubscribe();
+      console.log('🔔 プッシュ通知を解除しました');
+    },
+    getPermission: function() { return Notification.permission; },
+  };
 
   function showSyncBanner(serverSyncedAt) {
     // 既にバナーが存在する場合は重複表示しない

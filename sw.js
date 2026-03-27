@@ -1,5 +1,5 @@
-// ===== lifelog service worker (v4 - Network First + auto-update) =====
-const CACHE_NAME = 'lifelog-cache-v8';
+// ===== lifelog service worker (v5 - Network First + auto-update + push) =====
+const CACHE_NAME = 'lifelog-cache-v9';
 const CORE_ASSETS = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', (event) => {
@@ -46,5 +46,33 @@ self.addEventListener('fetch', (event) => {
       caches.open(CACHE_NAME).then(cache => cache.put(req, copy)).catch(() => {});
       return res;
     }).catch(() => caches.match(req))
+  );
+});
+
+// ===== Push Notifications =====
+self.addEventListener('push', event => {
+  let data = { title: 'Dayce', body: '今日を振り返りましょう', url: 'https://dayce.app' };
+  try { if (event.data) data = { ...data, ...event.data.json() }; } catch(e) {}
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: '/ogp.png',
+      badge: '/ogp.png',
+      data: { url: data.url },
+      vibrate: [100, 50, 100],
+    })
+  );
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || 'https://dayce.app';
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(wins => {
+      for (const w of wins) {
+        if (w.url.includes('dayce.app') && 'focus' in w) return w.focus();
+      }
+      return clients.openWindow(url);
+    })
   );
 });
