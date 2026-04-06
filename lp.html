@@ -906,6 +906,104 @@ body {
   transform: translateY(0);
 }
 
+/* === Pain Section === */
+.lp-pain {
+  padding: 64px 20px;
+  background: #fff;
+}
+
+.lp-pain-title {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--black);
+  margin-bottom: 32px;
+}
+
+.lp-pain-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  max-width: 600px;
+  margin: 0 auto 36px;
+}
+
+.lp-pain-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--gray-50);
+  border-radius: 14px;
+  padding: 16px 18px;
+  border-left: 4px solid #ddd;
+}
+
+.lp-pain-item .pain-emoji {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  line-height: 1.3;
+}
+
+.lp-pain-item p {
+  font-size: 0.95rem;
+  color: var(--gray-800);
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.lp-pain-solve {
+  text-align: center;
+  background: linear-gradient(135deg, #e3f2fd 0%, #f0f7ff 100%);
+  border-radius: 16px;
+  padding: 24px 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.lp-pain-solve p {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--blue-dark);
+  line-height: 1.6;
+}
+
+/* === Video Section === */
+.lp-video-section {
+  padding: 60px 20px;
+  background: var(--gray-50);
+  text-align: center;
+}
+
+.lp-video-section h2 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: var(--black);
+}
+
+.lp-video-section p {
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  margin-bottom: 24px;
+}
+
+.lp-video-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  background: #000;
+}
+
+.lp-video-wrap video {
+  width: 100%;
+  display: block;
+  border-radius: 20px;
+}
+
 /* === Responsive === */
 @media (min-width: 768px) {
   .lp-header { height: 64px; padding: 0 32px; }
@@ -926,6 +1024,8 @@ body {
   }
   .lp-step { flex-direction: column; align-items: center; text-align: center; flex: 1; }
   .lp-final-cta h2 { font-size: 2.2rem; }
+  .lp-pain-grid { grid-template-columns: 1fr 1fr; }
+  .lp-video-wrap { max-width: 420px; }
 }
 </style>
 </head>
@@ -943,23 +1043,64 @@ body {
 <!-- Hero -->
 <section class="lp-hero">
   <div class="lp-container">
-    <h1 class="lp-fade">声で記録する、<br>毎日のライフログ。</h1>
-    <p class="lp-hero-sub lp-fade">日々の行動・お金・目標・気持ちを<br>声で記録して、AIが振り返る。</p>
-    <a href="./index.html" class="lp-cta-primary lp-fade">🎤 無料で登録して始める</a>
-    <p class="lp-hero-note lp-fade">PWA対応・メール登録のみ・完全無料</p>
+    <h1 class="lp-fade">毎日3分。<br>話すだけで、<br>生活が整っていく。</h1>
+    <p class="lp-hero-sub lp-fade">行動・お金・目標・気持ちを声でサクッと記録。<br>AIキャラクターが毎日振り返りをサポートします。</p>
+    <a href="./index.html" class="lp-cta-primary lp-fade">🎤 無料で始める（登録30秒）</a>
+    <p class="lp-hero-note lp-fade">メール登録のみ・完全無料・アプリDL不要</p>
     <div class="lp-social-proof lp-fade">
       <div class="lp-proof-item">
-        <div class="lp-proof-num">5分</div>
+        <div class="lp-proof-num">3分</div>
         <div class="lp-proof-label">1日の記録時間</div>
       </div>
       <div class="lp-proof-item">
-        <div class="lp-proof-num">4つ</div>
-        <div class="lp-proof-label">記録カテゴリ</div>
+        <div class="lp-proof-num">4機能</div>
+        <div class="lp-proof-label">記録できること</div>
       </div>
       <div class="lp-proof-item">
         <div class="lp-proof-num">3人</div>
         <div class="lp-proof-label">AIキャラクター</div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- Video Demo -->
+<section class="lp-video-section lp-fade">
+  <div class="lp-container">
+    <h2>実際の画面を見てみよう</h2>
+    <p>声で話すだけでAIが自動記録。たった30秒で使い方がわかります。</p>
+    <div class="lp-video-wrap">
+      <video autoplay muted loop playsinline preload="auto" poster="">
+        <source src="./dayce-demo-v2.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+</section>
+
+<!-- Pain Points -->
+<section class="lp-pain">
+  <div class="lp-container">
+    <p class="lp-pain-title lp-fade">😓 こんなこと、ありませんか？</p>
+    <div class="lp-pain-grid">
+      <div class="lp-pain-item lp-fade">
+        <span class="pain-emoji">📓</span>
+        <p>「日記をつけたいけど、書くのが面倒で続かない」</p>
+      </div>
+      <div class="lp-pain-item lp-fade">
+        <span class="pain-emoji">💸</span>
+        <p>「気づいたら月末にお金がなくなっている」</p>
+      </div>
+      <div class="lp-pain-item lp-fade">
+        <span class="pain-emoji">🎯</span>
+        <p>「目標は立てるのに、いつの間にか忘れている」</p>
+      </div>
+      <div class="lp-pain-item lp-fade">
+        <span class="pain-emoji">🤯</span>
+        <p>「何をしていたか振り返れない。時間が消えていく感覚」</p>
+      </div>
+    </div>
+    <div class="lp-pain-solve lp-fade">
+      <p>✅ Dayceなら、<strong>話すだけ</strong>で全部が記録される。<br>AIが整理して、毎日フィードバックをくれます。</p>
     </div>
   </div>
 </section>
