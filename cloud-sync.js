@@ -1312,7 +1312,7 @@
   }
 
   // ===== Push Notifications =====
-  var VAPID_PUBLIC_KEY = 'BPri9MxuqWyE_VTPeWMPCzXxOXB7BaYO2zmdhQiqG88eZttWPpccJ5XWTz3hbDUihKZplhqZ-se7N1i6zwzS3e0';
+  var VAPID_PUBLIC_KEY = 'BBIJCmdw_b6KV_TULUY5LKckBJjqBWZrTR_ohiR8spxpYIbPEX0uy4shwBTjG7hCq1G2MZoo1Vx2NrebxHatrzI';
 
   function urlBase64ToUint8Array(base64String) {
     var padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -1361,7 +1361,7 @@
     var el = document.createElement('div');
     el.id = 'csPushPrompt';
     el.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a2e;color:#fff;border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;max-width:340px;width:calc(100% - 40px);font-size:14px;';
-    el.innerHTML = '<span style="font-size:20px">🔔</span><div style="flex:1"><div style="font-weight:600;margin-bottom:2px">毎晩リマインドしますか？</div><div style="font-size:12px;opacity:.7">21時に記録を促す通知を送ります</div></div><button id="csPushYes" style="background:#6c63ff;color:#fff;border:none;border-radius:8px;padding:8px 14px;cursor:pointer;font-size:13px;white-space:nowrap">はい</button><button id="csPushNo" style="background:transparent;color:#aaa;border:none;cursor:pointer;font-size:20px;line-height:1;padding:0 4px">×</button>';
+    el.innerHTML = '<span style="font-size:20px">🔔</span><div style="flex:1"><div style="font-weight:600;margin-bottom:2px">毎晩リマインドしますか？</div><div style="font-size:12px;opacity:.7">毎晩20時に記録を促す通知を送ります</div></div><button id="csPushYes" style="background:#6c63ff;color:#fff;border:none;border-radius:8px;padding:8px 14px;cursor:pointer;font-size:13px;white-space:nowrap">はい</button><button id="csPushNo" style="background:transparent;color:#aaa;border:none;cursor:pointer;font-size:20px;line-height:1;padding:0 4px">×</button>';
     document.body.appendChild(el);
     document.getElementById('csPushYes').onclick = async function() {
       el.remove();

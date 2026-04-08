@@ -5080,7 +5080,16 @@ body.qr-open .fab-container{ pointer-events:none !important; }
     </div>
 </div>
 
-<!-- クイックアクションは削除済み（FABメニューに統合） -->
+<!-- ジャーナル未記録バナー（updateDashboardで制御） -->
+<div id="journalNudgeBanner" style="display:none;background:#fffbeb;border:2px solid #f59e0b;border-radius:14px;padding:14px 16px;margin:12px 0;align-items:center;gap:12px;">
+  <span style="font-size:24px;">📔</span>
+  <div style="flex:1;">
+    <div style="font-weight:800;font-size:15px;color:#92400e;">今日のジャーナルを書こう</div>
+    <div style="font-size:13px;color:#78350f;margin-top:2px;">今日の出来事を一言振り返りましょう</div>
+  </div>
+  <button onclick="switchTab('journal')" style="background:#f59e0b;color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;">書く</button>
+  <button onclick="document.getElementById('journalNudgeBanner').style.display='none';localStorage.setItem('journalBannerDismissed',new Date().toDateString());" style="background:none;border:none;font-size:20px;cursor:pointer;color:#92400e;padding:4px;line-height:1;">✕</button>
+</div>
 
 <div class="dashboard-header">
         <h2 id="dashboardDate">📊 今日の概要</h2>
@@ -15788,6 +15797,18 @@ textarea { width: 100%; }
     }
     if (journalBtn) journalBtn.textContent = hasJournal ? '編集する' : '今すぐ書く';
 
+    // ジャーナルバナー制御
+    var nudgeBanner = document.getElementById('journalNudgeBanner');
+    if (nudgeBanner) {
+      var dismissed = localStorage.getItem('journalBannerDismissed');
+      var todayDateStr = new Date().toDateString();
+      if (!hasJournal && dismissed !== todayDateStr) {
+        nudgeBanner.style.display = 'flex';
+      } else {
+        nudgeBanner.style.display = 'none';
+      }
+    }
+
     renderQuickButtons();
     renderRecentLogs(todayActivities, todayMoney);
 
@@ -18628,6 +18649,18 @@ const modal = $('qrModal');
       }
     }
     if (journalBtn) journalBtn.textContent = hasJournal ? '編集する' : '今すぐ書く';
+
+    // ジャーナルバナー制御
+    var nudgeBanner2 = document.getElementById('journalNudgeBanner');
+    if (nudgeBanner2) {
+      var dismissed2 = localStorage.getItem('journalBannerDismissed');
+      var todayDateStr2 = new Date().toDateString();
+      if (!hasJournal && dismissed2 !== todayDateStr2) {
+        nudgeBanner2.style.display = 'flex';
+      } else {
+        nudgeBanner2.style.display = 'none';
+      }
+    }
 
     // ===== 最近の履歴（今日のみ） =====
     renderRecentLogs(todayActivities, todayMoney);
