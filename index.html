@@ -6061,6 +6061,16 @@ const Storage = {
 
     // --- 旧Wrapper#4: トーンUI注入 ---
     try { if (typeof injectToneUI === 'function') setTimeout(injectToneUI, 50); } catch(e) {}
+
+    // GA4 virtual page view（SPA対応）
+    try {
+      if (typeof gtag === 'function') {
+        gtag('event', 'page_view', {
+          page_title: tabName,
+          page_location: window.location.origin + '/tab/' + tabName
+        });
+      }
+    } catch(e) {}
 }
 
 // ===== 月間気分レポート =====
