@@ -1,5 +1,5 @@
 // ===== lifelog service worker (v5 - Network First + auto-update + push) =====
-const CACHE_NAME = 'lifelog-cache-v9';
+const CACHE_NAME = 'lifelog-cache-v10';
 const CORE_ASSETS = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', (event) => {
