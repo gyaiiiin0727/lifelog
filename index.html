@@ -14637,6 +14637,8 @@ try{
         btn.disabled = true;
         const original = btn.textContent;
         btn.textContent = '今日もお疲れ様でした✨';
+        // GA4: ジャーナルAIリクエスト開始
+        if (typeof gtag === 'function') gtag('event', 'journal_ai_request', { tone: tone });
 
         // Worker側は /api/analyze を想定（なければ root でも受けられるよう、まず /api/analyze を叩く）
         const endpoint = `${BACKEND_URL}/api/analyze`;
@@ -14749,6 +14751,8 @@ try{
 
         // 使用回数カウント
         if (window.DaycePlan) { window.DaycePlan.incrementUsage('journal'); window.DaycePlan.renderPlanBadges(); }
+        // GA4: ジャーナルAI完了
+        if (typeof gtag === 'function') gtag('event', 'journal_ai_complete', { tone: tone });
 
         // キャラクター情報を取得してフィードバック表示
         const toneNames = { harsh: 'マネージャー', normal: 'タクヤ先輩', gentle: 'ハナさん' };
