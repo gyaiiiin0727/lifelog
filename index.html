@@ -7458,16 +7458,15 @@ function renderHomeTodayTasks() {
     const container = document.getElementById('homeTodayTasksContent');
     if (!container) return;
 
-    // 昨日の日付キー（ローカル）
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = localDateKey(yesterday);
-
     var journalEntries = (typeof safeParse === 'function')
         ? safeParse('journalEntriesV3', {})
         : JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
 
     // --- 初回ユーザー向けチュートリアルタスク（メモリ内のみ、localStorageに書き込まない） ---
+    // 昨日の日付キー（チュートリアル用フォールバック）
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = localDateKey(yesterday);
     if (Object.keys(journalEntries).length === 0 && !localStorage.getItem('tutorialTasksDone')) {
         journalEntries[yesterdayStr] = {
             summary: {
@@ -7477,7 +7476,9 @@ function renderHomeTodayTasks() {
         };
     }
 
-    const yesterdayJournal = journalEntries[yesterdayStr];
+    // タスク取得元の日付（直近7日まで遡る getTaskDateKey と統一）
+    const taskDateKey = (typeof getTaskDateKey === 'function') ? getTaskDateKey() : yesterdayStr;
+    const yesterdayJournal = journalEntries[taskDateKey] || journalEntries[yesterdayStr];
 
     if (!yesterdayJournal || !yesterdayJournal.summary) {
         container.innerHTML = '<div class="no-tasks">昨日のジャーナルがありません。<br>ジャーナルを記録するとMUST/WANTが表示されます。</div>'
@@ -7660,6 +7661,23 @@ function getSelectedTaskCat(container) {
 
 // タスク編集機能
 function getTaskDateKey() {
+    // 昨日→一昨日→…と直近7日まで遡り、must/wantを持つ最新のジャーナルの日付を返す。
+    // 1日サボったりデータ欠損があってもタスクが消えないようにする。
+    let entries = {};
+    try { entries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}'); } catch(e) {}
+    for (let i = 1; i <= 7; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const key = localDateKey(d);
+        const e = entries[key];
+        if (e && e.summary && (
+            (e.summary.must && String(e.summary.must).trim() && e.summary.must !== '—') ||
+            (e.summary.want && String(e.summary.want).trim() && e.summary.want !== '—')
+        )) {
+            return key;
+        }
+    }
+    // 見つからなければ従来通り昨日
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     return localDateKey(yesterday);
@@ -8212,11 +8230,19 @@ function openJournalFlow() {
     var dateField = document.getElementById('journalV2Date');
     var dateVal = (dateField && dateField.value) ? dateField.value : todayStr;
 
-    // 今日のタスクデータ取得
+    // 今日のタスクデータ取得（ホームの renderHomeTodayTasks と同じロジックで一致させる）
     var mustTasks = [], wantTasks = [];
     try {
-        var taskDateKey = (typeof getTaskDateKey === 'function') ? getTaskDateKey() : todayStr;
         var allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
+        // 初回ユーザー向けチュートリアルタスク（ホームと同じフォールバック）
+        if (Object.keys(allEntries).length === 0 && !localStorage.getItem('tutorialTasksDone')) {
+            var yKeyTut = (typeof getTaskDateKey === 'function') ? getTaskDateKey() : todayStr;
+            allEntries[yKeyTut] = { summary: {
+                must: '行動を記録してみよう（行動タブ → ＋ボタン）\nジャーナルを書いてみよう（ジャーナルタブ → ＋ボタン）',
+                want: 'お金の記録をしてみよう（お金タブ → ＋ボタン）'
+            }};
+        }
+        var taskDateKey = (typeof getTaskDateKey === 'function') ? getTaskDateKey() : todayStr;
         var taskEntry = allEntries[taskDateKey];
         if (taskEntry && taskEntry.summary) {
             mustTasks = String(taskEntry.summary.must || '').split(/[\n・]/).map(function(s){return s.trim();}).filter(function(s){return s && s !== '—';});
