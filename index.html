@@ -7607,6 +7607,38 @@ function removeTaskCategory(type, index) {
     setTaskCategory(type, index, null, null);
 }
 
+// AIが割り当てたカテゴリを entry.summary.taskCategories に反映する。
+// 既に手動設定済みのスロットは上書きしない（ユーザーの編集を尊重）。
+function applyAiTaskCategories(entry, mustCats, wantCats) {
+    if (!entry || !entry.summary) return;
+    var actCats = [];
+    try { actCats = JSON.parse(localStorage.getItem('activityCategories') || '[]'); } catch(e) {}
+    // カテゴリ名 → 絵文字 の対応表
+    var emojiByName = {};
+    actCats.forEach(function(c) { if (c && c.name) emojiByName[c.name] = c.emoji || '📝'; });
+
+    if (!entry.summary.taskCategories) entry.summary.taskCategories = {};
+    var tc = entry.summary.taskCategories;
+
+    function applyOne(type, arr) {
+        if (!Array.isArray(arr)) return;
+        arr.forEach(function(catName, idx) {
+            if (!catName || typeof catName !== 'string') return;
+            var name = catName.trim();
+            if (!name) return;
+            var key = type + '_' + idx;
+            // 既に設定済み（手動含む）なら触らない
+            if (tc[key] && tc[key].name) return;
+            // 登録カテゴリに一致するものだけ採用
+            if (!(name in emojiByName)) return;
+            tc[key] = { name: name, emoji: emojiByName[name] };
+        });
+    }
+    applyOne('must', mustCats);
+    applyOne('want', wantCats);
+}
+window.applyAiTaskCategories = applyAiTaskCategories;
+
 function shiftTaskCategories(type, deletedIndex) {
     const dateKey = getTaskDateKey();
     const allEntries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}');
@@ -8699,11 +8731,13 @@ function jfSubmitAI() {
 
     var textToSend = '【ユーザーのジャーナル】\n' + text + todayContext;
     var aiHeaders = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : {'Content-Type':'application/json'};
+    var _jCats = [];
+    try { _jCats = JSON.parse(localStorage.getItem('activityCategories') || '[]'); } catch(e) {}
 
     fetch(BACKEND + '/api/analyze', {
         method: 'POST',
         headers: aiHeaders,
-        body: JSON.stringify({ text: textToSend, tone: tone, type: 'journal' })
+        body: JSON.stringify({ text: textToSend, tone: tone, type: 'journal', categories: _jCats })
     })
     .then(function(res) {
         if (res.status === 429 || res.status === 401) {
@@ -8754,6 +8788,8 @@ function jfSubmitAI() {
                 if (parsed.feelings) entry.summary.feelings = _eb(parsed.feelings);
                 if (parsed.gratitude) entry.summary.gratitude = _eb(parsed.gratitude);
                 if (parsed.oneLiner) entry.hitokoto = parsed.oneLiner;
+                // AIが付けたカテゴリを反映（空きスロットのみ。手動設定は尊重）
+                try { applyAiTaskCategories(entry, parsed.mustCategories, parsed.wantCategories); } catch(e) {}
             } else if (out) {
                 var m;
                 if ((m = out.match(/【明日のMUST】\n([\s\S]*?)(?=【|$)/))) entry.summary.must = m[1].trim();
@@ -14285,10 +14321,12 @@ try{
           var textToSend = '【ユーザーのジャーナル】\n' + text;
 
           var aiHeaders5 = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : {'Content-Type':'application/json'};
+          var _jCats5 = [];
+          try { _jCats5 = JSON.parse(localStorage.getItem('activityCategories') || '[]'); } catch(e) {}
           var res = await fetch(endpoint, {
             method: 'POST',
             headers: aiHeaders5,
-            body: JSON.stringify({ text: textToSend, tone: tone, type: 'journal' })
+            body: JSON.stringify({ text: textToSend, tone: tone, type: 'journal', categories: _jCats5 })
           });
 
           if (res.status === 429 || res.status === 401) {
@@ -14343,6 +14381,7 @@ try{
               if(parsed.concerns) entry.summary.gratitude = _ensureBullets(parsed.concerns);
               else if(parsed.gratitude) entry.summary.gratitude = _ensureBullets(parsed.gratitude);
               if(parsed.oneLiner) entry.hitokoto = parsed.oneLiner;
+              try { applyAiTaskCategories(entry, parsed.mustCategories, parsed.wantCategories); } catch(e) {}
             } else {
               var mustMatch = out.match(/【明日のMUST】\n([\s\S]*?)(?=【|$)/);
               var wantMatch = out.match(/【明日のWANT】\n([\s\S]*?)(?=【|$)/);
@@ -14671,10 +14710,13 @@ try{
         // ジャーナルAIは記入テキストのみで整理（他データは含めない）
         const textToSend = `【ユーザーのジャーナル】\n${text}`;
         const aiHeaders6 = (window.DaycePlan && window.DaycePlan.getAIHeaders) ? window.DaycePlan.getAIHeaders() : {'Content-Type':'application/json'};
+        // 行動カテゴリリストをAIに渡してMUST/WANTを自動分類してもらう
+        let _journalCats = [];
+        try { _journalCats = JSON.parse(localStorage.getItem('activityCategories') || '[]'); } catch(e) {}
         const res = await fetch(endpoint, {
           method: 'POST',
           headers: aiHeaders6,
-          body: JSON.stringify({ text: textToSend, tone, type: 'journal' })
+          body: JSON.stringify({ text: textToSend, tone, type: 'journal', categories: _journalCats })
         });
 
         if (res.status === 429 || res.status === 401) {
@@ -14738,6 +14780,8 @@ try{
             if (parsed.feelings) entry.summary.feelings = ensureBulletBreaks(parsed.feelings);
             if (parsed.gratitude) entry.summary.gratitude = ensureBulletBreaks(parsed.gratitude);
             if (parsed.oneLiner) entry.hitokoto = parsed.oneLiner;
+            // AIが付けたカテゴリを反映（空きスロットのみ。手動設定は尊重）
+            try { applyAiTaskCategories(entry, parsed.mustCategories, parsed.wantCategories); } catch(e) {}
           } else {
             const mustMatch = out.match(/【明日のMUST】\n([\s\S]*?)(?=【|$)/);
             const wantMatch = out.match(/【明日のWANT】\n([\s\S]*?)(?=【|$)/);
