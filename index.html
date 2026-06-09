@@ -7693,23 +7693,8 @@ function getSelectedTaskCat(container) {
 
 // タスク編集機能
 function getTaskDateKey() {
-    // 昨日→一昨日→…と直近7日まで遡り、must/wantを持つ最新のジャーナルの日付を返す。
-    // 1日サボったりデータ欠損があってもタスクが消えないようにする。
-    let entries = {};
-    try { entries = JSON.parse(localStorage.getItem('journalEntriesV3') || '{}'); } catch(e) {}
-    for (let i = 1; i <= 7; i++) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        const key = localDateKey(d);
-        const e = entries[key];
-        if (e && e.summary && (
-            (e.summary.must && String(e.summary.must).trim() && e.summary.must !== '—') ||
-            (e.summary.want && String(e.summary.want).trim() && e.summary.want !== '—')
-        )) {
-            return key;
-        }
-    }
-    // 見つからなければ従来通り昨日
+    // 「今日のタスク」= 昨日のジャーナルで立てた『明日のMUST/WANT』のみ。
+    // 昨日ぴったりだけを見るので、タスクは翌日1日だけ表示され、それ以降は残らない。
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     return localDateKey(yesterday);
