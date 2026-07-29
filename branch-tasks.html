@@ -132,22 +132,21 @@
   .node.branch .node-text { font-weight:800; font-size:15.5px; letter-spacing:.01em; }
   .branch-dot { flex:none; width:12px; height:12px; margin-top:4px; border-radius:50%; background:var(--col); box-shadow:0 0 0 4px color-mix(in srgb,var(--col) 20%, transparent); }
 
-  /* 中分類（グループ）＝見出しとして目立たせる */
-  .node.group:not(.branch) .node-row { border-left-width:4px; padding:9px 12px;
-    background:color-mix(in srgb,var(--col) 13%, var(--surface));
-    border-color:color-mix(in srgb,var(--col) 32%, var(--border)); }
+  /* 中分類（グループ）＝「色バッジ＋太い帯」の見出しスタイル（塗りつぶさない） */
+  .node.group:not(.branch) .node-row { border-left-width:6px; padding:9px 12px;
+    background:var(--surface); border-color:color-mix(in srgb,var(--col) 22%, var(--border)); }
   .node.group:not(.branch) .node-text { font-weight:800; font-size:14.5px; letter-spacing:.01em;
-    color:color-mix(in srgb,var(--col) 40%, var(--ink)); }
-  .node.group:not(.branch) .node-icon { color:#fff; background:var(--col); border-radius:6px; width:21px; height:21px;
+    color:color-mix(in srgb,var(--col) 45%, var(--ink)); }
+  .node.group:not(.branch) .node-icon { color:#fff; background:var(--col); border-radius:6px; width:22px; height:22px;
     box-shadow:0 1px 4px color-mix(in srgb,var(--col) 38%, transparent); }
   .node.group:not(.branch) .node-icon svg { width:13px; height:13px; }
-  .node.group:not(.branch):hover .node-row { background:color-mix(in srgb,var(--col) 18%, var(--surface)); }
+  .node.group:not(.branch):hover .node-row { border-color:color-mix(in srgb,var(--col) 40%, var(--border)); background:color-mix(in srgb,var(--col) 5%, var(--surface)); }
 
-  /* メモ・目標（目立たせる） */
-  .node.memo .node-row { background:color-mix(in srgb,var(--col) 15%, var(--surface)); border:1px solid color-mix(in srgb,var(--col) 40%, var(--border)); border-left:4px solid var(--col); box-shadow:0 2px 10px color-mix(in srgb,var(--col) 20%, transparent); }
-  .node.memo .node-text { color:var(--ink); font-weight:700; }
+  /* メモ・目標＝「色で塗ったハイライト・カード」（中分類とは別の性格に） */
+  .node.memo .node-row { background:color-mix(in srgb,var(--col) 16%, var(--surface)); border:1px solid color-mix(in srgb,var(--col) 42%, var(--border)); border-left:4px solid var(--col); border-radius:14px; box-shadow:0 2px 12px color-mix(in srgb,var(--col) 22%, transparent); }
+  .node.memo .node-text { color:color-mix(in srgb,var(--col) 30%, var(--ink)); font-weight:800; }
   .node.memo .memo-ico { color:var(--col); }
-  .node.memo .memo-ico svg { width:16px; height:16px; }
+  .node.memo .memo-ico svg { width:17px; height:17px; }
 
   /* タスク（第3階層以降）はやや控えめ */
   .node.task .node-text { font-size:13.5px; }
@@ -417,6 +416,9 @@
     <button class="btn icon" id="btn-sticky" title="付箋メモを貼る（マインドマップ）">
       <svg viewBox="0 0 24 24" fill="none"><path d="M5 4h14v10l-5 5H5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 19v-5h5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
     </button>
+    <button class="btn icon" id="btn-tidy" title="自動整列に戻す（自由配置をリセット）">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h9M4 12h13M4 18h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M18 15l3 3-3 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
     <button class="btn primary" id="btn-add-branch">
       <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg>
       <span class="lbl">項目</span>
@@ -501,25 +503,29 @@
   }
   function nthWeekday(y,m,weekday,n){ const first=new Date(y,m,1); const fd=first.getDay();
     let day=1+((weekday-fd+7)%7)+(n-1)*7; const dim=new Date(y,m+1,0).getDate(); while(day>dim) day-=7; return new Date(y,m,day); }
+  function wdays(n){ return Array.isArray(n.weekdays)?n.weekdays:[]; }
+  // 今日を含め7日以内で、選択曜日に一致する最も近い日付
+  function nextWeekdayDate(weekdays){ const now=new Date(); now.setHours(0,0,0,0); const wd=now.getDay();
+    for(let i=0;i<7;i++){ if(weekdays.includes((wd+i)%7)){ const d=new Date(now); d.setDate(now.getDate()+i); return d; } } return null; }
   // Concrete scheduled date for a recurring task in the current period (or null = whole-period).
-  function recurDate(n){ const now=new Date(), y=now.getFullYear(), m=now.getMonth();
+  function recurDate(n){ const now=new Date(), y=now.getFullYear(), m=now.getMonth(); const wds=wdays(n);
     if(n.repeat==="daily") return new Date(y,m,now.getDate());
-    if(n.repeat==="weekly"){ if(n.weekday==null) return null; const ws=weekStart(now); const d=new Date(ws); d.setDate(ws.getDate()+((n.weekday+6)%7)); return d; }
+    if(n.repeat==="weekly"){ if(!wds.length) return null; return nextWeekdayDate(wds); }
     if(n.repeat==="monthly"){
-      if(n.weekday!=null&&n.weekOfMonth!=null) return nthWeekday(y,m,n.weekday,n.weekOfMonth);
+      if(wds.length&&n.weekOfMonth!=null){ let best=null; wds.forEach(w=>{ const d=nthWeekday(y,m,w,n.weekOfMonth); if(!best||d<best) best=d; }); return best; }
       if(n.weekOfMonth!=null){ const dim=new Date(y,m+1,0).getDate(); return new Date(y,m,Math.min(dim,(n.weekOfMonth-1)*7+4)); }
-      if(n.weekday!=null) return nthWeekday(y,m,n.weekday,1);
+      if(wds.length){ let best=null; wds.forEach(w=>{ const d=nthWeekday(y,m,w,1); if(!best||d<best) best=d; }); return best; }
       return null;
     }
     return null;
   }
-  function repeatLabel(n){
+  function repeatLabel(n){ const wds=wdays(n); const wl=wds.map(w=>WD[w]).join("・");
     if(n.repeat==="daily") return "毎日";
-    if(n.repeat==="weekly") return n.weekday!=null?("毎週"+WD[n.weekday]):"毎週";
+    if(n.repeat==="weekly") return wds.length?("毎週"+wl):"毎週";
     if(n.repeat==="monthly"){
-      if(n.weekOfMonth!=null&&n.weekday!=null) return "毎月第"+n.weekOfMonth+WD[n.weekday];
+      if(n.weekOfMonth!=null&&wds.length) return "毎月第"+n.weekOfMonth+" "+wl;
       if(n.weekOfMonth!=null) return "毎月第"+n.weekOfMonth+"週";
-      if(n.weekday!=null) return "毎月"+WD[n.weekday];
+      if(wds.length) return "毎月"+wl;
       return "毎月";
     }
     return "";
@@ -535,7 +541,7 @@
   }
 
   // ---- model ----
-  function newNode(text,type){ return {id:uid(),text:text||"",type:type||"task",children:[],collapsed:false,done:false,priority:false,repeat:null,lastDone:null,note:false,due:null,weekday:null,weekOfMonth:null,below:false,link:null}; }
+  function newNode(text,type){ return {id:uid(),text:text||"",type:type||"task",children:[],collapsed:false,done:false,priority:false,repeat:null,lastDone:null,note:false,due:null,weekdays:[],weekOfMonth:null,below:false,link:null,ox:0,oy:0}; }
   function newRoot(text){ return newNode(text||"マイタスク","root"); }
   function assignTypes(node,depth){
     if(node.type!=="root"&&node.type!=="task"&&node.type!=="group"&&node.type!=="memo"){
@@ -551,12 +557,17 @@
     n.collapsed=!!n.collapsed; n.done=!!n.done; n.priority=!!n.priority; n.note=!!n.note;
     n.repeat=(n.repeat==="daily"||n.repeat==="weekly"||n.repeat==="monthly")?n.repeat:null;
     n.lastDone=n.lastDone||null; n.due=(typeof n.due==="string")?n.due:null;
-    n.weekday=(typeof n.weekday==="number"&&n.weekday>=0&&n.weekday<=6)?n.weekday:null;
+    // 曜日：単一(weekday)→複数(weekdays)へ移行
+    if(!Array.isArray(n.weekdays)) n.weekdays=(typeof n.weekday==="number"&&n.weekday>=0&&n.weekday<=6)?[n.weekday]:[];
+    n.weekdays=[...new Set(n.weekdays.filter(x=>typeof x==="number"&&x>=0&&x<=6))].sort((a,b)=>a-b);
+    delete n.weekday;
     n.weekOfMonth=(typeof n.weekOfMonth==="number"&&n.weekOfMonth>=1&&n.weekOfMonth<=5)?n.weekOfMonth:null;
     if(n.color&&typeof n.color!=="string") delete n.color;
     if(n.side!=="left"&&n.side!=="right") delete n.side;
     n.below=!!n.below;
     n.link=(typeof n.link==="string"&&n.link)?n.link:null;
+    n.ox=(typeof n.ox==="number"&&isFinite(n.ox))?n.ox:0;
+    n.oy=(typeof n.oy==="number"&&isFinite(n.oy))?n.oy:0;
     n.children.forEach(normNode); return n;
   }
   function migrate(old){
@@ -575,7 +586,7 @@
     const work=newNode("仕事","group"); work.color="#4C6EF5";
     const g1=newNode("今期の目標：新規案件を3件クローズ","memo");
     const wt1=newNode("メールとチャットの確認"); wt1.repeat="daily";
-    const wt2=newNode("週次レポートを提出"); wt2.repeat="weekly"; wt2.weekday=5; wt2.priority=true;
+    const wt2=newNode("週次レポートを提出"); wt2.repeat="weekly"; wt2.weekdays=[1,3,5]; wt2.priority=true;
     const wt5=newNode("経費精算"); wt5.repeat="monthly"; wt5.weekOfMonth=4;
     const proj=newNode("サイト刷新プロジェクト","group");
     const pg=newNode("目標：4月にリニューアル公開","memo");
@@ -768,6 +779,11 @@
   // Children of the root & top-level 項目 fan out to the right (mind-map).
   // Children of 中分類/タスク（depth>=2）stack vertically just below-and-right (outline).
   function vertParent(node){ return false; } // 縦積みは各ノードの below フラグで制御（両マップ統一）
+  function shiftSubtree(node,ddx,ddy){ if(node._x!==undefined){ node._x+=ddx; node._y+=ddy; } (node.collapsed?[]:node.children).forEach(k=>shiftSubtree(k,ddx,ddy)); }
+  function applyOffsets(node){ // 各ノードのox/oyぶん、そのノードと子孫をまとめてずらす（pre-order）
+    if(node.ox||node.oy) shiftSubtree(node,node.ox||0,node.oy||0);
+    (node.collapsed?[]:node.children).forEach(applyOffsets);
+  }
   function stackH(list){ return list.reduce((s,k)=>s+k._sub,0)+Math.max(0,list.length-1)*V_GAP; }
   function calcSub(node){
     const kids=node.collapsed?[]:node.children;
@@ -818,6 +834,7 @@
     if(view!=="map"&&view!=="think") return;
     els.forEach((el)=>{ const ta=el.querySelector(".node-text"); if(ta) autoGrow(ta); el.__node._h=el.offsetHeight; });
     calcSub(curRoot); place(curRoot,PAD,PAD);
+    applyOffsets(curRoot); // ノードごとの自由配置（枝ごと移動）を反映
     // 周囲に余白を確保（＝いつでも空きを掴んで画面を動かせる）。左枝の負座標もここで吸収。
     const vw=stage.clientWidth||900, vh=stage.clientHeight||600;
     const mX=Math.max(PAD,Math.round(vw*0.55)), mY=Math.max(PAD,Math.round(vh*0.55));
@@ -909,6 +926,7 @@
     const dloc=locate(dragId), tloc=locate(targetId);
     if(!dloc||!tloc||!dloc.parent) return; if(dragId===targetId) return; if(within(dloc.node,targetId)) return;
     const idx=dloc.parent.children.indexOf(dloc.node); dloc.parent.children.splice(idx,1);
+    dloc.node.ox=0; dloc.node.oy=0; // 付け替え時は自由配置を解除して整列
     tloc.node.collapsed=false; tloc.node.children.push(dloc.node);
     if(tloc.node===curRoot){ if(!dloc.node.color) dloc.node.color=pickColor(); dloc.node.type=isThink()?"idea":"group"; }
     selectNode(dragId); save(); render(); toast("移動しました");
@@ -977,6 +995,7 @@
       drag.started=true; selectNode(drag.id);
       drag.el.classList.add("dragging"); drag.el.style.pointerEvents="none"; document.body.style.userSelect="none";
     }
+    drag.lx=e.clientX; drag.ly=e.clientY;
     drag.el.style.transform=`translate(${(e.clientX-drag.sx)/zoom}px, ${(e.clientY-drag.sy)/zoom}px)`;
     const under=document.elementFromPoint(e.clientX,e.clientY); const tn=under&&under.closest(".node");
     clearDrop(); drag.target=null;
@@ -987,7 +1006,16 @@
     if(!drag) return;
     const started=drag.started, t=drag.target, el=drag.el;
     if(el) el.style.pointerEvents=""; document.body.style.userSelect=""; clearDrop();
-    if(started){ if(t){ reparent(drag.id,t); } else if(el){ el.style.transform=""; el.classList.remove("dragging"); toast("他のノードに重ねると、その下に付け替えできます"); } }
+    if(started){
+      if(t){ reparent(drag.id,t); }
+      else { // 空きに落とす＝その場所へ自由配置（枝ごと移動）
+        const loc=locate(drag.id);
+        if(loc){ const ddx=(drag.lx-drag.sx)/zoom, ddy=(drag.ly-drag.sy)/zoom;
+          loc.node.ox=(loc.node.ox||0)+ddx; loc.node.oy=(loc.node.oy||0)+ddy; }
+        if(el){ el.style.transform=""; el.classList.remove("dragging"); }
+        save(); render();
+      }
+    }
     drag=null;
   });
 
@@ -1013,11 +1041,11 @@
       let h=`<div class="rep-body"><div class="rep-seg">`+
         [["","なし"],["daily","毎日"],["weekly","毎週"],["monthly","毎月"]].map(([v,l])=>`<button data-type="${v}" class="${t===v?"on":""}">${l}</button>`).join("")+`</div>`;
       if(t==="weekly"){
-        h+=`<div class="rep-label">曜日</div><div class="wd-row">`+WD.map((w,i)=>`<button class="wd ${node.weekday===i?"on":""}" data-wd="${i}">${w}</button>`).join("")+`</div>`;
+        h+=`<div class="rep-label">曜日（複数選べます）</div><div class="wd-row">`+WD.map((w,i)=>`<button class="wd ${node.weekdays.includes(i)?"on":""}" data-wd="${i}">${w}</button>`).join("")+`</div>`;
       }
       if(t==="monthly"){
         h+=`<div class="rep-label">第何週</div><div class="wm-row">`+[1,2,3,4,5].map(n=>`<button class="wm ${node.weekOfMonth===n?"on":""}" data-wm="${n}">第${n}</button>`).join("")+`</div>`;
-        h+=`<div class="rep-label">曜日（任意）</div><div class="wd-row">`+WD.map((w,i)=>`<button class="wd ${node.weekday===i?"on":""}" data-wd="${i}">${w}</button>`).join("")+`</div>`;
+        h+=`<div class="rep-label">曜日（任意・複数可）</div><div class="wd-row">`+WD.map((w,i)=>`<button class="wd ${node.weekdays.includes(i)?"on":""}" data-wd="${i}">${w}</button>`).join("")+`</div>`;
       }
       return h+`</div>`;
     }
@@ -1026,9 +1054,9 @@
       const b=e.target.closest("[data-type],[data-wd],[data-wm]"); if(!b) return;
       if(b.hasAttribute("data-type")){
         const v=b.dataset.type; node.repeat=v||null;
-        if(!node.repeat){ node.weekday=null; node.weekOfMonth=null; node.lastDone=null; }
+        if(!node.repeat){ node.weekdays=[]; node.weekOfMonth=null; node.lastDone=null; }
         else { node.lastDone=node.done?Date.now():null; node.done=false; }
-      } else if(b.hasAttribute("data-wd")){ const w=+b.dataset.wd; node.weekday=node.weekday===w?null:w; }
+      } else if(b.hasAttribute("data-wd")){ const w=+b.dataset.wd; const i=node.weekdays.indexOf(w); if(i>=0) node.weekdays.splice(i,1); else node.weekdays.push(w); node.weekdays.sort((a,b)=>a-b); }
       else if(b.hasAttribute("data-wm")){ const n=+b.dataset.wm; node.weekOfMonth=node.weekOfMonth===n?null:n; }
       save(); refresh(); p.innerHTML=bodyHtml();
     });
@@ -1124,6 +1152,11 @@
     sdrag.el.style.left=nx+"px"; sdrag.el.style.top=ny+"px"; sdrag.s.x=Math.round(nx); sdrag.s.y=Math.round(ny); });
   window.addEventListener("pointerup",()=>{ if(sdrag){ sdrag.el.classList.remove("dragging"); save(); relayout(); sdrag=null; } });
   $("#btn-sticky").addEventListener("click",addSticky);
+  $("#btn-tidy").addEventListener("click",()=>{
+    if(view!=="map"&&view!=="think"){ setView("map"); }
+    let moved=false; (function w(n){ if(n.ox||n.oy){ n.ox=0; n.oy=0; moved=true; } n.children.forEach(w); })(curRoot);
+    if(moved){ needCenter=true; save(); render(); toast("自動整列に戻しました"); } else { toast("自由配置はありません"); }
+  });
 
   // ---- zoom ----
   function updateZoomLbl(){ const l=$("#zoom-lbl"); if(l) l.textContent=Math.round(zoom*100)+"%"; }
@@ -1155,10 +1188,10 @@
   function bucketOf(t){ const n=t.node; const today=todayStr();
     if(n.due){ if(n.due<today) return isDone(n)?"today":"overdue"; if(n.due===today) return "today"; if(n.due<=weekEndStr()) return "week"; return "later"; }
     if(n.repeat){
-      const td=recurDate(n);
-      if(td){ const s=ymd(td); if(s<today) return isDone(n)?"today":"overdue"; if(s===today) return "today"; if(s<=weekEndStr()) return "week"; return "later"; }
       if(n.repeat==="daily") return "today";
-      if(n.repeat==="weekly") return "week";
+      if(n.repeat==="weekly"){ const wds=wdays(n); if(!wds.length) return "week"; return wds.includes(new Date().getDay())?"today":"week"; }
+      const td=recurDate(n); // monthly
+      if(td){ const s=ymd(td); if(s<today) return isDone(n)?"today":"later"; if(s===today) return "today"; if(s<=weekEndStr()) return "week"; return "later"; }
       return "later";
     }
     return "none"; }
