@@ -132,10 +132,16 @@
   .node.branch .node-text { font-weight:800; font-size:15.5px; letter-spacing:.01em; }
   .branch-dot { flex:none; width:12px; height:12px; margin-top:4px; border-radius:50%; background:var(--col); box-shadow:0 0 0 4px color-mix(in srgb,var(--col) 20%, transparent); }
 
-  /* 中分類（グループ） */
-  .node.group:not(.branch) .node-row { border-left-width:4px; background:color-mix(in srgb,var(--col) 4%, var(--surface)); }
-  .node.group:not(.branch) .node-text { font-weight:700; font-size:14px; }
-  .node.group .node-icon { color:var(--col); }
+  /* 中分類（グループ）＝見出しとして目立たせる */
+  .node.group:not(.branch) .node-row { border-left-width:4px; padding:9px 12px;
+    background:color-mix(in srgb,var(--col) 13%, var(--surface));
+    border-color:color-mix(in srgb,var(--col) 32%, var(--border)); }
+  .node.group:not(.branch) .node-text { font-weight:800; font-size:14.5px; letter-spacing:.01em;
+    color:color-mix(in srgb,var(--col) 40%, var(--ink)); }
+  .node.group:not(.branch) .node-icon { color:#fff; background:var(--col); border-radius:6px; width:21px; height:21px;
+    box-shadow:0 1px 4px color-mix(in srgb,var(--col) 38%, transparent); }
+  .node.group:not(.branch) .node-icon svg { width:13px; height:13px; }
+  .node.group:not(.branch):hover .node-row { background:color-mix(in srgb,var(--col) 18%, var(--surface)); }
 
   /* メモ・目標（目立たせる） */
   .node.memo .node-row { background:color-mix(in srgb,var(--col) 15%, var(--surface)); border:1px solid color-mix(in srgb,var(--col) 40%, var(--border)); border-left:4px solid var(--col); box-shadow:0 2px 10px color-mix(in srgb,var(--col) 20%, transparent); }
