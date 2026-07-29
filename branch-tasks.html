@@ -114,6 +114,9 @@
   .sticky-text { width:100%; border:0; background:transparent; resize:none; outline:none; font-family:inherit;
     font-size:13px; line-height:1.55; color:#3a3218; padding:1px 11px 12px; overflow:hidden; }
   .sticky-text::placeholder { color:rgba(0,0,0,.36); }
+  .sticky-resize { position:absolute; right:1px; bottom:1px; width:16px; height:16px; cursor:nwse-resize; touch-action:none;
+    background:linear-gradient(135deg, transparent 45%, rgba(0,0,0,.26) 45%, rgba(0,0,0,.26) 55%, transparent 55%, transparent 70%, rgba(0,0,0,.26) 70%, rgba(0,0,0,.26) 80%, transparent 80%); border-radius:0 0 4px 0; }
+  .sticky.min .sticky-resize { display:none; }
 
   .node { position:absolute; z-index:1; }
   .node.dragging { z-index:30; opacity:.9; }
@@ -123,6 +126,8 @@
   .node:hover .node-row { border-color:color-mix(in srgb,var(--col) 45%, var(--border)); }
   .node.selected .node-row { border-color:var(--col); box-shadow:0 0 0 2px color-mix(in srgb,var(--col) 30%, transparent), var(--shadow); }
   .node.drop-target .node-row { border-color:var(--col); box-shadow:0 0 0 3px color-mix(in srgb,var(--col) 45%, transparent), var(--shadow); background:color-mix(in srgb,var(--col) 10%, var(--surface)); }
+  .node.multi .node-row { box-shadow:0 0 0 2.5px color-mix(in srgb,var(--accent) 60%, transparent), var(--shadow); }
+  .marquee { position:absolute; z-index:26; border:1.5px solid var(--accent); background:color-mix(in srgb,var(--accent) 12%, transparent); border-radius:4px; pointer-events:none; }
 
   .node.root .node-row { background:var(--accent); border:none; border-radius:999px; padding:10px 18px; justify-content:center; box-shadow:var(--shadow); }
   .node.root .node-text { color:#fff; font-weight:700; text-align:center; }
@@ -150,6 +155,13 @@
 
   /* タスク（第3階層以降）はやや控えめ */
   .node.task .node-text { font-size:13.5px; }
+  /* 優先フラグ＝黄色（琥珀色）で目立たせる */
+  .node.task.pri .node-row { background:color-mix(in srgb,var(--flag) 20%, var(--surface));
+    border-color:color-mix(in srgb,var(--flag) 55%, var(--border)); border-left:4px solid var(--flag);
+    box-shadow:0 2px 12px color-mix(in srgb,var(--flag) 28%, transparent); }
+  .node.task.pri:hover .node-row { background:color-mix(in srgb,var(--flag) 28%, var(--surface)); }
+  .node.task.pri.selected .node-row { box-shadow:0 0 0 2px color-mix(in srgb,var(--flag) 62%, transparent), var(--shadow); }
+  .node.task.pri .node-text { font-weight:700; }
 
   /* 思考マップのアイデア・ノード（普通のマインドマップ） */
   .node.idea:not(.branch) .node-row { border-left-width:3px; background:color-mix(in srgb,var(--col) 5%, var(--surface)); }
@@ -249,9 +261,22 @@
   .dash-h .cnt { font-size:12px; color:var(--faint); font-weight:700; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:1px 8px; }
   .dash-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow-sm); overflow:hidden; }
   .dash-section.overdue .dash-card { border-color:color-mix(in srgb,var(--danger) 40%, var(--border)); }
+  /* 今日のタスクを強調 */
+  .dash-section.today-sec { margin-bottom:26px; }
+  .dash-section.today-sec .dash-h { background:color-mix(in srgb,var(--accent) 13%, var(--surface));
+    border:1px solid color-mix(in srgb,var(--accent) 32%, var(--border)); border-radius:12px; padding:10px 14px; margin-bottom:12px; }
+  .dash-section.today-sec .dash-h h3 { font-size:18px; color:var(--accent); letter-spacing:.01em; }
+  .dash-section.today-sec .dash-h .dot { width:11px; height:11px; box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 20%, transparent); }
+  .dash-section.today-sec .dash-h .cnt { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .dash-section.today-sec .dash-card { border:1.5px solid color-mix(in srgb,var(--accent) 38%, var(--border));
+    box-shadow:0 4px 18px color-mix(in srgb,var(--accent) 16%, transparent); }
+  .dash-section.today-sec .db-bhead { font-size:15px; }
   .dash-task { display:flex; align-items:flex-start; gap:11px; padding:12px 15px; border-top:1px solid var(--border); cursor:pointer; transition:background .1s; }
   .dash-task:first-child { border-top:0; }
   .dash-task:hover { background:var(--surface-2); }
+  .dash-task.pri { background:color-mix(in srgb,var(--flag) 11%, transparent); box-shadow:inset 3px 0 0 var(--flag); }
+  .dash-task.pri:hover { background:color-mix(in srgb,var(--flag) 17%, transparent); }
+  .ol-row.task.pri { background:color-mix(in srgb,var(--flag) 11%, transparent); box-shadow:inset 3px 0 0 var(--flag); }
   .dash-check { flex:none; width:20px; height:20px; margin-top:1px; border-radius:6px; border:1.8px solid var(--border-strong);
     background:var(--surface); display:inline-flex; align-items:center; justify-content:center; color:#fff; }
   .dash-check svg { width:13px; height:13px; opacity:0; }
@@ -433,7 +458,9 @@
   <span class="k"><kbd>⇧Tab</kbd> 一段上げる</span>
   <span class="k"><kbd>↑</kbd><kbd>↓</kbd> 移動</span>
   <span class="k"><kbd>⌘/Ctrl</kbd>+<kbd>Z</kbd> 元に戻す</span>
-  <span class="k">⠿ かノード本体をドラッグ→他ノードに重ねて付け替え</span>
+  <span class="k">ノードをドラッグ→重ねて付け替え／空きへ自由配置</span>
+  <span class="k">空きをドラッグ=範囲選択（まとめて移動）</span>
+  <span class="k"><kbd>Alt</kbd>ドラッグ=画面移動</span>
   <button class="close" id="btn-help-close" title="閉じる">×</button>
 </div>
 
@@ -710,6 +737,7 @@
     relayout();
     if(pendingFocus){ focusNode(pendingFocus); pendingFocus=null; }
     else if(selectedId&&els.has(selectedId)) els.get(selectedId).classList.add("selected");
+    applyMulti();
   }
   function build(node,depth,inherited,dir){
     const own=node.color||inherited;
@@ -846,7 +874,7 @@
       maxR=Math.max(maxR,n._x+nodeWidth(n._depth)); maxB=Math.max(maxB,n._y+n._h/2); });
     const rh=$("#root-hint");
     if(rh){ rh.style.left=(curRoot._x+ROOT_W+40)+"px"; rh.style.top=(curRoot._y-18)+"px"; maxR=Math.max(maxR,curRoot._x+ROOT_W+340); }
-    if(!isThink()) state.stickies.forEach(s=>{ maxR=Math.max(maxR,(s.x||0)+200); maxB=Math.max(maxB,(s.y||0)+160); });
+    if(!isThink()) state.stickies.forEach(s=>{ maxR=Math.max(maxR,(s.x||0)+(s.w||180)+20); maxB=Math.max(maxB,(s.y||0)+(s.h?s.h+44:160)); });
     const W=maxR+mX, H=maxB+mY;
     canvas.style.width=W+"px"; canvas.style.height=H+"px";
     drawLinks(W,H);
@@ -937,9 +965,10 @@
 
   // ---- map click ----
   nodesLayer.addEventListener("click",(e)=>{
+    if(suppressClick) return;
     const nodeDiv=e.target.closest(".node"); if(!nodeDiv) return;
     if(e.target.closest('[data-role="grip"]')) return;
-    const id=nodeDiv.dataset.id; selectNode(id);
+    const id=nodeDiv.dataset.id; clearSelection(); selectNode(id);
     if(e.target.closest('[data-role="collapse"]')){ const {node}=locate(id); node.collapsed=!node.collapsed; save(); render(); return; }
     if(e.target.closest('[data-role="check"]')){ const {node}=locate(id); applyToggle(node); save(); render(); return; }
     const act=e.target.closest("[data-act]");
@@ -976,7 +1005,13 @@
     if(e.key==="ArrowLeft"&&atStart){ if(navDir(id,"left")) e.preventDefault(); return; }
   });
 
-  // ---- drag to reparent（ノード本体 or ⠿ をつかんで移動）----
+  // ---- 複数選択（範囲選択で選んだノード） ----
+  let selection=new Set(), suppressClick=false;
+  function clearSelection(){ if(!selection.size) return; selection.clear(); nodesLayer.querySelectorAll(".node.multi").forEach(n=>n.classList.remove("multi")); }
+  function applyMulti(){ els.forEach(el=>el.classList.toggle("multi", selection.has(el.__node.id))); }
+  function hasSelectedAncestor(id){ let l=locate(id); if(!l) return false; let p=l.parent; while(p){ if(selection.has(p.id)) return true; const pl=locate(p.id); p=pl?pl.parent:null; } return false; }
+
+  // ---- drag to reparent／自由配置（ノード本体 or ⠿ をつかんで移動）----
   let drag=null;
   function clearDrop(){ nodesLayer.querySelectorAll(".drop-target").forEach(n=>n.classList.remove("drop-target")); }
   nodesLayer.addEventListener("pointerdown",(e)=>{
@@ -986,17 +1021,22 @@
     // 編集・操作パーツからはドラッグ開始しない（文字入力/チェック/開閉/ツールバー）
     if(e.target.closest(".node-text")||e.target.closest('[data-role="check"]')||e.target.closest('[data-role="collapse"]')||e.target.closest('[data-role="link"]')||e.target.closest(".node-tools")) return;
     const id=nodeDiv.dataset.id; const el=els.get(id); if(!el) return;
-    drag={id,el,sx:e.clientX,sy:e.clientY,started:false,target:null};
+    if(!selection.has(id)) clearSelection();
+    const group=selection.has(id)&&selection.size>1;
+    drag={id,el,sx:e.clientX,sy:e.clientY,started:false,target:null,group};
   });
   window.addEventListener("pointermove",(e)=>{
     if(!drag) return;
     if(!drag.started){
       if(Math.abs(e.clientX-drag.sx)+Math.abs(e.clientY-drag.sy)<5) return;
-      drag.started=true; selectNode(drag.id);
-      drag.el.classList.add("dragging"); drag.el.style.pointerEvents="none"; document.body.style.userSelect="none";
+      drag.started=true; document.body.style.userSelect="none";
+      if(drag.group){ selection.forEach(sid=>{ const s=els.get(sid); if(s){ s.classList.add("dragging"); s.style.pointerEvents="none"; } }); }
+      else { selectNode(drag.id); drag.el.classList.add("dragging"); drag.el.style.pointerEvents="none"; }
     }
     drag.lx=e.clientX; drag.ly=e.clientY;
-    drag.el.style.transform=`translate(${(e.clientX-drag.sx)/zoom}px, ${(e.clientY-drag.sy)/zoom}px)`;
+    const dx=(e.clientX-drag.sx)/zoom, dy=(e.clientY-drag.sy)/zoom;
+    if(drag.group){ selection.forEach(sid=>{ const s=els.get(sid); if(s) s.style.transform=`translate(${dx}px,${dy}px)`; }); return; }
+    drag.el.style.transform=`translate(${dx}px, ${dy}px)`;
     const under=document.elementFromPoint(e.clientX,e.clientY); const tn=under&&under.closest(".node");
     clearDrop(); drag.target=null;
     if(tn&&tn!==drag.el){ const tid=tn.dataset.id; const dloc=locate(drag.id);
@@ -1004,14 +1044,20 @@
   });
   window.addEventListener("pointerup",()=>{
     if(!drag) return;
-    const started=drag.started, t=drag.target, el=drag.el;
-    if(el) el.style.pointerEvents=""; document.body.style.userSelect=""; clearDrop();
+    const started=drag.started, t=drag.target, el=drag.el, group=drag.group;
+    if(group){ selection.forEach(sid=>{ const s=els.get(sid); if(s) s.style.pointerEvents=""; }); }
+    else if(el) el.style.pointerEvents="";
+    document.body.style.userSelect=""; clearDrop();
     if(started){
-      if(t){ reparent(drag.id,t); }
+      suppressClick=true; setTimeout(()=>{ suppressClick=false; },0);
+      const ddx=(drag.lx-drag.sx)/zoom, ddy=(drag.ly-drag.sy)/zoom;
+      if(group){ // 選択したノードをまとめて自由配置（子孫は親に付いて動くので重複移動しない）
+        [...selection].forEach(sid=>{ if(!hasSelectedAncestor(sid)){ const loc=locate(sid); if(loc&&loc.parent){ loc.node.ox=(loc.node.ox||0)+ddx; loc.node.oy=(loc.node.oy||0)+ddy; } } });
+        save(); render();
+      } else if(t){ reparent(drag.id,t); }
       else { // 空きに落とす＝その場所へ自由配置（枝ごと移動）
         const loc=locate(drag.id);
-        if(loc){ const ddx=(drag.lx-drag.sx)/zoom, ddy=(drag.ly-drag.sy)/zoom;
-          loc.node.ox=(loc.node.ox||0)+ddx; loc.node.oy=(loc.node.oy||0)+ddy; }
+        if(loc&&loc.parent){ loc.node.ox=(loc.node.ox||0)+ddx; loc.node.oy=(loc.node.oy||0)+ddy; }
         if(el){ el.style.transform=""; el.classList.remove("dragging"); }
         save(); render();
       }
@@ -1098,7 +1144,7 @@
   }
   window.addEventListener("resize",()=>{ closePop(); relayout(); });
   document.addEventListener("keydown",(e)=>{
-    if(e.key==="Escape"){ closePop(); return; }
+    if(e.key==="Escape"){ closePop(); clearSelection(); return; }
     const mod=e.metaKey||e.ctrlKey; if(!mod) return;
     if(e.target&&e.target.closest&&e.target.closest("#cloud-modal")) return; // 入力欄では通常の取り消し
     const k=e.key.toLowerCase();
@@ -1120,13 +1166,16 @@
             <span class="sticky-title">${esc(title)}</span>
             <button class="sticky-min" data-role="stoggle" title="開く">${ICON.exp}</button></div></div>`;
       }
-      return `<div class="sticky" data-id="${s.id}" style="${pos}">
+      const wstyle=s.w?`width:${s.w}px;`:"";
+      const tstyle=s.h?`height:${s.h}px;overflow:auto;`:"";
+      return `<div class="sticky" data-id="${s.id}" style="${pos};${wstyle}">
         <div class="sticky-bar" data-role="smove"><span class="sticky-grip">${ICON.grip}</span><span class="sticky-spacer"></span>
           <button class="sticky-min" data-role="stoggle" title="最小化（タイトルだけ表示）">${ICON.min}</button>
           <button class="sticky-del" data-role="sdel" title="削除">${ICON.trash}</button></div>
-        <textarea class="sticky-text" data-role="stext" spellcheck="false" placeholder="メモ…">${esc(s.text||"")}</textarea></div>`;
+        <textarea class="sticky-text" data-role="stext" spellcheck="false" placeholder="メモ…" style="${tstyle}">${esc(s.text||"")}</textarea>
+        <div class="sticky-resize" data-role="sresize" title="ドラッグでサイズ変更"></div></div>`;
     }).join("");
-    stickiesLayer.querySelectorAll(".sticky-text").forEach(t=>{ t.style.height="auto"; t.style.height=Math.max(58,t.scrollHeight)+"px"; });
+    stickiesLayer.querySelectorAll(".sticky-text").forEach(t=>{ const s=state.stickies.find(x=>x.id===t.closest(".sticky").dataset.id); if(s&&s.h) return; t.style.height="auto"; t.style.height=Math.max(58,t.scrollHeight)+"px"; });
   }
   function addSticky(){
     if(view!=="map"){ setView("map"); }
@@ -1136,21 +1185,32 @@
   }
   stickiesLayer.addEventListener("input",(e)=>{ const t=e.target.closest(".sticky-text"); if(!t) return;
     const id=t.closest(".sticky").dataset.id; const s=state.stickies.find(x=>x.id===id); if(!s) return;
-    s.text=t.value; t.style.height="auto"; t.style.height=Math.max(58,t.scrollHeight)+"px"; saveDebounced(); });
+    s.text=t.value; if(!s.h){ t.style.height="auto"; t.style.height=Math.max(58,t.scrollHeight)+"px"; } saveDebounced(); });
   stickiesLayer.addEventListener("click",(e)=>{
     const tog=e.target.closest('[data-role="stoggle"]');
     if(tog){ const id=tog.closest(".sticky").dataset.id; const s=state.stickies.find(x=>x.id===id); if(s){ s.min=!s.min; save(); renderStickies(); relayout(); } return; }
     const del=e.target.closest('[data-role="sdel"]'); if(!del) return;
     const id=del.closest(".sticky").dataset.id; state.stickies=state.stickies.filter(x=>x.id!==id); save(); render(); });
-  let sdrag=null;
-  stickiesLayer.addEventListener("pointerdown",(e)=>{ const bar=e.target.closest('[data-role="smove"]'); if(!bar) return;
+  let sdrag=null, sresize=null;
+  stickiesLayer.addEventListener("pointerdown",(e)=>{
+    const rz=e.target.closest('[data-role="sresize"]');
+    if(rz){ e.preventDefault(); e.stopPropagation(); const el=rz.closest(".sticky"); const s=state.stickies.find(x=>x.id===el.dataset.id); if(!s) return;
+      const ta=el.querySelector(".sticky-text");
+      sresize={el,s,sx:e.clientX,sy:e.clientY,w0:s.w||el.offsetWidth||180,h0:s.h||(ta?Math.max(58,ta.scrollHeight):100)}; return; }
+    const bar=e.target.closest('[data-role="smove"]'); if(!bar) return;
     if(e.target.closest('[data-role="sdel"]')) return; e.preventDefault(); e.stopPropagation();
     const el=bar.closest(".sticky"); const s=state.stickies.find(x=>x.id===el.dataset.id); if(!s) return;
     sdrag={el,s,sx:e.clientX,sy:e.clientY,ox:s.x||40,oy:s.y||40}; el.classList.add("dragging"); });
-  window.addEventListener("pointermove",(e)=>{ if(!sdrag) return;
+  window.addEventListener("pointermove",(e)=>{
+    if(sresize){ const nw=Math.max(120,Math.round(sresize.w0+(e.clientX-sresize.sx)/zoom)), nh=Math.max(58,Math.round(sresize.h0+(e.clientY-sresize.sy)/zoom));
+      sresize.s.w=nw; sresize.s.h=nh; sresize.el.style.width=nw+"px";
+      const ta=sresize.el.querySelector(".sticky-text"); if(ta){ ta.style.height=nh+"px"; ta.style.overflow="auto"; } return; }
+    if(!sdrag) return;
     const nx=sdrag.ox+(e.clientX-sdrag.sx)/zoom, ny=sdrag.oy+(e.clientY-sdrag.sy)/zoom;
     sdrag.el.style.left=nx+"px"; sdrag.el.style.top=ny+"px"; sdrag.s.x=Math.round(nx); sdrag.s.y=Math.round(ny); });
-  window.addEventListener("pointerup",()=>{ if(sdrag){ sdrag.el.classList.remove("dragging"); save(); relayout(); sdrag=null; } });
+  window.addEventListener("pointerup",()=>{
+    if(sresize){ save(); relayout(); sresize=null; }
+    if(sdrag){ sdrag.el.classList.remove("dragging"); save(); relayout(); sdrag=null; } });
   $("#btn-sticky").addEventListener("click",addSticky);
   $("#btn-tidy").addEventListener("click",()=>{
     if(view!=="map"&&view!=="think"){ setView("map"); }
@@ -1173,11 +1233,43 @@
   $("#zoom-reset").addEventListener("click",()=>setZoom(1));
   stage.addEventListener("wheel",(e)=>{ if(!(e.ctrlKey||e.metaKey)) return; e.preventDefault(); setZoom(zoom+(e.deltaY<0?0.1:-0.1),e.clientX,e.clientY); },{passive:false});
 
-  // ---- pan ----
-  let panning=null;
-  stage.addEventListener("pointerdown",(e)=>{ if(e.target.closest(".node")||e.target.closest(".sticky")) return; panning={x:e.clientX,y:e.clientY,l:stage.scrollLeft,t:stage.scrollTop}; stage.classList.add("panning"); });
-  window.addEventListener("pointermove",(e)=>{ if(!panning||drag||sdrag) return; stage.scrollLeft=panning.l-(e.clientX-panning.x); stage.scrollTop=panning.t-(e.clientY-panning.y); });
-  window.addEventListener("pointerup",()=>{ if(panning){ panning=null; stage.classList.remove("panning"); } });
+  // ---- pan（Alt/中ボタンドラッグ or トラックパッドスクロール）＆ 範囲選択（空きをドラッグ）----
+  let panning=null, marquee=null;
+  function toCanvas(cx,cy){ const r=stage.getBoundingClientRect(); return {x:(stage.scrollLeft+cx-r.left)/zoom, y:(stage.scrollTop+cy-r.top)/zoom}; }
+  function updateMarquee(){ if(!marquee) return;
+    const x=Math.min(marquee.sx,marquee.cx), y=Math.min(marquee.sy,marquee.cy), w=Math.abs(marquee.cx-marquee.sx), h=Math.abs(marquee.cy-marquee.sy);
+    const s=marquee.el.style; s.left=x+"px"; s.top=y+"px"; s.width=w+"px"; s.height=h+"px";
+    els.forEach((elm)=>{ const n=elm.__node; if(n===curRoot) return;
+      const nx1=n._x, nx2=n._x+nodeWidth(n._depth), ny1=n._y-(n._h||40)/2, ny2=n._y+(n._h||40)/2;
+      const hit=!(nx2<x||nx1>x+w||ny2<y||ny1>y+h);
+      if(hit) selection.add(n.id); else if(!marquee.add) selection.delete(n.id);
+      elm.classList.toggle("multi", selection.has(n.id));
+    });
+  }
+  stage.addEventListener("pointerdown",(e)=>{
+    if(e.target.closest(".node")||e.target.closest(".sticky")) return;
+    if(e.pointerType!=="mouse") return; // タッチ／ペンはネイティブスクロールで画面移動
+    if(e.button===2) return;
+    if(e.altKey||e.button===1){ // 画面移動（パン）
+      panning={x:e.clientX,y:e.clientY,l:stage.scrollLeft,t:stage.scrollTop}; stage.classList.add("panning"); return;
+    }
+    // 範囲選択
+    const c=toCanvas(e.clientX,e.clientY);
+    marquee={sx:c.x,sy:c.y,cx:c.x,cy:c.y,add:e.shiftKey};
+    if(!e.shiftKey) clearSelection();
+    const box=document.createElement("div"); box.className="marquee"; nodesLayer.appendChild(box); marquee.el=box;
+    updateMarquee();
+  });
+  window.addEventListener("pointermove",(e)=>{
+    if(marquee){ const c=toCanvas(e.clientX,e.clientY); marquee.cx=c.x; marquee.cy=c.y; updateMarquee(); return; }
+    if(!panning||drag||sdrag) return; stage.scrollLeft=panning.l-(e.clientX-panning.x); stage.scrollTop=panning.t-(e.clientY-panning.y);
+  });
+  window.addEventListener("pointerup",()=>{
+    if(marquee){ const moved=(Math.abs(marquee.cx-marquee.sx)+Math.abs(marquee.cy-marquee.sy))>3; marquee.el.remove(); marquee=null;
+      if(!moved&&!selection.size){} // 空クリックは何もしない
+      suppressClick=true; setTimeout(()=>{ suppressClick=false; },0); return; }
+    if(panning){ panning=null; stage.classList.remove("panning"); }
+  });
 
   // ---- dashboard ----
   function collectTasks(){ const out=[]; (function walk(node,depth,branch,path){
@@ -1206,7 +1298,7 @@
     if(n.link) chips.push(`<a class="chip link-chip" href="${esc(n.link)}" target="_blank" rel="noopener noreferrer" data-role="link" title="${esc(n.link)}">${ICON.link}リンク</a>`);
     const sub=(t.path&&t.path.length>1)?`<span class="db-path">${esc(t.path.slice(1).join(" › "))}</span>`:"";
     const subline=(sub||chips.length)?`<div class="dash-sub">${sub}${chips.join("")}</div>`:"";
-    return `<div class="dash-task ${done?"done":""}" data-id="${n.id}" style="--dc:${col}">
+    return `<div class="dash-task ${done?"done":""} ${n.priority?"pri":""}" data-id="${n.id}" style="--dc:${col}">
       <button class="dash-check" data-role="check">${ICON.check}</button>
       <div class="dash-body"><div class="dash-text">${esc(n.text)||"（無題）"}</div>${subline}</div></div>`;
   }
@@ -1249,7 +1341,7 @@
 
     if(!total){ html+=`<div class="dash-blank"><h2>タスクがまだありません</h2><p>「マインドマップ」でタスクを追加すると、ここに今日・今週やることが集まります。</p></div></div>`; dash.innerHTML=html; return; }
 
-    function timeGroup(title,list,color){
+    function timeGroup(title,list,color,emph){
       const remaining=list.filter(t=>!isDone(t.node)).length;
       let inner="";
       if(!list.length){ inner=`<div class="dash-empty">タスクはありません。</div>`; }
@@ -1263,14 +1355,14 @@
           const spot=g.items.filter(t=>!t.node.repeat).sort(order);
           let s="";
           if(rec.length) s+=`<div class="db-sub">${ICON.repeat}<span>定例タスク</span></div>`+rec.map(taskRowHtml).join("");
-          if(spot.length) s+=`<div class="db-sub"><span>そのときのタスク</span></div>`+spot.map(taskRowHtml).join("");
+          if(spot.length) s+=`<div class="db-sub"><span>スポットタスク</span></div>`+spot.map(taskRowHtml).join("");
           inner+=`<div class="db-branch"><div class="db-bhead"><span class="bdot" style="background:${col}"></span>${esc(g.branch?(g.branch.text||"項目"):"項目")}</div>${s}</div>`;
         });
       }
-      return `<div class="dash-section"><div class="dash-h"><span class="dot" style="background:${color}"></span><h3>${title}</h3><span class="cnt">残り${remaining}</span></div><div class="dash-card db-card">${inner}</div></div>`;
+      return `<div class="dash-section${emph?" today-sec":""}"><div class="dash-h"><span class="dot" style="background:${color}"></span><h3>${title}</h3><span class="cnt">残り${remaining}</span></div><div class="dash-card db-card">${inner}</div></div>`;
     }
 
-    html+=timeGroup("今日のタスク",B.overdue.concat(B.today),accent);
+    html+=timeGroup("今日のタスク",B.overdue.concat(B.today),accent,true);
     html+=timeGroup("今週のタスク",B.week,"#4C6EF5");
     if(priNone.length) html+=timeGroup("優先（日付なし）",priNone,flag);
     html+=`</div>`;
@@ -1294,7 +1386,7 @@
       if(node.repeat) chips.push(`<span class="chip cadence-chip" style="--col:${col}">${repeatLabel(node)}</span>`);
       if(node.due){ const dl=dueLabel(node.due); if(dl) chips.push(`<span class="chip due-chip ${dl.cls}">${dl.text}</span>`); }
       if(node.link) chips.push(`<a class="chip link-chip" href="${esc(node.link)}" target="_blank" rel="noopener noreferrer" data-role="link" title="${esc(node.link)}">${ICON.link}リンク</a>`);
-      return `<div class="ol-row task ${done?"done":""}" data-id="${node.id}" style="padding-left:${pad}px;--dc:${col}">
+      return `<div class="ol-row task ${done?"done":""} ${node.priority?"pri":""}" data-id="${node.id}" style="padding-left:${pad}px;--dc:${col}">
         <button class="dash-check" data-role="check">${ICON.check}</button>
         <div class="ol-body"><span class="ol-text">${esc(node.text)||"（無題）"}</span><span class="ol-chips">${chips.join("")}</span></div></div>`;
     }
