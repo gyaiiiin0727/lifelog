@@ -58,6 +58,24 @@
   .help .close:hover { background:var(--surface); color:var(--ink); }
   .help.hidden { display:none; }
 
+  .theme-bar { display:flex; align-items:center; gap:7px; flex-wrap:wrap; padding:8px clamp(14px,3vw,26px);
+    background:var(--surface); border-bottom:1px solid var(--border); flex:none; }
+  .theme-bar[hidden] { display:none; }
+  .theme-bar .tb-label { font-size:11px; font-weight:800; letter-spacing:.06em; color:var(--faint); margin-right:2px; }
+  .theme-chip { height:30px; padding:0 13px; border:1px solid var(--border-strong); background:var(--surface-2);
+    color:var(--muted); border-radius:999px; font-size:13px; font-weight:700; max-width:200px; overflow:hidden;
+    text-overflow:ellipsis; white-space:nowrap; }
+  .theme-chip:hover { background:var(--surface); color:var(--ink); }
+  .theme-chip.on { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .theme-add { height:30px; padding:0 12px; border:1px dashed var(--border-strong); background:transparent;
+    color:var(--muted); border-radius:999px; font-size:12.5px; font-weight:700; display:inline-flex; align-items:center; gap:5px; }
+  .theme-add:hover { border-color:var(--accent); color:var(--accent); }
+  .theme-add svg { width:13px; height:13px; }
+  .theme-del { width:30px; height:30px; border:1px solid var(--border-strong); background:var(--surface); color:var(--faint);
+    border-radius:999px; display:inline-flex; align-items:center; justify-content:center; margin-left:auto; }
+  .theme-del:hover { color:var(--danger); border-color:var(--danger); }
+  .theme-del svg { width:14px; height:14px; }
+
   .views { flex:1; position:relative; overflow:hidden; display:flex; }
 
   /* ---- Map ---- */
@@ -65,6 +83,11 @@
     background:radial-gradient(circle at 1px 1px, color-mix(in srgb,var(--faint) 26%, transparent) 1px, transparent 0);
     background-size:26px 26px; }
   .stage.panning { cursor:grabbing; }
+  .zoom-ctl { position:absolute; right:16px; bottom:16px; z-index:20; display:flex; align-items:center;
+    background:var(--surface); border:1px solid var(--border-strong); border-radius:999px; box-shadow:var(--shadow); overflow:hidden; }
+  .zoom-ctl button { border:0; background:transparent; color:var(--ink); height:36px; min-width:40px; font-size:16px; font-weight:700; padding:0 6px; }
+  .zoom-ctl button:hover { background:var(--surface-2); }
+  .zoom-ctl #zoom-reset { min-width:56px; font-size:12.5px; border-left:1px solid var(--border); border-right:1px solid var(--border); font-variant-numeric:tabular-nums; }
   .stage::-webkit-scrollbar { width:12px; height:12px; }
   .stage::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:12px; border:3px solid transparent; background-clip:padding-box; }
   .canvas { position:relative; min-width:100%; min-height:100%; }
@@ -161,8 +184,10 @@
 
   .node-grip { position:absolute; left:-11px; top:50%; transform:translateY(-50%); width:20px; height:24px;
     border-radius:6px; background:var(--surface); border:1px solid var(--border-strong); color:var(--faint);
-    display:none; align-items:center; justify-content:center; cursor:grab; z-index:5; touch-action:none; box-shadow:var(--shadow-sm); }
-  .node:hover .node-grip, .node.selected .node-grip { display:flex; }
+    display:flex; align-items:center; justify-content:center; cursor:grab; z-index:5; touch-action:none;
+    box-shadow:var(--shadow-sm); opacity:.35; transition:opacity .12s; }
+  .node:hover .node-grip, .node.selected .node-grip { opacity:1; }
+  .node.dragging .node-grip { opacity:1; }
   .node-grip:active { cursor:grabbing; }
   .node-grip svg { width:12px; height:12px; }
 
@@ -217,6 +242,15 @@
   .dash-branch { display:inline-flex; align-items:center; gap:5px; font-weight:700; }
   .dash-branch .bdot { width:8px; height:8px; border-radius:50%; }
   .dash-empty { padding:26px; text-align:center; color:var(--faint); font-size:13.5px; }
+  .db-card { padding:4px 0; }
+  .db-branch { border-top:1px solid var(--border); padding:10px 0 4px; }
+  .db-branch:first-child { border-top:0; }
+  .db-bhead { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:800; padding:2px 15px 6px; }
+  .db-bhead .bdot { width:9px; height:9px; border-radius:50%; }
+  .db-sub { display:flex; align-items:center; gap:5px; font-size:11px; font-weight:800; letter-spacing:.04em; color:var(--faint); padding:6px 15px 2px 30px; }
+  .db-sub svg { width:12px; height:12px; }
+  .db-path { color:var(--faint); }
+  .db-card .dash-task { padding:8px 15px 8px 30px; border-top:0; }
 
   /* タスク・アウトライン */
   .ol-head { display:flex; align-items:center; gap:9px; margin:0 0 10px; }
@@ -373,9 +407,12 @@
   <span class="k"><kbd>⌘/Ctrl</kbd>+<kbd>Enter</kbd> 真下に子</span>
   <span class="k"><kbd>⇧Tab</kbd> 一段上げる</span>
   <span class="k"><kbd>↑</kbd><kbd>↓</kbd> 移動</span>
-  <span class="k">左の⠿をドラッグで他ノードに付け替え</span>
+  <span class="k"><kbd>⌘/Ctrl</kbd>+<kbd>Z</kbd> 元に戻す</span>
+  <span class="k">⠿ かノード本体をドラッグ→他ノードに重ねて付け替え</span>
   <button class="close" id="btn-help-close" title="閉じる">×</button>
 </div>
+
+<div class="theme-bar" id="theme-bar" hidden></div>
 
 <div class="views">
   <div class="stage" id="stage">
@@ -387,6 +424,11 @@
   </div>
   <div class="dash" id="dash"></div>
   <div class="dash" id="tasks"></div>
+  <div class="zoom-ctl" id="zoom-ctl">
+    <button id="zoom-out" title="縮小（⌘/Ctrl+ホイールでも可）">−</button>
+    <button id="zoom-reset" title="100%に戻す"><span id="zoom-lbl">100%</span></button>
+    <button id="zoom-in" title="拡大">＋</button>
+  </div>
 </div>
 
 <input type="file" id="file-input" accept="application/json,.json" hidden>
@@ -549,23 +591,39 @@
     }catch(e){}
     return seed();
   }
-  let cloudPush=null;
-  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){ toast("保存に失敗しました"); } if(cloudPush) cloudPush(); }
+  let cloudPush=null, undoStack=[], redoStack=[], lastSnap=null;
+  function save(){
+    const cur=JSON.stringify(state);
+    if(lastSnap!==null && lastSnap!==cur){ undoStack.push(lastSnap); if(undoStack.length>120) undoStack.shift(); redoStack.length=0; }
+    lastSnap=cur;
+    try{ localStorage.setItem(KEY,cur); }catch(e){ toast("保存に失敗しました"); }
+    if(cloudPush) cloudPush();
+  }
   let saveTimer=null; function saveDebounced(){ clearTimeout(saveTimer); saveTimer=setTimeout(save,400); }
+  function applyStateJSON(js){ try{ localStorage.setItem(KEY,js); }catch(e){} hydrate(); lastSnap=JSON.stringify(state); selectedId=null; refresh(); if(cloudPush) cloudPush(); }
+  function undo(){ if(!undoStack.length){ toast("これ以上戻せません"); return; } redoStack.push(JSON.stringify(state)); applyStateJSON(undoStack.pop()); toast("元に戻しました"); }
+  function redo(){ if(!redoStack.length){ toast("やり直す操作がありません"); return; } undoStack.push(JSON.stringify(state)); applyStateJSON(redoStack.pop()); toast("やり直しました"); }
 
-  let state=null, selectedId=null, pendingFocus=null, view="map", helpHidden=false, curRoot=null;
-  const isThink=()=>curRoot===state.thoughtRoot;
+  let state=null, selectedId=null, pendingFocus=null, view="map", helpHidden=false, curRoot=null, zoom=1, needCenter=true;
+  const centered={};
+  const isThink=()=>!!(state.thoughts&&state.thoughts.indexOf(curRoot)>=0);
   function hydrate(){
     state=load();
     assignTypes(state.root,0);
     // 統一移行：以前は深さ3以上のノードが自動で「真下」配置だったので、その見た目を保つ
     if(!state.below2){ (function w(n,d){ for(const k of n.children){ if(d+1>=3) k.below=true; w(k,d+1); } })(state.root,0); state.below2=true; }
-    if(!state.thoughtRoot) state.thoughtRoot=seedThought();
-    normNode(state.thoughtRoot); assignIdea(state.thoughtRoot,0);
+    // 思考マップ：複数テーマ（配列）へ移行
+    if(!Array.isArray(state.thoughts)){
+      state.thoughts = state.thoughtRoot ? [state.thoughtRoot] : [seedThought()];
+    }
+    delete state.thoughtRoot;
+    state.thoughts.forEach(r=>{ normNode(r); assignIdea(r,0); });
+    if(typeof state.thoughtIdx!=="number"||state.thoughtIdx<0||state.thoughtIdx>=state.thoughts.length) state.thoughtIdx=0;
     if(!Array.isArray(state.stickies)) state.stickies=[];
-    curRoot=(view==="think")?state.thoughtRoot:state.root;
+    curRoot=(view==="think")?state.thoughts[state.thoughtIdx]:state.root;
   }
   hydrate();
+  lastSnap=JSON.stringify(state);
 
   // ---- dom ----
   const $=(s,el=document)=>el.querySelector(s);
@@ -604,6 +662,7 @@
 
   // ---- render (map) ----
   function render(){
+    if(isThink()) renderThemeBar();
     nodesLayer.innerHTML=""; els.clear();
     build(curRoot,0,null);
     if(!curRoot.children.length){
@@ -732,18 +791,22 @@
     if(view!=="map"&&view!=="think") return;
     els.forEach((el)=>{ const ta=el.querySelector(".node-text"); if(ta) autoGrow(ta); el.__node._h=el.offsetHeight; });
     calcSub(curRoot); place(curRoot,PAD,PAD);
-    // left-side branches can produce negative x → shift everything right so all fit
-    let minX=Infinity; els.forEach((el)=>{ minX=Math.min(minX,el.__node._x); });
-    if(minX<PAD){ const dx=PAD-minX; els.forEach((el)=>{ el.__node._x+=dx; }); }
+    // 周囲に余白を確保（＝いつでも空きを掴んで画面を動かせる）。左枝の負座標もここで吸収。
+    const vw=stage.clientWidth||900, vh=stage.clientHeight||600;
+    const mX=Math.max(PAD,Math.round(vw*0.55)), mY=Math.max(PAD,Math.round(vh*0.55));
+    let minX=Infinity,minY=Infinity;
+    els.forEach((el)=>{ const n=el.__node; minX=Math.min(minX,n._x); minY=Math.min(minY,n._y-n._h/2); });
+    const dx=mX-minX, dy=mY-minY;
     let maxR=0,maxB=0;
-    els.forEach((el)=>{ const n=el.__node; el.style.left=n._x+"px"; el.style.top=(n._y-n._h/2)+"px";
+    els.forEach((el)=>{ const n=el.__node; n._x+=dx; n._y+=dy; el.style.left=n._x+"px"; el.style.top=(n._y-n._h/2)+"px";
       maxR=Math.max(maxR,n._x+nodeWidth(n._depth)); maxB=Math.max(maxB,n._y+n._h/2); });
     const rh=$("#root-hint");
     if(rh){ rh.style.left=(curRoot._x+ROOT_W+40)+"px"; rh.style.top=(curRoot._y-18)+"px"; maxR=Math.max(maxR,curRoot._x+ROOT_W+340); }
     if(!isThink()) state.stickies.forEach(s=>{ maxR=Math.max(maxR,(s.x||0)+200); maxB=Math.max(maxB,(s.y||0)+160); });
-    const W=Math.max(maxR+PAD,stage.clientWidth), H=Math.max(maxB+PAD,stage.clientHeight);
+    const W=maxR+mX, H=maxB+mY;
     canvas.style.width=W+"px"; canvas.style.height=H+"px";
     drawLinks(W,H);
+    if(needCenter){ needCenter=false; stage.scrollLeft=Math.max(0,curRoot._x*zoom-vw*0.28); stage.scrollTop=Math.max(0,curRoot._y*zoom-vh/2); }
   }
   function drawLinks(W,H){
     let d="";
@@ -775,6 +838,23 @@
 
   // ---- focus / selection ----
   function selectNode(id){ if(selectedId&&els.has(selectedId)) els.get(selectedId).classList.remove("selected"); selectedId=id; if(els.has(id)) els.get(id).classList.add("selected"); }
+  // 見た目の位置で上下左右の一番近いノードへ移動
+  function navDir(id,dir){
+    const cur=(locate(id)||{}).node; if(!cur) return false;
+    const cx=cur._x+nodeWidth(cur._depth)/2, cy=cur._y;
+    let best=null, bestScore=Infinity;
+    els.forEach((el)=>{ const n=el.__node; if(!n||n===cur) return;
+      const nx=n._x+nodeWidth(n._depth)/2, ny=n._y, dx=nx-cx, dy=ny-cy;
+      let along,perp,ok=false;
+      if(dir==="right"){ ok=dx>6&&Math.abs(dy)<=Math.abs(dx)*1.4; along=dx; perp=Math.abs(dy); }
+      else if(dir==="left"){ ok=dx<-6&&Math.abs(dy)<=Math.abs(dx)*1.4; along=-dx; perp=Math.abs(dy); }
+      else if(dir==="down"){ ok=dy>6&&Math.abs(dx)<=Math.abs(dy)*1.4; along=dy; perp=Math.abs(dx); }
+      else { ok=dy<-6&&Math.abs(dx)<=Math.abs(dy)*1.4; along=-dy; perp=Math.abs(dx); }
+      if(!ok) return; const score=along+perp*2.2;
+      if(score<bestScore){ bestScore=score; best=n; }
+    });
+    if(best){ focusNode(best.id); return true; } return false;
+  }
   function focusNode(id){ const el=els.get(id); if(!el) return; selectNode(id); const ta=el.querySelector(".node-text");
     if(ta){ ta.focus(); const v=ta.value; try{ ta.setSelectionRange(v.length,v.length); }catch(e){} } el.scrollIntoView({block:"nearest",inline:"nearest"}); }
 
@@ -782,6 +862,7 @@
   function defType(isTop){ return isThink()?"idea":(isTop?"group":"task"); }
   function addSiblingAfter(id){ const loc=locate(id); if(!loc) return; if(!loc.parent){ addBranch(); return; }
     const top=(loc.parent===curRoot); const sib=newNode("",defType(top));
+    sib.below=loc.node.below; // 真下ノードの兄弟は真下に、横ノードの兄弟は横に
     const idx=loc.parent.children.indexOf(loc.node); if(top){ sib.color=pickColor(); if(loc.node.side) sib.side=loc.node.side; }
     loc.parent.children.splice(idx+1,0,sib); pendingFocus=sib.id; save(); render(); }
   function addChild(id){ const loc=locate(id); if(!loc) return; const top=(loc.node===curRoot); const child=newNode("",defType(top)); if(top) child.color=pickColor();
@@ -830,7 +911,7 @@
   nodesLayer.addEventListener("input",(e)=>{ const ta=e.target.closest(".node-text"); if(!ta) return;
     const {node}=locate(ta.closest(".node").dataset.id)||{}; if(!node) return; node.text=ta.value; autoGrow(ta); relayout(); saveDebounced(); });
   nodesLayer.addEventListener("focusin",(e)=>{ const ta=e.target.closest(".node-text"); if(ta) selectNode(ta.closest(".node").dataset.id); });
-  nodesLayer.addEventListener("change",(e)=>{ if(e.target.closest(".node-text")) save(); });
+  nodesLayer.addEventListener("change",(e)=>{ if(e.target.closest(".node-text")){ save(); if(isThink()) renderThemeBar(); } });
 
   nodesLayer.addEventListener("keydown",(e)=>{
     const ta=e.target.closest(".node-text"); if(!ta) return;
@@ -840,24 +921,34 @@
     if(e.key==="Tab"&&!e.shiftKey){ e.preventDefault(); addChild(id); return; }
     if(e.key==="Tab"&&e.shiftKey){ e.preventDefault(); outdent(id); return; }
     if(e.key==="Backspace"&&ta.value===""){ e.preventDefault(); deleteNode(id); return; }
-    if(e.key==="ArrowDown"&&ta.selectionStart===ta.value.length){ const f=flatten(); const i=f.findIndex(x=>x.node.id===id); if(i>-1&&i<f.length-1){ e.preventDefault(); focusNode(f[i+1].node.id); } return; }
-    if(e.key==="ArrowUp"&&ta.selectionStart===0){ const f=flatten(); const i=f.findIndex(x=>x.node.id===id); if(i>0){ e.preventDefault(); focusNode(f[i-1].node.id); } return; }
+    const atStart=ta.selectionStart===0&&ta.selectionEnd===0;
+    const atEnd=ta.selectionStart===ta.value.length&&ta.selectionEnd===ta.value.length;
+    if(e.key==="ArrowDown"&&atEnd){ if(navDir(id,"down")) e.preventDefault(); return; }
+    if(e.key==="ArrowUp"&&atStart){ if(navDir(id,"up")) e.preventDefault(); return; }
+    if(e.key==="ArrowRight"&&atEnd){ if(navDir(id,"right")) e.preventDefault(); return; }
+    if(e.key==="ArrowLeft"&&atStart){ if(navDir(id,"left")) e.preventDefault(); return; }
   });
 
-  // ---- drag to reparent ----
+  // ---- drag to reparent（ノード本体 or ⠿ をつかんで移動）----
   let drag=null;
-  nodesLayer.addEventListener("pointerdown",(e)=>{
-    const grip=e.target.closest('[data-role="grip"]'); if(!grip) return;
-    e.preventDefault(); e.stopPropagation();
-    const id=grip.closest(".node").dataset.id; const el=els.get(id); if(!el) return;
-    selectNode(id);
-    drag={id,el,sx:e.clientX,sy:e.clientY,target:null};
-    el.classList.add("dragging"); el.style.pointerEvents="none"; document.body.style.userSelect="none";
-  });
   function clearDrop(){ nodesLayer.querySelectorAll(".drop-target").forEach(n=>n.classList.remove("drop-target")); }
+  nodesLayer.addEventListener("pointerdown",(e)=>{
+    if(e.pointerType==="mouse"&&e.button!==0) return;
+    const nodeDiv=e.target.closest(".node"); if(!nodeDiv) return;
+    if(nodeDiv.classList.contains("root")) return; // 中心は動かさない
+    // 編集・操作パーツからはドラッグ開始しない（文字入力/チェック/開閉/ツールバー）
+    if(e.target.closest(".node-text")||e.target.closest('[data-role="check"]')||e.target.closest('[data-role="collapse"]')||e.target.closest(".node-tools")) return;
+    const id=nodeDiv.dataset.id; const el=els.get(id); if(!el) return;
+    drag={id,el,sx:e.clientX,sy:e.clientY,started:false,target:null};
+  });
   window.addEventListener("pointermove",(e)=>{
     if(!drag) return;
-    drag.el.style.transform=`translate(${e.clientX-drag.sx}px, ${e.clientY-drag.sy}px)`;
+    if(!drag.started){
+      if(Math.abs(e.clientX-drag.sx)+Math.abs(e.clientY-drag.sy)<5) return;
+      drag.started=true; selectNode(drag.id);
+      drag.el.classList.add("dragging"); drag.el.style.pointerEvents="none"; document.body.style.userSelect="none";
+    }
+    drag.el.style.transform=`translate(${(e.clientX-drag.sx)/zoom}px, ${(e.clientY-drag.sy)/zoom}px)`;
     const under=document.elementFromPoint(e.clientX,e.clientY); const tn=under&&under.closest(".node");
     clearDrop(); drag.target=null;
     if(tn&&tn!==drag.el){ const tid=tn.dataset.id; const dloc=locate(drag.id);
@@ -865,8 +956,9 @@
   });
   window.addEventListener("pointerup",()=>{
     if(!drag) return;
-    const t=drag.target; drag.el.style.pointerEvents=""; document.body.style.userSelect=""; clearDrop();
-    if(t){ reparent(drag.id,t); } else { drag.el.style.transform=""; drag.el.classList.remove("dragging"); }
+    const started=drag.started, t=drag.target, el=drag.el;
+    if(el) el.style.pointerEvents=""; document.body.style.userSelect=""; clearDrop();
+    if(started){ if(t){ reparent(drag.id,t); } else if(el){ el.style.transform=""; el.classList.remove("dragging"); toast("他のノードに重ねると、その下に付け替えできます"); } }
     drag=null;
   });
 
@@ -931,7 +1023,14 @@
     di.addEventListener("change",()=>{ node.due=di.value||null; save(); closePop(); refresh(); });
   }
   window.addEventListener("resize",()=>{ closePop(); relayout(); });
-  document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closePop(); });
+  document.addEventListener("keydown",(e)=>{
+    if(e.key==="Escape"){ closePop(); return; }
+    const mod=e.metaKey||e.ctrlKey; if(!mod) return;
+    if(e.target&&e.target.closest&&e.target.closest("#cloud-modal")) return; // 入力欄では通常の取り消し
+    const k=e.key.toLowerCase();
+    if(k==="z"){ e.preventDefault(); if(e.shiftKey) redo(); else undo(); }
+    else if(k==="y"){ e.preventDefault(); redo(); }
+  });
 
   // ---- 付箋メモ ----
   const stickiesLayer=$("#stickies");
@@ -957,7 +1056,7 @@
   }
   function addSticky(){
     if(view!=="map"){ setView("map"); }
-    const x=Math.round(stage.scrollLeft+stage.clientWidth/2-90), y=Math.round(stage.scrollTop+stage.clientHeight/2-56);
+    const x=Math.round((stage.scrollLeft+stage.clientWidth/2)/zoom-90), y=Math.round((stage.scrollTop+stage.clientHeight/2)/zoom-56);
     const s={id:uid(),text:"",x,y,color:"#FFE08A"}; state.stickies.push(s); save(); render();
     requestAnimationFrame(()=>{ const el=stickiesLayer.querySelector(`.sticky[data-id="${s.id}"] .sticky-text`); if(el) el.focus(); });
   }
@@ -975,10 +1074,25 @@
     const el=bar.closest(".sticky"); const s=state.stickies.find(x=>x.id===el.dataset.id); if(!s) return;
     sdrag={el,s,sx:e.clientX,sy:e.clientY,ox:s.x||40,oy:s.y||40}; el.classList.add("dragging"); });
   window.addEventListener("pointermove",(e)=>{ if(!sdrag) return;
-    const nx=sdrag.ox+(e.clientX-sdrag.sx), ny=sdrag.oy+(e.clientY-sdrag.sy);
+    const nx=sdrag.ox+(e.clientX-sdrag.sx)/zoom, ny=sdrag.oy+(e.clientY-sdrag.sy)/zoom;
     sdrag.el.style.left=nx+"px"; sdrag.el.style.top=ny+"px"; sdrag.s.x=Math.round(nx); sdrag.s.y=Math.round(ny); });
   window.addEventListener("pointerup",()=>{ if(sdrag){ sdrag.el.classList.remove("dragging"); save(); relayout(); sdrag=null; } });
   $("#btn-sticky").addEventListener("click",addSticky);
+
+  // ---- zoom ----
+  function updateZoomLbl(){ const l=$("#zoom-lbl"); if(l) l.textContent=Math.round(zoom*100)+"%"; }
+  function setZoom(nz,fx,fy){
+    nz=Math.max(0.3,Math.min(2.5,Math.round(nz*100)/100)); if(nz===zoom){ updateZoomLbl(); return; }
+    const r=stage.getBoundingClientRect();
+    const px=(fx!=null)?(fx-r.left):stage.clientWidth/2, py=(fy!=null)?(fy-r.top):stage.clientHeight/2;
+    const lx=(stage.scrollLeft+px)/zoom, ly=(stage.scrollTop+py)/zoom;
+    zoom=nz; canvas.style.zoom=zoom;
+    stage.scrollLeft=lx*nz-px; stage.scrollTop=ly*nz-py; updateZoomLbl();
+  }
+  $("#zoom-in").addEventListener("click",()=>setZoom(zoom+0.1));
+  $("#zoom-out").addEventListener("click",()=>setZoom(zoom-0.1));
+  $("#zoom-reset").addEventListener("click",()=>setZoom(1));
+  stage.addEventListener("wheel",(e)=>{ if(!(e.ctrlKey||e.metaKey)) return; e.preventDefault(); setZoom(zoom+(e.deltaY<0?0.1:-0.1),e.clientX,e.clientY); },{passive:false});
 
   // ---- pan ----
   let panning=null;
@@ -1010,12 +1124,11 @@
     if(n.priority) chips.push(`<span class="meta-flag">${ICON.flag}</span>`);
     if(n.repeat) chips.push(`<span class="chip cadence-chip" style="--col:${col}">${repeatLabel(n)}</span>`);
     if(n.due){ const dl=dueLabel(n.due); if(dl) chips.push(`<span class="chip due-chip ${dl.cls}">${dl.text}</span>`); }
+    const sub=(t.path&&t.path.length>1)?`<span class="db-path">${esc(t.path.slice(1).join(" › "))}</span>`:"";
+    const subline=(sub||chips.length)?`<div class="dash-sub">${sub}${chips.join("")}</div>`:"";
     return `<div class="dash-task ${done?"done":""}" data-id="${n.id}" style="--dc:${col}">
       <button class="dash-check" data-role="check">${ICON.check}</button>
-      <div class="dash-body">
-        <div class="dash-text">${esc(n.text)||"（無題）"}</div>
-        <div class="dash-sub"><span class="dash-branch"><span class="bdot" style="background:${col}"></span>${esc((t.path&&t.path.length?t.path.join(" › "):(t.branch?t.branch.text:""))||"項目")}</span>${chips.join("")}</div>
-      </div></div>`;
+      <div class="dash-body"><div class="dash-text">${esc(n.text)||"（無題）"}</div>${subline}</div></div>`;
   }
   function sectionHtml(title,list,color,emptyMsg,extraClass){
     if(!list.length&&!emptyMsg) return "";
@@ -1054,12 +1167,32 @@
         <div class="stat"><div class="num">${done}<span style="font-size:15px;color:var(--faint)">/${total}</span></div><div class="lbl">完了</div></div>
       </div>`;
 
-    if(!total){ html+=`<div class="dash-blank"><h2>タスクがまだありません</h2><p>「マップ」でタスクを追加すると、ここに今日・今週やることが集まります。</p></div></div>`; dash.innerHTML=html; return; }
+    if(!total){ html+=`<div class="dash-blank"><h2>タスクがまだありません</h2><p>「マインドマップ」でタスクを追加すると、ここに今日・今週やることが集まります。</p></div></div>`; dash.innerHTML=html; return; }
 
-    html+=sectionHtml("期限切れ",B.overdue,danger,null,"overdue");
-    html+=sectionHtml("今日",B.today,accent,"今日やることはありません。",null);
-    html+=sectionHtml("今週",B.week,"#4C6EF5","今週の予定はまだありません。",null);
-    if(priNone.length) html+=sectionHtml("優先（日付なし）",priNone,flag,null,null);
+    function timeGroup(title,list,color){
+      const remaining=list.filter(t=>!isDone(t.node)).length;
+      let inner="";
+      if(!list.length){ inner=`<div class="dash-empty">タスクはありません。</div>`; }
+      else {
+        const byB=new Map();
+        list.forEach(t=>{ const k=t.branch?t.branch.id:"_"; if(!byB.has(k)) byB.set(k,{branch:t.branch,items:[]}); byB.get(k).items.push(t); });
+        const groups=[...byB.values()].sort((a,b)=>state.root.children.indexOf(a.branch)-state.root.children.indexOf(b.branch));
+        groups.forEach(g=>{
+          const col=branchColor(g.branch);
+          const rec=g.items.filter(t=>t.node.repeat).sort(order);
+          const spot=g.items.filter(t=>!t.node.repeat).sort(order);
+          let s="";
+          if(rec.length) s+=`<div class="db-sub">${ICON.repeat}<span>定例タスク</span></div>`+rec.map(taskRowHtml).join("");
+          if(spot.length) s+=`<div class="db-sub"><span>そのときのタスク</span></div>`+spot.map(taskRowHtml).join("");
+          inner+=`<div class="db-branch"><div class="db-bhead"><span class="bdot" style="background:${col}"></span>${esc(g.branch?(g.branch.text||"項目"):"項目")}</div>${s}</div>`;
+        });
+      }
+      return `<div class="dash-section"><div class="dash-h"><span class="dot" style="background:${color}"></span><h3>${title}</h3><span class="cnt">残り${remaining}</span></div><div class="dash-card db-card">${inner}</div></div>`;
+    }
+
+    html+=timeGroup("今日のタスク",B.overdue.concat(B.today),accent);
+    html+=timeGroup("今週のタスク",B.week,"#4C6EF5");
+    if(priNone.length) html+=timeGroup("優先（日付なし）",priNone,flag);
     html+=`</div>`;
     dash.innerHTML=html;
   }
@@ -1113,12 +1246,15 @@
   // ---- view switching ----
   function setView(v){
     view=v;
-    if(v==="map") curRoot=state.root; else if(v==="think") curRoot=state.thoughtRoot;
+    if(v==="map") curRoot=state.root; else if(v==="think") curRoot=state.thoughts[state.thoughtIdx];
     const isMap=(v==="map"||v==="think");
     stage.style.display=isMap?"block":"none";
     dash.style.display=v==="dash"?"block":"none";
     tasksView.style.display=v==="tasks"?"block":"none";
     $("#help").style.display=(isMap&&!helpHidden)?"":"none";
+    $("#theme-bar").hidden=(v!=="think");
+    $("#zoom-ctl").style.display=isMap?"flex":"none";
+    if(isMap&&!centered[v]){ centered[v]=true; needCenter=true; }
     $("#tab-map").setAttribute("aria-pressed",v==="map");
     $("#tab-think").setAttribute("aria-pressed",v==="think");
     $("#tab-dash").setAttribute("aria-pressed",v==="dash");
@@ -1127,6 +1263,25 @@
     if(v==="dash") renderDash(); else if(v==="tasks") renderTasks(); else render();
   }
   function refresh(){ if(view==="dash") renderDash(); else if(view==="tasks") renderTasks(); else render(); }
+
+  function renderThemeBar(){
+    const bar=$("#theme-bar"); if(!bar) return;
+    bar.innerHTML=`<span class="tb-label">テーマ</span>`+
+      state.thoughts.map((r,i)=>`<button class="theme-chip ${i===state.thoughtIdx?"on":""}" data-ti="${i}">${esc(r.text||"（無題）")}</button>`).join("")+
+      `<button class="theme-add" id="theme-add">${ICON.plus}<span>テーマ追加</span></button>`+
+      (state.thoughts.length>1?`<button class="theme-del" id="theme-del" title="このテーマを削除">${ICON.trash}</button>`:"");
+  }
+  function switchTheme(i){ if(i<0||i>=state.thoughts.length) return; state.thoughtIdx=i; curRoot=state.thoughts[i]; selectedId=null; needCenter=true; save(); render(); }
+  function addTheme(){ const r=newNode("新しいテーマ","root"); state.thoughts.push(r); state.thoughtIdx=state.thoughts.length-1; curRoot=r; selectedId=null; pendingFocus=r.id; needCenter=true; save(); render(); }
+  function deleteTheme(){ if(state.thoughts.length<=1){ toast("テーマは最低1つ必要です"); return; }
+    if(!confirm(`テーマ「${state.thoughts[state.thoughtIdx].text||"（無題）"}」を削除しますか？`)) return;
+    state.thoughts.splice(state.thoughtIdx,1); if(state.thoughtIdx>=state.thoughts.length) state.thoughtIdx=state.thoughts.length-1;
+    curRoot=state.thoughts[state.thoughtIdx]; selectedId=null; save(); render(); }
+  $("#theme-bar").addEventListener("click",(e)=>{
+    const chip=e.target.closest("[data-ti]"); if(chip){ switchTheme(+chip.dataset.ti); return; }
+    if(e.target.closest("#theme-add")){ addTheme(); return; }
+    if(e.target.closest("#theme-del")){ deleteTheme(); return; }
+  });
 
   $("#tab-map").addEventListener("click",()=>setView("map"));
   $("#tab-think").addEventListener("click",()=>setView("think"));
@@ -1155,10 +1310,8 @@
       if(p&&p.root){ normNode(p.root); next=p; } else if(p&&Array.isArray(p.categories)){ next=migrate(p); normNode(next.root); }
       if(!next) throw new Error("format");
       if(!confirm("読み込むと現在の内容は置き換えられます。続けますか？")) return;
-      state=next; assignTypes(state.root,0);
-      if(!state.thoughtRoot) state.thoughtRoot=seedThought(); normNode(state.thoughtRoot); assignIdea(state.thoughtRoot,0);
-      if(!Array.isArray(state.stickies)) state.stickies=[];
-      curRoot=(view==="think")?state.thoughtRoot:state.root; selectedId=null; save(); refresh(); toast("インポートしました");
+      try{ localStorage.setItem(KEY,JSON.stringify(next)); }catch(e2){}
+      hydrate(); lastSnap=JSON.stringify(state); undoStack.length=0; redoStack.length=0; selectedId=null; save(); refresh(); toast("インポートしました");
     }catch(err){ toast("ファイルを読み込めませんでした"); } };
     reader.readAsText(file); e.target.value="";
   });
@@ -1183,7 +1336,7 @@
   function clLogout(){ [CL_TOKEN,CL_EMAIL,CL_AT].forEach(k=>localStorage.removeItem(k)); }
   async function clUpload(){ const r=await clApi("/api/sync/upload",{method:"POST",body:{data:{[KEY]:localStorage.getItem(KEY)||""},planLevel:"free"}}); if(r.syncedAt) localStorage.setItem(CL_AT,r.syncedAt); return r; }
   async function clDownload(){ const r=await clApi("/api/sync/download"); if(r&&r.data&&typeof r.data[KEY]==="string"&&r.data[KEY]){ localStorage.setItem(KEY,r.data[KEY]); if(r.syncedAt) localStorage.setItem(CL_AT,r.syncedAt); return true; } return false; }
-  function reloadFromStorage(){ hydrate(); selectedId=null; refresh(); }
+  function reloadFromStorage(){ hydrate(); lastSnap=JSON.stringify(state); undoStack.length=0; redoStack.length=0; selectedId=null; refresh(); }
 
   function setCloudBtn(){ const b=$("#btn-cloud"), lbl=$("#cloud-lbl"); if(!b) return;
     if(clLoggedIn()){ b.classList.add("synced"); if(lbl) lbl.textContent="同期"; } else { b.classList.remove("synced"); if(lbl) lbl.textContent="クラウド"; } }
