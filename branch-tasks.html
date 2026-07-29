@@ -174,6 +174,23 @@
   .due-chip { color:var(--muted); background:var(--surface-2); border:1px solid var(--border); }
   .due-chip.today { color:#fff; background:var(--accent); border-color:var(--accent); }
   .due-chip.overdue { color:#fff; background:var(--danger); border-color:var(--danger); }
+  .link-chip { display:inline-flex; align-items:center; gap:3px; text-decoration:none; cursor:pointer;
+    color:color-mix(in srgb,var(--accent) 70%,var(--ink)); background:color-mix(in srgb,var(--accent) 13%,transparent);
+    border:1px solid color-mix(in srgb,var(--accent) 32%,transparent); }
+  .link-chip:hover { background:color-mix(in srgb,var(--accent) 22%,transparent); }
+  .link-chip svg { width:11px; height:11px; }
+  .node-tools .lnk.on { color:var(--accent); }
+  .link-menu { display:flex; flex-direction:column; gap:9px; min-width:230px; }
+  .link-input { height:38px; border:1px solid var(--border-strong); border-radius:9px; background:var(--surface-2);
+    color:var(--ink); font-family:inherit; font-size:13.5px; padding:0 11px; }
+  .link-input:focus { outline:none; border-color:var(--accent); background:var(--surface); }
+  .link-btns { display:flex; gap:7px; }
+  .link-btns .link-save { flex:1; height:34px; border:0; border-radius:9px; background:var(--accent); color:#fff; font-weight:800; font-size:12.5px; }
+  .link-btns .link-open { height:34px; padding:0 13px; display:inline-flex; align-items:center; border:1px solid var(--border-strong);
+    border-radius:9px; color:var(--ink); text-decoration:none; font-weight:700; font-size:12.5px; }
+  .link-btns .link-open:hover { background:var(--surface-2); }
+  .link-btns .link-clear { height:34px; padding:0 11px; border:1px solid var(--border-strong); background:var(--surface); color:var(--faint); border-radius:9px; font-size:12.5px; font-weight:700; }
+  .link-btns .link-clear:hover { color:var(--danger); border-color:var(--danger); }
 
   .node-collapse { position:absolute; right:-12px; top:50%; transform:translateY(-50%); width:22px; height:22px;
     border-radius:50%; border:1px solid var(--border-strong); background:var(--surface); color:var(--muted); font-size:11px;
@@ -512,7 +529,7 @@
   }
 
   // ---- model ----
-  function newNode(text,type){ return {id:uid(),text:text||"",type:type||"task",children:[],collapsed:false,done:false,priority:false,repeat:null,lastDone:null,note:false,due:null,weekday:null,weekOfMonth:null,below:false}; }
+  function newNode(text,type){ return {id:uid(),text:text||"",type:type||"task",children:[],collapsed:false,done:false,priority:false,repeat:null,lastDone:null,note:false,due:null,weekday:null,weekOfMonth:null,below:false,link:null}; }
   function newRoot(text){ return newNode(text||"マイタスク","root"); }
   function assignTypes(node,depth){
     if(node.type!=="root"&&node.type!=="task"&&node.type!=="group"&&node.type!=="memo"){
@@ -533,6 +550,7 @@
     if(n.color&&typeof n.color!=="string") delete n.color;
     if(n.side!=="left"&&n.side!=="right") delete n.side;
     n.below=!!n.below;
+    n.link=(typeof n.link==="string"&&n.link)?n.link:null;
     n.children.forEach(normNode); return n;
   }
   function migrate(old){
@@ -649,7 +667,8 @@
     folder:'<svg viewBox="0 0 24 24" fill="none"><path d="M4 7a2 2 0 0 1 2-2h3.2l1.6 2H18a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
     layers:'<svg viewBox="0 0 24 24" fill="none"><path d="M12 3 3 8l9 5 9-5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m3 13 9 5 9-5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
     min:'<svg viewBox="0 0 24 24" fill="none"><path d="M6 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
-    exp:'<svg viewBox="0 0 24 24" fill="none"><path d="M4 9V4h5M20 15v5h-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    exp:'<svg viewBox="0 0 24 24" fill="none"><path d="M4 9V4h5M20 15v5h-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    link:'<svg viewBox="0 0 24 24" fill="none"><path d="M10 13.5 14 9.5M9.5 7l1-1a4 4 0 0 1 5.7 5.7l-1 1M14.5 17l-1 1a4 4 0 0 1-5.7-5.7l1-1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
 
   // ---- tree utils ----
@@ -709,6 +728,7 @@
     if(isTask&&node.repeat) chips.push(`<span class="chip cadence-chip">${repeatLabel(node)}</span>`);
     if(isTask&&node.due){ const dl=dueLabel(node.due); if(dl) chips.push(`<span class="chip due-chip ${dl.cls}">${dl.text}</span>`); }
     if(node.collapsed&&kids) chips.push(`<span class="chip count-chip">${kids}</span>`);
+    if(node.link) chips.push(`<a class="chip link-chip" href="${esc(node.link)}" target="_blank" rel="noopener noreferrer" data-role="link" title="${esc(node.link)}">${ICON.link}リンク</a>`);
     const meta=chips.length?`<div class="node-meta">${chips.join("")}</div>`:"";
 
     let tools="";
@@ -723,6 +743,7 @@
       }
       if(!isTask||isBranch){ t.push(`<button data-act="color" title="色を変える">${ICON.color}</button>`); }
       if(!isBranch&&!isIdea) t.push(`<button class="type" data-act="type" title="種類（タスク／中分類／メモ）">${ICON.layers}</button>`);
+      t.push(`<button class="lnk ${node.link?"on":""}" data-act="link" title="リンクを設定">${ICON.link}</button>`);
       t.push(`<button data-act="add" title="子を追加">${ICON.plus}</button>`);
       t.push(`<button class="del" data-act="del" title="削除">${ICON.trash}</button>`);
       tools=`<div class="node-tools">${t.join("")}</div>`;
@@ -903,6 +924,7 @@
       else if(a==="repeat"){ openRepeatMenu(node,act); }
       else if(a==="type"){ openTypeMenu(node,act); }
       else if(a==="due"){ openDueMenu(node,act); }
+      else if(a==="link"){ openLinkMenu(node,act); }
       else if(a==="add"){ addChild(id); }
       else if(a==="del"){ deleteNode(id); }
       else if(a==="color"){ openColorMenu(node,act); }
@@ -915,6 +937,7 @@
 
   nodesLayer.addEventListener("keydown",(e)=>{
     const ta=e.target.closest(".node-text"); if(!ta) return;
+    if(e.isComposing||e.keyCode===229) return; // IME変換中のEnter等は確定に使わせる（ノードを作らない）
     const id=ta.closest(".node").dataset.id; const mod=e.metaKey||e.ctrlKey;
     if(e.key==="Enter"&&mod){ e.preventDefault(); addChildBelow(id); return; }
     if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); addSiblingAfter(id); return; }
@@ -937,7 +960,7 @@
     const nodeDiv=e.target.closest(".node"); if(!nodeDiv) return;
     if(nodeDiv.classList.contains("root")) return; // 中心は動かさない
     // 編集・操作パーツからはドラッグ開始しない（文字入力/チェック/開閉/ツールバー）
-    if(e.target.closest(".node-text")||e.target.closest('[data-role="check"]')||e.target.closest('[data-role="collapse"]')||e.target.closest(".node-tools")) return;
+    if(e.target.closest(".node-text")||e.target.closest('[data-role="check"]')||e.target.closest('[data-role="collapse"]')||e.target.closest('[data-role="link"]')||e.target.closest(".node-tools")) return;
     const id=nodeDiv.dataset.id; const el=els.get(id); if(!el) return;
     drag={id,el,sx:e.clientX,sy:e.clientY,started:false,target:null};
   });
@@ -1010,6 +1033,23 @@
       <button data-t="group" class="${node.type==="group"?"on":""}">${ICON.folder}<span>中分類</span></button>
       <button data-t="memo" class="${node.type==="memo"?"on":""}">${ICON.target}<span>メモ・目標</span></button>
     </div>`,(e)=>{ const b=e.target.closest("[data-t]"); if(!b) return; node.type=b.dataset.t; node.note=(node.type==="memo"); save(); closePop(); render(); });
+  }
+  function openLinkMenu(node,anchor){
+    const p=openPop(anchor,`<div class="link-menu">
+        <input type="url" class="link-input" placeholder="https://example.com" value="${esc(node.link||"")}">
+        <div class="link-btns">
+          ${node.link?`<a class="link-open" href="${esc(node.link)}" target="_blank" rel="noopener noreferrer">開く ↗</a>`:""}
+          <button class="link-save">保存</button>
+          ${node.link?`<button class="link-clear">削除</button>`:""}
+        </div>
+      </div>`,()=>{});
+    const inp=p.querySelector(".link-input"); setTimeout(()=>{ try{ inp.focus(); }catch(e){} },0);
+    function commit(){ let v=(inp.value||"").trim();
+      if(v&&!/^([a-z][a-z0-9+.-]*:)/i.test(v)) v="https://"+v; // スキーム無しはhttpsを補う
+      node.link=v||null; save(); closePop(); render(); }
+    p.querySelector(".link-save").addEventListener("click",commit);
+    inp.addEventListener("keydown",(e)=>{ if(e.key==="Enter"&&!e.isComposing){ e.preventDefault(); commit(); } });
+    const cl=p.querySelector(".link-clear"); if(cl) cl.addEventListener("click",()=>{ node.link=null; save(); closePop(); render(); });
   }
   function openDueMenu(node,anchor){
     const p=openPop(anchor,`<div class="due-opts">
@@ -1124,6 +1164,7 @@
     if(n.priority) chips.push(`<span class="meta-flag">${ICON.flag}</span>`);
     if(n.repeat) chips.push(`<span class="chip cadence-chip" style="--col:${col}">${repeatLabel(n)}</span>`);
     if(n.due){ const dl=dueLabel(n.due); if(dl) chips.push(`<span class="chip due-chip ${dl.cls}">${dl.text}</span>`); }
+    if(n.link) chips.push(`<a class="chip link-chip" href="${esc(n.link)}" target="_blank" rel="noopener noreferrer" data-role="link" title="${esc(n.link)}">${ICON.link}リンク</a>`);
     const sub=(t.path&&t.path.length>1)?`<span class="db-path">${esc(t.path.slice(1).join(" › "))}</span>`:"";
     const subline=(sub||chips.length)?`<div class="dash-sub">${sub}${chips.join("")}</div>`:"";
     return `<div class="dash-task ${done?"done":""}" data-id="${n.id}" style="--dc:${col}">
@@ -1197,6 +1238,7 @@
     dash.innerHTML=html;
   }
   dash.addEventListener("click",(e)=>{
+    if(e.target.closest('[data-role="link"]')) return; // リンクはそのまま開く
     const row=e.target.closest(".dash-task"); if(!row) return; const id=row.dataset.id;
     if(e.target.closest('[data-role="check"]')){ const {node}=locate(id,state.root)||{}; if(node){ applyToggle(node); save(); renderDash(); } return; }
     openInMap(id);
@@ -1212,6 +1254,7 @@
       if(node.priority) chips.push(`<span class="meta-flag">${ICON.flag}</span>`);
       if(node.repeat) chips.push(`<span class="chip cadence-chip" style="--col:${col}">${repeatLabel(node)}</span>`);
       if(node.due){ const dl=dueLabel(node.due); if(dl) chips.push(`<span class="chip due-chip ${dl.cls}">${dl.text}</span>`); }
+      if(node.link) chips.push(`<a class="chip link-chip" href="${esc(node.link)}" target="_blank" rel="noopener noreferrer" data-role="link" title="${esc(node.link)}">${ICON.link}リンク</a>`);
       return `<div class="ol-row task ${done?"done":""}" data-id="${node.id}" style="padding-left:${pad}px;--dc:${col}">
         <button class="dash-check" data-role="check">${ICON.check}</button>
         <div class="ol-body"><span class="ol-text">${esc(node.text)||"（無題）"}</span><span class="ol-chips">${chips.join("")}</span></div></div>`;
@@ -1238,6 +1281,7 @@
     html+=`</div>`; tasksView.innerHTML=html;
   }
   tasksView.addEventListener("click",(e)=>{
+    if(e.target.closest('[data-role="link"]')) return; // リンクはそのまま開く
     const row=e.target.closest(".ol-row"); if(!row) return; const id=row.dataset.id;
     if(e.target.closest('[data-role="check"]')){ const {node}=locate(id,state.root)||{}; if(node){ applyToggle(node); save(); renderTasks(); } return; }
     openInMap(id);
