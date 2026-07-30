@@ -75,6 +75,8 @@
     border-radius:999px; display:inline-flex; align-items:center; justify-content:center; margin-left:auto; }
   .theme-del:hover { color:var(--danger); border-color:var(--danger); }
   .theme-del svg { width:14px; height:14px; }
+  .jump-bar .theme-chip { color:var(--ink); }
+  .jump-bar .jb-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px; vertical-align:1px; }
 
   .views { flex:1; position:relative; overflow:hidden; display:flex; }
 
@@ -147,11 +149,20 @@
   .node.group:not(.branch) .node-icon svg { width:13px; height:13px; }
   .node.group:not(.branch):hover .node-row { border-color:color-mix(in srgb,var(--col) 40%, var(--border)); background:color-mix(in srgb,var(--col) 5%, var(--surface)); }
 
-  /* メモ・目標＝「色で塗ったハイライト・カード」（中分類とは別の性格に） */
-  .node.memo .node-row { background:color-mix(in srgb,var(--col) 16%, var(--surface)); border:1px solid color-mix(in srgb,var(--col) 42%, var(--border)); border-left:4px solid var(--col); border-radius:14px; box-shadow:0 2px 12px color-mix(in srgb,var(--col) 22%, transparent); }
-  .node.memo .node-text { color:color-mix(in srgb,var(--col) 30%, var(--ink)); font-weight:800; }
-  .node.memo .memo-ico { color:var(--col); }
-  .node.memo .memo-ico svg { width:17px; height:17px; }
+  /* 目標＝色で塗ったハイライト・カード（しっかり目立たせる） */
+  .node.goal .node-row { background:color-mix(in srgb,var(--col) 16%, var(--surface)); border:1px solid color-mix(in srgb,var(--col) 42%, var(--border)); border-left:4px solid var(--col); border-radius:14px; box-shadow:0 2px 12px color-mix(in srgb,var(--col) 22%, transparent); }
+  .node.goal .node-text { color:color-mix(in srgb,var(--col) 30%, var(--ink)); font-weight:800; }
+  .node.goal .goal-ico { color:var(--col); }
+  .node.goal .goal-ico svg { width:17px; height:17px; }
+  /* メモ＝ただのメモ。目立たなくていい（控えめ） */
+  .node.memo .node-row { background:var(--surface-2); border:1px dashed var(--border-strong); box-shadow:none; }
+  .node.memo .node-text { color:var(--muted); font-weight:500; font-size:12.5px; }
+  .node.memo .memo-ico { color:var(--faint); }
+  .node.memo .memo-ico svg { width:14px; height:14px; }
+  /* 繰り返しタスクの目印（スポットタスクと区別） */
+  .recur-badge { flex:none; width:17px; height:17px; margin-top:1px; display:inline-flex; align-items:center; justify-content:center; color:var(--col); opacity:.85; }
+  .recur-badge svg { width:13px; height:13px; }
+  .node.task.recur .node-row { border-left-style:dashed; }
 
   /* タスク（第3階層以降）はやや控えめ */
   .node.task .node-text { font-size:13.5px; }
@@ -185,7 +196,8 @@
   .meta-flag { color:var(--flag); display:inline-flex; }
   .meta-flag svg { width:13px; height:13px; fill:var(--flag); }
   .chip { font-size:10.5px; font-weight:700; border-radius:999px; padding:1px 7px; white-space:nowrap; }
-  .cadence-chip { color:color-mix(in srgb,var(--col) 62%,var(--ink)); background:color-mix(in srgb,var(--col) 15%,transparent); }
+  .cadence-chip { color:color-mix(in srgb,var(--col) 62%,var(--ink)); background:color-mix(in srgb,var(--col) 15%,transparent); display:inline-flex; align-items:center; gap:2px; }
+  .cadence-chip svg { width:11px; height:11px; }
   .node.done .cadence-chip { color:var(--faint); background:color-mix(in srgb,var(--faint) 14%,transparent); }
   .count-chip { color:var(--muted); background:var(--surface-2); border:1px solid var(--border); }
   .due-chip { color:var(--muted); background:var(--surface-2); border:1px solid var(--border); }
@@ -472,6 +484,7 @@
 </div>
 
 <div class="theme-bar" id="theme-bar" hidden></div>
+<div class="theme-bar jump-bar" id="jump-bar" hidden></div>
 
 <div class="views">
   <div class="stage" id="stage">
@@ -526,15 +539,12 @@
   function sameDay(a,b){ return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); }
   function sameMonth(a,b){ return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth(); }
 
-  function isDone(n){
-    if(!n.repeat) return !!n.done;
-    if(!n.lastDone) return false;
-    const l=new Date(n.lastDone), now=new Date();
-    if(n.repeat==="daily") return sameDay(l,now);
-    if(n.repeat==="weekly") return weekStart(l).getTime()===weekStart(now).getTime();
-    if(n.repeat==="monthly") return sameMonth(l,now);
-    return false;
-  }
+  function occDone(n,d){ return Array.isArray(n.doneDates)&&n.doneDates.includes(d); }
+  function toggleOcc(n,d){ if(!Array.isArray(n.doneDates)) n.doneDates=[]; const i=n.doneDates.indexOf(d);
+    if(i>=0) n.doneDates.splice(i,1); else n.doneDates.push(d);
+    const cut=new Date(); cut.setDate(cut.getDate()-90); const cs=ymd(cut); n.doneDates=n.doneDates.filter(x=>x>=cs); } // 古い記録は整理
+  // 汎用の「今日時点で完了か」（マップ表示・カウント用）。繰り返しは今日ぶんの完了で判定。
+  function isDone(n){ if(!n.repeat) return !!n.done; return occDone(n, todayStr()); }
   function nthWeekday(y,m,weekday,n){ const first=new Date(y,m,1); const fd=first.getDay();
     let day=1+((weekday-fd+7)%7)+(n-1)*7; const dim=new Date(y,m+1,0).getDate(); while(day>dim) day-=7; return new Date(y,m,day); }
   function wdays(n){ return Array.isArray(n.weekdays)?n.weekdays:[]; }
@@ -575,10 +585,10 @@
   }
 
   // ---- model ----
-  function newNode(text,type){ return {id:uid(),text:text||"",type:type||"task",children:[],collapsed:false,done:false,priority:false,repeat:null,lastDone:null,note:false,due:null,weekdays:[],weekOfMonth:null,below:false,link:null,ox:0,oy:0}; }
+  function newNode(text,type){ return {id:uid(),text:text||"",type:type||"task",children:[],collapsed:false,done:false,priority:false,repeat:null,doneDates:[],note:false,due:null,weekdays:[],weekOfMonth:null,below:false,link:null,ox:0,oy:0}; }
   function newRoot(text){ return newNode(text||"マイタスク","root"); }
   function assignTypes(node,depth){
-    if(node.type!=="root"&&node.type!=="task"&&node.type!=="group"&&node.type!=="memo"){
+    if(node.type!=="root"&&node.type!=="task"&&node.type!=="group"&&node.type!=="memo"&&node.type!=="goal"){
       if(depth===0) node.type="root";
       else if(node.note) node.type="memo";
       else if(depth===1) node.type="group";
@@ -590,7 +600,11 @@
     n.id=n.id||uid(); n.text=typeof n.text==="string"?n.text:""; n.children=Array.isArray(n.children)?n.children:[];
     n.collapsed=!!n.collapsed; n.done=!!n.done; n.priority=!!n.priority; n.note=!!n.note;
     n.repeat=(n.repeat==="daily"||n.repeat==="weekly"||n.repeat==="monthly")?n.repeat:null;
-    n.lastDone=n.lastDone||null; n.due=(typeof n.due==="string")?n.due:null;
+    // 完了を日付ごと(doneDates)に。旧lastDone(単一時刻)は最終完了日として引き継ぐ
+    if(!Array.isArray(n.doneDates)) n.doneDates = n.lastDone ? [ymd(new Date(n.lastDone))] : [];
+    n.doneDates=n.doneDates.filter(x=>typeof x==="string");
+    delete n.lastDone;
+    n.due=(typeof n.due==="string")?n.due:null;
     // 曜日：単一(weekday)→複数(weekdays)へ移行
     if(!Array.isArray(n.weekdays)) n.weekdays=(typeof n.weekday==="number"&&n.weekday>=0&&n.weekday<=6)?[n.weekday]:[];
     n.weekdays=[...new Set(n.weekdays.filter(x=>typeof x==="number"&&x>=0&&x<=6))].sort((a,b)=>a-b);
@@ -732,7 +746,7 @@
 
   // ---- render (map) ----
   function render(){
-    if(isThink()) renderThemeBar();
+    if(isThink()) renderThemeBar(); else if(view==="map") renderJumpBar();
     nodesLayer.innerHTML=""; els.clear();
     build(curRoot,0,null);
     if(!curRoot.children.length){
@@ -757,16 +771,18 @@
     const isBranch=depth===1;
     const isTask=node.type==="task"&&!isRoot;
     const isMemo=node.type==="memo"&&!isRoot;
+    const isGoal=node.type==="goal"&&!isRoot;
     const isGroup=node.type==="group"&&!isRoot;
     const isIdea=node.type==="idea"&&!isRoot;
     const lvl=Math.min(depth,4);
     const el=document.createElement("div");
-    el.className="node lvl"+lvl+(isRoot?" root":"")+(isBranch?" branch":"")+(isTask?" task":"")+(isMemo?" memo":"")+(isGroup?" group":"")+(isIdea?" idea":"")+(isDone(node)?" done":"")+(node.priority&&isTask?" pri":"");
+    el.className="node lvl"+lvl+(isRoot?" root":"")+(isBranch?" branch":"")+(isTask?" task":"")+(isMemo?" memo":"")+(isGoal?" goal":"")+(isGroup?" group":"")+(isIdea?" idea":"")+(isDone(node)?" done":"")+(node.priority&&isTask?" pri":"")+(isTask&&node.repeat?" recur":"");
     el.dataset.id=node.id; el.style.width=nodeWidth(depth)+"px"; el.style.setProperty("--col",node._col);
 
     let lead="";
-    if(isTask) lead=`<button class="node-check" data-role="check" title="完了/未完了" aria-label="完了">${ICON.check}</button>`;
-    else if(isMemo) lead=`<span class="node-icon memo-ico">${ICON.target}</span>`;
+    if(isTask) lead=`<button class="node-check" data-role="check" title="完了/未完了" aria-label="完了">${ICON.check}</button>`+(node.repeat?`<span class="recur-badge" title="繰り返し">${ICON.repeat}</span>`:"");
+    else if(isGoal) lead=`<span class="node-icon goal-ico">${ICON.target}</span>`;
+    else if(isMemo) lead=`<span class="node-icon memo-ico">${ICON.memo}</span>`;
     else if(isBranch) lead=`<span class="branch-dot"></span>`;
     else if(isGroup) lead=`<span class="node-icon">${ICON.folder}</span>`;
     else if(isIdea) lead=`<span class="idea-dot"></span>`;
@@ -794,14 +810,14 @@
         t.push(`<button class="due ${node.due?"on":""}" data-act="due" title="予定日">${ICON.cal}</button>`);
       }
       if(!isTask||isBranch){ t.push(`<button data-act="color" title="色を変える">${ICON.color}</button>`); }
-      if(!isBranch&&!isIdea) t.push(`<button class="type" data-act="type" title="種類（タスク／中分類／メモ）">${ICON.layers}</button>`);
+      if(!isBranch&&!isIdea) t.push(`<button class="type" data-act="type" title="種類（タスク／中分類／目標／メモ）">${ICON.layers}</button>`);
       t.push(`<button class="lnk ${node.link?"on":""}" data-act="link" title="リンクを設定">${ICON.link}</button>`);
       t.push(`<button data-act="add" title="子を追加">${ICON.plus}</button>`);
       t.push(`<button class="del" data-act="del" title="削除">${ICON.trash}</button>`);
       tools=`<div class="node-tools">${t.join("")}</div>`;
     }
 
-    const ph=isRoot?(isThink()?"テーマ":"タイトル"):isBranch?(isThink()?"メインの枝":"項目名（大分類）"):isGroup?"中分類の名前":isMemo?"目標・メモ":isIdea?"アイデア":"やること";
+    const ph=isRoot?(isThink()?"テーマ":"タイトル"):isBranch?(isThink()?"メインの枝":"項目名（大分類）"):isGroup?"中分類の名前":isGoal?"目標":isMemo?"メモ":isIdea?"アイデア":"やること";
     el.innerHTML=`${tools}${grip}
       <div class="node-row">${lead}
         <textarea class="node-text" rows="1" spellcheck="false" data-role="text" placeholder="${ph}">${esc(node.text)}</textarea>
@@ -966,7 +982,7 @@
     if(tloc.node===curRoot){ if(!dloc.node.color) dloc.node.color=pickColor(); dloc.node.type=isThink()?"idea":"group"; }
     selectNode(dragId); save(); render(); toast("移動しました");
   }
-  function applyToggle(node){ if(node.repeat){ node.lastDone=isDone(node)?null:Date.now(); } else node.done=!node.done; }
+  function applyToggle(node,dateStr){ if(node.repeat){ toggleOcc(node, dateStr||todayStr()); } else node.done=!node.done; }
   function cycleRepeat(node){ const i=REPEAT_ORDER.indexOf(node.repeat||null); node.repeat=REPEAT_ORDER[(i+1)%REPEAT_ORDER.length];
     if(node.repeat){ node.lastDone=node.done?Date.now():null; node.done=false; } else node.lastDone=null; }
 
@@ -993,7 +1009,7 @@
   nodesLayer.addEventListener("input",(e)=>{ const ta=e.target.closest(".node-text"); if(!ta) return;
     const {node}=locate(ta.closest(".node").dataset.id)||{}; if(!node) return; node.text=ta.value; autoGrow(ta); relayout(); saveDebounced(); });
   nodesLayer.addEventListener("focusin",(e)=>{ const ta=e.target.closest(".node-text"); if(ta) selectNode(ta.closest(".node").dataset.id); });
-  nodesLayer.addEventListener("change",(e)=>{ if(e.target.closest(".node-text")){ save(); if(isThink()) renderThemeBar(); } });
+  nodesLayer.addEventListener("change",(e)=>{ if(e.target.closest(".node-text")){ save(); if(isThink()) renderThemeBar(); else if(view==="map") renderJumpBar(); } });
 
   nodesLayer.addEventListener("keydown",(e)=>{
     const ta=e.target.closest(".node-text"); if(!ta) return;
@@ -1107,8 +1123,8 @@
       const b=e.target.closest("[data-type],[data-wd],[data-wm]"); if(!b) return;
       if(b.hasAttribute("data-type")){
         const v=b.dataset.type; node.repeat=v||null;
-        if(!node.repeat){ node.weekdays=[]; node.weekOfMonth=null; node.lastDone=null; }
-        else { node.lastDone=node.done?Date.now():null; node.done=false; }
+        if(!node.repeat){ node.weekdays=[]; node.weekOfMonth=null; node.doneDates=[]; }
+        else { node.doneDates=[]; node.done=false; }
       } else if(b.hasAttribute("data-wd")){ const w=+b.dataset.wd; const i=node.weekdays.indexOf(w); if(i>=0) node.weekdays.splice(i,1); else node.weekdays.push(w); node.weekdays.sort((a,b)=>a-b); }
       else if(b.hasAttribute("data-wm")){ const n=+b.dataset.wm; node.weekOfMonth=node.weekOfMonth===n?null:n; }
       save(); refresh(); p.innerHTML=bodyHtml();
@@ -1118,8 +1134,9 @@
     openPop(anchor,`<div class="type-opts">
       <button data-t="task" class="${node.type==="task"?"on":""}">${ICON.toTask}<span>タスク</span></button>
       <button data-t="group" class="${node.type==="group"?"on":""}">${ICON.folder}<span>中分類</span></button>
-      <button data-t="memo" class="${node.type==="memo"?"on":""}">${ICON.target}<span>メモ・目標</span></button>
-    </div>`,(e)=>{ const b=e.target.closest("[data-t]"); if(!b) return; node.type=b.dataset.t; node.note=(node.type==="memo"); save(); closePop(); render(); });
+      <button data-t="goal" class="${node.type==="goal"?"on":""}">${ICON.target}<span>目標</span></button>
+      <button data-t="memo" class="${node.type==="memo"?"on":""}">${ICON.memo}<span>メモ</span></button>
+    </div>`,(e)=>{ const b=e.target.closest("[data-t]"); if(!b) return; node.type=b.dataset.t; node.note=(node.type==="memo"||node.type==="goal"); save(); closePop(); render(); });
   }
   function openLinkMenu(node,anchor){
     const p=openPop(anchor,`<div class="link-menu">
@@ -1284,32 +1301,39 @@
       if(kd>=2&&k.type==="task") out.push({node:k,branch:kb,path:path});
       walk(k,kd,kb,kd>=1?path.concat(k.text||"（無題）"):path);
     } })(state.root,0,null,[]); return out; }
-  const weekIdx=(w)=>(w+6)%7; // 月=0 … 日=6（週の並び順）
-  function bucketOf(t){ const n=t.node; const today=todayStr();
-    if(n.due){ if(n.due<today) return isDone(n)?"done":"overdue"; if(n.due===today) return "today"; if(n.due<=weekEndStr()) return "week"; return "later"; }
-    if(n.repeat){
-      if(n.repeat==="daily") return "today";
-      if(n.repeat==="weekly"){ const wds=wdays(n); if(!wds.length) return "week"; const wd=new Date().getDay();
-        if(wds.includes(wd)) return "today";
-        if(!isDone(n)&&wds.some(w=>weekIdx(w)<weekIdx(wd))) return "overdue"; // 今週の予定日を過ぎて未完了
-        return "week"; }
-      const td=recurDate(n); // monthly
-      if(td){ const s=ymd(td); if(s<today) return isDone(n)?"done":"overdue"; if(s===today) return "today"; if(s<=weekEndStr()) return "week"; return "later"; }
-      return "later";
-    }
-    return "none"; }
   function branchColor(b){ return (b&&b.color)?b.color:getComputedStyle(document.documentElement).getPropertyValue("--accent").trim(); }
+  // 繰り返しタスクの、今の期間(今週/今月)の予定日リスト
+  function occDates(n){ const out=[];
+    if(n.repeat==="daily"){ out.push(todayStr()); }
+    else if(n.repeat==="weekly"){ const wds=wdays(n); const ws=weekStart(new Date()); wds.forEach(w=>{ const d=new Date(ws); d.setDate(ws.getDate()+((w+6)%7)); out.push(ymd(d)); }); }
+    else if(n.repeat==="monthly"){ const now=new Date(),y=now.getFullYear(),m=now.getMonth(); const wds=wdays(n);
+      if(n.weekOfMonth!=null){ if(wds.length) wds.forEach(w=>out.push(ymd(nthWeekday(y,m,w,n.weekOfMonth)))); else { const dim=new Date(y,m+1,0).getDate(); out.push(ymd(new Date(y,m,Math.min(dim,(n.weekOfMonth-1)*7+4)))); } }
+      else if(wds.length){ wds.forEach(w=>out.push(ymd(nthWeekday(y,m,w,1)))); }
+    }
+    return out;
+  }
+  // タスク → 予定日ごとの表示エントリに展開
+  function taskEntries(){ const out=[];
+    collectTasks().forEach(t=>{ const n=t.node;
+      if(!n.repeat){ out.push({node:n,branch:t.branch,path:t.path,date:n.due||null,done:!!n.done}); }
+      else { occDates(n).forEach(d=>out.push({node:n,branch:t.branch,path:t.path,date:d,done:occDone(n,d)})); }
+    });
+    return out;
+  }
+  function bucketE(e){ const today=todayStr();
+    if(e.date){ if(e.date<today) return e.done?"done":"overdue"; if(e.date===today) return "today"; if(e.date<=weekEndStr()) return "week"; return "later"; }
+    return e.done?"done":"none"; }
 
-  function taskRowHtml(t){
-    const n=t.node, col=branchColor(t.branch), done=isDone(n);
+  function taskRowHtml(e){
+    const n=e.node, col=branchColor(e.branch), done=e.done;
     const chips=[];
     if(n.priority) chips.push(`<span class="meta-flag">${ICON.flag}</span>`);
-    if(n.repeat) chips.push(`<span class="chip cadence-chip" style="--col:${col}">${repeatLabel(n)}</span>`);
-    if(n.due){ const dl=dueLabel(n.due); if(dl) chips.push(`<span class="chip due-chip ${dl.cls}">${dl.text}</span>`); }
+    if(n.repeat){ const dl=e.date?dueLabel(e.date):null; chips.push(`<span class="chip cadence-chip" style="--col:${col}">${ICON.repeat}${dl?dl.text:repeatLabel(n)}</span>`); }
+    else if(n.due){ const dl=dueLabel(n.due); if(dl) chips.push(`<span class="chip due-chip ${dl.cls}">${dl.text}</span>`); }
     if(n.link) chips.push(`<a class="chip link-chip" href="${esc(n.link)}" target="_blank" rel="noopener noreferrer" data-role="link" title="${esc(n.link)}">${ICON.link}リンク</a>`);
-    const sub=(t.path&&t.path.length>1)?`<span class="db-path">${esc(t.path.slice(1).join(" › "))}</span>`:"";
+    const sub=(e.path&&e.path.length>1)?`<span class="db-path">${esc(e.path.slice(1).join(" › "))}</span>`:"";
     const subline=(sub||chips.length)?`<div class="dash-sub">${sub}${chips.join("")}</div>`:"";
-    return `<div class="dash-task ${done?"done":""} ${n.priority?"pri":""}" data-id="${n.id}" style="--dc:${col}">
+    return `<div class="dash-task ${done?"done":""} ${n.priority?"pri":""}" data-id="${n.id}" data-date="${e.date||""}" style="--dc:${col}">
       <button class="dash-check" data-role="check">${ICON.check}</button>
       <div class="dash-body"><div class="dash-text">${esc(n.text)||"（無題）"}</div>${subline}</div></div>`;
   }
@@ -1322,18 +1346,18 @@
       <div class="dash-card">${body}</div></div>`;
   }
   function renderDash(){
-    const tasks=collectTasks();
+    const entries=taskEntries();
     const B={overdue:[],today:[],week:[],later:[],none:[],done:[]};
-    tasks.forEach(t=>{ B[bucketOf(t)].push(t); });
-    const order=(a,b)=>{ const da=isDone(a.node)?1:0, db=isDone(b.node)?1:0; if(da!==db) return da-db;
+    entries.forEach(e=>{ B[bucketE(e)].push(e); });
+    const order=(a,b)=>{ const da=a.done?1:0, db=b.done?1:0; if(da!==db) return da-db;
       const pa=a.node.priority?0:1, pb=b.node.priority?0:1; if(pa!==pb) return pa-pb;
-      const x=a.node.due||"9999", y=b.node.due||"9999"; return x<y?-1:x>y?1:0; };
+      const x=a.date||"9999", y=b.date||"9999"; return x<y?-1:x>y?1:0; };
     B.overdue.sort(order); B.today.sort(order); B.week.sort(order);
-    const priNone=B.none.filter(t=>t.node.priority).sort(order);
-    const rem=(l)=>l.filter(t=>!isDone(t.node)).length;
-    const total=tasks.length, done=tasks.filter(t=>isDone(t.node)).length;
+    const priNone=B.none.filter(e=>e.node.priority).sort(order);
+    const rem=(l)=>l.filter(e=>!e.done).length;
+    const total=entries.length, done=entries.filter(e=>e.done).length;
     const todayN=rem(B.overdue)+rem(B.today), weekN=rem(B.week);
-    const priN=tasks.filter(t=>t.node.priority&&!isDone(t.node)).length;
+    const priN=entries.filter(e=>e.node.priority&&!e.done).length;
     const now=new Date(); const dateline=`${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日（${WD[now.getDay()]}）`;
     const accent=getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
     const danger=getComputedStyle(document.documentElement).getPropertyValue("--danger").trim();
@@ -1353,7 +1377,7 @@
     if(!total){ html+=`<div class="dash-blank"><h2>タスクがまだありません</h2><p>「マインドマップ」でタスクを追加すると、ここに今日・今週やることが集まります。</p></div></div>`; dash.innerHTML=html; return; }
 
     function timeGroup(title,list,color,emph){
-      const remaining=list.filter(t=>!isDone(t.node)).length;
+      const remaining=list.filter(e=>!e.done).length;
       let inner="";
       if(!list.length){ inner=`<div class="dash-empty">タスクはありません。</div>`; }
       else {
@@ -1385,7 +1409,7 @@
   dash.addEventListener("click",(e)=>{
     if(e.target.closest('[data-role="link"]')) return; // リンクはそのまま開く
     const row=e.target.closest(".dash-task"); if(!row) return; const id=row.dataset.id;
-    if(e.target.closest('[data-role="check"]')){ const {node}=locate(id,state.root)||{}; if(node){ applyToggle(node); save(); renderDash(); } return; }
+    if(e.target.closest('[data-role="check"]')){ const {node}=locate(id,state.root)||{}; if(node){ applyToggle(node,row.dataset.date||undefined); save(); renderDash(); } return; }
     openInMap(id);
   });
   function openInMap(id){ const path=pathTo(id); if(path) path.forEach(n=>n.collapsed=false); selectedId=id; save(); setView("map"); pendingFocus=id; render(); }
@@ -1404,9 +1428,13 @@
         <button class="dash-check" data-role="check">${ICON.check}</button>
         <div class="ol-body"><span class="ol-text">${esc(node.text)||"（無題）"}</span><span class="ol-chips">${chips.join("")}</span></div></div>`;
     }
-    if(node.type==="memo"){
-      return `<div class="ol-row memo" data-id="${node.id}" style="padding-left:${pad}px;--dc:${col}">
+    if(node.type==="goal"){
+      return `<div class="ol-row goal" data-id="${node.id}" style="padding-left:${pad}px;--dc:${col}">
         <span class="ol-ico">${ICON.target}</span><div class="ol-body"><span class="ol-text">${esc(node.text)||"（無題）"}</span></div></div>`;
+    }
+    if(node.type==="memo"){
+      return `<div class="ol-row note" data-id="${node.id}" style="padding-left:${pad}px;--dc:${col}">
+        <span class="ol-ico" style="color:var(--faint)">${ICON.memo}</span><div class="ol-body"><span class="ol-text" style="color:var(--muted);font-weight:500">${esc(node.text)||"（無題）"}</span></div></div>`;
     }
     return `<div class="ol-row group" data-id="${node.id}" style="padding-left:${pad}px;--dc:${col}">
       <span class="ol-ico">${ICON.folder}</span><div class="ol-body"><span class="ol-text">${esc(node.text)||"（無題）"}</span></div></div>`;
@@ -1442,6 +1470,7 @@
     tasksView.style.display=v==="tasks"?"block":"none";
     $("#help").style.display=(isMap&&!helpHidden)?"":"none";
     $("#theme-bar").hidden=(v!=="think");
+    $("#jump-bar").hidden=(v!=="map");
     $("#zoom-ctl").style.display=isMap?"flex":"none";
     if(isMap&&!centered[v]){ centered[v]=true; needCenter=true; }
     $("#tab-map").setAttribute("aria-pressed",v==="map");
@@ -1471,6 +1500,18 @@
     if(e.target.closest("#theme-add")){ addTheme(); return; }
     if(e.target.closest("#theme-del")){ deleteTheme(); return; }
   });
+
+  function renderJumpBar(){
+    const bar=$("#jump-bar"); if(!bar) return;
+    const branches=state.root.children;
+    if(!branches.length){ bar.innerHTML=""; return; }
+    bar.innerHTML=`<span class="tb-label">大分類へ移動</span>`+
+      branches.map(b=>`<button class="theme-chip" data-jb="${b.id}"><span class="jb-dot" style="background:${b.color||'var(--accent)'}"></span>${esc(b.text||"（無題）")}</button>`).join("");
+  }
+  function jumpToBranch(id){ const el=els.get(id); if(!el) return; const n=el.__node; selectNode(id);
+    stage.scrollLeft=Math.max(0, n._x*zoom - stage.clientWidth*0.28);
+    stage.scrollTop=Math.max(0, n._y*zoom - stage.clientHeight/2); }
+  $("#jump-bar").addEventListener("click",(e)=>{ const c=e.target.closest("[data-jb]"); if(c) jumpToBranch(c.dataset.jb); });
 
   $("#tab-map").addEventListener("click",()=>setView("map"));
   $("#tab-think").addEventListener("click",()=>setView("think"));
@@ -1572,7 +1613,7 @@
   $("#cloud-close").addEventListener("click",closeCloud);
   $("#cloud-modal").addEventListener("click",(e)=>{ if(e.target===$("#cloud-modal")) closeCloud(); });
 
-  render();
+  setView("map");
   setCloudBtn();
   if(clLoggedIn()){ clDownload().then(got=>{ if(got) reloadFromStorage(); }).catch(()=>{}); }
 })();
