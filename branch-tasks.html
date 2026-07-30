@@ -271,6 +271,13 @@
   .dash-section.today-sec .dash-card { border:1.5px solid color-mix(in srgb,var(--accent) 38%, var(--border));
     box-shadow:0 4px 18px color-mix(in srgb,var(--accent) 16%, transparent); }
   .dash-section.today-sec .db-bhead { font-size:15px; }
+  /* 期限切れ・やり残しを目立たせる（赤系） */
+  .dash-section.danger-sec .dash-h { background:color-mix(in srgb,var(--danger) 12%, var(--surface));
+    border:1px solid color-mix(in srgb,var(--danger) 32%, var(--border)); border-radius:12px; padding:10px 14px; margin-bottom:12px; }
+  .dash-section.danger-sec .dash-h h3 { font-size:16px; color:var(--danger); }
+  .dash-section.danger-sec .dash-h .cnt { background:var(--danger); color:#fff; border-color:var(--danger); }
+  .dash-section.danger-sec .dash-card { border:1.5px solid color-mix(in srgb,var(--danger) 38%, var(--border));
+    box-shadow:0 4px 18px color-mix(in srgb,var(--danger) 15%, transparent); }
   .dash-task { display:flex; align-items:flex-start; gap:11px; padding:12px 15px; border-top:1px solid var(--border); cursor:pointer; transition:background .1s; }
   .dash-task:first-child { border-top:0; }
   .dash-task:hover { background:var(--surface-2); }
@@ -1277,13 +1284,17 @@
       if(kd>=2&&k.type==="task") out.push({node:k,branch:kb,path:path});
       walk(k,kd,kb,kd>=1?path.concat(k.text||"（無題）"):path);
     } })(state.root,0,null,[]); return out; }
+  const weekIdx=(w)=>(w+6)%7; // 月=0 … 日=6（週の並び順）
   function bucketOf(t){ const n=t.node; const today=todayStr();
-    if(n.due){ if(n.due<today) return isDone(n)?"today":"overdue"; if(n.due===today) return "today"; if(n.due<=weekEndStr()) return "week"; return "later"; }
+    if(n.due){ if(n.due<today) return isDone(n)?"done":"overdue"; if(n.due===today) return "today"; if(n.due<=weekEndStr()) return "week"; return "later"; }
     if(n.repeat){
       if(n.repeat==="daily") return "today";
-      if(n.repeat==="weekly"){ const wds=wdays(n); if(!wds.length) return "week"; return wds.includes(new Date().getDay())?"today":"week"; }
+      if(n.repeat==="weekly"){ const wds=wdays(n); if(!wds.length) return "week"; const wd=new Date().getDay();
+        if(wds.includes(wd)) return "today";
+        if(!isDone(n)&&wds.some(w=>weekIdx(w)<weekIdx(wd))) return "overdue"; // 今週の予定日を過ぎて未完了
+        return "week"; }
       const td=recurDate(n); // monthly
-      if(td){ const s=ymd(td); if(s<today) return isDone(n)?"today":"later"; if(s===today) return "today"; if(s<=weekEndStr()) return "week"; return "later"; }
+      if(td){ const s=ymd(td); if(s<today) return isDone(n)?"done":"overdue"; if(s===today) return "today"; if(s<=weekEndStr()) return "week"; return "later"; }
       return "later";
     }
     return "none"; }
@@ -1359,10 +1370,13 @@
           inner+=`<div class="db-branch"><div class="db-bhead"><span class="bdot" style="background:${col}"></span>${esc(g.branch?(g.branch.text||"項目"):"項目")}</div>${s}</div>`;
         });
       }
-      return `<div class="dash-section${emph?" today-sec":""}"><div class="dash-h"><span class="dot" style="background:${color}"></span><h3>${title}</h3><span class="cnt">残り${remaining}</span></div><div class="dash-card db-card">${inner}</div></div>`;
+      const secCls=emph==="today"?" today-sec":emph==="danger"?" danger-sec":"";
+      return `<div class="dash-section${secCls}"><div class="dash-h"><span class="dot" style="background:${color}"></span><h3>${title}</h3><span class="cnt">残り${remaining}</span></div><div class="dash-card db-card">${inner}</div></div>`;
     }
 
-    html+=timeGroup("今日のタスク",B.overdue.concat(B.today),accent,true);
+    B.overdue.sort(order);
+    if(B.overdue.length) html+=timeGroup("期限切れ・やり残し",B.overdue,danger,"danger");
+    html+=timeGroup("今日のタスク",B.today,accent,"today");
     html+=timeGroup("今週のタスク",B.week,"#4C6EF5");
     if(priNone.length) html+=timeGroup("優先（日付なし）",priNone,flag);
     html+=`</div>`;
