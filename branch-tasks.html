@@ -1509,16 +1509,18 @@
   async function clRegister(email,pw){ const r=await clApi("/api/auth/register",{method:"POST",body:{email,password:pw}}); localStorage.setItem(CL_TOKEN,r.token); localStorage.setItem(CL_EMAIL,r.email); return r; }
   async function clLogin(email,pw){ const r=await clApi("/api/auth/login",{method:"POST",body:{email,password:pw}}); localStorage.setItem(CL_TOKEN,r.token); localStorage.setItem(CL_EMAIL,r.email); return r; }
   function clLogout(){ [CL_TOKEN,CL_EMAIL,CL_AT].forEach(k=>localStorage.removeItem(k)); }
-  async function clUpload(){ const r=await clApi("/api/sync/upload",{method:"POST",body:{data:{[KEY]:localStorage.getItem(KEY)||""},planLevel:"free"}}); if(r.syncedAt) localStorage.setItem(CL_AT,r.syncedAt); return r; }
-  async function clDownload(){ const r=await clApi("/api/sync/download"); if(r&&r.data&&typeof r.data[KEY]==="string"&&r.data[KEY]){ localStorage.setItem(KEY,r.data[KEY]); if(r.syncedAt) localStorage.setItem(CL_AT,r.syncedAt); return true; } return false; }
+  let lastUploaded=null;
+  async function clUpload(){ const cur=localStorage.getItem(KEY)||""; const r=await clApi("/api/sync/upload",{method:"POST",body:{data:{[KEY]:cur}}}); if(r.syncedAt) localStorage.setItem(CL_AT,r.syncedAt); lastUploaded=cur; return r; }
+  async function clDownload(){ const r=await clApi("/api/sync/download"); if(r&&r.data&&typeof r.data[KEY]==="string"&&r.data[KEY]){ localStorage.setItem(KEY,r.data[KEY]); lastUploaded=r.data[KEY]; if(r.syncedAt) localStorage.setItem(CL_AT,r.syncedAt); return true; } return false; }
   function reloadFromStorage(){ hydrate(); lastSnap=JSON.stringify(state); undoStack.length=0; redoStack.length=0; selectedId=null; refresh(); }
 
   function setCloudBtn(){ const b=$("#btn-cloud"), lbl=$("#cloud-lbl"); if(!b) return;
     if(clLoggedIn()){ b.classList.add("synced"); if(lbl) lbl.textContent="同期"; } else { b.classList.remove("synced"); if(lbl) lbl.textContent="クラウド"; } }
 
   let pushTimer=null, pushing=false;
+  // 書き込み回数を抑える：内容が変わった時だけ、しかも長めの間隔でまとめてアップ
   cloudPush=function(){ if(!clLoggedIn()) return; clearTimeout(pushTimer);
-    pushTimer=setTimeout(async()=>{ if(pushing) return; pushing=true; try{ await clUpload(); }catch(e){} pushing=false; },2000); };
+    pushTimer=setTimeout(async()=>{ if(pushing) return; const cur=localStorage.getItem(KEY)||""; if(cur===lastUploaded) return; pushing=true; try{ await clUpload(); }catch(e){} pushing=false; },15000); };
 
   let clMode="login";
   function renderCloud(){
