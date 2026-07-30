@@ -159,10 +159,13 @@
   .node.memo .node-text { color:var(--muted); font-weight:500; font-size:12.5px; }
   .node.memo .memo-ico { color:var(--faint); }
   .node.memo .memo-ico svg { width:14px; height:14px; }
-  /* 繰り返しタスクの目印（スポットタスクと区別） */
-  .recur-badge { flex:none; width:17px; height:17px; margin-top:1px; display:inline-flex; align-items:center; justify-content:center; color:var(--col); opacity:.85; }
-  .recur-badge svg { width:13px; height:13px; }
-  .node.task.recur .node-row { border-left-style:dashed; }
+  /* 繰り返しタスクの目印（スポットタスクとハッキリ区別） */
+  .recur-badge { flex:none; width:19px; height:19px; margin-top:1px; display:inline-flex; align-items:center; justify-content:center;
+    color:#fff; background:var(--col); border-radius:50%; box-shadow:0 1px 3px color-mix(in srgb,var(--col) 40%, transparent); }
+  .recur-badge svg { width:12px; height:12px; }
+  .node.task.recur .node-row { border-left-style:dashed; border-left-width:4px;
+    background:color-mix(in srgb,var(--col) 9%, var(--surface)); }
+  .node.task.recur:hover .node-row { background:color-mix(in srgb,var(--col) 14%, var(--surface)); }
 
   /* タスク（第3階層以降）はやや控えめ */
   .node.task .node-text { font-size:13.5px; }
@@ -539,22 +542,24 @@
   function sameDay(a,b){ return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); }
   function sameMonth(a,b){ return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth(); }
 
-  function occDone(n,d){ return Array.isArray(n.doneDates)&&n.doneDates.includes(d); }
-  function toggleOcc(n,d){ if(!Array.isArray(n.doneDates)) n.doneDates=[]; const i=n.doneDates.indexOf(d);
-    if(i>=0) n.doneDates.splice(i,1); else n.doneDates.push(d);
-    const cut=new Date(); cut.setDate(cut.getDate()-90); const cs=ymd(cut); n.doneDates=n.doneDates.filter(x=>x>=cs); } // 古い記録は整理
-  // 汎用の「今日時点で完了か」（マップ表示・カウント用）。繰り返しは今日ぶんの完了で判定。
-  function isDone(n){ if(!n.repeat) return !!n.done; return occDone(n, todayStr()); }
+  // その日付が「現在の期間（今日/今週/今月）」に入るか
+  function inPeriod(n,dstr){ const dt=new Date(dstr+"T00:00"), now=new Date();
+    if(n.repeat==="daily") return sameDay(dt,now);
+    if(n.repeat==="weekly") return weekStart(dt).getTime()===weekStart(now).getTime();
+    if(n.repeat==="monthly") return sameMonth(dt,now); return false; }
+  // 繰り返しは「その期間内にチェックしたか」で完了判定（曜日は1つ＝ノード単位で完結）
+  function isDone(n){ if(!n.repeat) return !!n.done; return (n.doneDates||[]).some(d=>inPeriod(n,d)); }
   function nthWeekday(y,m,weekday,n){ const first=new Date(y,m,1); const fd=first.getDay();
     let day=1+((weekday-fd+7)%7)+(n-1)*7; const dim=new Date(y,m+1,0).getDate(); while(day>dim) day-=7; return new Date(y,m,day); }
   function wdays(n){ return Array.isArray(n.weekdays)?n.weekdays:[]; }
+  const weekIdx=(w)=>(w+6)%7; // 月=0 … 日=6（週の並び順）
   // 今日を含め7日以内で、選択曜日に一致する最も近い日付
   function nextWeekdayDate(weekdays){ const now=new Date(); now.setHours(0,0,0,0); const wd=now.getDay();
     for(let i=0;i<7;i++){ if(weekdays.includes((wd+i)%7)){ const d=new Date(now); d.setDate(now.getDate()+i); return d; } } return null; }
   // Concrete scheduled date for a recurring task in the current period (or null = whole-period).
   function recurDate(n){ const now=new Date(), y=now.getFullYear(), m=now.getMonth(); const wds=wdays(n);
     if(n.repeat==="daily") return new Date(y,m,now.getDate());
-    if(n.repeat==="weekly"){ if(!wds.length) return null; return nextWeekdayDate(wds); }
+    if(n.repeat==="weekly"){ if(!wds.length) return null; const ws=weekStart(now); const d=new Date(ws); d.setDate(ws.getDate()+weekIdx(wds[0])); return d; }
     if(n.repeat==="monthly"){
       if(wds.length&&n.weekOfMonth!=null){ let best=null; wds.forEach(w=>{ const d=nthWeekday(y,m,w,n.weekOfMonth); if(!best||d<best) best=d; }); return best; }
       if(n.weekOfMonth!=null){ const dim=new Date(y,m+1,0).getDate(); return new Date(y,m,Math.min(dim,(n.weekOfMonth-1)*7+4)); }
@@ -608,6 +613,7 @@
     // 曜日：単一(weekday)→複数(weekdays)へ移行
     if(!Array.isArray(n.weekdays)) n.weekdays=(typeof n.weekday==="number"&&n.weekday>=0&&n.weekday<=6)?[n.weekday]:[];
     n.weekdays=[...new Set(n.weekdays.filter(x=>typeof x==="number"&&x>=0&&x<=6))].sort((a,b)=>a-b);
+    if(n.weekdays.length>1) n.weekdays=[n.weekdays[0]]; // 曜日は1つだけ（複数は別ノードに分ける方式）
     delete n.weekday;
     n.weekOfMonth=(typeof n.weekOfMonth==="number"&&n.weekOfMonth>=1&&n.weekOfMonth<=5)?n.weekOfMonth:null;
     if(n.color&&typeof n.color!=="string") delete n.color;
@@ -982,7 +988,11 @@
     if(tloc.node===curRoot){ if(!dloc.node.color) dloc.node.color=pickColor(); dloc.node.type=isThink()?"idea":"group"; }
     selectNode(dragId); save(); render(); toast("移動しました");
   }
-  function applyToggle(node,dateStr){ if(node.repeat){ toggleOcc(node, dateStr||todayStr()); } else node.done=!node.done; }
+  function applyToggle(node){ if(node.repeat){
+      if(isDone(node)){ node.doneDates=(node.doneDates||[]).filter(d=>!inPeriod(node,d)); }
+      else { if(!Array.isArray(node.doneDates)) node.doneDates=[]; node.doneDates.push(todayStr());
+        const cut=new Date(); cut.setDate(cut.getDate()-120); const cs=ymd(cut); node.doneDates=node.doneDates.filter(d=>d>=cs); } }
+    else node.done=!node.done; }
   function cycleRepeat(node){ const i=REPEAT_ORDER.indexOf(node.repeat||null); node.repeat=REPEAT_ORDER[(i+1)%REPEAT_ORDER.length];
     if(node.repeat){ node.lastDone=node.done?Date.now():null; node.done=false; } else node.lastDone=null; }
 
@@ -1110,11 +1120,11 @@
       let h=`<div class="rep-body"><div class="rep-seg">`+
         [["","なし"],["daily","毎日"],["weekly","毎週"],["monthly","毎月"]].map(([v,l])=>`<button data-type="${v}" class="${t===v?"on":""}">${l}</button>`).join("")+`</div>`;
       if(t==="weekly"){
-        h+=`<div class="rep-label">曜日（複数選べます）</div><div class="wd-row">`+WD.map((w,i)=>`<button class="wd ${node.weekdays.includes(i)?"on":""}" data-wd="${i}">${w}</button>`).join("")+`</div>`;
+        h+=`<div class="rep-label">曜日</div><div class="wd-row">`+WD.map((w,i)=>`<button class="wd ${node.weekdays.includes(i)?"on":""}" data-wd="${i}">${w}</button>`).join("")+`</div>`;
       }
       if(t==="monthly"){
         h+=`<div class="rep-label">第何週</div><div class="wm-row">`+[1,2,3,4,5].map(n=>`<button class="wm ${node.weekOfMonth===n?"on":""}" data-wm="${n}">第${n}</button>`).join("")+`</div>`;
-        h+=`<div class="rep-label">曜日（任意・複数可）</div><div class="wd-row">`+WD.map((w,i)=>`<button class="wd ${node.weekdays.includes(i)?"on":""}" data-wd="${i}">${w}</button>`).join("")+`</div>`;
+        h+=`<div class="rep-label">曜日（任意）</div><div class="wd-row">`+WD.map((w,i)=>`<button class="wd ${node.weekdays.includes(i)?"on":""}" data-wd="${i}">${w}</button>`).join("")+`</div>`;
       }
       return h+`</div>`;
     }
@@ -1125,7 +1135,7 @@
         const v=b.dataset.type; node.repeat=v||null;
         if(!node.repeat){ node.weekdays=[]; node.weekOfMonth=null; node.doneDates=[]; }
         else { node.doneDates=[]; node.done=false; }
-      } else if(b.hasAttribute("data-wd")){ const w=+b.dataset.wd; const i=node.weekdays.indexOf(w); if(i>=0) node.weekdays.splice(i,1); else node.weekdays.push(w); node.weekdays.sort((a,b)=>a-b); }
+      } else if(b.hasAttribute("data-wd")){ const w=+b.dataset.wd; node.weekdays=node.weekdays.includes(w)?[]:[w]; } // 1曜日だけ
       else if(b.hasAttribute("data-wm")){ const n=+b.dataset.wm; node.weekOfMonth=node.weekOfMonth===n?null:n; }
       save(); refresh(); p.innerHTML=bodyHtml();
     });
@@ -1302,38 +1312,30 @@
       walk(k,kd,kb,kd>=1?path.concat(k.text||"（無題）"):path);
     } })(state.root,0,null,[]); return out; }
   function branchColor(b){ return (b&&b.color)?b.color:getComputedStyle(document.documentElement).getPropertyValue("--accent").trim(); }
-  // 繰り返しタスクの、今の期間(今週/今月)の予定日リスト
-  function occDates(n){ const out=[];
-    if(n.repeat==="daily"){ out.push(todayStr()); }
-    else if(n.repeat==="weekly"){ const wds=wdays(n); const ws=weekStart(new Date()); wds.forEach(w=>{ const d=new Date(ws); d.setDate(ws.getDate()+((w+6)%7)); out.push(ymd(d)); }); }
-    else if(n.repeat==="monthly"){ const now=new Date(),y=now.getFullYear(),m=now.getMonth(); const wds=wdays(n);
-      if(n.weekOfMonth!=null){ if(wds.length) wds.forEach(w=>out.push(ymd(nthWeekday(y,m,w,n.weekOfMonth)))); else { const dim=new Date(y,m+1,0).getDate(); out.push(ymd(new Date(y,m,Math.min(dim,(n.weekOfMonth-1)*7+4)))); } }
-      else if(wds.length){ wds.forEach(w=>out.push(ymd(nthWeekday(y,m,w,1)))); }
+  function bucketOf(t){ const n=t.node; const today=todayStr();
+    if(n.due){ if(n.due<today) return isDone(n)?"done":"overdue"; if(n.due===today) return "today"; if(n.due<=weekEndStr()) return "week"; return "later"; }
+    if(n.repeat){
+      if(n.repeat==="daily") return "today";
+      if(n.repeat==="weekly"){ const wds=wdays(n); if(!wds.length) return "week"; const wd=new Date().getDay();
+        if(wds.includes(wd)) return "today";
+        if(!isDone(n)&&wds.some(w=>weekIdx(w)<weekIdx(wd))) return "overdue"; // 今週の予定日を過ぎて未完了
+        return "week"; }
+      const td=recurDate(n); // monthly
+      if(td){ const s=ymd(td); if(s<today) return isDone(n)?"done":"overdue"; if(s===today) return "today"; if(s<=weekEndStr()) return "week"; return "later"; }
+      return "later";
     }
-    return out;
-  }
-  // タスク → 予定日ごとの表示エントリに展開
-  function taskEntries(){ const out=[];
-    collectTasks().forEach(t=>{ const n=t.node;
-      if(!n.repeat){ out.push({node:n,branch:t.branch,path:t.path,date:n.due||null,done:!!n.done}); }
-      else { occDates(n).forEach(d=>out.push({node:n,branch:t.branch,path:t.path,date:d,done:occDone(n,d)})); }
-    });
-    return out;
-  }
-  function bucketE(e){ const today=todayStr();
-    if(e.date){ if(e.date<today) return e.done?"done":"overdue"; if(e.date===today) return "today"; if(e.date<=weekEndStr()) return "week"; return "later"; }
-    return e.done?"done":"none"; }
+    return "none"; }
 
-  function taskRowHtml(e){
-    const n=e.node, col=branchColor(e.branch), done=e.done;
+  function taskRowHtml(t){
+    const n=t.node, col=branchColor(t.branch), done=isDone(n);
     const chips=[];
     if(n.priority) chips.push(`<span class="meta-flag">${ICON.flag}</span>`);
-    if(n.repeat){ const dl=e.date?dueLabel(e.date):null; chips.push(`<span class="chip cadence-chip" style="--col:${col}">${ICON.repeat}${dl?dl.text:repeatLabel(n)}</span>`); }
+    if(n.repeat) chips.push(`<span class="chip cadence-chip" style="--col:${col}">${ICON.repeat}${repeatLabel(n)}</span>`);
     else if(n.due){ const dl=dueLabel(n.due); if(dl) chips.push(`<span class="chip due-chip ${dl.cls}">${dl.text}</span>`); }
     if(n.link) chips.push(`<a class="chip link-chip" href="${esc(n.link)}" target="_blank" rel="noopener noreferrer" data-role="link" title="${esc(n.link)}">${ICON.link}リンク</a>`);
-    const sub=(e.path&&e.path.length>1)?`<span class="db-path">${esc(e.path.slice(1).join(" › "))}</span>`:"";
+    const sub=(t.path&&t.path.length>1)?`<span class="db-path">${esc(t.path.slice(1).join(" › "))}</span>`:"";
     const subline=(sub||chips.length)?`<div class="dash-sub">${sub}${chips.join("")}</div>`:"";
-    return `<div class="dash-task ${done?"done":""} ${n.priority?"pri":""}" data-id="${n.id}" data-date="${e.date||""}" style="--dc:${col}">
+    return `<div class="dash-task ${done?"done":""} ${n.priority?"pri":""}" data-id="${n.id}" style="--dc:${col}">
       <button class="dash-check" data-role="check">${ICON.check}</button>
       <div class="dash-body"><div class="dash-text">${esc(n.text)||"（無題）"}</div>${subline}</div></div>`;
   }
@@ -1346,18 +1348,18 @@
       <div class="dash-card">${body}</div></div>`;
   }
   function renderDash(){
-    const entries=taskEntries();
+    const tasks=collectTasks();
     const B={overdue:[],today:[],week:[],later:[],none:[],done:[]};
-    entries.forEach(e=>{ B[bucketE(e)].push(e); });
-    const order=(a,b)=>{ const da=a.done?1:0, db=b.done?1:0; if(da!==db) return da-db;
+    tasks.forEach(t=>{ B[bucketOf(t)].push(t); });
+    const order=(a,b)=>{ const da=isDone(a.node)?1:0, db=isDone(b.node)?1:0; if(da!==db) return da-db;
       const pa=a.node.priority?0:1, pb=b.node.priority?0:1; if(pa!==pb) return pa-pb;
-      const x=a.date||"9999", y=b.date||"9999"; return x<y?-1:x>y?1:0; };
+      const x=a.node.due||"9999", y=b.node.due||"9999"; return x<y?-1:x>y?1:0; };
     B.overdue.sort(order); B.today.sort(order); B.week.sort(order);
-    const priNone=B.none.filter(e=>e.node.priority).sort(order);
-    const rem=(l)=>l.filter(e=>!e.done).length;
-    const total=entries.length, done=entries.filter(e=>e.done).length;
+    const priNone=B.none.filter(t=>t.node.priority).sort(order);
+    const rem=(l)=>l.filter(t=>!isDone(t.node)).length;
+    const total=tasks.length, done=tasks.filter(t=>isDone(t.node)).length;
     const todayN=rem(B.overdue)+rem(B.today), weekN=rem(B.week);
-    const priN=entries.filter(e=>e.node.priority&&!e.done).length;
+    const priN=tasks.filter(t=>t.node.priority&&!isDone(t.node)).length;
     const now=new Date(); const dateline=`${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日（${WD[now.getDay()]}）`;
     const accent=getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
     const danger=getComputedStyle(document.documentElement).getPropertyValue("--danger").trim();
@@ -1377,7 +1379,7 @@
     if(!total){ html+=`<div class="dash-blank"><h2>タスクがまだありません</h2><p>「マインドマップ」でタスクを追加すると、ここに今日・今週やることが集まります。</p></div></div>`; dash.innerHTML=html; return; }
 
     function timeGroup(title,list,color,emph){
-      const remaining=list.filter(e=>!e.done).length;
+      const remaining=list.filter(t=>!isDone(t.node)).length;
       let inner="";
       if(!list.length){ inner=`<div class="dash-empty">タスクはありません。</div>`; }
       else {
@@ -1409,7 +1411,7 @@
   dash.addEventListener("click",(e)=>{
     if(e.target.closest('[data-role="link"]')) return; // リンクはそのまま開く
     const row=e.target.closest(".dash-task"); if(!row) return; const id=row.dataset.id;
-    if(e.target.closest('[data-role="check"]')){ const {node}=locate(id,state.root)||{}; if(node){ applyToggle(node,row.dataset.date||undefined); save(); renderDash(); } return; }
+    if(e.target.closest('[data-role="check"]')){ const {node}=locate(id,state.root)||{}; if(node){ applyToggle(node); save(); renderDash(); } return; }
     openInMap(id);
   });
   function openInMap(id){ const path=pathTo(id); if(path) path.forEach(n=>n.collapsed=false); selectedId=id; save(); setView("map"); pendingFocus=id; render(); }
