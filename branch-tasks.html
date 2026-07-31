@@ -293,6 +293,16 @@
   .dash-section.danger-sec .dash-h .cnt { background:var(--danger); color:#fff; border-color:var(--danger); }
   .dash-section.danger-sec .dash-card { border:1.5px solid color-mix(in srgb,var(--danger) 38%, var(--border));
     box-shadow:0 4px 18px color-mix(in srgb,var(--danger) 15%, transparent); }
+  /* 昨日やったこと（ふりかえり・控えめ） */
+  .dash-section.log-sec { margin-top:30px; }
+  .dash-section.log-sec .dash-h { cursor:pointer; user-select:none; }
+  .dash-section.log-sec .dash-h h3 { font-size:14px; color:var(--muted); }
+  .dash-section.log-sec .dash-h .dot { background:var(--faint); }
+  .dash-section.log-sec .dash-card { background:var(--surface-2); }
+  .dash-section.log-sec .dash-task.pri { background:transparent; box-shadow:none; }
+  .dash-section.log-sec .dash-check { cursor:default; }
+  .log-caret { width:13px; height:13px; flex:none; color:var(--faint); transition:transform .15s; transform:rotate(-90deg); }
+  .dash-section.log-sec.open .log-caret { transform:rotate(0deg); }
   .dash-task { display:flex; align-items:flex-start; gap:11px; padding:12px 15px; border-top:1px solid var(--border); cursor:pointer; transition:background .1s; }
   .dash-task:first-child { border-top:0; }
   .dash-task:hover { background:var(--surface-2); }
@@ -537,6 +547,7 @@
   function parseYmd(s){ const p=s.split("-").map(Number); return new Date(p[0],p[1]-1,p[2]); }
   function todayStr(){ return ymd(new Date()); }
   function tomorrowStr(){ const d=new Date(); d.setDate(d.getDate()+1); return ymd(d); }
+  function yesterdayStr(){ const d=new Date(); d.setDate(d.getDate()-1); return ymd(d); }
   function weekStart(d){ const x=new Date(d); const day=(x.getDay()+6)%7; x.setHours(0,0,0,0); x.setDate(x.getDate()-day); return x; }
   function weekEndStr(){ const s=weekStart(new Date()); s.setDate(s.getDate()+6); return ymd(s); }
   function sameDay(a,b){ return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); }
@@ -549,6 +560,8 @@
     if(n.repeat==="monthly") return sameMonth(dt,now); return false; }
   // 繰り返しは「その期間内にチェックしたか」で完了判定（曜日は1つ＝ノード単位で完結）
   function isDone(n){ if(!n.repeat) return !!n.done; return (n.doneDates||[]).some(d=>inPeriod(n,d)); }
+  // その日にチェックしたか（繰り返し=doneDates／スポット=完了日doneAt）
+  function doneOn(n,dstr){ if(n.repeat) return (n.doneDates||[]).includes(dstr); return !!n.done&&n.doneAt===dstr; }
   function nthWeekday(y,m,weekday,n){ const first=new Date(y,m,1); const fd=first.getDay();
     let day=1+((weekday-fd+7)%7)+(n-1)*7; const dim=new Date(y,m+1,0).getDate(); while(day>dim) day-=7; return new Date(y,m,day); }
   function wdays(n){ return Array.isArray(n.weekdays)?n.weekdays:[]; }
@@ -590,7 +603,7 @@
   }
 
   // ---- model ----
-  function newNode(text,type){ return {id:uid(),text:text||"",type:type||"task",children:[],collapsed:false,done:false,priority:false,repeat:null,doneDates:[],note:false,due:null,weekdays:[],weekOfMonth:null,below:false,link:null,ox:0,oy:0}; }
+  function newNode(text,type){ return {id:uid(),text:text||"",type:type||"task",children:[],collapsed:false,done:false,doneAt:null,priority:false,repeat:null,doneDates:[],note:false,due:null,weekdays:[],weekOfMonth:null,below:false,link:null,ox:0,oy:0}; }
   function newRoot(text){ return newNode(text||"マイタスク","root"); }
   function assignTypes(node,depth){
     if(node.type!=="root"&&node.type!=="task"&&node.type!=="group"&&node.type!=="memo"&&node.type!=="goal"){
@@ -609,6 +622,9 @@
     if(!Array.isArray(n.doneDates)) n.doneDates = n.lastDone ? [ymd(new Date(n.lastDone))] : [];
     n.doneDates=n.doneDates.filter(x=>typeof x==="string");
     delete n.lastDone;
+    // スポットタスクの完了日（未記録の既存データは null のまま＝ふりかえりには出ない）
+    n.doneAt=(typeof n.doneAt==="string")?n.doneAt:null;
+    if(!n.done) n.doneAt=null;
     n.due=(typeof n.due==="string")?n.due:null;
     // 曜日：単一(weekday)→複数(weekdays)へ移行
     if(!Array.isArray(n.weekdays)) n.weekdays=(typeof n.weekday==="number"&&n.weekday>=0&&n.weekday<=6)?[n.weekday]:[];
@@ -992,9 +1008,9 @@
       if(isDone(node)){ node.doneDates=(node.doneDates||[]).filter(d=>!inPeriod(node,d)); }
       else { if(!Array.isArray(node.doneDates)) node.doneDates=[]; node.doneDates.push(todayStr());
         const cut=new Date(); cut.setDate(cut.getDate()-120); const cs=ymd(cut); node.doneDates=node.doneDates.filter(d=>d>=cs); } }
-    else node.done=!node.done; }
+    else { node.done=!node.done; node.doneAt=node.done?todayStr():null; } }
   function cycleRepeat(node){ const i=REPEAT_ORDER.indexOf(node.repeat||null); node.repeat=REPEAT_ORDER[(i+1)%REPEAT_ORDER.length];
-    if(node.repeat){ node.lastDone=node.done?Date.now():null; node.done=false; } else node.lastDone=null; }
+    if(node.repeat){ node.done=false; node.doneAt=null; } }
 
   // ---- map click ----
   nodesLayer.addEventListener("click",(e)=>{
@@ -1134,7 +1150,7 @@
       if(b.hasAttribute("data-type")){
         const v=b.dataset.type; node.repeat=v||null;
         if(!node.repeat){ node.weekdays=[]; node.weekOfMonth=null; node.doneDates=[]; }
-        else { node.doneDates=[]; node.done=false; }
+        else { node.doneDates=[]; node.done=false; node.doneAt=null; }
       } else if(b.hasAttribute("data-wd")){ const w=+b.dataset.wd; node.weekdays=node.weekdays.includes(w)?[]:[w]; } // 1曜日だけ
       else if(b.hasAttribute("data-wm")){ const n=+b.dataset.wm; node.weekOfMonth=node.weekOfMonth===n?null:n; }
       save(); refresh(); p.innerHTML=bodyHtml();
@@ -1306,6 +1322,9 @@
   });
 
   // ---- dashboard ----
+  // 「昨日やったこと」の開閉。UIの好みなので state には入れない（同期のアップロードを増やさない）
+  const LOG_OPEN_KEY="branch.dash.log";
+  let logOpen=(()=>{ try{ return localStorage.getItem(LOG_OPEN_KEY)!=="0"; }catch(e){ return true; } })();
   function collectTasks(){ const out=[]; (function walk(node,depth,branch,path){
     for(const k of node.children){ const kd=depth+1; const kb=kd===1?k:branch;
       if(kd>=2&&k.type==="task") out.push({node:k,branch:kb,path:path});
@@ -1326,8 +1345,10 @@
     }
     return "none"; }
 
-  function taskRowHtml(t){
-    const n=t.node, col=branchColor(t.branch), done=isDone(n);
+  // opt.log=true … ふりかえり表示（完了済みとして描画・チェックは押せない）
+  function taskRowHtml(t,opt){
+    const log=!!(opt&&opt.log);
+    const n=t.node, col=branchColor(t.branch), done=log?true:isDone(n);
     const chips=[];
     if(n.priority) chips.push(`<span class="meta-flag">${ICON.flag}</span>`);
     if(n.repeat) chips.push(`<span class="chip cadence-chip" style="--col:${col}">${ICON.repeat}${repeatLabel(n)}</span>`);
@@ -1335,14 +1356,15 @@
     if(n.link) chips.push(`<a class="chip link-chip" href="${esc(n.link)}" target="_blank" rel="noopener noreferrer" data-role="link" title="${esc(n.link)}">${ICON.link}リンク</a>`);
     const sub=(t.path&&t.path.length>1)?`<span class="db-path">${esc(t.path.slice(1).join(" › "))}</span>`:"";
     const subline=(sub||chips.length)?`<div class="dash-sub">${sub}${chips.join("")}</div>`:"";
+    const check=log?`<span class="dash-check">${ICON.check}</span>`:`<button class="dash-check" data-role="check">${ICON.check}</button>`;
     return `<div class="dash-task ${done?"done":""} ${n.priority?"pri":""}" data-id="${n.id}" style="--dc:${col}">
-      <button class="dash-check" data-role="check">${ICON.check}</button>
+      ${check}
       <div class="dash-body"><div class="dash-text">${esc(n.text)||"（無題）"}</div>${subline}</div></div>`;
   }
   function sectionHtml(title,list,color,emptyMsg,extraClass){
     if(!list.length&&!emptyMsg) return "";
     const rem=list.filter(t=>!isDone(t.node)).length;
-    const body=list.length?list.map(taskRowHtml).join(""):`<div class="dash-empty">${emptyMsg}</div>`;
+    const body=list.length?list.map(t=>taskRowHtml(t)).join(""):`<div class="dash-empty">${emptyMsg}</div>`;
     return `<div class="dash-section ${extraClass||""}">
       <div class="dash-h"><span class="dot" style="background:${color}"></span><h3>${title}</h3><span class="cnt">残り${rem}</span></div>
       <div class="dash-card">${body}</div></div>`;
@@ -1378,26 +1400,38 @@
 
     if(!total){ html+=`<div class="dash-blank"><h2>タスクがまだありません</h2><p>「マインドマップ」でタスクを追加すると、ここに今日・今週やることが集まります。</p></div></div>`; dash.innerHTML=html; return; }
 
+    // 項目（大分類）ごと → 定例タスク／スポットタスク
+    function branchListHtml(list,opt){
+      let inner="";
+      const byB=new Map();
+      list.forEach(t=>{ const k=t.branch?t.branch.id:"_"; if(!byB.has(k)) byB.set(k,{branch:t.branch,items:[]}); byB.get(k).items.push(t); });
+      const groups=[...byB.values()].sort((a,b)=>state.root.children.indexOf(a.branch)-state.root.children.indexOf(b.branch));
+      groups.forEach(g=>{
+        const col=branchColor(g.branch);
+        const rec=g.items.filter(t=>t.node.repeat).sort(order);
+        const spot=g.items.filter(t=>!t.node.repeat).sort(order);
+        let s="";
+        if(rec.length) s+=`<div class="db-sub">${ICON.repeat}<span>定例タスク</span></div>`+rec.map(t=>taskRowHtml(t,opt)).join("");
+        if(spot.length) s+=`<div class="db-sub"><span>スポットタスク</span></div>`+spot.map(t=>taskRowHtml(t,opt)).join("");
+        inner+=`<div class="db-branch"><div class="db-bhead"><span class="bdot" style="background:${col}"></span>${esc(g.branch?(g.branch.text||"項目"):"項目")}</div>${s}</div>`;
+      });
+      return inner;
+    }
     function timeGroup(title,list,color,emph){
       const remaining=list.filter(t=>!isDone(t.node)).length;
-      let inner="";
-      if(!list.length){ inner=`<div class="dash-empty">タスクはありません。</div>`; }
-      else {
-        const byB=new Map();
-        list.forEach(t=>{ const k=t.branch?t.branch.id:"_"; if(!byB.has(k)) byB.set(k,{branch:t.branch,items:[]}); byB.get(k).items.push(t); });
-        const groups=[...byB.values()].sort((a,b)=>state.root.children.indexOf(a.branch)-state.root.children.indexOf(b.branch));
-        groups.forEach(g=>{
-          const col=branchColor(g.branch);
-          const rec=g.items.filter(t=>t.node.repeat).sort(order);
-          const spot=g.items.filter(t=>!t.node.repeat).sort(order);
-          let s="";
-          if(rec.length) s+=`<div class="db-sub">${ICON.repeat}<span>定例タスク</span></div>`+rec.map(taskRowHtml).join("");
-          if(spot.length) s+=`<div class="db-sub"><span>スポットタスク</span></div>`+spot.map(taskRowHtml).join("");
-          inner+=`<div class="db-branch"><div class="db-bhead"><span class="bdot" style="background:${col}"></span>${esc(g.branch?(g.branch.text||"項目"):"項目")}</div>${s}</div>`;
-        });
-      }
+      const inner=list.length?branchListHtml(list):`<div class="dash-empty">タスクはありません。</div>`;
       const secCls=emph==="today"?" today-sec":emph==="danger"?" danger-sec":"";
       return `<div class="dash-section${secCls}"><div class="dash-h"><span class="dot" style="background:${color}"></span><h3>${title}</h3><span class="cnt">残り${remaining}</span></div><div class="dash-card db-card">${inner}</div></div>`;
+    }
+    // 昨日やったこと（ふりかえり・折りたたみ可）
+    function logGroup(list,dstr){
+      const d=parseYmd(dstr);
+      const inner=list.length?branchListHtml(list,{log:true}):`<div class="dash-empty">昨日完了したタスクはありません。</div>`;
+      const body=logOpen?`<div class="dash-card db-card">${inner}</div>`:"";
+      return `<div class="dash-section log-sec${logOpen?" open":""}">
+        <div class="dash-h" data-role="logtoggle"><span class="log-caret">${ICON.chevron}</span><span class="dot"></span>
+          <h3>昨日やったこと（${d.getMonth()+1}/${d.getDate()} ${WD[d.getDay()]}）</h3><span class="cnt">${list.length}件</span></div>
+        ${body}</div>`;
     }
 
     B.overdue.sort(order);
@@ -1405,11 +1439,16 @@
     html+=timeGroup("今日のタスク",B.today,accent,"today");
     html+=timeGroup("今週のタスク",B.week,"#4C6EF5");
     if(priNone.length) html+=timeGroup("優先（日付なし）",priNone,flag);
+    const yst=yesterdayStr();
+    html+=logGroup(tasks.filter(t=>doneOn(t.node,yst)).sort(order),yst);
     html+=`</div>`;
     dash.innerHTML=html;
   }
   dash.addEventListener("click",(e)=>{
     if(e.target.closest('[data-role="link"]')) return; // リンクはそのまま開く
+    if(e.target.closest('[data-role="logtoggle"]')){ logOpen=!logOpen;
+      try{ localStorage.setItem(LOG_OPEN_KEY,logOpen?"1":"0"); }catch(err){}
+      renderDash(); return; }
     const row=e.target.closest(".dash-task"); if(!row) return; const id=row.dataset.id;
     if(e.target.closest('[data-role="check"]')){ const {node}=locate(id,state.root)||{}; if(node){ applyToggle(node); save(); renderDash(); } return; }
     openInMap(id);
