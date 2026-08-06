@@ -121,7 +121,15 @@
   .sticky.min .sticky-resize { display:none; }
 
   .node { position:absolute; z-index:1; }
-  .node.dragging { z-index:30; opacity:.9; }
+  .node.dragging { z-index:30; opacity:.85; }
+  .node.dragging .node-row { box-shadow:0 10px 24px rgba(16,24,40,.22); border-color:var(--col); }
+  /* ドラッグ中の落とし場所の表示：兄弟として差し込む位置を線で示す */
+  .drop-line { position:absolute; z-index:28; height:3px; border-radius:3px; background:var(--accent);
+    box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%, transparent); pointer-events:none; }
+  .drop-line::before { content:""; position:absolute; left:-5px; top:50%; transform:translateY(-50%);
+    width:9px; height:9px; border-radius:50%; background:var(--accent); }
+  .drop-hint { position:fixed; z-index:70; pointer-events:none; background:var(--ink); color:var(--bg);
+    font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px; box-shadow:var(--shadow); white-space:nowrap; }
   .node-row { display:flex; align-items:flex-start; gap:8px; background:var(--surface); border:1px solid var(--border);
     border-left:3px solid var(--col,var(--accent)); border-radius:11px; padding:8px 11px; box-shadow:var(--shadow-sm);
     transition:box-shadow .12s,border-color .12s; }
@@ -181,6 +189,14 @@
   .node.idea:not(.branch) .node-row { border-left-width:3px; background:color-mix(in srgb,var(--col) 5%, var(--surface)); }
   .node.idea:not(.branch) .node-text { font-weight:600; font-size:13.5px; }
   .idea-dot { flex:none; width:9px; height:9px; margin-top:5px; border-radius:50%; background:var(--col); }
+  /* 思考マップでも優先フラグで目立たせる（タスクと同じ琥珀色） */
+  .node.idea.pri .node-row { background:color-mix(in srgb,var(--flag) 20%, var(--surface));
+    border-color:color-mix(in srgb,var(--flag) 55%, var(--border)); border-left:4px solid var(--flag);
+    box-shadow:0 2px 12px color-mix(in srgb,var(--flag) 28%, transparent); }
+  .node.idea.pri:hover .node-row { background:color-mix(in srgb,var(--flag) 28%, var(--surface)); }
+  .node.idea.pri.selected .node-row { box-shadow:0 0 0 2px color-mix(in srgb,var(--flag) 62%, transparent), var(--shadow); }
+  .node.idea.pri .node-text { font-weight:700; }
+  .node.idea.pri .idea-dot, .node.idea.pri .branch-dot { background:var(--flag); box-shadow:0 0 0 4px color-mix(in srgb,var(--flag) 22%, transparent); }
 
   .node-check { flex:none; width:19px; height:19px; margin-top:1px; border-radius:6px; border:1.8px solid var(--border-strong);
     background:var(--surface); display:inline-flex; align-items:center; justify-content:center; color:#fff; transition:background .12s,border-color .12s; }
@@ -231,10 +247,11 @@
   .node-collapse svg { width:12px; height:12px; transition:transform .18s; }
   .node-collapse.closed svg { transform:rotate(-90deg); }
 
-  .node-grip { position:absolute; left:-11px; top:50%; transform:translateY(-50%); width:20px; height:24px;
-    border-radius:6px; background:var(--surface); border:1px solid var(--border-strong); color:var(--faint);
+  .node-grip { position:absolute; left:-14px; top:50%; transform:translateY(-50%); width:24px; height:34px;
+    border-radius:8px; background:var(--surface); border:1px solid var(--border-strong); color:var(--muted);
     display:flex; align-items:center; justify-content:center; cursor:grab; z-index:5; touch-action:none;
-    box-shadow:var(--shadow-sm); opacity:.35; transition:opacity .12s; }
+    box-shadow:var(--shadow-sm); opacity:.5; transition:opacity .12s,color .12s,border-color .12s; }
+  .node-grip:hover { color:var(--ink); border-color:var(--faint); background:var(--surface-2); }
   .node:hover .node-grip, .node.selected .node-grip { opacity:1; }
   .node.dragging .node-grip { opacity:1; }
   .node-grip:active { cursor:grabbing; }
@@ -488,9 +505,10 @@
   <span class="k"><kbd>Tab</kbd> 右に子</span>
   <span class="k"><kbd>⌘/Ctrl</kbd>+<kbd>Enter</kbd> 真下に子</span>
   <span class="k"><kbd>⇧Tab</kbd> 一段上げる</span>
-  <span class="k"><kbd>↑</kbd><kbd>↓</kbd> 移動</span>
+  <span class="k"><kbd>⌘/Ctrl</kbd>+<kbd>←↑↓→</kbd> 隣のノードへ</span>
+  <span class="k"><kbd>⌘/Ctrl</kbd>+<kbd>⇧</kbd>+<kbd>←↑↓→</kbd> ノードを動かす</span>
   <span class="k"><kbd>⌘/Ctrl</kbd>+<kbd>Z</kbd> 元に戻す</span>
-  <span class="k">ノードをドラッグ→重ねて付け替え／空きへ自由配置</span>
+  <span class="k">ドラッグ→まん中=中に入れる／上下のふち=その位置に差し込む</span>
   <span class="k">空きをドラッグ=範囲選択（まとめて移動）</span>
   <span class="k"><kbd>Alt</kbd>ドラッグ=画面移動</span>
   <button class="close" id="btn-help-close" title="閉じる">×</button>
@@ -798,7 +816,7 @@
     const isIdea=node.type==="idea"&&!isRoot;
     const lvl=Math.min(depth,4);
     const el=document.createElement("div");
-    el.className="node lvl"+lvl+(isRoot?" root":"")+(isBranch?" branch":"")+(isTask?" task":"")+(isMemo?" memo":"")+(isGoal?" goal":"")+(isGroup?" group":"")+(isIdea?" idea":"")+(isDone(node)?" done":"")+(node.priority&&isTask?" pri":"")+(isTask&&node.repeat?" recur":"");
+    el.className="node lvl"+lvl+(isRoot?" root":"")+(isBranch?" branch":"")+(isTask?" task":"")+(isMemo?" memo":"")+(isGoal?" goal":"")+(isGroup?" group":"")+(isIdea?" idea":"")+(isDone(node)?" done":"")+(node.priority&&(isTask||isIdea)?" pri":"")+(isTask&&node.repeat?" recur":"");
     el.dataset.id=node.id; el.style.width=nodeWidth(depth)+"px"; el.style.setProperty("--col",node._col);
 
     let lead="";
@@ -814,7 +832,7 @@
     const grip=!isRoot?`<button class="node-grip" data-role="grip" title="ドラッグで移動・付け替え">${ICON.grip}</button>`:"";
 
     const chips=[];
-    if(isTask&&node.priority) chips.push(`<span class="meta-flag">${ICON.flag}</span>`);
+    if((isTask||isIdea)&&node.priority) chips.push(`<span class="meta-flag">${ICON.flag}</span>`);
     if(isTask&&node.repeat) chips.push(`<span class="chip cadence-chip">${repeatLabel(node)}</span>`);
     if(isTask&&node.due){ const dl=dueLabel(node.due); if(dl) chips.push(`<span class="chip due-chip ${dl.cls}">${dl.text}</span>`); }
     if(node.collapsed&&kids) chips.push(`<span class="chip count-chip">${kids}</span>`);
@@ -826,6 +844,7 @@
       tools=`<div class="node-tools"><button data-act="add" title="項目を追加">${ICON.plus}</button></div>`;
     } else {
       const t=[];
+      if(isIdea) t.push(`<button class="${node.priority?"on":""}" data-act="flag" title="フラグで目立たせる">${ICON.flag}</button>`);
       if(isTask){
         t.push(`<button class="${node.priority?"on":""}" data-act="flag" title="優先フラグ">${ICON.flag}</button>`);
         t.push(`<button class="rep ${node.repeat?"on":""}" data-act="repeat" title="くり返し設定">${ICON.repeat}</button>`);
@@ -995,14 +1014,29 @@
     if(loc.node.children.length){ if(!confirm("この枝と、ぶら下がっている中身をすべて削除しますか？")) return; }
     const idx=loc.parent.children.indexOf(loc.node); loc.parent.children.splice(idx,1);
     const focusTo=idx>0?loc.parent.children[idx-1]:loc.parent; pendingFocus=focusTo.id; save(); render(); }
-  function reparent(dragId,targetId){
+  // ノードを移動：mode="child"（その中に入れる）／"before"・"after"（兄弟としてその位置に差し込む）
+  function moveNode(dragId,targetId,mode){
     const dloc=locate(dragId), tloc=locate(targetId);
     if(!dloc||!tloc||!dloc.parent) return; if(dragId===targetId) return; if(within(dloc.node,targetId)) return;
-    const idx=dloc.parent.children.indexOf(dloc.node); dloc.parent.children.splice(idx,1);
-    dloc.node.ox=0; dloc.node.oy=0; // 付け替え時は自由配置を解除して整列
-    tloc.node.collapsed=false; tloc.node.children.push(dloc.node);
-    if(tloc.node===curRoot){ if(!dloc.node.color) dloc.node.color=pickColor(); dloc.node.type=isThink()?"idea":"group"; }
-    selectNode(dragId); save(); render(); toast("移動しました");
+    const node=dloc.node, tp=tloc.parent;
+    if(mode!=="child"&&!tp) mode="child"; // 中心ノードには兄弟を作れない
+    dloc.parent.children.splice(dloc.parent.children.indexOf(node),1);
+    node.ox=0; node.oy=0; // 移動したら自由配置は解除して整列
+    let newParent;
+    if(mode==="child"){
+      newParent=tloc.node; newParent.collapsed=false;
+      node.below=newParent.children.some(k=>k.below); // 真下に積む子がいればその列に加わる
+      newParent.children.push(node);
+    } else {
+      newParent=tp;
+      node.below=!!tloc.node.below; // 真下の列に差し込むならこのノードも真下扱い
+      if(tloc.node.side) node.side=tloc.node.side; else delete node.side;
+      let ti=newParent.children.indexOf(tloc.node); if(mode==="after") ti++;
+      newParent.children.splice(ti,0,node);
+    }
+    if(newParent===curRoot){ if(!node.color) node.color=pickColor(); node.type=isThink()?"idea":"group"; }
+    selectNode(dragId); save(); render();
+    toast(mode==="child"?"この中に入れました":"移動しました");
   }
   function applyToggle(node){ if(node.repeat){
       if(isDone(node)){ node.doneDates=(node.doneDates||[]).filter(d=>!inPeriod(node,d)); }
@@ -1046,13 +1080,38 @@
     if(e.key==="Tab"&&!e.shiftKey){ e.preventDefault(); addChild(id); return; }
     if(e.key==="Tab"&&e.shiftKey){ e.preventDefault(); outdent(id); return; }
     if(e.key==="Backspace"&&ta.value===""){ e.preventDefault(); deleteNode(id); return; }
+    const arrow=ARROW[e.key]; if(!arrow) return;
+    // ⌘/Ctrl+⇧+矢印＝ノードそのものを移動、⌘/Ctrl+矢印＝隣のノードへすぐ移動
+    if(mod&&e.shiftKey){ e.preventDefault(); moveByKey(id,arrow); return; }
+    if(mod){ e.preventDefault(); navDir(id,arrow); return; }
+    // 修飾なし：文字カーソルを優先。ただし1行で収まっているときは上下で即移動できる
     const atStart=ta.selectionStart===0&&ta.selectionEnd===0;
     const atEnd=ta.selectionStart===ta.value.length&&ta.selectionEnd===ta.value.length;
-    if(e.key==="ArrowDown"&&atEnd){ if(navDir(id,"down")) e.preventDefault(); return; }
-    if(e.key==="ArrowUp"&&atStart){ if(navDir(id,"up")) e.preventDefault(); return; }
-    if(e.key==="ArrowRight"&&atEnd){ if(navDir(id,"right")) e.preventDefault(); return; }
-    if(e.key==="ArrowLeft"&&atStart){ if(navDir(id,"left")) e.preventDefault(); return; }
+    const vert=(arrow==="up"||arrow==="down");
+    const go=vert ? (isOneLine(ta)||(arrow==="down"?atEnd:atStart)) : (arrow==="right"?atEnd:atStart);
+    if(go&&navDir(id,arrow)) e.preventDefault();
   });
+  const ARROW={ArrowUp:"up",ArrowDown:"down",ArrowLeft:"left",ArrowRight:"right"};
+  // 折り返しも含めて「見た目1行」か（複数行のときは上下キーは行移動を優先させる）
+  function isOneLine(ta){ const lh=parseFloat(getComputedStyle(ta).lineHeight)||20; return !ta.scrollHeight||ta.scrollHeight<lh*1.6; }
+  // ノードそのものを移動：上下＝兄弟の並べ替え／右＝ひとつ上の兄弟の子になる／左＝一段上げる
+  function moveByKey(id,dir){
+    const loc=locate(id); if(!loc||!loc.parent) return;
+    const sibs=loc.parent.children, i=sibs.indexOf(loc.node);
+    if(dir==="left"){ outdent(id); return; }
+    if(dir==="right"){
+      if(i<=0) return; const p=sibs[i-1];
+      sibs.splice(i,1); p.collapsed=false;
+      loc.node.below=p.children.some(k=>k.below); p.children.push(loc.node);
+    } else {
+      // 見た目どおりに動くよう、同じ並び（真下の列／横並び）の兄弟と入れ替える
+      const step=dir==="up"?-1:1; let j=i+step;
+      while(j>=0&&j<sibs.length&&!!sibs[j].below!==!!loc.node.below) j+=step;
+      if(j<0||j>=sibs.length) return;
+      const tmp=sibs[j]; sibs[j]=sibs[i]; sibs[i]=tmp;
+    }
+    loc.node.ox=0; loc.node.oy=0; pendingFocus=id; save(); render();
+  }
 
   // ---- 複数選択（範囲選択で選んだノード） ----
   let selection=new Set(), suppressClick=false;
@@ -1061,8 +1120,44 @@
   function hasSelectedAncestor(id){ let l=locate(id); if(!l) return false; let p=l.parent; while(p){ if(selection.has(p.id)) return true; const pl=locate(p.id); p=pl?pl.parent:null; } return false; }
 
   // ---- drag to reparent／自由配置（ノード本体 or ⠿ をつかんで移動）----
-  let drag=null;
-  function clearDrop(){ nodesLayer.querySelectorAll(".drop-target").forEach(n=>n.classList.remove("drop-target")); }
+  let drag=null, dropLine=null, dropHint=null;
+  function clearDrop(){ nodesLayer.querySelectorAll(".drop-target").forEach(n=>n.classList.remove("drop-target"));
+    if(dropLine){ dropLine.remove(); dropLine=null; }
+    if(dropHint){ dropHint.remove(); dropHint=null; } }
+  // カーソルの位置から「どのノードの・どこへ落とすか」を決める。
+  // ノードの上ふち＝すぐ上の兄弟、下ふち＝すぐ下の兄弟、まん中＝その中に入れる。
+  function dropHitAt(cx,cy,dragId){
+    const dloc=locate(dragId); if(!dloc) return null;
+    let best=null,bestD=Infinity;
+    els.forEach((el)=>{ const n=el.__node; if(!n||n.id===dragId) return;
+      if(within(dloc.node,n.id)) return; // 自分の子孫の中には入れられない
+      const w=nodeWidth(n._depth), h=n._h||40;
+      if(cx<n._x-14||cx>n._x+w+14||cy<n._y-h/2-10||cy>n._y+h/2+10) return;
+      const d=Math.abs(cy-n._y)+Math.abs(cx-(n._x+w/2))*0.15;
+      if(d<bestD){ bestD=d; best=n; }
+    });
+    if(!best) return null;
+    const h=best._h||40, rel=(cy-(best._y-h/2))/h;
+    const canSib=!!(locate(best.id)||{}).parent; // 中心ノードには兄弟を作れない
+    let mode="child";
+    if(canSib&&rel<0.34) mode="before"; else if(canSib&&rel>0.66) mode="after";
+    return {id:best.id,node:best,mode};
+  }
+  function showDrop(hit,clientX,clientY){
+    clearDrop(); if(!hit) return;
+    if(hit.mode==="child"){ const el=els.get(hit.id); if(el) el.classList.add("drop-target"); }
+    else {
+      const n=hit.node, h=n._h||40;
+      dropLine=document.createElement("div"); dropLine.className="drop-line";
+      dropLine.style.left=n._x+"px"; dropLine.style.width=nodeWidth(n._depth)+"px";
+      dropLine.style.top=((hit.mode==="before")?(n._y-h/2-6):(n._y+h/2+3))+"px";
+      nodesLayer.appendChild(dropLine);
+    }
+    dropHint=document.createElement("div"); dropHint.className="drop-hint";
+    dropHint.textContent=hit.mode==="child"?"この中に入れる":(hit.mode==="before"?"すぐ上に入れる":"すぐ下に入れる");
+    document.body.appendChild(dropHint);
+    dropHint.style.left=Math.min(window.innerWidth-140,clientX+15)+"px"; dropHint.style.top=(clientY+17)+"px";
+  }
   nodesLayer.addEventListener("pointerdown",(e)=>{
     if(e.pointerType==="mouse"&&e.button!==0) return;
     const nodeDiv=e.target.closest(".node"); if(!nodeDiv) return;
@@ -1072,7 +1167,7 @@
     const id=nodeDiv.dataset.id; const el=els.get(id); if(!el) return;
     if(!selection.has(id)) clearSelection();
     const group=selection.has(id)&&selection.size>1;
-    drag={id,el,sx:e.clientX,sy:e.clientY,started:false,target:null,group};
+    drag={id,el,sx:e.clientX,sy:e.clientY,started:false,hit:null,group};
   });
   window.addEventListener("pointermove",(e)=>{
     if(!drag) return;
@@ -1086,14 +1181,15 @@
     const dx=(e.clientX-drag.sx)/zoom, dy=(e.clientY-drag.sy)/zoom;
     if(drag.group){ selection.forEach(sid=>{ const s=els.get(sid); if(s) s.style.transform=`translate(${dx}px,${dy}px)`; }); return; }
     drag.el.style.transform=`translate(${dx}px, ${dy}px)`;
-    const under=document.elementFromPoint(e.clientX,e.clientY); const tn=under&&under.closest(".node");
-    clearDrop(); drag.target=null;
-    if(tn&&tn!==drag.el){ const tid=tn.dataset.id; const dloc=locate(drag.id);
-      if(tid!==drag.id&&dloc&&!within(dloc.node,tid)){ tn.classList.add("drop-target"); drag.target=tid; } }
+    const c=toCanvas(e.clientX,e.clientY);
+    drag.hit=dropHitAt(c.x,c.y,drag.id);
+    const sig=drag.hit?(drag.hit.id+":"+drag.hit.mode):"";
+    if(sig!==drag.sig){ drag.sig=sig; showDrop(drag.hit,e.clientX,e.clientY); } // 変わったときだけ描き直す
+    else if(dropHint){ dropHint.style.left=Math.min(window.innerWidth-140,e.clientX+15)+"px"; dropHint.style.top=(e.clientY+17)+"px"; }
   });
   window.addEventListener("pointerup",()=>{
     if(!drag) return;
-    const started=drag.started, t=drag.target, el=drag.el, group=drag.group;
+    const started=drag.started, hit=drag.hit, el=drag.el, group=drag.group;
     if(group){ selection.forEach(sid=>{ const s=els.get(sid); if(s) s.style.pointerEvents=""; }); }
     else if(el) el.style.pointerEvents="";
     document.body.style.userSelect=""; clearDrop();
@@ -1103,12 +1199,12 @@
       if(group){ // 選択したノードをまとめて自由配置（子孫は親に付いて動くので重複移動しない）
         [...selection].forEach(sid=>{ if(!hasSelectedAncestor(sid)){ const loc=locate(sid); if(loc&&loc.parent){ loc.node.ox=(loc.node.ox||0)+ddx; loc.node.oy=(loc.node.oy||0)+ddy; } } });
         save(); render();
-      } else if(t){ reparent(drag.id,t); }
+      } else if(hit){ moveNode(drag.id,hit.id,hit.mode); }
       else { // 空きに落とす＝その場所へ自由配置（枝ごと移動）
         const loc=locate(drag.id);
         if(loc&&loc.parent){ loc.node.ox=(loc.node.ox||0)+ddx; loc.node.oy=(loc.node.oy||0)+ddy; }
         if(el){ el.style.transform=""; el.classList.remove("dragging"); }
-        save(); render();
+        save(); render(); toast("ここに置きました（「整列」で元の並びに戻せます）");
       }
     }
     drag=null;
@@ -1197,6 +1293,14 @@
     if(e.key==="Escape"){ closePop(); clearSelection(); return; }
     const mod=e.metaKey||e.ctrlKey; if(!mod) return;
     if(e.target&&e.target.closest&&e.target.closest("#cloud-modal")) return; // 入力欄では通常の取り消し
+    // 文字入力中でなくても ⌘/Ctrl+矢印で選択中のノードから移動できる
+    const arw=ARROW[e.key];
+    if(arw){
+      const inText=e.target&&e.target.closest&&(e.target.closest(".node-text")||e.target.closest(".sticky-text"));
+      if(!inText&&(view==="map"||view==="think")&&selectedId){ e.preventDefault();
+        if(e.shiftKey) moveByKey(selectedId,arw); else navDir(selectedId,arw); }
+      return;
+    }
     const k=e.key.toLowerCase();
     if(k==="z"){ e.preventDefault(); if(e.shiftKey) redo(); else undo(); }
     else if(k==="y"){ e.preventDefault(); redo(); }
