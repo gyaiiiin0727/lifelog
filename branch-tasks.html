@@ -80,8 +80,17 @@
     border-radius:999px; display:inline-flex; align-items:center; justify-content:center; margin-left:auto; }
   .theme-del:hover { color:var(--danger); border-color:var(--danger); }
   .theme-del svg { width:14px; height:14px; }
+  .jump-bar { flex-direction:column; align-items:stretch; gap:6px; }
   .jump-bar .theme-chip { color:var(--ink); }
+  .jump-bar .theme-chip.on { color:#fff; }
   .jump-bar .jb-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px; vertical-align:1px; }
+  .jb-row { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  /* 2段目＝選んだ大分類の中分類。1段目より控えめに */
+  .jb-row.sub { padding-left:10px; border-left:2px solid var(--border); }
+  .jb-row.sub .theme-chip { height:26px; font-size:12.5px; padding:0 11px; background:transparent; }
+  .jb-row.sub .theme-chip:hover { background:var(--surface-2); }
+  .jb-row.sub .theme-chip.on { background:var(--mc,var(--accent)); border-color:var(--mc,var(--accent)); }
+  .jb-empty { font-size:12px; color:var(--faint); }
 
   .views { flex:1; position:relative; overflow:hidden; display:flex; }
 
@@ -982,7 +991,8 @@
   }
 
   // ---- focus / selection ----
-  function selectNode(id){ if(selectedId&&els.has(selectedId)) els.get(selectedId).classList.remove("selected"); selectedId=id; if(els.has(id)) els.get(id).classList.add("selected"); }
+  function selectNode(id){ if(selectedId&&els.has(selectedId)) els.get(selectedId).classList.remove("selected"); selectedId=id; if(els.has(id)) els.get(id).classList.add("selected");
+    if(view==="map") renderJumpBar(); } // 選んだ大分類に合わせてジャンプバーを更新
   // 見た目の位置で上下左右の一番近いノードへ移動
   function navDir(id,dir){
     const cur=(locate(id)||{}).node; if(!cur) return false;
@@ -1655,17 +1665,44 @@
     if(e.target.closest("#theme-del")){ deleteTheme(); return; }
   });
 
+  let jumpBranchId=null;
+  // いま見ている大分類（選択中ノードの先祖をたどる。無ければ最後にバーで選んだもの）
+  function activeBranch(){
+    if(selectedId){ const p=pathTo(selectedId); if(p&&p.length>1) return p[1]; }
+    if(jumpBranchId){ const l=locate(jumpBranchId,state.root); if(l) return l.node; }
+    return null;
+  }
   function renderJumpBar(){
     const bar=$("#jump-bar"); if(!bar) return;
     const branches=state.root.children;
     if(!branches.length){ bar.innerHTML=""; return; }
-    bar.innerHTML=`<span class="tb-label">大分類へ移動</span>`+
-      branches.map(b=>`<button class="theme-chip" data-jb="${b.id}"><span class="jb-dot" style="background:${b.color||'var(--accent)'}"></span>${esc(b.text||"（無題）")}</button>`).join("");
+    const act=activeBranch();
+    const p=selectedId?pathTo(selectedId):null;
+    const actMidId=(p&&p.length>2&&p[2].type==="group")?p[2].id:null;
+    let h=`<div class="jb-row"><span class="tb-label">大分類へ移動</span>`+branches.map(b=>{
+      const col=b.color||"var(--accent)", on=!!act&&b.id===act.id;
+      return `<button class="theme-chip${on?" on":""}" data-jb="${b.id}"${on?` style="background:${col};border-color:${col}"`:""}>`+
+        `<span class="jb-dot" style="background:${on?"rgba(255,255,255,.9)":col}"></span>${esc(b.text||"（無題）")}</button>`;
+    }).join("")+`</div>`;
+    if(act){ // 2段目：選んだ大分類の中分類へ
+      const col=act.color||"var(--accent)";
+      const mids=act.children.filter(c=>c.type==="group");
+      h+=`<div class="jb-row sub" style="--mc:${col}"><span class="tb-label">${esc(act.text||"（無題）")} の中分類へ</span>`+
+        (mids.length
+          ? mids.map(m=>`<button class="theme-chip${m.id===actMidId?" on":""}" data-jb2="${m.id}">${esc(m.text||"（無題）")}</button>`).join("")
+          : `<span class="jb-empty">中分類はまだありません（大分類を選んで Tab で追加できます）</span>`)+`</div>`;
+    }
+    bar.innerHTML=h;
   }
-  function jumpToBranch(id){ const el=els.get(id); if(!el) return; const n=el.__node; selectNode(id);
+  function jumpToNode(id){
+    let el=els.get(id);
+    if(!el){ const p=pathTo(id); if(!p) return; p.forEach(n=>n.collapsed=false); save(); render(); el=els.get(id); } // 畳んであったら開いてから
+    if(!el) return; const n=el.__node; selectNode(id);
     stage.scrollLeft=Math.max(0, n._x*zoom - stage.clientWidth*0.28);
     stage.scrollTop=Math.max(0, n._y*zoom - stage.clientHeight/2); }
-  $("#jump-bar").addEventListener("click",(e)=>{ const c=e.target.closest("[data-jb]"); if(c) jumpToBranch(c.dataset.jb); });
+  $("#jump-bar").addEventListener("click",(e)=>{
+    const b=e.target.closest("[data-jb]"); if(b){ jumpBranchId=b.dataset.jb; jumpToNode(b.dataset.jb); renderJumpBar(); return; }
+    const m=e.target.closest("[data-jb2]"); if(m){ jumpToNode(m.dataset.jb2); renderJumpBar(); } });
 
   $("#tab-map").addEventListener("click",()=>setView("map"));
   $("#tab-think").addEventListener("click",()=>setView("think"));
