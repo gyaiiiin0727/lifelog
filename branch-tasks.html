@@ -45,6 +45,11 @@
   .btn:active { transform:translateY(1px); }
   .btn.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
   .btn.primary:hover { filter:brightness(1.07); background:var(--accent); }
+  /* Dayce（ジャーナル）への切り替え。ツールではなく「別アプリへ行く」とわかる見た目に */
+  .btn.app-switch { text-decoration:none; color:var(--accent); font-weight:700;
+    background:color-mix(in srgb,var(--accent) 10%, var(--surface)); border-color:color-mix(in srgb,var(--accent) 45%, var(--border-strong)); }
+  .btn.app-switch:hover { background:color-mix(in srgb,var(--accent) 18%, var(--surface)); border-color:var(--accent); }
+  .btn[hidden] { display:none; }
   .btn.icon { width:34px; padding:0; justify-content:center; }
   .btn svg { width:15px; height:15px; }
 
@@ -474,6 +479,10 @@
     </button>
   </div>
   <div class="toolbar">
+    <a class="btn app-switch" id="btn-journal" href="./" hidden title="Dayce（ジャーナル）に切り替え">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M5.5 4.5h11a1.5 1.5 0 0 1 1.5 1.5v13a1 1 0 0 1-1 1h-11a1.5 1.5 0 0 1 0-3H18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.5 8.5h6M8.5 11.5h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <span class="lbl">ジャーナル</span>
+    </a>
     <button class="btn" id="btn-cloud" title="クラウド同期">
       <svg viewBox="0 0 24 24" fill="none"><path d="M7 18a4 4 0 0 1-.5-7.97 5.5 5.5 0 0 1 10.6-1.02A3.75 3.75 0 0 1 17.5 18z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
       <span class="lbl" id="cloud-lbl">クラウド</span>
@@ -1666,6 +1675,9 @@
   $("#btn-help").addEventListener("click",()=>{ helpHidden=!helpHidden; $("#help").style.display=(view==="map"&&!helpHidden)?"":"none"; try{localStorage.setItem("branch.help",helpHidden?"0":"1");}catch(e){} });
   $("#btn-help-close").addEventListener("click",()=>{ helpHidden=true; $("#help").style.display="none"; try{localStorage.setItem("branch.help","0");}catch(e){} });
   try{ if(localStorage.getItem("branch.help")==="0") helpHidden=true; }catch(e){}
+  // ジャーナル（Dayce）への切り替えボタン：同じサイトに置いたときだけ表示する
+  (function(){ const b=$("#btn-journal"); if(!b) return; const h=location.hostname;
+    if(/(^|\.)dayce\.app$/.test(h)||h==="localhost"||h==="127.0.0.1") b.hidden=false; })();
   if(helpHidden) $("#help").style.display="none";
 
   // ---- export / import ----
