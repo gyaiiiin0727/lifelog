@@ -20826,6 +20826,10 @@ input, select, textarea,
       <span class="fab-icon">🏠</span>
       <span class="fab-label">ホーム</span>
     </button>
+    <button class="fab-sub fab-nav" id="fabBranch" type="button">
+      <span class="fab-icon">🌿</span>
+      <span class="fab-label">ブランチ</span>
+    </button>
     <button class="fab-sub" id="fabActivity" type="button">
       <span class="fab-icon">⏱️</span>
       <span class="fab-label">行動記録</span>
@@ -20969,6 +20973,12 @@ input, select, textarea,
   if (fabHome) fabHome.addEventListener('click', function() {
     closeFab();
     if (typeof window.switchTab === 'function') window.switchTab('home');
+  });
+  // タスク管理アプリ「ブランチ」へ（同じサイト内の別ページ）
+  var fabBranch = document.getElementById('fabBranch');
+  if (fabBranch) fabBranch.addEventListener('click', function() {
+    closeFab();
+    window.location.href = 'branch-tasks.html';
   });
 
   // 記録ボタン
