@@ -368,18 +368,44 @@
   .ol-head h3 { font-size:16px; font-weight:800; margin:0; flex:1; }
   .ol-head .ol-prog { font-size:12px; font-weight:700; color:var(--muted); background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:2px 9px; font-variant-numeric:tabular-nums; }
   .ol-card { padding:5px 0; }
-  .ol-row { display:flex; align-items:flex-start; gap:9px; padding:8px 15px; cursor:pointer; border-radius:8px; }
+  .ol-row { display:flex; align-items:flex-start; gap:9px; padding:8px 15px; border-radius:8px; }
   .ol-row:hover { background:var(--surface-2); }
   .ol-ico { flex:none; width:19px; height:19px; margin-top:1px; display:inline-flex; align-items:center; justify-content:center; color:var(--dc); }
   .ol-ico svg { width:15px; height:15px; }
-  .ol-body { flex:1; min-width:0; display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .ol-body { flex:1; min-width:0; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .ol-text { font-size:14px; line-height:1.45; }
-  .ol-chips { display:inline-flex; align-items:center; gap:5px; }
+  textarea.ol-text { flex:1 1 auto; min-width:90px; border:0; background:transparent; resize:none; color:var(--ink);
+    font-family:inherit; padding:0; margin:0; overflow:hidden; outline:none; cursor:text; }
+  textarea.ol-text::placeholder { color:var(--faint); }
   .ol-row.group .ol-text { font-weight:800; }
   .ol-row.group { border-left:3px solid color-mix(in srgb,var(--dc) 55%, transparent); margin:2px 0; border-radius:0 8px 8px 0; }
-  .ol-row.memo { background:color-mix(in srgb,var(--dc) 12%, var(--surface)); border-left:3px solid var(--dc); border-radius:0 8px 8px 0; margin:3px 8px 3px 0; }
-  .ol-row.memo .ol-text { font-weight:700; }
+  .ol-row.goal { background:color-mix(in srgb,var(--dc) 12%, var(--surface)); border-left:3px solid var(--dc); border-radius:0 8px 8px 0; margin:3px 8px 3px 0; }
+  .ol-row.goal .ol-text { font-weight:700; }
+  .ol-row.note .ol-text { color:var(--muted); font-weight:500; font-size:13px; }
   .ol-row.task.done .ol-text { text-decoration:line-through; color:var(--faint); }
+  /* 行の操作ボタン（ホバー/編集中に表示） */
+  .ol-tools { flex:none; display:none; align-items:center; gap:3px; }
+  .ol-row:hover .ol-tools, .ol-row:focus-within .ol-tools,
+  .ol-head:hover .ol-tools, .ol-head:focus-within .ol-tools { display:inline-flex; }
+  .ol-tools button { width:27px; height:27px; border:1px solid var(--border); background:var(--surface); color:var(--muted);
+    border-radius:7px; display:inline-flex; align-items:center; justify-content:center; }
+  .ol-tools button svg { width:13px; height:13px; }
+  .ol-tools button:hover { background:var(--surface-2); color:var(--ink); }
+  .ol-tools button.on { color:var(--flag); border-color:color-mix(in srgb,var(--flag) 45%, var(--border)); }
+  .ol-tools button.on svg { fill:var(--flag); }
+  .ol-tools button.lnk.on, .ol-tools button.rep.on, .ol-tools button.due.on { color:var(--accent); border-color:color-mix(in srgb,var(--accent) 45%, var(--border)); }
+  .ol-tools button.lnk.on svg, .ol-tools button.rep.on svg, .ol-tools button.due.on svg { fill:none; }
+  .ol-tools button.del:hover { color:var(--danger); border-color:var(--danger); }
+  .ol-htitle { flex:1; min-width:60px; border:0; background:transparent; resize:none; color:var(--ink); font-family:inherit;
+    font-size:16px; font-weight:800; line-height:1.4; padding:0; overflow:hidden; outline:none; cursor:text; }
+  .ol-add { display:inline-flex; align-items:center; gap:6px; margin:3px 15px 6px; padding:7px 12px; border:1px dashed var(--border-strong);
+    background:transparent; color:var(--muted); border-radius:9px; font-size:12.5px; font-weight:700; font-family:inherit; }
+  .ol-add:hover { border-color:var(--accent); color:var(--accent); }
+  .ol-add svg { width:13px; height:13px; }
+  .ol-newbranch { margin:4px 0 30px; }
+  .ol-hint { font-size:12.5px; color:var(--faint); margin:-10px 0 18px; line-height:1.7; }
+  .ol-hint kbd { font-family:inherit; font-size:11px; font-weight:700; background:var(--surface-2); border:1px solid var(--border);
+    border-radius:5px; padding:1px 5px; color:var(--muted); }
   .ol-row .dash-check { flex:none; }
   .ol-row.task.done .dash-check { background:var(--dc,var(--accent)); border-color:var(--dc,var(--accent)); }
   .ol-row.task.done .dash-check svg { opacity:1; }
@@ -1024,7 +1050,7 @@
     loc.node.collapsed=false; loc.node.children.push(child); pendingFocus=child.id; save(); render(); }
   function addChildBelow(id){ const loc=locate(id); if(!loc) return; const top=(loc.node===curRoot); const child=newNode("",defType(top)); child.below=true; if(top) child.color=pickColor();
     loc.node.collapsed=false; loc.node.children.push(child); pendingFocus=child.id; save(); render(); }
-  function addBranch(side){ if(view!=="map"&&view!=="think") setView("map"); const b=newNode("",isThink()?"idea":"group"); if(side==="left") b.side="left"; b.color=pickColor(); curRoot.collapsed=false; curRoot.children.push(b); pendingFocus=b.id; save(); render(); }
+  function addBranch(side){ if(view==="tasks"){ olAddBranch(); return; } if(view!=="map"&&view!=="think") setView("map"); const b=newNode("",isThink()?"idea":"group"); if(side==="left") b.side="left"; b.color=pickColor(); curRoot.collapsed=false; curRoot.children.push(b); pendingFocus=b.id; save(); render(); }
   function outdent(id){ const loc=locate(id); if(!loc||!loc.parent) return; const gpLoc=locate(loc.parent.id); if(!gpLoc||!gpLoc.parent) return;
     const gp=gpLoc.parent; const idx=loc.parent.children.indexOf(loc.node); loc.parent.children.splice(idx,1);
     const pIdx=gp.children.indexOf(loc.parent); gp.children.splice(pIdx+1,0,loc.node);
@@ -1242,7 +1268,7 @@
   function closePop(){ if(pop){ pop.p.remove(); pop.scrim.remove(); pop=null; } }
   function openColorMenu(node,anchor){
     openPop(anchor,`<div class="swatches">${PALETTE.map(c=>`<button class="swatch" style="background:${c}" data-color="${c}" aria-pressed="${c===node.color}"></button>`).join("")}</div>`,
-      (e)=>{ const sw=e.target.closest(".swatch"); if(!sw) return; node.color=sw.dataset.color; save(); closePop(); render(); });
+      (e)=>{ const sw=e.target.closest(".swatch"); if(!sw) return; node.color=sw.dataset.color; save(); closePop(); refresh(); });
   }
   function openRepeatMenu(node,anchor){
     const p=openPop(anchor,"",()=>{});
@@ -1277,7 +1303,7 @@
       <button data-t="group" class="${node.type==="group"?"on":""}">${ICON.folder}<span>中分類</span></button>
       <button data-t="goal" class="${node.type==="goal"?"on":""}">${ICON.target}<span>目標</span></button>
       <button data-t="memo" class="${node.type==="memo"?"on":""}">${ICON.memo}<span>メモ</span></button>
-    </div>`,(e)=>{ const b=e.target.closest("[data-t]"); if(!b) return; node.type=b.dataset.t; node.note=(node.type==="memo"||node.type==="goal"); save(); closePop(); render(); });
+    </div>`,(e)=>{ const b=e.target.closest("[data-t]"); if(!b) return; node.type=b.dataset.t; node.note=(node.type==="memo"||node.type==="goal"); save(); closePop(); refresh(); });
   }
   function openLinkMenu(node,anchor){
     const p=openPop(anchor,`<div class="link-menu">
@@ -1291,10 +1317,10 @@
     const inp=p.querySelector(".link-input"); setTimeout(()=>{ try{ inp.focus(); }catch(e){} },0);
     function commit(){ let v=(inp.value||"").trim();
       if(v&&!/^([a-z][a-z0-9+.-]*:)/i.test(v)) v="https://"+v; // スキーム無しはhttpsを補う
-      node.link=v||null; save(); closePop(); render(); }
+      node.link=v||null; save(); closePop(); refresh(); }
     p.querySelector(".link-save").addEventListener("click",commit);
     inp.addEventListener("keydown",(e)=>{ if(e.key==="Enter"&&!e.isComposing){ e.preventDefault(); commit(); } });
-    const cl=p.querySelector(".link-clear"); if(cl) cl.addEventListener("click",()=>{ node.link=null; save(); closePop(); render(); });
+    const cl=p.querySelector(".link-clear"); if(cl) cl.addEventListener("click",()=>{ node.link=null; save(); closePop(); refresh(); });
   }
   function openDueMenu(node,anchor){
     const p=openPop(anchor,`<div class="due-opts">
@@ -1582,46 +1608,141 @@
   function countTasksIn(node){ let dn=0,tn=0; (function w(n){ n.children.forEach(k=>{ if(k.type==="task"){ tn++; if(isDone(k)) dn++; } w(k); }); })(node); return {done:dn,total:tn}; }
   function olRow(node,depth,col){
     const pad=10+depth*20;
-    if(node.type==="task"){
-      const done=isDone(node); const chips=[];
+    const isTask=node.type==="task", isGoal=node.type==="goal", isMemo=node.type==="memo";
+    const done=isTask&&isDone(node);
+    const cls=isTask?`task ${done?"done":""} ${node.priority?"pri":""}`:isGoal?"goal":isMemo?"note":"group";
+    const lead=isTask?`<button class="dash-check" data-role="check" title="完了/未完了">${ICON.check}</button>`
+      :isGoal?`<span class="ol-ico">${ICON.target}</span>`
+      :isMemo?`<span class="ol-ico" style="color:var(--faint)">${ICON.memo}</span>`
+      :`<span class="ol-ico">${ICON.folder}</span>`;
+    const chips=[];
+    if(isTask){
       if(node.priority) chips.push(`<span class="meta-flag">${ICON.flag}</span>`);
-      if(node.repeat) chips.push(`<span class="chip cadence-chip" style="--col:${col}">${repeatLabel(node)}</span>`);
+      if(node.repeat) chips.push(`<span class="chip cadence-chip" style="--col:${col}">${ICON.repeat}${repeatLabel(node)}</span>`);
       if(node.due){ const dl=dueLabel(node.due); if(dl) chips.push(`<span class="chip due-chip ${dl.cls}">${dl.text}</span>`); }
-      if(node.link) chips.push(`<a class="chip link-chip" href="${esc(node.link)}" target="_blank" rel="noopener noreferrer" data-role="link" title="${esc(node.link)}">${ICON.link}リンク</a>`);
-      return `<div class="ol-row task ${done?"done":""} ${node.priority?"pri":""}" data-id="${node.id}" style="padding-left:${pad}px;--dc:${col}">
-        <button class="dash-check" data-role="check">${ICON.check}</button>
-        <div class="ol-body"><span class="ol-text">${esc(node.text)||"（無題）"}</span><span class="ol-chips">${chips.join("")}</span></div></div>`;
     }
-    if(node.type==="goal"){
-      return `<div class="ol-row goal" data-id="${node.id}" style="padding-left:${pad}px;--dc:${col}">
-        <span class="ol-ico">${ICON.target}</span><div class="ol-body"><span class="ol-text">${esc(node.text)||"（無題）"}</span></div></div>`;
+    if(node.link) chips.push(`<a class="chip link-chip" href="${esc(node.link)}" target="_blank" rel="noopener noreferrer" data-role="link" title="${esc(node.link)}">${ICON.link}リンク</a>`);
+    const ph=isTask?"やること":isGoal?"目標":isMemo?"メモ":"中分類の名前";
+    const t=[];
+    if(isTask){
+      t.push(`<button class="${node.priority?"on":""}" data-act="flag" title="優先フラグ">${ICON.flag}</button>`);
+      t.push(`<button class="rep ${node.repeat?"on":""}" data-act="repeat" title="くり返し設定">${ICON.repeat}</button>`);
+      t.push(`<button class="due ${node.due?"on":""}" data-act="due" title="予定日">${ICON.cal}</button>`);
     }
-    if(node.type==="memo"){
-      return `<div class="ol-row note" data-id="${node.id}" style="padding-left:${pad}px;--dc:${col}">
-        <span class="ol-ico" style="color:var(--faint)">${ICON.memo}</span><div class="ol-body"><span class="ol-text" style="color:var(--muted);font-weight:500">${esc(node.text)||"（無題）"}</span></div></div>`;
-    }
-    return `<div class="ol-row group" data-id="${node.id}" style="padding-left:${pad}px;--dc:${col}">
-      <span class="ol-ico">${ICON.folder}</span><div class="ol-body"><span class="ol-text">${esc(node.text)||"（無題）"}</span></div></div>`;
+    t.push(`<button class="type" data-act="type" title="種類（タスク／中分類／目標／メモ）">${ICON.layers}</button>`);
+    t.push(`<button class="lnk ${node.link?"on":""}" data-act="link" title="リンクを設定">${ICON.link}</button>`);
+    t.push(`<button data-act="add" title="この下に子を追加">${ICON.plus}</button>`);
+    t.push(`<button data-act="map" title="マインドマップで開く">${ICON.exp}</button>`);
+    t.push(`<button class="del" data-act="del" title="削除">${ICON.trash}</button>`);
+    return `<div class="ol-row ${cls}" data-id="${node.id}" style="padding-left:${pad}px;--dc:${col}">
+      ${lead}
+      <div class="ol-body"><textarea class="ol-text" rows="1" spellcheck="false" data-role="oltext" placeholder="${ph}">${esc(node.text)}</textarea><span class="ol-chips">${chips.join("")}</span></div>
+      <div class="ol-tools">${t.join("")}</div></div>`;
   }
   function renderTasks(){
     const accent=getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
-    let html=`<div class="dash-inner"><h1 class="dash-title">タスク</h1>`;
-    if(!state.root.children.length){ html+=`<div class="dash-blank"><h2>まだ項目がありません</h2><p>「マインドマップ」で項目を追加すると、ここに階層つきのタスク一覧が出ます。</p></div></div>`; tasksView.innerHTML=html; return; }
+    let html=`<div class="dash-inner"><h1 class="dash-title">タスク</h1>
+      <p class="ol-hint">文字をクリックでそのまま編集。<kbd>Enter</kbd> 下に追加／<kbd>Tab</kbd> 子を追加／<kbd>⇧Tab</kbd> 一段上げる／空で<kbd>Backspace</kbd> 削除</p>`;
+    if(!state.root.children.length){
+      html+=`<div class="dash-blank"><h2>まだ項目がありません</h2><p>下のボタンか「マインドマップ」で項目を追加できます。</p></div>
+        <button class="ol-add ol-newbranch" data-role="olnewbranch">${ICON.plus}<span>大分類を追加</span></button></div>`;
+      tasksView.innerHTML=html; return;
+    }
     state.root.children.forEach(branch=>{
       const col=branch.color||accent; const pr=countTasksIn(branch);
       let rows=""; (function walk(node,depth){ for(const k of node.children){ rows+=olRow(k,depth,col); walk(k,depth+1); } })(branch,0);
-      if(!rows) rows=`<div class="dash-empty">中身はまだありません。</div>`;
-      html+=`<div class="dash-section"><div class="ol-head" style="--dc:${col}">
-          <span class="ol-hdot"></span><h3>${esc(branch.text)||"（無題）"}</h3><span class="ol-prog">${pr.done}/${pr.total}</span></div>
-          <div class="dash-card ol-card">${rows}</div></div>`;
+      html+=`<div class="dash-section"><div class="ol-head" data-id="${branch.id}" style="--dc:${col}">
+          <span class="ol-hdot"></span>
+          <textarea class="ol-htitle" rows="1" spellcheck="false" data-role="oltext" placeholder="項目名（大分類）">${esc(branch.text)}</textarea>
+          <span class="ol-prog">${pr.done}/${pr.total}</span>
+          <div class="ol-tools">
+            <button data-act="color" title="色を変える">${ICON.color}</button>
+            <button data-act="add" title="タスクを追加">${ICON.plus}</button>
+            <button data-act="map" title="マインドマップで開く">${ICON.exp}</button>
+            <button class="del" data-act="del" title="削除">${ICON.trash}</button>
+          </div></div>
+          <div class="dash-card ol-card">${rows}
+            <button class="ol-add" data-role="oladd" data-parent="${branch.id}">${ICON.plus}<span>タスクを追加</span></button>
+          </div></div>`;
     });
-    html+=`</div>`; tasksView.innerHTML=html;
+    html+=`<button class="ol-add ol-newbranch" data-role="olnewbranch">${ICON.plus}<span>大分類を追加</span></button></div>`;
+    tasksView.innerHTML=html;
+    tasksView.querySelectorAll("textarea").forEach(olGrow);
+    if(olFocus){ const id=olFocus; olFocus=null; olFocusNode(id); }
   }
+  // ---- タスクページでの編集 ----
+  let olFocus=null;
+  function olGrow(ta){ ta.style.height="auto"; ta.style.height=ta.scrollHeight+"px"; }
+  function olLocate(id){ return locate(id,state.root); }
+  function olFocusNode(id){ const ta=tasksView.querySelector(`[data-id="${id}"] textarea`); if(!ta) return;
+    ta.focus(); const v=ta.value; try{ ta.setSelectionRange(v.length,v.length); }catch(e){}
+    ta.scrollIntoView({block:"nearest"}); }
+  function olAddChild(id){ const loc=olLocate(id); if(!loc) return;
+    const child=newNode("","task"); loc.node.collapsed=false; loc.node.children.push(child);
+    olFocus=child.id; save(); renderTasks(); }
+  function olAddSibling(id){ const loc=olLocate(id); if(!loc) return;
+    if(!loc.parent){ olAddBranch(); return; }
+    if(loc.parent===state.root){ olAddBranch(); return; }
+    const sib=newNode("", loc.node.type==="group"?"group":"task"); sib.below=loc.node.below;
+    const i=loc.parent.children.indexOf(loc.node); loc.parent.children.splice(i+1,0,sib);
+    olFocus=sib.id; save(); renderTasks(); }
+  function olOutdent(id){ const loc=olLocate(id); if(!loc||!loc.parent) return;
+    const pl=olLocate(loc.parent.id); if(!pl||!pl.parent) return; // 親が最上位なら何もしない
+    const gp=pl.parent;
+    const i=loc.parent.children.indexOf(loc.node); loc.parent.children.splice(i,1);
+    const j=gp.children.indexOf(loc.parent); gp.children.splice(j+1,0,loc.node);
+    if(gp===state.root){ if(!loc.node.color) loc.node.color=pickColor(state.root); loc.node.type="group"; }
+    olFocus=id; save(); renderTasks(); }
+  function olDelete(id){ const loc=olLocate(id); if(!loc||!loc.parent) return;
+    if(loc.node.children.length&&!confirm(`「${loc.node.text||"（無題）"}」と、その中身も削除します。よろしいですか？`)) return;
+    const i=loc.parent.children.indexOf(loc.node);
+    const focusTo=i>0?loc.parent.children[i-1]:(loc.parent===state.root?null:loc.parent);
+    loc.parent.children.splice(i,1);
+    olFocus=focusTo?focusTo.id:null; save(); renderTasks(); }
+  function olAddBranch(){ const b=newNode("","group"); b.color=pickColor(state.root); state.root.children.push(b);
+    olFocus=b.id; save(); renderTasks(); }
+  function olMove(id,dir){ const list=[...tasksView.querySelectorAll('[data-role="oltext"]')];
+    const cur=tasksView.querySelector(`[data-id="${id}"] textarea`); const i=list.indexOf(cur);
+    const next=list[i+dir]; if(!next) return false; next.focus();
+    try{ next.setSelectionRange(next.value.length,next.value.length); }catch(e){}
+    next.scrollIntoView({block:"nearest"}); return true; }
+
+  tasksView.addEventListener("input",(e)=>{ const ta=e.target.closest('[data-role="oltext"]'); if(!ta) return;
+    const host=ta.closest("[data-id]"); if(!host) return; const {node}=olLocate(host.dataset.id)||{}; if(!node) return;
+    node.text=ta.value; olGrow(ta); saveDebounced(); });
+  tasksView.addEventListener("change",(e)=>{ if(e.target.closest('[data-role="oltext"]')) save(); });
+  tasksView.addEventListener("keydown",(e)=>{
+    const ta=e.target.closest('[data-role="oltext"]'); if(!ta) return;
+    if(e.isComposing||e.keyCode===229) return; // IME変換中は無視
+    const host=ta.closest("[data-id]"); if(!host) return; const id=host.dataset.id;
+    if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); olAddSibling(id); return; }
+    if(e.key==="Tab"&&!e.shiftKey){ e.preventDefault(); olAddChild(id); return; }
+    if(e.key==="Tab"&&e.shiftKey){ e.preventDefault(); olOutdent(id); return; }
+    if(e.key==="Backspace"&&ta.value===""){ e.preventDefault(); olDelete(id); return; }
+    const atStart=ta.selectionStart===0&&ta.selectionEnd===0;
+    const atEnd=ta.selectionStart===ta.value.length&&ta.selectionEnd===ta.value.length;
+    if(e.key==="ArrowDown"&&atEnd){ if(olMove(id,1)) e.preventDefault(); return; }
+    if(e.key==="ArrowUp"&&atStart){ if(olMove(id,-1)) e.preventDefault(); return; }
+  });
   tasksView.addEventListener("click",(e)=>{
     if(e.target.closest('[data-role="link"]')) return; // リンクはそのまま開く
-    const row=e.target.closest(".ol-row"); if(!row) return; const id=row.dataset.id;
-    if(e.target.closest('[data-role="check"]')){ const {node}=locate(id,state.root)||{}; if(node){ applyToggle(node); save(); renderTasks(); } return; }
-    openInMap(id);
+    const add=e.target.closest('[data-role="oladd"]'); if(add){ olAddChild(add.dataset.parent); return; }
+    if(e.target.closest('[data-role="olnewbranch"]')){ olAddBranch(); return; }
+    const host=e.target.closest("[data-id]"); if(!host) return; const id=host.dataset.id;
+    if(e.target.closest('[data-role="check"]')){ const {node}=olLocate(id)||{}; if(node){ applyToggle(node); save(); renderTasks(); } return; }
+    const act=e.target.closest("[data-act]");
+    if(act){ const a=act.dataset.act; const {node}=olLocate(id)||{}; if(!node) return;
+      if(a==="flag"){ node.priority=!node.priority; save(); renderTasks(); }
+      else if(a==="repeat"){ openRepeatMenu(node,act); }
+      else if(a==="due"){ openDueMenu(node,act); }
+      else if(a==="link"){ openLinkMenu(node,act); }
+      else if(a==="type"){ openTypeMenu(node,act); }
+      else if(a==="color"){ openColorMenu(node,act); }
+      else if(a==="add"){ olAddChild(id); }
+      else if(a==="map"){ openInMap(id); }
+      else if(a==="del"){ olDelete(id); }
+      return; }
+    if(!e.target.closest('[data-role="oltext"]')){ const ta=host.querySelector('[data-role="oltext"]'); if(ta) ta.focus(); }
   });
 
   // ---- view switching ----
