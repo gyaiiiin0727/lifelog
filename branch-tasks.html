@@ -403,6 +403,28 @@
   .ol-add:hover { border-color:var(--accent); color:var(--accent); }
   .ol-add svg { width:13px; height:13px; }
   .ol-newbranch { margin:4px 0 30px; }
+  /* 折りたたみ（項目を隠す） */
+  .ol-caret { flex:none; width:20px; height:20px; margin-top:1px; border:0; background:transparent; color:var(--faint);
+    border-radius:5px; display:inline-flex; align-items:center; justify-content:center; }
+  .ol-caret:hover { background:var(--surface-2); color:var(--ink); }
+  .ol-caret svg { width:13px; height:13px; transition:transform .15s; }
+  .ol-caret.closed svg { transform:rotate(-90deg); }
+  .ol-caret-sp { flex:none; width:20px; }
+  .ol-head .ol-caret { width:22px; height:22px; margin-top:0; }
+  .ol-row.folded { background:var(--surface-2); }
+  .ol-foldall { height:28px; padding:0 11px; border:1px solid var(--border-strong); background:var(--surface); color:var(--muted);
+    border-radius:999px; font-size:12px; font-weight:700; font-family:inherit; margin:-8px 0 16px; display:inline-flex; align-items:center; gap:5px; }
+  .ol-foldall:hover { border-color:var(--faint); color:var(--ink); }
+  .ol-foldall svg { width:12px; height:12px; }
+  .ol-topbar { display:flex; align-items:center; gap:7px; margin:-8px 0 16px; flex-wrap:wrap; }
+  .ol-topbar .ol-foldall { margin:0; }
+  .ol-dot { width:7px; height:7px; border-radius:50%; background:var(--dc,var(--accent)); display:inline-block; }
+  .ol-row.idea .ol-text { font-weight:600; }
+  .ol-row.idea.pri { background:color-mix(in srgb,var(--flag) 11%, transparent); box-shadow:inset 3px 0 0 var(--flag); }
+  .tb-seg { display:inline-flex; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:2px; gap:2px; margin-left:4px; }
+  .tb-seg button { height:26px; padding:0 11px; border:0; background:transparent; color:var(--muted);
+    font-size:12px; font-weight:700; border-radius:999px; font-family:inherit; }
+  .tb-seg button.on { background:var(--surface); color:var(--ink); box-shadow:var(--shadow-sm); }
   .ol-hint { font-size:12.5px; color:var(--faint); margin:-10px 0 18px; line-height:1.7; }
   .ol-hint kbd { font-family:inherit; font-size:11px; font-weight:700; background:var(--surface-2); border:1px solid var(--border);
     border-radius:5px; padding:1px 5px; color:var(--muted); }
@@ -534,7 +556,7 @@
     <button class="btn icon" id="btn-sticky" title="付箋メモを貼る（マインドマップ）">
       <svg viewBox="0 0 24 24" fill="none"><path d="M5 4h14v10l-5 5H5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 19v-5h5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
     </button>
-    <button class="btn icon" id="btn-tidy" title="自動整列に戻す（自由配置をリセット）">
+    <button class="btn icon" id="btn-tidy" title="横並びに整列（自由配置と「真下に子」をリセット）">
       <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h9M4 12h13M4 18h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M18 15l3 3-3 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
     <button class="btn primary" id="btn-add-branch">
@@ -1411,10 +1433,17 @@
     if(sresize){ save(); relayout(); sresize=null; }
     if(sdrag){ sdrag.el.classList.remove("dragging"); save(); relayout(); sdrag=null; } });
   $("#btn-sticky").addEventListener("click",addSticky);
+  // 整列＝自由配置を解除し、子をすべて「横」に戻して、きれいな横並びのマインドマップにする
   $("#btn-tidy").addEventListener("click",()=>{
     if(view!=="map"&&view!=="think"){ setView("map"); }
-    let moved=false; (function w(n){ if(n.ox||n.oy){ n.ox=0; n.oy=0; moved=true; } n.children.forEach(w); })(curRoot);
-    if(moved){ needCenter=true; save(); render(); toast("自動整列に戻しました"); } else { toast("自由配置はありません"); }
+    let changed=false;
+    (function w(n){
+      if(n.ox||n.oy){ n.ox=0; n.oy=0; changed=true; }
+      if(n.below){ n.below=false; changed=true; }   // 真下に積んだ子も横並びに
+      n.children.forEach(w);
+    })(curRoot);
+    if(changed){ needCenter=true; save(); render(); toast("横並びに整列しました（⌘/Ctrl+Z で元に戻せます）"); }
+    else { toast("すでに横並びに整列されています"); }
   });
 
   // ---- zoom ----
@@ -1608,10 +1637,16 @@
   function countTasksIn(node){ let dn=0,tn=0; (function w(n){ n.children.forEach(k=>{ if(k.type==="task"){ tn++; if(isDone(k)) dn++; } w(k); }); })(node); return {done:dn,total:tn}; }
   function olRow(node,depth,col){
     const pad=10+depth*20;
-    const isTask=node.type==="task", isGoal=node.type==="goal", isMemo=node.type==="memo";
+    const isIdea=node.type==="idea";
+    const isTask=node.type==="task"&&!isIdea, isGoal=node.type==="goal", isMemo=node.type==="memo";
     const done=isTask&&isDone(node);
-    const cls=isTask?`task ${done?"done":""} ${node.priority?"pri":""}`:isGoal?"goal":isMemo?"note":"group";
-    const lead=isTask?`<button class="dash-check" data-role="check" title="完了/未完了">${ICON.check}</button>`
+    const kids=node.children.length, folded=kids&&olIsFold(node.id);
+    const cls=(isIdea?`idea${node.priority?" pri":""}`:isTask?`task ${done?"done":""} ${node.priority?"pri":""}`:isGoal?"goal":isMemo?"note":"group")+(folded?" folded":"");
+    const caret=kids
+      ? `<button class="ol-caret ${folded?"closed":""}" data-role="olfold" title="${folded?"開く":"畳む"}">${ICON.chevron}</button>`
+      : `<span class="ol-caret-sp"></span>`;
+    const lead=isIdea?`<span class="ol-ico"><span class="ol-dot"></span></span>`
+      :isTask?`<button class="dash-check" data-role="check" title="完了/未完了">${ICON.check}</button>`
       :isGoal?`<span class="ol-ico">${ICON.target}</span>`
       :isMemo?`<span class="ol-ico" style="color:var(--faint)">${ICON.memo}</span>`
       :`<span class="ol-ico">${ICON.folder}</span>`;
@@ -1622,68 +1657,131 @@
       if(node.due){ const dl=dueLabel(node.due); if(dl) chips.push(`<span class="chip due-chip ${dl.cls}">${dl.text}</span>`); }
     }
     if(node.link) chips.push(`<a class="chip link-chip" href="${esc(node.link)}" target="_blank" rel="noopener noreferrer" data-role="link" title="${esc(node.link)}">${ICON.link}リンク</a>`);
-    const ph=isTask?"やること":isGoal?"目標":isMemo?"メモ":"中分類の名前";
+    if(isIdea&&node.priority) chips.unshift(`<span class="meta-flag">${ICON.flag}</span>`);
+    if(folded) chips.push(`<span class="chip count-chip">${countIn(node)}件</span>`);
+    const ph=isIdea?"アイデア":isTask?"やること":isGoal?"目標":isMemo?"メモ":"中分類の名前";
     const t=[];
     if(isTask){
       t.push(`<button class="${node.priority?"on":""}" data-act="flag" title="優先フラグ">${ICON.flag}</button>`);
       t.push(`<button class="rep ${node.repeat?"on":""}" data-act="repeat" title="くり返し設定">${ICON.repeat}</button>`);
       t.push(`<button class="due ${node.due?"on":""}" data-act="due" title="予定日">${ICON.cal}</button>`);
     }
-    t.push(`<button class="type" data-act="type" title="種類（タスク／中分類／目標／メモ）">${ICON.layers}</button>`);
+    if(isIdea) t.push(`<button class="${node.priority?"on":""}" data-act="flag" title="フラグで目立たせる">${ICON.flag}</button>`);
+    else t.push(`<button class="type" data-act="type" title="種類（タスク／中分類／目標／メモ）">${ICON.layers}</button>`);
     t.push(`<button class="lnk ${node.link?"on":""}" data-act="link" title="リンクを設定">${ICON.link}</button>`);
     t.push(`<button data-act="add" title="この下に子を追加">${ICON.plus}</button>`);
     t.push(`<button data-act="map" title="マインドマップで開く">${ICON.exp}</button>`);
     t.push(`<button class="del" data-act="del" title="削除">${ICON.trash}</button>`);
     return `<div class="ol-row ${cls}" data-id="${node.id}" style="padding-left:${pad}px;--dc:${col}">
-      ${lead}
+      ${caret}${lead}
       <div class="ol-body"><textarea class="ol-text" rows="1" spellcheck="false" data-role="oltext" placeholder="${ph}">${esc(node.text)}</textarea><span class="ol-chips">${chips.join("")}</span></div>
       <div class="ol-tools">${t.join("")}</div></div>`;
   }
   function renderTasks(){
     const accent=getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
-    let html=`<div class="dash-inner"><h1 class="dash-title">タスク</h1>
-      <p class="ol-hint">文字をクリックでそのまま編集。<kbd>Enter</kbd> 下に追加／<kbd>Tab</kbd> 子を追加／<kbd>⇧Tab</kbd> 一段上げる／空で<kbd>Backspace</kbd> 削除</p>`;
-    if(!state.root.children.length){
-      html+=`<div class="dash-blank"><h2>まだ項目がありません</h2><p>下のボタンか「マインドマップ」で項目を追加できます。</p></div>
-        <button class="ol-add ol-newbranch" data-role="olnewbranch">${ICON.plus}<span>大分類を追加</span></button></div>`;
+    const think=olIsThink(), R=olRootNode();
+    const title=think?(R.text||"（無題のテーマ）"):"タスク";
+    const addLabel=think?"枝を追加":"大分類を追加";
+    const childLabel=think?"アイデアを追加":"タスクを追加";
+    const tools=`<div class="ol-topbar">
+        <button class="ol-foldall" data-role="olcopy" title="階層つきのテキストとしてコピー">${ICON.memo}<span>コピー</span></button>
+        ${think?`<button class="ol-foldall" data-role="olmapmode" title="マップ表示に戻す">${ICON.exp}<span>マップ表示</span></button>`:""}
+      </div>`;
+    let html=`<div class="dash-inner"><h1 class="dash-title">${esc(title)}</h1>
+      <p class="ol-hint">文字をクリックでそのまま編集。<kbd>Enter</kbd> 下に追加／<kbd>Tab</kbd> 子を追加／<kbd>⇧Tab</kbd> 一段上げる／空で<kbd>Backspace</kbd> 削除</p>${tools}`;
+    if(!R.children.length){
+      html+=`<div class="dash-blank"><h2>まだ${think?"アイデア":"項目"}がありません</h2><p>下のボタンか「${think?"思考マップ":"マインドマップ"}」で追加できます。</p></div>
+        <button class="ol-add ol-newbranch" data-role="olnewbranch">${ICON.plus}<span>${addLabel}</span></button></div>`;
       tasksView.innerHTML=html; return;
     }
-    state.root.children.forEach(branch=>{
-      const col=branch.color||accent; const pr=countTasksIn(branch);
-      let rows=""; (function walk(node,depth){ for(const k of node.children){ rows+=olRow(k,depth,col); walk(k,depth+1); } })(branch,0);
+    const anyOpen=R.children.some(b=>!olIsFold(b.id));
+    html+=`<button class="ol-foldall" data-role="olfoldall">${ICON.chevron}<span>${anyOpen?"すべて畳む":"すべて開く"}</span></button>`;
+    R.children.forEach(branch=>{
+      const col=branch.color||accent; const bFold=olIsFold(branch.id);
+      const prog=think?`${countIn(branch)}件`:(()=>{ const pr=countTasksIn(branch); return `${pr.done}/${pr.total}`; })();
+      let rows=""; (function walk(node,depth){ if(olIsFold(node.id)) return;
+        for(const k of node.children){ rows+=olRow(k,depth,col); walk(k,depth+1); } })(branch,0);
+      const body=bFold?"":`<div class="dash-card ol-card">${rows}
+            <button class="ol-add" data-role="oladd" data-parent="${branch.id}">${ICON.plus}<span>${childLabel}</span></button>
+          </div>`;
       html+=`<div class="dash-section"><div class="ol-head" data-id="${branch.id}" style="--dc:${col}">
+          <button class="ol-caret ${bFold?"closed":""}" data-role="olfold" title="${bFold?"開く":"畳む"}">${ICON.chevron}</button>
           <span class="ol-hdot"></span>
-          <textarea class="ol-htitle" rows="1" spellcheck="false" data-role="oltext" placeholder="項目名（大分類）">${esc(branch.text)}</textarea>
-          <span class="ol-prog">${pr.done}/${pr.total}</span>
+          <textarea class="ol-htitle" rows="1" spellcheck="false" data-role="oltext" placeholder="${think?"メインの枝":"項目名（大分類）"}">${esc(branch.text)}</textarea>
+          <span class="ol-prog">${prog}</span>
           <div class="ol-tools">
             <button data-act="color" title="色を変える">${ICON.color}</button>
-            <button data-act="add" title="タスクを追加">${ICON.plus}</button>
-            <button data-act="map" title="マインドマップで開く">${ICON.exp}</button>
+            <button data-act="add" title="${childLabel}">${ICON.plus}</button>
+            <button data-act="map" title="${think?"思考マップで開く":"マインドマップで開く"}">${ICON.exp}</button>
             <button class="del" data-act="del" title="削除">${ICON.trash}</button>
           </div></div>
-          <div class="dash-card ol-card">${rows}
-            <button class="ol-add" data-role="oladd" data-parent="${branch.id}">${ICON.plus}<span>タスクを追加</span></button>
-          </div></div>`;
+          ${body}</div>`;
     });
-    html+=`<button class="ol-add ol-newbranch" data-role="olnewbranch">${ICON.plus}<span>大分類を追加</span></button></div>`;
+    html+=`<button class="ol-add ol-newbranch" data-role="olnewbranch">${ICON.plus}<span>${addLabel}</span></button></div>`;
     tasksView.innerHTML=html;
     tasksView.querySelectorAll("textarea").forEach(olGrow);
     if(olFocus){ const id=olFocus; olFocus=null; olFocusNode(id); }
   }
+  // ---- 階層つきテキストとしてコピー（メモアプリに貼りやすい形）----
+  function outlineText(){
+    const think=olIsThink(), R=olRootNode(); const lines=[];
+    if(R.text) lines.push(R.text);
+    (function w(node,depth){
+      if(olIsFold(node.id)) { return; }
+      node.children.forEach(k=>{
+        const pad="  ".repeat(depth);
+        let mark="- ";
+        if(!think&&k.type==="task") mark=isDone(k)?"- [x] ":"- [ ] ";
+        const meta=[];
+        if(k.type==="task"){ if(k.repeat) meta.push(repeatLabel(k)); if(k.due){ const dl=dueLabel(k.due); if(dl) meta.push(dl.text); } }
+        if(k.link) meta.push(k.link);
+        lines.push(pad+mark+(k.text||"（無題）")+(meta.length?"  （"+meta.join("・")+"）":""));
+        w(k,depth+1);
+      });
+    })(R,0);
+    return lines.join("\n");
+  }
+  async function copyOutline(){
+    const text=outlineText();
+    try{ await navigator.clipboard.writeText(text); toast("コピーしました（メモに貼り付けできます）"); return; }catch(e){}
+    try{ // クリップボードAPIが使えない環境向けのフォールバック
+      const ta=document.createElement("textarea"); ta.value=text;
+      ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta);
+      ta.select(); const ok=document.execCommand("copy"); ta.remove();
+      toast(ok?"コピーしました（メモに貼り付けできます）":"コピーできませんでした");
+    }catch(e){ toast("コピーできませんでした"); }
+  }
+  // ---- タスクページの折りたたみ（表示の好みなので state には入れない＝同期を増やさない）----
+  const OL_FOLD_KEY="branch.tasks.fold";
+  let olFold=(()=>{ try{ const a=JSON.parse(localStorage.getItem(OL_FOLD_KEY)||"[]"); return new Set(Array.isArray(a)?a:[]); }catch(e){ return new Set(); } })();
+  function olFoldSave(){ try{ localStorage.setItem(OL_FOLD_KEY,JSON.stringify([...olFold])); }catch(e){} }
+  function olIsFold(id){ return olFold.has(id); }
+  function olToggleFold(id){ if(olFold.has(id)) olFold.delete(id); else olFold.add(id); olFoldSave(); renderTasks(); }
+  function olUnfold(id){ if(olFold.delete(id)) olFoldSave(); }
+  function countIn(node){ let n=0; (function w(x){ x.children.forEach(k=>{ n++; w(k); }); })(node); return n; }
+  function olFoldAll(fold){ olFold=new Set();
+    if(fold){ olRootNode().children.forEach(b=>olFold.add(b.id)); }
+    olFoldSave(); renderTasks(); }
+
   // ---- タスクページでの編集 ----
   let olFocus=null;
   function olGrow(ta){ ta.style.height="auto"; ta.style.height=ta.scrollHeight+"px"; }
-  function olLocate(id){ return locate(id,state.root); }
+  // アウトライン（リスト表示）が扱う木：タスク＝state.root／思考マップ＝いま選んでいるテーマ
+  function olRootNode(){ return (view==="think")?state.thoughts[state.thoughtIdx]:state.root; }
+  function olIsThink(){ return view==="think"; }
+  function olLocate(id){ return locate(id,olRootNode()); }
   function olFocusNode(id){ const ta=tasksView.querySelector(`[data-id="${id}"] textarea`); if(!ta) return;
     ta.focus(); const v=ta.value; try{ ta.setSelectionRange(v.length,v.length); }catch(e){}
     ta.scrollIntoView({block:"nearest"}); }
   function olAddChild(id){ const loc=olLocate(id); if(!loc) return;
-    const child=newNode("","task"); loc.node.collapsed=false; loc.node.children.push(child);
+    const child=newNode("",olIsThink()?"idea":"task"); loc.node.collapsed=false; loc.node.children.push(child);
+    olUnfold(id); // 畳んでいたら開いて、追加した行が見えるように
     olFocus=child.id; save(); renderTasks(); }
   function olAddSibling(id){ const loc=olLocate(id); if(!loc) return;
     if(!loc.parent){ olAddBranch(); return; }
-    if(loc.parent===state.root){ olAddBranch(); return; }
-    const sib=newNode("", loc.node.type==="group"?"group":"task"); sib.below=loc.node.below;
+    if(loc.parent===olRootNode()){ olAddBranch(); return; }
+    olUnfold(loc.parent.id);
+    const sib=newNode("", olIsThink()?"idea":(loc.node.type==="group"?"group":"task")); sib.below=loc.node.below;
     const i=loc.parent.children.indexOf(loc.node); loc.parent.children.splice(i+1,0,sib);
     olFocus=sib.id; save(); renderTasks(); }
   function olOutdent(id){ const loc=olLocate(id); if(!loc||!loc.parent) return;
@@ -1691,15 +1789,21 @@
     const gp=pl.parent;
     const i=loc.parent.children.indexOf(loc.node); loc.parent.children.splice(i,1);
     const j=gp.children.indexOf(loc.parent); gp.children.splice(j+1,0,loc.node);
-    if(gp===state.root){ if(!loc.node.color) loc.node.color=pickColor(state.root); loc.node.type="group"; }
+    if(gp===olRootNode()){ if(!loc.node.color) loc.node.color=pickColor(gp); loc.node.type=olIsThink()?"idea":"group"; }
     olFocus=id; save(); renderTasks(); }
   function olDelete(id){ const loc=olLocate(id); if(!loc||!loc.parent) return;
     if(loc.node.children.length&&!confirm(`「${loc.node.text||"（無題）"}」と、その中身も削除します。よろしいですか？`)) return;
     const i=loc.parent.children.indexOf(loc.node);
-    const focusTo=i>0?loc.parent.children[i-1]:(loc.parent===state.root?null:loc.parent);
+    const focusTo=i>0?loc.parent.children[i-1]:(loc.parent===olRootNode()?null:loc.parent);
     loc.parent.children.splice(i,1);
     olFocus=focusTo?focusTo.id:null; save(); renderTasks(); }
-  function olAddBranch(){ const b=newNode("","group"); b.color=pickColor(state.root); state.root.children.push(b);
+  // リストの行から、その木のマップ表示へジャンプ
+  function olOpenInMap(id){
+    if(olIsThink()){ const p=pathTo(id,olRootNode()); if(p) p.forEach(n=>n.collapsed=false);
+      pendingFocus=id; save(); setThinkList(false); return; }
+    openInMap(id);
+  }
+  function olAddBranch(){ const R=olRootNode(); const b=newNode("",olIsThink()?"idea":"group"); b.color=pickColor(R); R.children.push(b);
     olFocus=b.id; save(); renderTasks(); }
   function olMove(id,dir){ const list=[...tasksView.querySelectorAll('[data-role="oltext"]')];
     const cur=tasksView.querySelector(`[data-id="${id}"] textarea`); const i=list.indexOf(cur);
@@ -1728,7 +1832,12 @@
     if(e.target.closest('[data-role="link"]')) return; // リンクはそのまま開く
     const add=e.target.closest('[data-role="oladd"]'); if(add){ olAddChild(add.dataset.parent); return; }
     if(e.target.closest('[data-role="olnewbranch"]')){ olAddBranch(); return; }
+    if(e.target.closest('[data-role="olcopy"]')){ copyOutline(); return; }
+    if(e.target.closest('[data-role="olmapmode"]')){ setThinkList(false); return; }
+    const fa=e.target.closest('[data-role="olfoldall"]');
+    if(fa){ olFoldAll(olRootNode().children.some(b=>!olIsFold(b.id))); return; }
     const host=e.target.closest("[data-id]"); if(!host) return; const id=host.dataset.id;
+    if(e.target.closest('[data-role="olfold"]')){ olToggleFold(id); return; }
     if(e.target.closest('[data-role="check"]')){ const {node}=olLocate(id)||{}; if(node){ applyToggle(node); save(); renderTasks(); } return; }
     const act=e.target.closest("[data-act]");
     if(act){ const a=act.dataset.act; const {node}=olLocate(id)||{}; if(!node) return;
@@ -1739,20 +1848,26 @@
       else if(a==="type"){ openTypeMenu(node,act); }
       else if(a==="color"){ openColorMenu(node,act); }
       else if(a==="add"){ olAddChild(id); }
-      else if(a==="map"){ openInMap(id); }
+      else if(a==="map"){ olOpenInMap(id); }
       else if(a==="del"){ olDelete(id); }
       return; }
     if(!e.target.closest('[data-role="oltext"]')){ const ta=host.querySelector('[data-role="oltext"]'); if(ta) ta.focus(); }
   });
 
   // ---- view switching ----
+  // 思考マップは「マップ表示」と「リスト表示（タスクページと同じ形）」を切り替えられる
+  const THINK_LIST_KEY="branch.think.list";
+  let thinkList=(()=>{ try{ return localStorage.getItem(THINK_LIST_KEY)==="1"; }catch(e){ return false; } })();
+  function setThinkList(on){ thinkList=!!on; try{ localStorage.setItem(THINK_LIST_KEY,thinkList?"1":"0"); }catch(e){}
+    if(view==="think") setView("think"); }
   function setView(v){
     view=v;
     if(v==="map") curRoot=state.root; else if(v==="think") curRoot=state.thoughts[state.thoughtIdx];
-    const isMap=(v==="map"||v==="think");
+    const thinkAsList=(v==="think"&&thinkList);
+    const isMap=((v==="map")||(v==="think"&&!thinkList));
     stage.style.display=isMap?"block":"none";
     dash.style.display=v==="dash"?"block":"none";
-    tasksView.style.display=v==="tasks"?"block":"none";
+    tasksView.style.display=(v==="tasks"||thinkAsList)?"block":"none";
     $("#help").style.display=(isMap&&!helpHidden)?"":"none";
     $("#theme-bar").hidden=(v!=="think");
     $("#jump-bar").hidden=(v!=="map");
@@ -1763,25 +1878,31 @@
     $("#tab-dash").setAttribute("aria-pressed",v==="dash");
     $("#tab-tasks").setAttribute("aria-pressed",v==="tasks");
     selectedId=null;
-    if(v==="dash") renderDash(); else if(v==="tasks") renderTasks(); else render();
+    if(v==="think") renderThemeBar();
+    if(v==="dash") renderDash(); else if(v==="tasks"||thinkAsList) renderTasks(); else render();
   }
-  function refresh(){ if(view==="dash") renderDash(); else if(view==="tasks") renderTasks(); else render(); }
+  function refresh(){ if(view==="dash") renderDash(); else if(view==="tasks"||(view==="think"&&thinkList)) renderTasks(); else render(); }
 
   function renderThemeBar(){
     const bar=$("#theme-bar"); if(!bar) return;
     bar.innerHTML=`<span class="tb-label">テーマ</span>`+
       state.thoughts.map((r,i)=>`<button class="theme-chip ${i===state.thoughtIdx?"on":""}" data-ti="${i}">${esc(r.text||"（無題）")}</button>`).join("")+
       `<button class="theme-add" id="theme-add">${ICON.plus}<span>テーマ追加</span></button>`+
+      `<span class="tb-seg" id="think-mode">
+         <button class="${thinkList?"":"on"}" data-tm="map" title="マップ表示">マップ</button>
+         <button class="${thinkList?"on":""}" data-tm="list" title="リスト表示（コピーしやすい）">リスト</button>
+       </span>`+
       (state.thoughts.length>1?`<button class="theme-del" id="theme-del" title="このテーマを削除">${ICON.trash}</button>`:"");
   }
-  function switchTheme(i){ if(i<0||i>=state.thoughts.length) return; state.thoughtIdx=i; curRoot=state.thoughts[i]; selectedId=null; needCenter=true; save(); render(); }
-  function addTheme(){ const r=newNode("新しいテーマ","root"); state.thoughts.push(r); state.thoughtIdx=state.thoughts.length-1; curRoot=r; selectedId=null; pendingFocus=r.id; needCenter=true; save(); render(); }
+  function switchTheme(i){ if(i<0||i>=state.thoughts.length) return; state.thoughtIdx=i; curRoot=state.thoughts[i]; selectedId=null; needCenter=true; save(); renderThemeBar(); refresh(); }
+  function addTheme(){ const r=newNode("新しいテーマ","root"); state.thoughts.push(r); state.thoughtIdx=state.thoughts.length-1; curRoot=r; selectedId=null; pendingFocus=r.id; needCenter=true; save(); renderThemeBar(); refresh(); }
   function deleteTheme(){ if(state.thoughts.length<=1){ toast("テーマは最低1つ必要です"); return; }
     if(!confirm(`テーマ「${state.thoughts[state.thoughtIdx].text||"（無題）"}」を削除しますか？`)) return;
     state.thoughts.splice(state.thoughtIdx,1); if(state.thoughtIdx>=state.thoughts.length) state.thoughtIdx=state.thoughts.length-1;
-    curRoot=state.thoughts[state.thoughtIdx]; selectedId=null; save(); render(); }
+    curRoot=state.thoughts[state.thoughtIdx]; selectedId=null; save(); renderThemeBar(); refresh(); }
   $("#theme-bar").addEventListener("click",(e)=>{
     const chip=e.target.closest("[data-ti]"); if(chip){ switchTheme(+chip.dataset.ti); return; }
+    const tm=e.target.closest("[data-tm]"); if(tm){ setThinkList(tm.dataset.tm==="list"); return; }
     if(e.target.closest("#theme-add")){ addTheme(); return; }
     if(e.target.closest("#theme-del")){ deleteTheme(); return; }
   });
