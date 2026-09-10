@@ -491,6 +491,62 @@
   .cl-meta { font-size:12px; color:var(--muted); margin-bottom:14px; }
   .cl-err { color:var(--danger); font-size:12.5px; margin-top:10px; font-weight:600; min-height:16px; }
 
+  /* ---- 仕分け（判断フロー）---- */
+  .tri-modal { max-width:520px; }
+  #tri-body { padding:18px; max-height:70vh; overflow:auto; }
+  .tri-steps { display:flex; align-items:center; gap:6px; margin-bottom:14px; }
+  .tri-steps i { flex:1; height:4px; border-radius:999px; background:var(--border); font-style:normal; }
+  .tri-steps i.on { background:var(--accent); }
+  .tri-q { font-size:17px; font-weight:800; line-height:1.5; margin:6px 0 4px; }
+  .tri-note { font-size:12.5px; color:var(--muted); line-height:1.6; margin-bottom:16px; }
+  .tri-yn { display:flex; gap:10px; }
+  .tri-yn button { flex:1; height:52px; border-radius:12px; border:1.5px solid var(--border-strong); background:var(--surface);
+    color:var(--ink); font-size:15px; font-weight:800; font-family:inherit; }
+  .tri-yn .yes { border-color:color-mix(in srgb,var(--danger) 45%,var(--border)); color:var(--danger); }
+  .tri-yn .yes:hover { background:color-mix(in srgb,var(--danger) 10%,var(--surface)); }
+  .tri-yn .no { border-color:color-mix(in srgb,#4C6EF5 45%,var(--border)); color:#4C6EF5; }
+  .tri-yn .no:hover { background:color-mix(in srgb,#4C6EF5 10%,var(--surface)); }
+  .tri-target { display:flex; align-items:center; gap:8px; background:var(--surface-2); border:1px solid var(--border);
+    border-radius:10px; padding:9px 12px; margin-bottom:16px; font-size:13.5px; font-weight:700; }
+  .tri-target .path { font-size:11.5px; color:var(--faint); font-weight:600; }
+  .tri-search { width:100%; height:40px; border:1px solid var(--border-strong); border-radius:10px; background:var(--surface-2);
+    color:var(--ink); font-family:inherit; font-size:14px; padding:0 12px; margin-bottom:10px; }
+  .tri-search:focus { outline:none; border-color:var(--accent); background:var(--surface); }
+  .tri-list { max-height:240px; overflow:auto; border:1px solid var(--border); border-radius:10px; }
+  .tri-item { display:flex; align-items:center; gap:9px; padding:9px 12px; border-top:1px solid var(--border); cursor:pointer; }
+  .tri-item:first-child { border-top:0; }
+  .tri-item:hover { background:var(--surface-2); }
+  .tri-item .bdot { width:8px; height:8px; border-radius:50%; flex:none; }
+  .tri-item .tx { flex:1; min-width:0; font-size:13.5px; }
+  .tri-item .pt { font-size:11px; color:var(--faint); }
+  .tri-sec { font-size:11px; font-weight:800; letter-spacing:.05em; color:var(--faint); margin:16px 0 7px; }
+  .tri-new { display:flex; gap:7px; }
+  .tri-new input { flex:1; height:40px; border:1px solid var(--border-strong); border-radius:10px; background:var(--surface-2);
+    color:var(--ink); font-family:inherit; font-size:14px; padding:0 12px; }
+  .tri-new select { height:40px; border:1px solid var(--border-strong); border-radius:10px; background:var(--surface-2);
+    color:var(--ink); font-family:inherit; font-size:13px; padding:0 8px; max-width:150px; }
+  .tri-new button { height:40px; padding:0 14px; border:0; border-radius:10px; background:var(--accent); color:#fff; font-weight:800; font-size:13px; font-family:inherit; }
+  .tri-result { text-align:center; padding:6px 0 2px; }
+  .tri-badge { display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%;
+    background:var(--accent); color:#fff; font-size:20px; font-weight:800; margin-bottom:10px; }
+  .tri-badge.n1 { background:var(--danger); } .tri-badge.n2 { background:#2A9D8F; }
+  .tri-badge.n3 { background:#4C6EF5; } .tri-badge.n4 { background:var(--flag); }
+  .tri-act { font-size:17px; font-weight:800; line-height:1.5; }
+  .tri-why { font-size:12.5px; color:var(--muted); margin-top:6px; line-height:1.6; }
+  .tri-do { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
+  .tri-do button { height:44px; border-radius:11px; border:1.5px solid var(--border-strong); background:var(--surface);
+    color:var(--ink); font-size:14px; font-weight:700; font-family:inherit; }
+  .tri-do button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .tri-do button:hover { filter:brightness(1.04); }
+  .tri-split { width:100%; min-height:92px; border:1px solid var(--border-strong); border-radius:10px; background:var(--surface-2);
+    color:var(--ink); font-family:inherit; font-size:14px; padding:10px 12px; line-height:1.7; resize:vertical; }
+  .tri-split:focus { outline:none; border-color:var(--accent); background:var(--surface); }
+  .tri-back { border:0; background:transparent; color:var(--muted); font-size:12.5px; font-weight:700; font-family:inherit; margin-top:14px; }
+  .tri-back:hover { color:var(--ink); text-decoration:underline; }
+  .tri-chip { color:#fff; background:var(--accent); }
+  .tri-chip.n1 { background:var(--danger); } .tri-chip.n2 { background:#2A9D8F; }
+  .tri-chip.n3 { background:#4C6EF5; } .tri-chip.n4 { background:var(--flag); }
+
   .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:var(--bg);
     padding:10px 18px; border-radius:999px; font-size:13px; font-weight:600; box-shadow:var(--shadow); opacity:0;
     transition:opacity .2s,transform .2s; pointer-events:none; z-index:80; }
@@ -556,8 +612,12 @@
     <button class="btn icon" id="btn-sticky" title="付箋メモを貼る（マインドマップ）">
       <svg viewBox="0 0 24 24" fill="none"><path d="M5 4h14v10l-5 5H5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 19v-5h5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
     </button>
-    <button class="btn icon" id="btn-tidy" title="横並びに整列（自由配置と「真下に子」をリセット）">
+    <button class="btn icon" id="btn-tidy" title="整列（形はそのまま・ドラッグのズレを直す／⇧Shift+クリックでぜんぶ横並び）">
       <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h9M4 12h13M4 18h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M18 15l3 3-3 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="btn" id="btn-triage" title="タスクを仕分ける（判断フロー）">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h6M4 12h9M4 18h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M15 6h5m0 0-2-2m2 2-2 2M17 18h3m0 0-2-2m2 2-2 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="lbl">仕分け</span>
     </button>
     <button class="btn primary" id="btn-add-branch">
       <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg>
@@ -602,6 +662,16 @@
 
 <input type="file" id="file-input" accept="application/json,.json" hidden>
 <div class="toast" id="toast"></div>
+
+<div class="modal-scrim" id="triage-modal" hidden>
+  <div class="modal tri-modal" role="dialog" aria-label="タスクの仕分け">
+    <div class="modal-head">
+      <h2 id="tri-title">タスクを仕分ける</h2>
+      <button class="modal-x" id="tri-close" title="閉じる">✕</button>
+    </div>
+    <div id="tri-body"></div>
+  </div>
+</div>
 
 <div class="modal-scrim" id="cloud-modal" hidden>
   <div class="modal" role="dialog" aria-label="クラウド同期">
@@ -687,7 +757,7 @@
   }
 
   // ---- model ----
-  function newNode(text,type){ return {id:uid(),text:text||"",type:type||"task",children:[],collapsed:false,done:false,doneAt:null,priority:false,repeat:null,doneDates:[],note:false,due:null,weekdays:[],weekOfMonth:null,below:false,link:null,ox:0,oy:0}; }
+  function newNode(text,type){ return {id:uid(),text:text||"",type:type||"task",children:[],collapsed:false,done:false,doneAt:null,priority:false,repeat:null,doneDates:[],note:false,due:null,weekdays:[],weekOfMonth:null,below:false,link:null,ox:0,oy:0,triage:null}; }
   function newRoot(text){ return newNode(text||"マイタスク","root"); }
   function assignTypes(node,depth){
     if(node.type!=="root"&&node.type!=="task"&&node.type!=="group"&&node.type!=="memo"&&node.type!=="goal"){
@@ -720,6 +790,7 @@
     if(n.side!=="left"&&n.side!=="right") delete n.side;
     n.below=!!n.below;
     n.link=(typeof n.link==="string"&&n.link)?n.link:null;
+    n.triage=(n.triage===1||n.triage===2||n.triage===3||n.triage===4)?n.triage:null;
     n.ox=(typeof n.ox==="number"&&isFinite(n.ox))?n.ox:0;
     n.oy=(typeof n.oy==="number"&&isFinite(n.oy))?n.oy:0;
     n.children.forEach(normNode); return n;
@@ -899,6 +970,7 @@
 
     const chips=[];
     if((isTask||isIdea)&&node.priority) chips.push(`<span class="meta-flag">${ICON.flag}</span>`);
+    if(isTask&&node.triage) chips.push(`<span class="chip tri-chip n${node.triage}">${TRI_MARK[node.triage]}</span>`);
     if(isTask&&node.repeat) chips.push(`<span class="chip cadence-chip">${repeatLabel(node)}</span>`);
     if(isTask&&node.due){ const dl=dueLabel(node.due); if(dl) chips.push(`<span class="chip due-chip ${dl.cls}">${dl.text}</span>`); }
     if(node.collapsed&&kids) chips.push(`<span class="chip count-chip">${kids}</span>`);
@@ -1433,17 +1505,20 @@
     if(sresize){ save(); relayout(); sresize=null; }
     if(sdrag){ sdrag.el.classList.remove("dragging"); save(); relayout(); sdrag=null; } });
   $("#btn-sticky").addEventListener("click",addSticky);
-  // 整列＝自由配置を解除し、子をすべて「横」に戻して、きれいな横並びのマインドマップにする
-  $("#btn-tidy").addEventListener("click",()=>{
+  // 整列＝いまの形（横に伸ばした枝／真下に積んだ枝）はそのままに、ドラッグでずらした位置だけ元に戻す。
+  // ⇧Shift を押しながら押すと、真下の枝も横並びに開く。
+  $("#btn-tidy").addEventListener("click",(e)=>{
     if(view!=="map"&&view!=="think"){ setView("map"); }
+    const flat=e.shiftKey;
     let changed=false;
     (function w(n){
       if(n.ox||n.oy){ n.ox=0; n.oy=0; changed=true; }
-      if(n.below){ n.below=false; changed=true; }   // 真下に積んだ子も横並びに
+      if(flat&&n.below){ n.below=false; changed=true; }
       n.children.forEach(w);
     })(curRoot);
-    if(changed){ needCenter=true; save(); render(); toast("横並びに整列しました（⌘/Ctrl+Z で元に戻せます）"); }
-    else { toast("すでに横並びに整列されています"); }
+    if(changed){ needCenter=true; save(); render();
+      toast(flat?"ぜんぶ横に並べました（⌘/Ctrl+Z で戻せます）":"整列しました"); }
+    else { toast(flat?"すでに横並びです":"ずれているノードはありません"); }
   });
 
   // ---- zoom ----
@@ -1528,6 +1603,7 @@
     const log=!!(opt&&opt.log);
     const n=t.node, col=branchColor(t.branch), done=log?true:isDone(n);
     const chips=[];
+    if(n.triage) chips.push(`<span class="chip tri-chip n${n.triage}">${TRI_MARK[n.triage]}</span>`);
     if(n.priority) chips.push(`<span class="meta-flag">${ICON.flag}</span>`);
     if(n.repeat) chips.push(`<span class="chip cadence-chip" style="--col:${col}">${ICON.repeat}${repeatLabel(n)}</span>`);
     else if(n.due){ const dl=dueLabel(n.due); if(dl) chips.push(`<span class="chip due-chip ${dl.cls}">${dl.text}</span>`); }
@@ -1657,6 +1733,7 @@
       if(node.due){ const dl=dueLabel(node.due); if(dl) chips.push(`<span class="chip due-chip ${dl.cls}">${dl.text}</span>`); }
     }
     if(node.link) chips.push(`<a class="chip link-chip" href="${esc(node.link)}" target="_blank" rel="noopener noreferrer" data-role="link" title="${esc(node.link)}">${ICON.link}リンク</a>`);
+    if(node.triage) chips.unshift(`<span class="chip tri-chip n${node.triage}">${TRI_MARK[node.triage]}</span>`);
     if(isIdea&&node.priority) chips.unshift(`<span class="meta-flag">${ICON.flag}</span>`);
     if(folded) chips.push(`<span class="chip count-chip">${countIn(node)}件</span>`);
     const ph=isIdea?"アイデア":isTask?"やること":isGoal?"目標":isMemo?"メモ":"中分類の名前";
@@ -1669,6 +1746,7 @@
     if(isIdea) t.push(`<button class="${node.priority?"on":""}" data-act="flag" title="フラグで目立たせる">${ICON.flag}</button>`);
     else t.push(`<button class="type" data-act="type" title="種類（タスク／中分類／目標／メモ）">${ICON.layers}</button>`);
     t.push(`<button class="lnk ${node.link?"on":""}" data-act="link" title="リンクを設定">${ICON.link}</button>`);
+    if(isTask) t.push(`<button class="${node.triage?"on":""}" data-act="triage" title="このタスクを仕分ける">${ICON.layers}</button>`);
     t.push(`<button data-act="add" title="この下に子を追加">${ICON.plus}</button>`);
     t.push(`<button data-act="map" title="マインドマップで開く">${ICON.exp}</button>`);
     t.push(`<button class="del" data-act="del" title="削除">${ICON.trash}</button>`);
@@ -1848,6 +1926,7 @@
       else if(a==="type"){ openTypeMenu(node,act); }
       else if(a==="color"){ openColorMenu(node,act); }
       else if(a==="add"){ olAddChild(id); }
+      else if(a==="triage"){ openTriage(id); }
       else if(a==="map"){ olOpenInMap(id); }
       else if(a==="del"){ olDelete(id); }
       return; }
@@ -1983,6 +2062,130 @@
   });
 
   window.addEventListener("resize",()=>relayout());
+
+  // ================= 仕分け（判断フロー）=================
+  // マルチタスク状態 → 3つの質問 → ①〜④ に仕分けて、シングルタスク化して処理する
+  const TRI_MARK=["","①","②","③","④"];
+  const TRI_Q=[
+    {q:"誰かに依頼が必要？", note:"自分が持っている間は進まないもの（確認待ち・他の人の作業など）。"},
+    {q:"10分以内に終わる？", note:"すぐ片づく細かい用事かどうか。"},
+    {q:"3営業日以上かかる？", note:"ひとかたまりのままだと重すぎないか。"}
+  ];
+  const TRI_R={
+    1:{act:"すぐ着手して相手に渡す", why:"自分が抱えている間は止まってしまうので、いちばん先に手放します。"},
+    2:{act:"その場で溜めずに終わらせる", why:"あとで思い出すコストのほうが高いタスク。いま片づけます。"},
+    3:{act:"3営業日以内の粒度に分解する", why:"大きすぎると動けないので、小さく割ってから着手します。"},
+    4:{act:"〆切が早い順に着手する", why:"シングルタスク化して、締切が近いものから順に進めます。"}
+  };
+  let tri=null;
+  function openTriage(nodeId){ tri={step:nodeId?0:"pick", nodeId:nodeId||null, filter:""}; $("#triage-modal").hidden=false; renderTriage(); }
+  function closeTriage(){ $("#triage-modal").hidden=true; tri=null; }
+  function triNode(){ return (tri&&tri.nodeId)?((locate(tri.nodeId,state.root)||{}).node||null):null; }
+  function triPathOf(id){ const p=pathTo(id,state.root); return p?p.slice(1,-1).map(n=>n.text||"（無題）").join(" › "):""; }
+  function triApply(n,result,extra){ n.triage=result; if(extra) extra(n); save();
+    if(view==="dash") renderDash(); else if(view==="tasks") renderTasks(); else render(); }
+
+  function renderTriage(){
+    const body=$("#tri-body"), ttl=$("#tri-title"); if(!body||!tri) return;
+    // --- タスクを選ぶ ---
+    if(tri.step==="pick"){
+      ttl.textContent="仕分けるタスクを選ぶ";
+      const f=(tri.filter||"").trim();
+      const items=collectTasks().filter(t=>!isDone(t.node))
+        .filter(t=>!f||(t.node.text||"").includes(f))
+        .sort((a,b)=>(a.node.triage?1:0)-(b.node.triage?1:0));
+      const list=items.length?items.slice(0,60).map(t=>{
+        const col=branchColor(t.branch); const pt=triPathOf(t.node.id);
+        return `<div class="tri-item" data-pick="${t.node.id}"><span class="bdot" style="background:${col}"></span>
+          <span class="tx">${esc(t.node.text)||"（無題）"}${pt?`<br><span class="pt">${esc(pt)}</span>`:""}</span>
+          ${t.node.triage?`<span class="chip tri-chip n${t.node.triage}">${TRI_MARK[t.node.triage]}</span>`:""}</div>`;
+      }).join(""):`<div class="dash-empty">${f?"見つかりません":"未完了のタスクがありません"}</div>`;
+      const opts=state.root.children.map(b=>`<option value="${b.id}">${esc(b.text||"（無題）")}</option>`).join("");
+      body.innerHTML=`<input class="tri-search" id="tri-search" placeholder="タスクを検索…" value="${esc(tri.filter||"")}">
+        <div class="tri-list">${list}</div>
+        <div class="tri-sec">なければ新しく作る</div>
+        <div class="tri-new">
+          <input id="tri-newtext" placeholder="やること">
+          ${state.root.children.length?`<select id="tri-newbranch">${opts}</select>`:""}
+          <button id="tri-newgo">作る</button>
+        </div>`;
+      const si=$("#tri-search"); if(si){ si.oninput=()=>{ tri.filter=si.value; const at=si.selectionStart; renderTriage();
+        const s2=$("#tri-search"); if(s2){ s2.focus(); try{ s2.setSelectionRange(at,at); }catch(e){} } }; }
+      return;
+    }
+    const n=triNode();
+    if(!n){ tri.step="pick"; renderTriage(); return; }
+    const head=`<div class="tri-target"><span class="bdot" style="width:9px;height:9px;border-radius:50%;background:${branchColor((pathTo(n.id,state.root)||[])[1])}"></span>
+      <span>${esc(n.text)||"（無題）"}${triPathOf(n.id)?`<div class="path">${esc(triPathOf(n.id))}</div>`:""}</span></div>`;
+    // --- 質問 ---
+    if(typeof tri.step==="number"){
+      const i=tri.step, Q=TRI_Q[i];
+      ttl.textContent="タスクを仕分ける";
+      body.innerHTML=head+
+        `<div class="tri-steps">${[0,1,2].map(k=>`<i class="${k<=i?"on":""}"></i>`).join("")}</div>
+         <div class="tri-q">${Q.q}</div><div class="tri-note">${Q.note}</div>
+         <div class="tri-yn"><button class="yes" data-ans="y">はい</button><button class="no" data-ans="n">いいえ</button></div>
+         <button class="tri-back" data-back="1">${i===0?"別のタスクを選ぶ":"ひとつ前の質問に戻る"}</button>`;
+      return;
+    }
+    // --- 結果 ---
+    const r=tri.step==="done"?tri.result:4, R=TRI_R[r];
+    ttl.textContent="仕分けの結果";
+    let doHtml="";
+    if(r===1) doHtml=`<button class="primary" data-do="p1">優先フラグを立てて「今日」にする</button>`;
+    else if(r===2) doHtml=`<button class="primary" data-do="p2done">いま終わらせた（完了にする）</button>
+        <button data-do="p2today">今日のうちにやる（期日を今日に）</button>`;
+    else if(r===3) doHtml=`<div class="tri-note">1行ずつ書くと、それぞれが子タスクになります。</div>
+        <textarea class="tri-split" id="tri-split" placeholder="たとえば&#10;資料の構成を決める&#10;たたき台を作る&#10;レビューをもらう"></textarea>
+        <button class="primary" data-do="p3">この内容に分解する</button>`;
+    else doHtml=`<button class="primary" data-do="p4today">今日</button>
+        <button data-do="p4tomorrow">明日</button>
+        <button data-do="p4week">今週末</button>`;
+    body.innerHTML=head+`<div class="tri-result"><div class="tri-badge n${r}">${TRI_MARK[r]}</div>
+        <div class="tri-act">${R.act}</div><div class="tri-why">${R.why}</div></div>
+      <div class="tri-do">${doHtml}</div>
+      <button class="tri-back" data-back="1">質問に戻る</button>`;
+  }
+
+  $("#tri-body").addEventListener("click",(e)=>{
+    if(!tri) return;
+    const pick=e.target.closest("[data-pick]");
+    if(pick){ tri.nodeId=pick.dataset.pick; tri.step=0; renderTriage(); return; }
+    if(e.target.closest("#tri-newgo")){
+      const tx=($("#tri-newtext").value||"").trim(); if(!tx){ toast("やることを入力してください"); return; }
+      const sel=$("#tri-newbranch");
+      let parent=sel?(locate(sel.value,state.root)||{}).node:null;
+      if(!parent){ parent=newNode("その他","group"); parent.color=pickColor(state.root); state.root.children.push(parent); }
+      const t=newNode(tx,"task"); parent.collapsed=false; parent.children.push(t); save();
+      tri.nodeId=t.id; tri.step=0; renderTriage(); return;
+    }
+    const ans=e.target.closest("[data-ans]");
+    if(ans){ const yes=ans.dataset.ans==="y", i=tri.step;
+      if(yes){ tri.result=(i===0)?1:(i===1)?2:3; tri.step="done"; }
+      else if(i<2){ tri.step=i+1; } else { tri.result=4; tri.step="done"; }
+      renderTriage(); return; }
+    if(e.target.closest("[data-back]")){
+      if(tri.step==="done") tri.step=2; else if(tri.step>0) tri.step=tri.step-1; else tri.step="pick";
+      renderTriage(); return; }
+    const dobtn=e.target.closest("[data-do]"); if(!dobtn) return;
+    const n=triNode(); if(!n) return; const a=dobtn.dataset.do;
+    if(a==="p1"){ triApply(n,1,x=>{ x.priority=true; x.due=todayStr(); }); toast("①いま渡す：優先＋今日にしました"); }
+    else if(a==="p2done"){ triApply(n,2,x=>{ if(!isDone(x)) applyToggle(x); }); toast("②完了にしました"); }
+    else if(a==="p2today"){ triApply(n,2,x=>{ x.due=todayStr(); }); toast("②今日の予定にしました"); }
+    else if(a==="p3"){
+      const lines=(($("#tri-split")||{}).value||"").split("\n").map(s=>s.trim()).filter(Boolean);
+      if(!lines.length){ toast("分解する内容を1行ずつ入力してください"); return; }
+      triApply(n,3,x=>{ x.collapsed=false; lines.forEach(l=>{ const c=newNode(l,"task"); c.below=true; x.children.push(c); }); });
+      toast(`③${lines.length}個に分解しました`);
+    }
+    else if(a==="p4today"){ triApply(n,4,x=>{ x.due=todayStr(); }); toast("④今日の予定にしました"); }
+    else if(a==="p4tomorrow"){ triApply(n,4,x=>{ x.due=tomorrowStr(); }); toast("④明日の予定にしました"); }
+    else if(a==="p4week"){ triApply(n,4,x=>{ x.due=weekEndStr(); }); toast("④今週末までにしました"); }
+    tri.step="pick"; tri.nodeId=null; renderTriage(); // 続けて次のタスクを仕分ける
+  });
+  $("#btn-triage").addEventListener("click",()=>openTriage());
+  $("#tri-close").addEventListener("click",closeTriage);
+  $("#triage-modal").addEventListener("click",(e)=>{ if(e.target===$("#triage-modal")) closeTriage(); });
 
   // ================= クラウド同期（Dayceバックエンド流用）=================
   const CLOUD_API=(window.__BRANCH_API__||"https://api.dayce.app");
