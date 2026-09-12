@@ -543,6 +543,24 @@
   .tri-split:focus { outline:none; border-color:var(--accent); background:var(--surface); }
   .tri-back { border:0; background:transparent; color:var(--muted); font-size:12.5px; font-weight:700; font-family:inherit; margin-top:14px; }
   .tri-back:hover { color:var(--ink); text-decoration:underline; }
+  .tri-check { flex:none; width:19px; height:19px; border-radius:6px; border:1.8px solid var(--border-strong);
+    background:var(--surface); display:inline-flex; align-items:center; justify-content:center; color:#fff; }
+  .tri-check svg { width:12px; height:12px; opacity:0; }
+  .tri-check.on { background:var(--accent); border-color:var(--accent); }
+  .tri-check.on svg { opacity:1; }
+  .tri-item.sel { background:color-mix(in srgb,var(--accent) 9%, transparent); }
+  .tri-selall { height:30px; padding:0 12px; margin-bottom:9px; border:1px solid var(--border-strong); background:var(--surface);
+    color:var(--muted); border-radius:999px; font-size:12px; font-weight:700; font-family:inherit; }
+  .tri-selall:hover { border-color:var(--faint); color:var(--ink); }
+  .tri-bar { position:sticky; bottom:-18px; margin:14px -18px -18px; padding:14px 18px;
+    background:var(--surface); border-top:1px solid var(--border); display:flex; gap:8px; }
+  .tri-bar button { flex:1; height:46px; border-radius:11px; border:1.5px solid var(--border-strong);
+    background:var(--surface); color:var(--ink); font-size:14.5px; font-weight:800; font-family:inherit; }
+  .tri-bar button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .tri-bar button[disabled] { opacity:.5; cursor:default; }
+  .tri-count { font-size:12px; font-weight:800; color:var(--accent); margin-bottom:8px; }
+  .tri-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .tri-chip.skip { background:var(--surface-2); color:var(--faint); border:1px solid var(--border); }
   .tri-chip { color:#fff; background:var(--accent); }
   .tri-chip.n1 { background:var(--danger); } .tri-chip.n2 { background:#2A9D8F; }
   .tri-chip.n3 { background:#4C6EF5; } .tri-chip.n4 { background:var(--flag); }
@@ -2077,47 +2095,88 @@
     3:{act:"3営業日以内の粒度に分解する", why:"大きすぎると動けないので、小さく割ってから着手します。"},
     4:{act:"〆切が早い順に着手する", why:"シングルタスク化して、締切が近いものから順に進めます。"}
   };
+  // tri = {step:"pick"|0|1|2|"done"|"summary", picked:Set, queue:[id], qi, nodeId, filter, result, log:[]}
   let tri=null;
-  function openTriage(nodeId){ tri={step:nodeId?0:"pick", nodeId:nodeId||null, filter:""}; $("#triage-modal").hidden=false; renderTriage(); }
+  function openTriage(nodeId){
+    tri=nodeId
+      ? {step:0, picked:new Set([nodeId]), queue:[nodeId], qi:0, nodeId, filter:"", log:[]}
+      : {step:"pick", picked:new Set(), queue:[], qi:0, nodeId:null, filter:"", log:[]};
+    $("#triage-modal").hidden=false; renderTriage();
+  }
   function closeTriage(){ $("#triage-modal").hidden=true; tri=null; }
   function triNode(){ return (tri&&tri.nodeId)?((locate(tri.nodeId,state.root)||{}).node||null):null; }
   function triPathOf(id){ const p=pathTo(id,state.root); return p?p.slice(1,-1).map(n=>n.text||"（無題）").join(" › "):""; }
   function triApply(n,result,extra){ n.triage=result; if(extra) extra(n); save();
-    if(view==="dash") renderDash(); else if(view==="tasks") renderTasks(); else render(); }
+    if(view==="dash") renderDash(); else if(view==="tasks"||(view==="think"&&thinkList)) renderTasks(); else render(); }
+  function triCandidates(){ const f=(tri.filter||"").trim();
+    return collectTasks().filter(t=>!isDone(t.node)).filter(t=>!f||(t.node.text||"").includes(f)); }
+  // 選んだタスクを、上から順に仕分けていく
+  function triStart(){
+    const order=collectTasks().map(t=>t.node.id).filter(id=>tri.picked.has(id));
+    if(!order.length){ toast("仕分けるタスクを選んでください"); return; }
+    tri.queue=order; tri.qi=0; tri.nodeId=order[0]; tri.step=0; tri.log=[]; renderTriage();
+  }
+  function triNext(result){
+    const n=triNode();
+    if(n) tri.log.push({id:n.id, text:n.text||"（無題）", result:result||null});
+    tri.qi++;
+    while(tri.qi<tri.queue.length){ tri.nodeId=tri.queue[tri.qi]; if(triNode()) break; tri.qi++; }
+    if(tri.qi<tri.queue.length){ tri.step=0; } else { tri.step="summary"; }
+    renderTriage();
+  }
 
   function renderTriage(){
     const body=$("#tri-body"), ttl=$("#tri-title"); if(!body||!tri) return;
-    // --- タスクを選ぶ ---
+    // --- 1) まずやるタスクを複数えらぶ ---
     if(tri.step==="pick"){
-      ttl.textContent="仕分けるタスクを選ぶ";
-      const f=(tri.filter||"").trim();
-      const items=collectTasks().filter(t=>!isDone(t.node))
-        .filter(t=>!f||(t.node.text||"").includes(f))
-        .sort((a,b)=>(a.node.triage?1:0)-(b.node.triage?1:0));
-      const list=items.length?items.slice(0,60).map(t=>{
-        const col=branchColor(t.branch); const pt=triPathOf(t.node.id);
-        return `<div class="tri-item" data-pick="${t.node.id}"><span class="bdot" style="background:${col}"></span>
+      ttl.textContent="いまやるタスクをえらぶ";
+      const items=triCandidates(), shown=items.slice(0,60);
+      const list=shown.length?shown.map(t=>{
+        const col=branchColor(t.branch), pt=triPathOf(t.node.id), on=tri.picked.has(t.node.id);
+        return `<div class="tri-item ${on?"sel":""}" data-pick="${t.node.id}">
+          <span class="tri-check ${on?"on":""}">${ICON.check}</span>
+          <span class="bdot" style="background:${col}"></span>
           <span class="tx">${esc(t.node.text)||"（無題）"}${pt?`<br><span class="pt">${esc(pt)}</span>`:""}</span>
           ${t.node.triage?`<span class="chip tri-chip n${t.node.triage}">${TRI_MARK[t.node.triage]}</span>`:""}</div>`;
-      }).join(""):`<div class="dash-empty">${f?"見つかりません":"未完了のタスクがありません"}</div>`;
+      }).join(""):`<div class="dash-empty">${(tri.filter||"").trim()?"見つかりません":"未完了のタスクがありません"}</div>`;
       const opts=state.root.children.map(b=>`<option value="${b.id}">${esc(b.text||"（無題）")}</option>`).join("");
-      body.innerHTML=`<input class="tri-search" id="tri-search" placeholder="タスクを検索…" value="${esc(tri.filter||"")}">
+      const cnt=tri.picked.size;
+      const allOn=shown.length&&shown.every(t=>tri.picked.has(t.node.id));
+      body.innerHTML=`<div class="tri-note">溜まっているタスクから、いま片づけるものをまとめて選びます。選んだ順に1件ずつ仕分けます。</div>
+        <input class="tri-search" id="tri-search" placeholder="タスクを検索…" value="${esc(tri.filter||"")}">
+        ${shown.length?`<button class="tri-selall" data-selall="1">${allOn?"表示中の選択を解除":"表示中をすべて選ぶ"}</button>`:""}
         <div class="tri-list">${list}</div>
         <div class="tri-sec">なければ新しく作る</div>
         <div class="tri-new">
           <input id="tri-newtext" placeholder="やること">
           ${state.root.children.length?`<select id="tri-newbranch">${opts}</select>`:""}
           <button id="tri-newgo">作る</button>
-        </div>`;
+        </div>
+        <div class="tri-bar"><button class="primary" data-start="1" ${cnt?"":"disabled"}>
+          ${cnt?`選んだ ${cnt}件 を仕分ける`:"タスクを選んでください"}</button></div>`;
       const si=$("#tri-search"); if(si){ si.oninput=()=>{ tri.filter=si.value; const at=si.selectionStart; renderTriage();
         const s2=$("#tri-search"); if(s2){ s2.focus(); try{ s2.setSelectionRange(at,at); }catch(e){} } }; }
       return;
     }
+    // --- おわり：結果まとめ ---
+    if(tri.step==="summary"){
+      ttl.textContent="仕分けが終わりました";
+      const rows=tri.log.map(l=>`<div class="tri-item">
+          <span class="chip tri-chip ${l.result?("n"+l.result):"skip"}">${l.result?TRI_MARK[l.result]:"—"}</span>
+          <span class="tx">${esc(l.text)}</span>
+          <span class="pt">${l.result?TRI_R[l.result].act:"とばした"}</span></div>`).join("");
+      body.innerHTML=`<div class="tri-note">${tri.log.filter(l=>l.result).length}件を仕分けました。ダッシュボードとタスクページに反映されています。</div>
+        <div class="tri-list">${rows||`<div class="dash-empty">仕分けたタスクはありません</div>`}</div>
+        <div class="tri-bar"><button class="primary" data-again="1">続けて別のタスクを選ぶ</button>
+          <button data-closetri="1">閉じる</button></div>`;
+      return;
+    }
     const n=triNode();
-    if(!n){ tri.step="pick"; renderTriage(); return; }
-    const head=`<div class="tri-target"><span class="bdot" style="width:9px;height:9px;border-radius:50%;background:${branchColor((pathTo(n.id,state.root)||[])[1])}"></span>
+    if(!n){ triNext(null); return; }
+    const pos=tri.queue.length>1?`<div class="tri-count">${tri.qi+1} / ${tri.queue.length} 件目</div>`:"";
+    const head=pos+`<div class="tri-target"><span class="bdot" style="width:9px;height:9px;border-radius:50%;background:${branchColor((pathTo(n.id,state.root)||[])[1])}"></span>
       <span>${esc(n.text)||"（無題）"}${triPathOf(n.id)?`<div class="path">${esc(triPathOf(n.id))}</div>`:""}</span></div>`;
-    // --- 質問 ---
+    // --- 2) 3つの質問 ---
     if(typeof tri.step==="number"){
       const i=tri.step, Q=TRI_Q[i];
       ttl.textContent="タスクを仕分ける";
@@ -2125,10 +2184,13 @@
         `<div class="tri-steps">${[0,1,2].map(k=>`<i class="${k<=i?"on":""}"></i>`).join("")}</div>
          <div class="tri-q">${Q.q}</div><div class="tri-note">${Q.note}</div>
          <div class="tri-yn"><button class="yes" data-ans="y">はい</button><button class="no" data-ans="n">いいえ</button></div>
-         <button class="tri-back" data-back="1">${i===0?"別のタスクを選ぶ":"ひとつ前の質問に戻る"}</button>`;
+         <div class="tri-foot">
+           <button class="tri-back" data-back="1">${i===0?"えらび直す":"ひとつ前の質問に戻る"}</button>
+           ${tri.queue.length>1?`<button class="tri-back" data-skip="1">このタスクはとばす →</button>`:""}
+         </div>`;
       return;
     }
-    // --- 結果 ---
+    // --- 3) 結果と、その場でやること ---
     const r=tri.step==="done"?tri.result:4, R=TRI_R[r];
     ttl.textContent="仕分けの結果";
     let doHtml="";
@@ -2144,21 +2206,36 @@
     body.innerHTML=head+`<div class="tri-result"><div class="tri-badge n${r}">${TRI_MARK[r]}</div>
         <div class="tri-act">${R.act}</div><div class="tri-why">${R.why}</div></div>
       <div class="tri-do">${doHtml}</div>
-      <button class="tri-back" data-back="1">質問に戻る</button>`;
+      <div class="tri-foot">
+        <button class="tri-back" data-back="1">質問に戻る</button>
+        ${tri.queue.length>1?`<button class="tri-back" data-skip="1">あとにする →</button>`:""}
+      </div>`;
   }
 
   $("#tri-body").addEventListener("click",(e)=>{
     if(!tri) return;
+    // 選ぶ画面
     const pick=e.target.closest("[data-pick]");
-    if(pick){ tri.nodeId=pick.dataset.pick; tri.step=0; renderTriage(); return; }
+    if(pick){ const id=pick.dataset.pick;
+      if(tri.picked.has(id)) tri.picked.delete(id); else tri.picked.add(id);
+      renderTriage(); return; }
+    if(e.target.closest("[data-selall]")){
+      const shown=triCandidates().slice(0,60);
+      const allOn=shown.length&&shown.every(t=>tri.picked.has(t.node.id));
+      shown.forEach(t=>{ if(allOn) tri.picked.delete(t.node.id); else tri.picked.add(t.node.id); });
+      renderTriage(); return; }
     if(e.target.closest("#tri-newgo")){
       const tx=($("#tri-newtext").value||"").trim(); if(!tx){ toast("やることを入力してください"); return; }
       const sel=$("#tri-newbranch");
       let parent=sel?(locate(sel.value,state.root)||{}).node:null;
       if(!parent){ parent=newNode("その他","group"); parent.color=pickColor(state.root); state.root.children.push(parent); }
       const t=newNode(tx,"task"); parent.collapsed=false; parent.children.push(t); save();
-      tri.nodeId=t.id; tri.step=0; renderTriage(); return;
-    }
+      tri.picked.add(t.id); tri.filter=""; renderTriage(); return; }
+    if(e.target.closest("[data-start]")){ triStart(); return; }
+    if(e.target.closest("[data-again]")){ tri.step="pick"; tri.picked=new Set(); tri.queue=[]; tri.qi=0; tri.nodeId=null; tri.log=[]; renderTriage(); return; }
+    if(e.target.closest("[data-closetri]")){ closeTriage(); return; }
+    if(e.target.closest("[data-skip]")){ triNext(null); return; }
+    // 質問
     const ans=e.target.closest("[data-ans]");
     if(ans){ const yes=ans.dataset.ans==="y", i=tri.step;
       if(yes){ tri.result=(i===0)?1:(i===1)?2:3; tri.step="done"; }
@@ -2167,6 +2244,7 @@
     if(e.target.closest("[data-back]")){
       if(tri.step==="done") tri.step=2; else if(tri.step>0) tri.step=tri.step-1; else tri.step="pick";
       renderTriage(); return; }
+    // 結果の実行
     const dobtn=e.target.closest("[data-do]"); if(!dobtn) return;
     const n=triNode(); if(!n) return; const a=dobtn.dataset.do;
     if(a==="p1"){ triApply(n,1,x=>{ x.priority=true; x.due=todayStr(); }); toast("①いま渡す：優先＋今日にしました"); }
@@ -2181,7 +2259,7 @@
     else if(a==="p4today"){ triApply(n,4,x=>{ x.due=todayStr(); }); toast("④今日の予定にしました"); }
     else if(a==="p4tomorrow"){ triApply(n,4,x=>{ x.due=tomorrowStr(); }); toast("④明日の予定にしました"); }
     else if(a==="p4week"){ triApply(n,4,x=>{ x.due=weekEndStr(); }); toast("④今週末までにしました"); }
-    tri.step="pick"; tri.nodeId=null; renderTriage(); // 続けて次のタスクを仕分ける
+    triNext(tri.result||4); // 次のタスクへ
   });
   $("#btn-triage").addEventListener("click",()=>openTriage());
   $("#tri-close").addEventListener("click",closeTriage);
