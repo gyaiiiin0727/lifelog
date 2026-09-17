@@ -543,6 +543,8 @@
   .tri-split:focus { outline:none; border-color:var(--accent); background:var(--surface); }
   .tri-back { border:0; background:transparent; color:var(--muted); font-size:12.5px; font-weight:700; font-family:inherit; margin-top:14px; }
   .tri-back:hover { color:var(--ink); text-decoration:underline; }
+  .tri-new[hidden] { display:none; }
+  .tri-newbranch-row { margin-top:7px; }
   .tri-check { flex:none; width:19px; height:19px; border-radius:6px; border:1.8px solid var(--border-strong);
     background:var(--surface); display:inline-flex; align-items:center; justify-content:center; color:#fff; }
   .tri-check svg { width:12px; height:12px; opacity:0; }
@@ -1154,7 +1156,11 @@
   // ---- structural ops ----
   function defType(isTop){ return isThink()?"idea":(isTop?"group":"task"); }
   function addSiblingAfter(id){ const loc=locate(id); if(!loc) return; if(!loc.parent){ addBranch(); return; }
-    const top=(loc.parent===curRoot); const sib=newNode("",defType(top));
+    const top=(loc.parent===curRoot);
+    // Enter＝「同じ種類をもう1つ」。項目（中分類）の次は項目、目標の次は目標…（思考マップは常にアイデア）
+    const same=["task","group","goal","memo"].includes(loc.node.type)?loc.node.type:null;
+    const sib=newNode("",(isThink()||top||!same)?defType(top):same);
+    sib.note=(sib.type==="memo"||sib.type==="goal");
     sib.below=loc.node.below; // 真下ノードの兄弟は真下に、横ノードの兄弟は横に
     const idx=loc.parent.children.indexOf(loc.node); if(top){ sib.color=pickColor(); if(loc.node.side) sib.side=loc.node.side; }
     loc.parent.children.splice(idx+1,0,sib); pendingFocus=sib.id; save(); render(); }
@@ -1877,7 +1883,8 @@
     if(!loc.parent){ olAddBranch(); return; }
     if(loc.parent===olRootNode()){ olAddBranch(); return; }
     olUnfold(loc.parent.id);
-    const sib=newNode("", olIsThink()?"idea":(loc.node.type==="group"?"group":"task")); sib.below=loc.node.below;
+    const sib=newNode("", olIsThink()?"idea":(["task","group","goal","memo"].includes(loc.node.type)?loc.node.type:"task"));
+    sib.note=(sib.type==="memo"||sib.type==="goal"); sib.below=loc.node.below;
     const i=loc.parent.children.indexOf(loc.node); loc.parent.children.splice(i+1,0,sib);
     olFocus=sib.id; save(); renderTasks(); }
   function olOutdent(id){ const loc=olLocate(id); if(!loc||!loc.parent) return;
@@ -2108,6 +2115,30 @@
   function triPathOf(id){ const p=pathTo(id,state.root); return p?p.slice(1,-1).map(n=>n.text||"（無題）").join(" › "):""; }
   function triApply(n,result,extra){ n.triage=result; if(extra) extra(n); save();
     if(view==="dash") renderDash(); else if(view==="tasks"||(view==="think"&&thinkList)) renderTasks(); else render(); }
+  // 仕分けの「新しく作る」で最後に選んだ項目を覚える（表示の好みなので state には入れない）
+  const TRI_BRANCH_KEY="branch.tri.lastBranch";
+  function triSaveBranch(id){ try{ localStorage.setItem(TRI_BRANCH_KEY,id); }catch(e){} }
+  function triBranchSel(){
+    const kids=state.root.children; if(!kids.length) return "__new";
+    let v=tri.lastBranch; if(v==null){ try{ v=localStorage.getItem(TRI_BRANCH_KEY); }catch(e){} }
+    if(v==="__new") return "__new";
+    return kids.some(b=>b.id===v)?v:kids[0].id;
+  }
+  function triCreateNew(){
+    const tx=(($("#tri-newtext")||{}).value||"").trim(); if(!tx){ toast("やることを入力してください"); return; }
+    const selv=triBranchSel(); let parent=null;
+    if(selv==="__new"){
+      const nm=(($("#tri-newbranchname")||{}).value||"").trim();
+      if(!nm){ toast("新しい項目の名前を入力してください"); const f=$("#tri-newbranchname"); if(f) f.focus(); return; }
+      parent=newNode(nm,"group"); parent.color=pickColor(state.root); state.root.children.push(parent);
+      toast(`項目「${nm}」を作りました`);
+    } else parent=(locate(selv,state.root)||{}).node;
+    if(!parent){ parent=newNode("その他","group"); parent.color=pickColor(state.root); state.root.children.push(parent); }
+    const t=newNode(tx,"task"); parent.collapsed=false; parent.children.push(t); save();
+    tri.lastBranch=parent.id; triSaveBranch(parent.id);          // 次も同じ項目で続けて作れる
+    tri.picked.add(t.id); tri.filter=""; tri.newText=""; tri.newBranchName=""; tri.focusNew=true;
+    renderTriage();
+  }
   function triCandidates(){ const f=(tri.filter||"").trim();
     return collectTasks().filter(t=>!isDone(t.node)).filter(t=>!f||(t.node.text||"").includes(f)); }
   // 選んだタスクを、上から順に仕分けていく
@@ -2139,7 +2170,9 @@
           <span class="tx">${esc(t.node.text)||"（無題）"}${pt?`<br><span class="pt">${esc(pt)}</span>`:""}</span>
           ${t.node.triage?`<span class="chip tri-chip n${t.node.triage}">${TRI_MARK[t.node.triage]}</span>`:""}</div>`;
       }).join(""):`<div class="dash-empty">${(tri.filter||"").trim()?"見つかりません":"未完了のタスクがありません"}</div>`;
-      const opts=state.root.children.map(b=>`<option value="${b.id}">${esc(b.text||"（無題）")}</option>`).join("");
+      const bsel=triBranchSel();
+      const opts=state.root.children.map(b=>`<option value="${b.id}" ${b.id===bsel?"selected":""}>${esc(b.text||"（無題）")}</option>`).join("")
+        +`<option value="__new" ${bsel==="__new"?"selected":""}>＋ 新しい項目を作る</option>`;
       const cnt=tri.picked.size;
       const allOn=shown.length&&shown.every(t=>tri.picked.has(t.node.id));
       body.innerHTML=`<div class="tri-note">溜まっているタスクから、いま片づけるものをまとめて選びます。選んだ順に1件ずつ仕分けます。</div>
@@ -2148,14 +2181,25 @@
         <div class="tri-list">${list}</div>
         <div class="tri-sec">なければ新しく作る</div>
         <div class="tri-new">
-          <input id="tri-newtext" placeholder="やること">
-          ${state.root.children.length?`<select id="tri-newbranch">${opts}</select>`:""}
+          <input id="tri-newtext" placeholder="やること" value="${esc(tri.newText||"")}">
+          <select id="tri-newbranch">${opts}</select>
           <button id="tri-newgo">作る</button>
+        </div>
+        <div class="tri-new tri-newbranch-row" ${bsel==="__new"?"":"hidden"}>
+          <input id="tri-newbranchname" placeholder="新しい項目の名前（例：仕事）" value="${esc(tri.newBranchName||"")}">
         </div>
         <div class="tri-bar"><button class="primary" data-start="1" ${cnt?"":"disabled"}>
           ${cnt?`選んだ ${cnt}件 を仕分ける`:"タスクを選んでください"}</button></div>`;
       const si=$("#tri-search"); if(si){ si.oninput=()=>{ tri.filter=si.value; const at=si.selectionStart; renderTriage();
         const s2=$("#tri-search"); if(s2){ s2.focus(); try{ s2.setSelectionRange(at,at); }catch(e){} } }; }
+      const nt=$("#tri-newtext"), nb=$("#tri-newbranch"), nn=$("#tri-newbranchname");
+      if(nt){ nt.oninput=()=>{ tri.newText=nt.value; };
+        nt.onkeydown=(ev)=>{ if(ev.key==="Enter"&&!ev.isComposing&&ev.keyCode!==229){ ev.preventDefault(); triCreateNew(); } }; }
+      if(nn){ nn.oninput=()=>{ tri.newBranchName=nn.value; };
+        nn.onkeydown=(ev)=>{ if(ev.key==="Enter"&&!ev.isComposing&&ev.keyCode!==229){ ev.preventDefault(); triCreateNew(); } }; }
+      if(nb){ nb.onchange=()=>{ tri.lastBranch=nb.value; if(nb.value!=="__new") triSaveBranch(nb.value);
+        renderTriage(); const f=$(nb.value==="__new"?"#tri-newbranchname":"#tri-newtext"); if(f) f.focus(); }; }
+      if(tri.focusNew){ tri.focusNew=false; const f=$("#tri-newtext"); if(f) f.focus(); }
       return;
     }
     // --- おわり：結果まとめ ---
@@ -2224,13 +2268,7 @@
       const allOn=shown.length&&shown.every(t=>tri.picked.has(t.node.id));
       shown.forEach(t=>{ if(allOn) tri.picked.delete(t.node.id); else tri.picked.add(t.node.id); });
       renderTriage(); return; }
-    if(e.target.closest("#tri-newgo")){
-      const tx=($("#tri-newtext").value||"").trim(); if(!tx){ toast("やることを入力してください"); return; }
-      const sel=$("#tri-newbranch");
-      let parent=sel?(locate(sel.value,state.root)||{}).node:null;
-      if(!parent){ parent=newNode("その他","group"); parent.color=pickColor(state.root); state.root.children.push(parent); }
-      const t=newNode(tx,"task"); parent.collapsed=false; parent.children.push(t); save();
-      tri.picked.add(t.id); tri.filter=""; renderTriage(); return; }
+    if(e.target.closest("#tri-newgo")){ triCreateNew(); return; }
     if(e.target.closest("[data-start]")){ triStart(); return; }
     if(e.target.closest("[data-again]")){ tri.step="pick"; tri.picked=new Set(); tri.queue=[]; tri.qi=0; tri.nodeId=null; tri.log=[]; renderTriage(); return; }
     if(e.target.closest("[data-closetri]")){ closeTriage(); return; }
