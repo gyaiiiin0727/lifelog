@@ -493,7 +493,7 @@
 
   /* ---- 仕分け（判断フロー）---- */
   .tri-modal { max-width:520px; }
-  #tri-body { padding:18px; max-height:70vh; overflow:auto; }
+  #tri-body, #vo-body, #img-body { padding:18px; max-height:70vh; overflow:auto; }
   .tri-steps { display:flex; align-items:center; gap:6px; margin-bottom:14px; }
   .tri-steps i { flex:1; height:4px; border-radius:999px; background:var(--border); font-style:normal; }
   .tri-steps i.on { background:var(--accent); }
@@ -577,6 +577,62 @@
     .help { display:none; }
     .toolbar .lbl { display:none; }
     .stat-row { grid-template-columns:repeat(2,1fr); }
+    /* 上部：タブを1段まるごと使ってアイコン表示に（横幅を食わないように） */
+    .topbar { flex-wrap:wrap; gap:8px; padding:9px 12px; }
+    .brand h1 { font-size:15px; }
+    .spacer { display:none; }
+    .toolbar { flex:1; gap:6px; }
+    .seg { order:3; flex:1 0 100%; padding:2px; }
+    .seg button { flex:1; padding:0 4px; height:34px; }
+    .seg .lbl { display:none; }
+    .seg button svg { width:18px; height:18px; }
+    .btn { height:36px; padding:0 10px; }
+    .btn.icon { width:36px; }
+    /* 画面いっぱい使う（アドレスバーの伸縮対策） */
+    .dash-inner { padding:16px 13px 90px; }
+    .dash-title { font-size:19px; }
+    /* モーダルは下から出るシート型に */
+    .modal-scrim { align-items:flex-end; padding:0; }
+    .modal, .tri-modal { max-width:100%; border-radius:18px 18px 0 0; max-height:94vh; display:flex; flex-direction:column; }
+    #tri-body, #cloud-body, #vo-body { max-height:none; overflow:auto; }
+    /* タスク一覧：階層のインデントを詰めて、操作ボタンは折り返す */
+    .ol-row { flex-wrap:wrap; }
+    .ol-tools { width:100%; justify-content:flex-end; padding-top:4px; }
+    .ol-tools button { width:34px; height:34px; }
+    .ol-head .ol-tools { width:100%; }
+    .ol-hint { display:none; }
+    .db-card .dash-task { padding-left:18px; }
+    .db-sub { padding-left:18px; }
+  }
+  @media (max-width:400px) { .seg button svg { width:17px; height:17px; } .btn.icon { width:34px; } }
+  @supports (height:100dvh) { body { min-height:100dvh; } }
+  /* 音声入力 */
+  .vo-text { width:100%; min-height:130px; border:1px solid var(--border-strong); border-radius:12px; background:var(--surface-2);
+    color:var(--ink); font-family:inherit; font-size:15px; line-height:1.7; padding:12px 13px; resize:vertical; }
+  .vo-text:focus { outline:none; border-color:var(--accent); background:var(--surface); }
+  .vo-row { display:flex; gap:8px; margin-top:10px; }
+  .vo-mic { flex:1; height:48px; border-radius:12px; border:1.5px solid var(--border-strong); background:var(--surface);
+    color:var(--ink); font-size:15px; font-weight:800; font-family:inherit; }
+  .vo-mic.on { background:var(--danger); border-color:var(--danger); color:#fff; }
+  .vo-item { display:flex; align-items:flex-start; gap:9px; padding:10px 12px; border-top:1px solid var(--border); }
+  .vo-item:first-child { border-top:0; }
+  .vo-item.off { opacity:.45; }
+  .vo-main { flex:1; min-width:0; }
+  .vo-name { width:100%; border:0; background:transparent; color:var(--ink); font-family:inherit; font-size:14px; font-weight:700; padding:2px 0; }
+  .vo-name:focus { outline:none; border-bottom:1px solid var(--accent); }
+  .vo-meta { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:5px; }
+  .vo-branch { height:28px; border:1px solid var(--border-strong); border-radius:8px; background:var(--surface-2);
+    color:var(--ink); font-family:inherit; font-size:12px; padding:0 6px; max-width:140px; }
+  .vo-chip { background:var(--surface-2); border:1px solid var(--border); color:var(--muted); cursor:pointer; }
+  .vo-chip:hover { border-color:var(--danger); color:var(--danger); }
+
+  /* 印刷（PDF保存のフォールバック） */
+  @media print {
+    .topbar, .help, .theme-bar, .jump-bar, .zoom-ctl, .toast, .modal-scrim,
+    .node-tools, .node-grip, .node-collapse, .dash { display:none !important; }
+    body { overflow:visible !important; height:auto !important; background:#fff; display:block; }
+    .views, .stage { overflow:visible !important; height:auto !important; display:block !important; }
+    .canvas { zoom:1 !important; }
   }
   @media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
 </style>
@@ -635,6 +691,13 @@
     <button class="btn icon" id="btn-tidy" title="整列（形はそのまま・ドラッグのズレを直す／⇧Shift+クリックでぜんぶ横並び）">
       <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h9M4 12h13M4 18h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M18 15l3 3-3 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
+    <button class="btn" id="btn-voice" title="話してタスクを作る（音声入力）">
+      <svg viewBox="0 0 24 24" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span class="lbl">音声</span>
+    </button>
+    <button class="btn icon" id="btn-image" title="マインドマップを画像・PDFで保存">
+      <svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5" stroke="currentColor" stroke-width="1.7"/><circle cx="9" cy="10" r="1.6" stroke="currentColor" stroke-width="1.5"/><path d="m4.5 17 4.5-4.5 3.5 3.5 2.5-2 4.5 4" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+    </button>
     <button class="btn" id="btn-triage" title="タスクを仕分ける（判断フロー）">
       <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h6M4 12h9M4 18h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M15 6h5m0 0-2-2m2 2-2 2M17 18h3m0 0-2-2m2 2-2 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <span class="lbl">仕分け</span>
@@ -682,6 +745,26 @@
 
 <input type="file" id="file-input" accept="application/json,.json" hidden>
 <div class="toast" id="toast"></div>
+
+<div class="modal-scrim" id="voice-modal" hidden>
+  <div class="modal tri-modal" role="dialog" aria-label="話してタスクを作る">
+    <div class="modal-head">
+      <h2 id="vo-title">話してタスクを作る</h2>
+      <button class="modal-x" id="vo-close" title="閉じる">✕</button>
+    </div>
+    <div id="vo-body"></div>
+  </div>
+</div>
+
+<div class="modal-scrim" id="image-modal" hidden>
+  <div class="modal" role="dialog" aria-label="画像・PDFで保存">
+    <div class="modal-head">
+      <h2>マインドマップを保存</h2>
+      <button class="modal-x" id="img-close" title="閉じる">✕</button>
+    </div>
+    <div id="img-body"></div>
+  </div>
+</div>
 
 <div class="modal-scrim" id="triage-modal" hidden>
   <div class="modal tri-modal" role="dialog" aria-label="タスクの仕分け">
@@ -1736,7 +1819,7 @@
   // ---- タスク（階層アウトライン）----
   function countTasksIn(node){ let dn=0,tn=0; (function w(n){ n.children.forEach(k=>{ if(k.type==="task"){ tn++; if(isDone(k)) dn++; } w(k); }); })(node); return {done:dn,total:tn}; }
   function olRow(node,depth,col){
-    const pad=10+depth*20;
+    const pad=10+Math.min(depth,6)*(window.innerWidth<640?11:20);
     const isIdea=node.type==="idea";
     const isTask=node.type==="task"&&!isIdea, isGoal=node.type==="goal", isMemo=node.type==="memo";
     const done=isTask&&isDone(node);
@@ -2087,6 +2170,306 @@
   });
 
   window.addEventListener("resize",()=>relayout());
+
+  // ================= マインドマップを画像／PDFで保存 =================
+  const IMG_VARS=["--bg","--surface","--surface-2","--ink","--muted","--faint","--border","--border-strong",
+    "--accent","--accent-soft","--danger","--flag","--shadow","--shadow-sm","--link","--font"];
+  // いま表示しているマップを、そのままの見た目で1枚の絵にする
+  function mapToCanvas(){
+    return new Promise((resolve,reject)=>{
+      const W=Math.ceil(parseFloat(canvas.style.width)||canvas.scrollWidth||1000);
+      const H=Math.ceil(parseFloat(canvas.style.height)||canvas.scrollHeight||700);
+      if(!W||!H) return reject(new Error("size"));
+      const clone=canvas.cloneNode(true);
+      // textarea は値が属性に入らないので、同じ見た目の div に置き換える
+      const src=canvas.querySelectorAll("textarea"), dst=clone.querySelectorAll("textarea");
+      dst.forEach((ta,i)=>{ const d=document.createElement("div");
+        d.setAttribute("class",ta.getAttribute("class")||"");
+        d.setAttribute("style",(ta.getAttribute("style")||"")+";white-space:pre-wrap;word-break:break-word;");
+        d.textContent=src[i]?src[i].value:""; ta.parentNode.replaceChild(d,ta); });
+      // 編集用の部品は写さない
+      clone.querySelectorAll(".node-tools,.node-grip,.node-collapse,.marquee,.drop-line,.root-hint,.sticky-resize,.sticky-min,.sticky-del").forEach(el=>el.remove());
+      const cs=getComputedStyle(document.documentElement);
+      const vars=IMG_VARS.map(v=>v+":"+cs.getPropertyValue(v).trim()).join(";");
+      const bg=cs.getPropertyValue("--bg").trim()||"#ffffff";
+      const css=[...document.querySelectorAll("style")].map(el=>el.textContent).join("\n");
+      const html=`<div xmlns="http://www.w3.org/1999/xhtml" style="${vars};width:${W}px;height:${H}px;background:${bg};margin:0;padding:0">`+
+        `<style>${css}</style>${clone.outerHTML}</div>`;
+      const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`+
+        `<foreignObject x="0" y="0" width="${W}" height="${H}">${html}</foreignObject></svg>`;
+      const img=new Image();
+      img.onload=()=>{
+        const scale=Math.min(2, Math.max(1, Math.floor(4000000/(W*H))||1));
+        const cv=document.createElement("canvas"); cv.width=Math.round(W*scale); cv.height=Math.round(H*scale);
+        const g=cv.getContext("2d"); g.fillStyle=bg; g.fillRect(0,0,cv.width,cv.height);
+        g.setTransform(scale,0,0,scale,0,0); g.drawImage(img,0,0);
+        resolve(cv);
+      };
+      img.onerror=()=>reject(new Error("render"));
+      img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+    });
+  }
+  function dlBlob(blob,filename){
+    try{
+      const url=URL.createObjectURL(blob); const a=document.createElement("a");
+      a.href=url; a.download=filename; a.rel="noopener"; document.body.appendChild(a); a.click();
+      setTimeout(()=>{ try{ URL.revokeObjectURL(url); a.remove(); }catch(e){} },1500);
+      return true;
+    }catch(e){ return false; }
+  }
+  function stampName(ext){ const d=new Date();
+    const st=d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+    const nm=(curRoot&&curRoot.text?curRoot.text:"mindmap").replace(/[\\/:*?"<>|\s]/g,"_");
+    return `${nm}-${st}.${ext}`; }
+  // JPEG を1枚だけ貼った最小構成のPDFを組み立てる（外部ライブラリなし）
+  function jpegToPdfBlob(dataUrl,iw,ih){
+    const bin=atob(dataUrl.split(",")[1]);
+    const jpg=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) jpg[i]=bin.charCodeAt(i);
+    const enc=new TextEncoder(); const chunks=[]; let len=0; const offs=[];
+    const push=(x)=>{ const u=(typeof x==="string")?enc.encode(x):x; chunks.push(u); len+=u.length; };
+    const pw=Math.round(iw*0.75), ph=Math.round(ih*0.75); // 96dpi → pt
+    push("%PDF-1.4\n");
+    offs.push(len); push("1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n");
+    offs.push(len); push("2 0 obj\n<</Type/Pages/Kids[3 0 R]/Count 1>>\nendobj\n");
+    offs.push(len); push(`3 0 obj\n<</Type/Page/Parent 2 0 R/MediaBox[0 0 ${pw} ${ph}]/Resources<</XObject<</Im0 4 0 R>>>>/Contents 5 0 R>>\nendobj\n`);
+    offs.push(len); push(`4 0 obj\n<</Type/XObject/Subtype/Image/Width ${iw}/Height ${ih}/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length ${jpg.length}>>\nstream\n`);
+    push(jpg); push("\nendstream\nendobj\n");
+    const content=`q ${pw} 0 0 ${ph} 0 0 cm /Im0 Do Q\n`;
+    offs.push(len); push(`5 0 obj\n<</Length ${content.length}>>\nstream\n${content}endstream\nendobj\n`);
+    const xref=len;
+    let x="xref\n0 6\n0000000000 65535 f \n";
+    offs.forEach(o=>{ x+=String(o).padStart(10,"0")+" 00000 n \n"; });
+    push(x); push(`trailer\n<</Size 6/Root 1 0 R>>\nstartxref\n${xref}\n%%EOF`);
+    const out=new Uint8Array(len); let q=0; chunks.forEach(c=>{ out.set(c,q); q+=c.length; });
+    return new Blob([out],{type:"application/pdf"});
+  }
+  function openImage(){
+    if(view!=="map"&&view!=="think"){ setView("map"); }
+    $("#image-modal").hidden=false;
+    $("#img-body").innerHTML=`<div class="tri-note">いま開いているマップ「${esc(curRoot.text||"（無題）")}」を、そのままの見た目で保存します。</div>
+      <div class="tri-do">
+        <button class="primary" data-img="png">画像（PNG）で保存</button>
+        <button data-img="pdf">PDFで保存</button>
+        <button data-img="print">印刷（PDFで保存もできます）</button>
+      </div>
+      <div class="tri-note" id="img-msg">畳んでいる枝は畳んだまま写ります。広いマップはそのままの大きさで書き出されます。</div>`;
+  }
+  function closeImage(){ $("#image-modal").hidden=true; }
+  async function doExport(kind){
+    const msg=$("#img-msg"); const say=(t)=>{ if(msg) msg.textContent=t; };
+    const z=zoom; canvas.style.zoom=1;                 // 等倍で書き出す
+    say("書き出しています…");
+    try{
+      const cv=await mapToCanvas();
+      canvas.style.zoom=z;
+      if(kind==="png"){
+        const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
+        if(blob&&dlBlob(blob,stampName("png"))){ toast("画像を保存しました"); closeImage(); return; }
+        throw new Error("dl");
+      } else {
+        const url=cv.toDataURL("image/jpeg",0.92);
+        const blob=jpegToPdfBlob(url,cv.width,cv.height);
+        if(dlBlob(blob,stampName("pdf"))){ toast("PDFを保存しました"); closeImage(); return; }
+        throw new Error("dl");
+      }
+    }catch(e){
+      canvas.style.zoom=z;
+      say("この環境では書き出せませんでした。「印刷」からPDFとして保存してください。");
+      toast("書き出しに失敗しました");
+    }
+  }
+  $("#btn-image").addEventListener("click",openImage);
+  $("#img-close").addEventListener("click",closeImage);
+  $("#image-modal").addEventListener("click",(e)=>{ if(e.target===$("#image-modal")) closeImage(); });
+  $("#img-body").addEventListener("click",(e)=>{
+    const b=e.target.closest("[data-img]"); if(!b) return;
+    const k=b.dataset.img;
+    if(k==="print"){ closeImage(); setTimeout(()=>window.print(),120); return; }
+    doExport(k);
+  });
+
+  // ================= 話してタスクを作る（音声入力）=================
+  // 端末の音声認識が使えればそれを、使えなくても「キーボードのマイク」で同じことができる。
+  const VO_WD={"日":0,"月":1,"火":2,"水":3,"木":4,"金":5,"土":6};
+  function voAddDays(n){ const d=new Date(); d.setDate(d.getDate()+n); return ymd(d); }
+  function voNextWeekday(w){ const d=new Date(); let diff=(w-d.getDay()+7)%7; if(diff===0) diff=7; d.setDate(d.getDate()+diff); return ymd(d); }
+  function voMonthEnd(){ const d=new Date(); return ymd(new Date(d.getFullYear(),d.getMonth()+1,0)); }
+  // 話し言葉のまとまりを、タスク1件ずつに切る
+  function voSplit(text){
+    const out=[];
+    String(text||"").replace(/\r/g,"").split(/[。．!！?？\n]+/).forEach(seg=>{
+      seg.split(/(?:、|,)\s*(?=あとは|あと|それから|それと|つぎに|次に|そのあと|その後|また)/).forEach(part=>{
+        const t=part.trim(); if(t.length>1) out.push(t);
+      });
+    });
+    return out;
+  }
+  // 「〜しないと」「〜したい」などを整えて、素直なタスク名にする
+  const VO_GODAN={"ら":"る","さ":"す","か":"く","が":"ぐ","ま":"む","ば":"ぶ","な":"ぬ","た":"つ","わ":"う"};
+  function voClean(s){
+    s=String(s||"").replace(/\s+/g," ").trim();
+    for(let i=0;i<5;i++){ const b=s;   // 言いよどみ・つなぎ言葉は重なることがあるので繰り返す
+      s=s.replace(/^(えーと|えっと|ええと|あのー|あの|うーんと|まあ|まず|とりあえず|あとは|あと|それから|それと|つぎに|次に|そのあと|その後|また)[、,\s]*/,"");
+      s=s.replace(/^(タスク|TODO|todo)\s*[:：]\s*/,"");
+      s=s.replace(/^[、,。\s]+/,"");
+      if(s===b) break; }
+    s=s.replace(/^(までには|までに|まで|には|にも|に|は|が|を|の|で|と)\s*/,""); // 日付を抜いた後に残る助詞
+    for(let i=0;i<3;i++) s=s.replace(/([^\x00-\x7F])\s+([^\x00-\x7F])/g,"$1$2"); // 全角どうしの隙間を詰める
+    s=s.replace(/(やりたいです|やりたい)$/,"やる");
+    s=s.replace(/(したいです|したい)$/,"する");
+    s=s.replace(/(しないといけない|しなきゃいけない|しなくちゃいけない|しないと|しなきゃ|しなくちゃ|する必要がある|しておく必要がある)$/,"する");
+    s=s.replace(/(やらないといけない|やらなきゃいけない|やらないと|やらなきゃ)$/,"やる");
+    s=s.replace(/(.)(ないといけない|なきゃいけない|なくちゃいけない|なければならない|ないと|なきゃ|なくちゃ)$/,(m,c)=>VO_GODAN[c]||(c+"る"));
+    s=s.replace(/(しておきます|しておく|します|やります|する予定)$/,"する");
+    s=s.replace(/(です|ます)$/,"");
+    return s.replace(/^[\s、,。]+/,"").replace(/[\s、,。]+$/,"").trim();
+  }
+  // 日付・くり返し・優先を読み取って、本文から取り除く
+  function voMeta(text){
+    let s=" "+text+" ", due=null, repeat=null, weekdays=[], weekOfMonth=null, priority=false;
+    const eat=(re,fn)=>{ const m=s.match(re); if(!m) return false; fn(m); s=s.replace(m[0]," "); return true; };
+    eat(/毎日/,()=>{ repeat="daily"; });
+    if(!repeat) eat(/毎週([日月火水木金土])曜?日?(?:には|まで|に)?/,m=>{ repeat="weekly"; weekdays=[VO_WD[m[1]]]; });
+    if(!repeat) eat(/毎週/,()=>{ repeat="weekly"; });
+    if(!repeat) eat(/毎月([1-5１-５])週目?の?([日月火水木金土])曜?日?(?:には|まで|に)?/,m=>{ repeat="monthly"; weekOfMonth=Number(m[1].replace(/[１-５]/,c=>"12345"["１２３４５".indexOf(c)])); weekdays=[VO_WD[m[2]]]; });
+    if(!repeat) eat(/毎月/,()=>{ repeat="monthly"; });
+    if(!repeat){
+      eat(/(?:今日中|今日|本日)(?:までには|までに|まで|には|に)?/,()=>{ due=todayStr(); }) ||
+      eat(/(?:明後日|あさって)(?:までには|までに|まで|には|に)?/,()=>{ due=voAddDays(2); }) ||
+      eat(/明日(?:までには|までに|まで|には|に)?/,()=>{ due=tomorrowStr(); }) ||
+      eat(/来週末(?:までには|までに|まで|には|に)?/,()=>{ due=ymd(new Date(parseYmd(weekEndStr()).getTime()+7*86400000)); }) ||
+      eat(/今週末(?:までには|までに|まで|には|に)?/,()=>{ due=weekEndStr(); }) ||
+      eat(/来週(?:までには|までに|まで|には|に)?/,()=>{ due=voAddDays(7); }) ||
+      eat(/今週(?:中|までには|までに|まで|には|に)?/,()=>{ due=weekEndStr(); }) ||
+      eat(/今月末(?:までには|までに|まで|には|に)?/,()=>{ due=voMonthEnd(); }) ||
+      eat(/(\d{1,2})月(\d{1,2})日(?:までには|までに|まで|には|に)?/,m=>{ const y=new Date().getFullYear(); let d=new Date(y,+m[1]-1,+m[2]);
+        if(ymd(d)<todayStr()) d=new Date(y+1,+m[1]-1,+m[2]); due=ymd(d); }) ||
+      eat(/(\d{1,2})日後(?:までには|までに|まで|には|に)?/,m=>{ due=voAddDays(+m[1]); }) ||
+      eat(/([日月火水木金土])曜日?(?:までには|までに|まで|には|に)?/,m=>{ due=voNextWeekday(VO_WD[m[1]]); });
+    }
+    if(eat(/(?:大至急|至急|急ぎで|急ぎ|今すぐ|最優先|優先|重要)(?:、|,)?/,()=>{})) priority=true;
+    return {text:voClean(s), due, repeat, weekdays, weekOfMonth, priority};
+  }
+  // 文中に既存の項目名が出てきたら、その項目に振り分ける
+  function voBranch(text,fallback){
+    for(const b of state.root.children){ const nm=(b.text||"").trim();
+      if(nm && nm.length>=1 && text.includes(nm)) return b.id; }
+    return fallback;
+  }
+  function voParse(text){
+    const fallback=triBranchSel()==="__new"?((state.root.children[0]||{}).id||null):triBranchSel();
+    return voSplit(text).map(raw=>{
+      const m=voMeta(raw);
+      const bid=voBranch(raw,fallback);
+      const b=bid?(locate(bid,state.root)||{}).node:null;
+      let t=m.text;
+      if(b&&b.text){ const nm=b.text.trim();
+        t=t.replace(new RegExp("^"+nm.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\s*(の|で|は|、)?\\s*"),"").trim() || m.text; }
+      return {...m, text:t, branchId:bid, on:true};
+    }).filter(x=>x.text.length>0);
+  }
+
+  let vo=null, voRec=null, voListening=false;
+  function voSupported(){ return !!(window.SpeechRecognition||window.webkitSpeechRecognition); }
+  function openVoice(){ vo={step:"input", text:"", items:[]}; $("#voice-modal").hidden=false; renderVoice();
+    setTimeout(()=>{ const t=$("#vo-text"); if(t) t.focus(); },50); }
+  function closeVoice(){ voStop(); $("#voice-modal").hidden=true; vo=null; }
+  function voStop(){ if(voRec){ try{ voRec.stop(); }catch(e){} } voListening=false; }
+  function voToggleRec(){
+    if(voListening){ voStop(); renderVoice(); return; }
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR){ toast("この端末では音声認識が使えません。キーボードのマイクで入力してください"); return; }
+    let base=(vo.text||"");
+    try{
+      voRec=new SR(); voRec.lang="ja-JP"; voRec.continuous=true; voRec.interimResults=true;
+      voRec.onresult=(ev)=>{ let fin="",int="";
+        for(let i=ev.resultIndex;i<ev.results.length;i++){ const r=ev.results[i]; if(r.isFinal) fin+=r[0].transcript; else int+=r[0].transcript; }
+        if(fin) base=(base+(base&&!/[。\n]$/.test(base)?"。":"")+fin);
+        vo.text=base+int; const ta=$("#vo-text"); if(ta){ ta.value=vo.text; ta.scrollTop=ta.scrollHeight; } };
+      voRec.onerror=(ev)=>{ voListening=false; vo.text=base; renderVoice();
+        toast(ev&&ev.error==="not-allowed"?"マイクの使用が許可されていません":"音声認識を終了しました"); };
+      voRec.onend=()=>{ voListening=false; vo.text=base; renderVoice(); };
+      voRec.start(); voListening=true; renderVoice();
+    }catch(e){ voListening=false; toast("音声認識を開始できませんでした"); }
+  }
+  function renderVoice(){
+    const body=$("#vo-body"), ttl=$("#vo-title"); if(!body||!vo) return;
+    if(vo.step==="input"){
+      ttl.textContent="話してタスクを作る";
+      body.innerHTML=`<div class="tri-note">やりたいことをそのまま話す（または入力する）と、タスクに分けて登録します。<br>
+          例）「明日までに見積もりを送る。あと毎週金曜に週報を出す。急ぎで請求書の確認」</div>
+        <textarea class="vo-text" id="vo-text" placeholder="ここに話した内容が入ります（キーボードのマイクでもOK）">${esc(vo.text||"")}</textarea>
+        <div class="vo-row">
+          <button class="vo-mic ${voListening?"on":""}" id="vo-mic">${voListening?"● 録音中（押して停止）":"🎤 話す"}</button>
+        </div>
+        ${voSupported()?"":`<div class="tri-note">この端末では自動の音声認識が使えないので、<b>キーボードのマイクボタン</b>から声で入力してください。</div>`}
+        <div class="tri-bar"><button class="primary" data-vo="parse">タスクに分ける</button></div>`;
+      const ta=$("#vo-text"); if(ta) ta.oninput=()=>{ vo.text=ta.value; };
+      return;
+    }
+    ttl.textContent="この内容で追加しますか？";
+    const opts=(sel)=>state.root.children.map(b=>`<option value="${b.id}" ${b.id===sel?"selected":""}>${esc(b.text||"（無題）")}</option>`).join("");
+    const rows=vo.items.map((it,i)=>{
+      const chips=[];
+      if(it.priority) chips.push(`<span class="chip vo-chip" data-vo="clr" data-i="${i}" data-k="priority">優先 ✕</span>`);
+      if(it.repeat) chips.push(`<span class="chip vo-chip" data-vo="clr" data-i="${i}" data-k="repeat">${repeatLabel(it)} ✕</span>`);
+      if(it.due){ const dl=dueLabel(it.due); chips.push(`<span class="chip vo-chip" data-vo="clr" data-i="${i}" data-k="due">${dl?dl.text:it.due} ✕</span>`); }
+      return `<div class="vo-item ${it.on?"":"off"}">
+        <span class="tri-check ${it.on?"on":""}" data-vo="toggle" data-i="${i}">${ICON.check}</span>
+        <div class="vo-main">
+          <input class="vo-name" data-i="${i}" value="${esc(it.text)}">
+          <div class="vo-meta">
+            <select class="vo-branch" data-i="${i}">${opts(it.branchId)}</select>
+            ${chips.join("")}
+          </div>
+        </div></div>`;
+    }).join("");
+    const n=vo.items.filter(x=>x.on).length;
+    body.innerHTML=`<div class="tri-note">名前は直せます。項目も選び直せます。いらない行はチェックを外してください。</div>
+      <div class="tri-list">${rows||`<div class="dash-empty">タスクが見つかりませんでした</div>`}</div>
+      <div class="tri-bar"><button data-vo="back">やり直す</button>
+        <button class="primary" data-vo="add" ${n?"":"disabled"}>${n?`${n}件を追加`:"追加するものがありません"}</button></div>`;
+    body.querySelectorAll(".vo-name").forEach(el=>{ el.oninput=()=>{ vo.items[+el.dataset.i].text=el.value; }; });
+    body.querySelectorAll(".vo-branch").forEach(el=>{ el.onchange=()=>{ vo.items[+el.dataset.i].branchId=el.value; triSaveBranch(el.value); }; });
+  }
+  $("#vo-body").addEventListener("click",(e)=>{
+    if(!vo) return;
+    if(e.target.closest("#vo-mic")){ voToggleRec(); return; }
+    const t=e.target.closest("[data-vo]"); if(!t) return;
+    const a=t.dataset.vo;
+    if(a==="parse"){
+      const ta=$("#vo-text"); if(ta) vo.text=ta.value;
+      voStop();
+      const items=voParse(vo.text||"");
+      if(!items.length){ toast("タスクを読み取れませんでした"); return; }
+      vo.items=items; vo.step="review"; renderVoice(); return;
+    }
+    if(a==="back"){ vo.step="input"; renderVoice(); return; }
+    if(a==="toggle"){ const i=+t.dataset.i; vo.items[i].on=!vo.items[i].on; renderVoice(); return; }
+    if(a==="clr"){ const i=+t.dataset.i, k=t.dataset.k;
+      if(k==="priority") vo.items[i].priority=false;
+      else if(k==="repeat"){ vo.items[i].repeat=null; vo.items[i].weekdays=[]; vo.items[i].weekOfMonth=null; }
+      else vo.items[i].due=null;
+      renderVoice(); return; }
+    if(a==="add"){
+      const add=vo.items.filter(x=>x.on&&x.text.trim());
+      if(!add.length) return;
+      add.forEach(it=>{
+        let parent=it.branchId?(locate(it.branchId,state.root)||{}).node:null;
+        if(!parent){ parent=state.root.children[0]; }
+        if(!parent){ parent=newNode("その他","group"); parent.color=pickColor(state.root); state.root.children.push(parent); }
+        const t2=newNode(it.text.trim(),"task");
+        if(it.due) t2.due=it.due;
+        if(it.repeat){ t2.repeat=it.repeat; t2.weekdays=it.weekdays||[]; t2.weekOfMonth=it.weekOfMonth||null; }
+        if(it.priority) t2.priority=true;
+        parent.collapsed=false; parent.children.push(t2);
+      });
+      save(); refresh(); toast(`${add.length}件のタスクを追加しました`); closeVoice(); return;
+    }
+  });
+  $("#btn-voice").addEventListener("click",openVoice);
+  $("#vo-close").addEventListener("click",closeVoice);
+  $("#voice-modal").addEventListener("click",(e)=>{ if(e.target===$("#voice-modal")) closeVoice(); });
 
   // ================= 仕分け（判断フロー）=================
   // マルチタスク状態 → 3つの質問 → ①〜④ に仕分けて、シングルタスク化して処理する
