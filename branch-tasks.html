@@ -2440,7 +2440,10 @@
     if(a==="parse"){
       const ta=$("#vo-text"); if(ta) vo.text=ta.value;
       voStop();
-      const items=voParse(vo.text||"");
+      if(!(vo.text||"").trim()){ toast("先に話すか、内容を入力してください"); return; }
+      let items=[];
+      try{ items=voParse(vo.text||""); }
+      catch(err){ console.error(err); toast("うまく読み取れませんでした"); return; }
       if(!items.length){ toast("タスクを読み取れませんでした"); return; }
       vo.items=items; vo.step="review"; renderVoice(); return;
     }
@@ -2503,7 +2506,7 @@
   function triSaveBranch(id){ try{ localStorage.setItem(TRI_BRANCH_KEY,id); }catch(e){} }
   function triBranchSel(){
     const kids=state.root.children; if(!kids.length) return "__new";
-    let v=tri.lastBranch; if(v==null){ try{ v=localStorage.getItem(TRI_BRANCH_KEY); }catch(e){} }
+    let v=tri&&tri.lastBranch; if(v==null){ try{ v=localStorage.getItem(TRI_BRANCH_KEY); }catch(e){} }
     if(v==="__new") return "__new";
     return kids.some(b=>b.id===v)?v:kids[0].id;
   }
