@@ -59,6 +59,26 @@
   .btn svg { width:15px; height:15px; }
   .lbl-s { display:none; }
   #btn-more { display:none; }
+  /* 外部ボードからの取りこみ */
+  .ext-row { display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap; }
+  .ext-row input[type=url] { flex:1; min-width:150px; height:36px; border:1px solid var(--border-strong); border-radius:9px;
+    background:var(--surface-2); color:var(--ink); padding:0 10px; font-size:13px; font-family:inherit; }
+  .ext-row input[type=url]:focus { outline:none; border-color:var(--accent); background:var(--surface); }
+  .ext-row button { height:36px; padding:0 12px; border-radius:9px; border:1px solid var(--border-strong);
+    background:var(--surface); color:var(--ink); font-size:12.5px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .ext-row button:hover { background:var(--surface-2); }
+  .ext-sum { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:12px; }
+  .ext-sum span { font-size:12px; font-weight:800; padding:5px 10px; border-radius:999px; background:var(--surface-2); border:1px solid var(--border); }
+  .ext-item { display:flex; gap:9px; align-items:flex-start; padding:9px 12px; border-bottom:1px solid var(--border); font-size:13px; }
+  .ext-item:last-child { border-bottom:0; }
+  .ext-tag { flex:none; font-size:10.5px; font-weight:800; padding:3px 7px; border-radius:6px; border:1px solid var(--border-strong); color:var(--muted); }
+  .ext-tag.add { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .ext-tag.upd { background:var(--flag); border-color:transparent; color:#2b2b2b; }
+  .ext-tag.gone { color:var(--danger); border-color:var(--danger); }
+  .ext-sub { font-size:11.5px; color:var(--faint); margin-top:2px; line-height:1.5; }
+  .ext-chk { display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--muted); margin:4px 0 10px; cursor:pointer; }
+  .ext-link { background:none; border:0; color:var(--link); font-size:12px; cursor:pointer; padding:4px 0; text-decoration:underline; font-family:inherit; }
+  .ext-err { font-size:12.5px; color:var(--danger); font-weight:700; margin-bottom:10px; }
   .more-menu { display:flex; flex-direction:column; gap:4px; width:200px; }
   .more-menu button { display:flex; align-items:center; gap:10px; height:42px; padding:0 12px; border:1px solid var(--border-strong);
     background:var(--surface); border-radius:10px; font-size:14px; font-weight:700; color:var(--ink); font-family:inherit; }
@@ -592,8 +612,27 @@
     .toolbar .lbl { display:none; }
     .stat-row { grid-template-columns:repeat(2,1fr); }
     /* 上部はロゴ＋最小限のボタンだけ。タブは画面下に固定する */
-    .topbar { flex-wrap:nowrap; gap:8px; padding:8px 12px; }
-    .brand h1 { font-size:15px; }
+    .topbar { flex-wrap:nowrap; gap:5px; padding:6px 10px; }
+    .brand { gap:6px; }
+    .brand .mark { width:19px; height:19px; }
+    .brand h1 { font-size:14px; }
+    /* 上のボタンを小さく */
+    .btn { height:32px; padding:0 9px; font-size:12.5px; }
+    .btn.icon { width:32px; }
+    .btn svg { width:14px; height:14px; }
+    .btn.primary { padding:0 10px; }
+    /* 「大分類へ移動」は折り返さず、横スクロールの1行に */
+    .theme-bar { padding:5px 10px; gap:5px; }
+    .jump-bar { gap:4px; }
+    .jb-row { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; }
+    .jb-row::-webkit-scrollbar { display:none; }
+    .jb-row .tb-label { flex:none; }
+    .tb-label { font-size:10px; }
+    .theme-chip { flex:none; height:27px; font-size:12px; padding:0 10px; max-width:150px; }
+    .jb-row.sub { padding-left:8px; }
+    .jb-row.sub .theme-chip { height:24px; font-size:11.5px; padding:0 9px; }
+    .theme-add { height:27px; font-size:11.5px; padding:0 10px; flex:none; }
+    .theme-del { width:27px; height:27px; flex:none; }
     .spacer { display:block; }
     .toolbar { gap:6px; flex-wrap:nowrap; }
     .seg { position:fixed; left:0; right:0; bottom:0; z-index:40; border-radius:0; padding:4px 6px;
@@ -633,12 +672,10 @@
     .ol-foldall { margin:-2px 0 12px; }
     .dash-title { margin-bottom:12px; }
     /* よく使うものだけ残して、あとは「…」にまとめる */
-    #btn-journal, #btn-cloud, #btn-help, #btn-import, #btn-export, #btn-sticky, #btn-tidy, #btn-image { display:none !important; }
+    #btn-journal, #btn-cloud, #btn-help, #btn-import, #btn-export, #btn-sticky, #btn-tidy, #btn-image, #btn-ext { display:none !important; }
     #btn-more { display:inline-flex !important; }
     .toolbar { justify-content:flex-end; }
     .seg button svg { width:18px; height:18px; }
-    .btn { height:36px; padding:0 10px; }
-    .btn.icon { width:36px; }
     /* 画面いっぱい使う（アドレスバーの伸縮対策） */
     .dash-inner { padding:16px 13px 90px; }
     .dash-title { font-size:19px; }
@@ -655,7 +692,13 @@
     .db-card .dash-task { padding-left:18px; }
     .db-sub { padding-left:18px; }
   }
-  @media (max-width:400px) { .seg button svg { width:17px; height:17px; } .btn.icon { width:34px; } }
+  @media (max-width:400px) {
+    .seg button svg { width:17px; height:17px; }
+    .btn { height:30px; padding:0 8px; }
+    .btn.icon { width:30px; }
+    .brand h1 { font-size:13px; }
+    .topbar { gap:4px; padding:5px 8px; }
+  }
   @supports (height:100dvh) { body { min-height:100dvh; } }
   /* 音声入力 */
   .vo-text { width:100%; min-height:130px; border:1px solid var(--border-strong); border-radius:12px; background:var(--surface-2);
@@ -736,6 +779,9 @@
     <button class="btn icon" id="btn-export" title="ファイルに書き出し（別端末へ移す）">
       <svg viewBox="0 0 24 24" fill="none"><path d="M12 15V4m0 0 4 4m-4-4-4 4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
     </button>
+    <button class="btn icon" id="btn-ext" title="外部ボードからタスクを取りこむ">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3.5 13.5h4l1.5 2.5h6l1.5-2.5h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 13.5 7 5.5h10l1.5 8v5a1.5 1.5 0 0 1-1.5 1.5H7a1.5 1.5 0 0 1-1.5-1.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+    </button>
     <button class="btn icon" id="btn-sticky" title="付箋メモを貼る（マインドマップ）">
       <svg viewBox="0 0 24 24" fill="none"><path d="M5 4h14v10l-5 5H5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 19v-5h5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
     </button>
@@ -807,6 +853,17 @@
       <button class="modal-x" id="vo-close" title="閉じる">✕</button>
     </div>
     <div id="vo-body"></div>
+  </div>
+</div>
+
+<input type="file" id="ext-file" accept="application/json,.json" hidden>
+<div class="modal-scrim" id="ext-modal" hidden>
+  <div class="modal tri-modal" role="dialog" aria-label="外部ボードから取りこみ">
+    <div class="modal-head">
+      <h2 id="ext-title">外部ボードから取りこむ</h2>
+      <button class="modal-x" id="ext-close" title="閉じる">✕</button>
+    </div>
+    <div id="ext-body"></div>
   </div>
 </div>
 
@@ -953,6 +1010,9 @@
     n.link=(typeof n.link==="string"&&n.link)?n.link:null;
     n.triage=(n.triage===1||n.triage===2||n.triage===3||n.triage===4)?n.triage:null;
     n.ox=(typeof n.ox==="number"&&isFinite(n.ox))?n.ox:0;
+    // 外部ボード連携の印（持っていないノードには付けない＝データを太らせない）
+    ["extSrc","extId","extText","extStage","extGroup"].forEach(k=>{ if(typeof n[k]!=="string"||!n[k]) delete n[k]; });
+    if(n.extGone) n.extGone=true; else delete n.extGone;
     n.oy=(typeof n.oy==="number"&&isFinite(n.oy))?n.oy:0;
     n.children.forEach(normNode); return n;
   }
@@ -2236,6 +2296,241 @@
     reader.readAsText(file); e.target.value="";
   });
 
+
+  // ================= 外部ボードからの取りこみ（片方向：ボード → ブランチ） =================
+  // しくみ：ノードに extSrc（どのボードか）と extId（ボード側のID）を持たせる。
+  // 同じ extId が見つかったら上書き、なければ追加。extId を持たないノード（手で作ったもの）にはさわらない。
+  const EXT_BAK_KEY="branch.mindmap.bak1", EXT_CFG_KEY="branch.ext.cfg";
+  const EXT_PARENT="AIbijo";
+  const EXT_STAGE={plan:"企画",make:"作成中",edit:"編集",check:"確認",ready:"準備OK",posted:"投稿ずみ",done:"完了"};
+  const EXT_DONE=["posted","done"];
+  let ext=null;
+
+  function extCfg(){ try{ const c=JSON.parse(localStorage.getItem(EXT_CFG_KEY)||"{}")||{};
+      return {url:c.url||"", auto:!!c.auto, lastAt:c.lastAt||null}; }catch(e){ return {url:"",auto:false,lastAt:null}; } }
+  function extSaveCfg(c){ try{ localStorage.setItem(EXT_CFG_KEY,JSON.stringify(c)); }catch(e){} }
+  function extWalk(n,fn,parent){ fn(n,parent||null); n.children.forEach(c=>extWalk(c,fn,n)); }
+  function extRaw(v){ return String(v==null?"":v).replace(/\s+/g," ").trim(); }
+  function extIsTask(n,src){ return n.extSrc===src && !!n.extId && !/#note$/.test(n.extId); }
+  function extTitle(n){
+    const base=(typeof n.extText==="string"&&n.extText)?n.extText:extRaw(n.text).replace(/^［[^］]*］\s*/,"");
+    const lab=n.extGone?"消えた":(EXT_STAGE[n.extStage]||null);
+    return lab?("［"+lab+"］"+base):base;
+  }
+  // 受け取った JSON を、安全な形にそろえる
+  function extParse(raw){
+    let p; try{ p=JSON.parse(raw); }catch(e){ throw new Error("JSONの形がこわれています"); }
+    if(Array.isArray(p)) p={tasks:p};
+    if(!p||typeof p!=="object"||!Array.isArray(p.tasks)) throw new Error("tasks（タスクの一覧）が見つかりません");
+    const src=extRaw(p.source)||"external", seen=new Set(), tasks=[];
+    p.tasks.forEach(t=>{
+      if(!t||typeof t!=="object") return;
+      const id=extRaw(t.extId); if(!id||seen.has(id)) return; seen.add(id);
+      tasks.push({ extId:id, group:extRaw(t.group), text:extRaw(t.text)||"（無題）",
+        stage:EXT_STAGE[t.stage]?t.stage:null,
+        due:/^\d{4}-\d{2}-\d{2}$/.test(t.due||"")?t.due:null,
+        note:extRaw(t.note),
+        link:(typeof t.link==="string"&&/^https?:\/\//i.test(t.link))?t.link:null });
+    });
+    if(!tasks.length) throw new Error("取りこめるタスクがありません（それぞれに extId が必要です）");
+    return {source:src, exportedAt:extRaw(p.exportedAt)||null, tasks};
+  }
+  // 取りこむ前に「何がどうなるか」を数える（まだ何も変えない）
+  function extPlan(pay){
+    const cur=new Map();
+    extWalk(state.root,(n)=>{ if(extIsTask(n,pay.source)) cur.set(n.extId,n); });
+    const ids=new Set(pay.tasks.map(t=>t.extId));
+    const add=[],upd=[],same=[],gone=[];
+    pay.tasks.forEach(t=>{
+      const n=cur.get(t.extId);
+      if(!n){ add.push(t); return; }
+      const noteNow=(n.children.find(c=>c.extSrc===pay.source&&c.extId===t.extId+"#note")||{}).text||"";
+      const a=[n.extText||"",n.due||"",n.link||"",n.extStage||"",!!n.done,noteNow,!!n.extGone].join("\u0001");
+      const b=[t.text,t.due||"",t.link||"",t.stage||"",EXT_DONE.indexOf(t.stage)>=0,t.note,false].join("\u0001");
+      (a===b?same:upd).push(t);
+    });
+    cur.forEach((n,k)=>{ if(!ids.has(k)&&!n.extGone) gone.push(n); });
+    const parentNode=state.root.children.find(c=>extRaw(c.text)===EXT_PARENT);
+    const have=new Set(); if(parentNode) parentNode.children.forEach(c=>have.add(extRaw(c.text)));
+    const newGroups=[...new Set(pay.tasks.map(t=>t.group).filter(Boolean))].filter(g=>!have.has(g));
+    return {pay,add,upd,same,gone,newParent:!parentNode,newGroups};
+  }
+  function extEnsureParent(){
+    let p=state.root.children.find(c=>extRaw(c.text)===EXT_PARENT);
+    if(!p){ p=newNode(EXT_PARENT,"group"); p.color=pickColor(state.root); state.root.children.push(p); }
+    p.collapsed=false; return p;
+  }
+  function extEnsureGroup(parent,name,src){
+    if(!name) return parent;
+    let g=parent.children.find(c=>extRaw(c.text)===name);
+    if(!g){ g=newNode(name,"group"); g.extSrc=src; g.extGroup=name; parent.children.push(g); }
+    g.collapsed=false; return g;
+  }
+  function extParentOf(target){ let f=null; extWalk(state.root,(n,p)=>{ if(n===target) f=p; }); return f; }
+  function extInside(root,target){ let hit=false; extWalk(root,(n)=>{ if(n===target) hit=true; }); return hit; }
+  function extSyncNote(task,text,src,id){
+    const key=id+"#note";
+    let m=task.children.find(c=>c.extSrc===src&&c.extId===key);
+    if(text){ if(!m){ m=newNode("","memo"); m.note=true; m.below=true; m.extSrc=src; m.extId=key; task.children.push(m); } m.text=text; }
+    else if(m){ const i=task.children.indexOf(m); if(i>=0) task.children.splice(i,1); }
+  }
+  function extBackup(){ try{ localStorage.setItem(EXT_BAK_KEY,JSON.stringify({at:new Date().toISOString(),data:JSON.stringify(state)})); }catch(e){} }
+  function extWhen(iso){ try{ const d=new Date(iso); return (d.getMonth()+1)+"/"+d.getDate()+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0"); }catch(e){ return ""; } }
+  function extBak(){ try{ const b=JSON.parse(localStorage.getItem(EXT_BAK_KEY)||"null"); return (b&&typeof b.data==="string")?b:null; }catch(e){ return null; } }
+  function extRestore(){
+    const b=extBak(); if(!b){ toast("もどせる版がありません"); return false; }
+    applyStateJSON(b.data); toast("取りこむ前の状態にもどしました"); return true;
+  }
+  // じっさいに取りこむ
+  function extApply(plan){
+    const pay=plan.pay, src=pay.source, today=todayStr();
+    extBackup();
+    const parent=extEnsureParent();
+    const cur=new Map();
+    extWalk(state.root,(n)=>{ if(extIsTask(n,src)) cur.set(n.extId,n); });
+    pay.tasks.forEach(t=>{
+      let n=cur.get(t.extId), fresh=false;
+      if(!n){ n=newNode("","task"); n.below=true; n.extSrc=src; n.extId=t.extId; fresh=true; }
+      const g=extEnsureGroup(parent,t.group,src);
+      if(fresh){ g.children.push(n); }
+      else{
+        // AIbijo の中にいるあいだは分類の変更についていく。外へ動かされていたらそのまま
+        const pa=extParentOf(n);
+        if(pa&&pa!==g&&extInside(parent,n)){ pa.children.splice(pa.children.indexOf(n),1); g.children.push(n); }
+      }
+      n.extSrc=src; n.extId=t.extId; n.extText=t.text; n.extStage=t.stage; delete n.extGone;
+      n.due=t.due; n.link=t.link;
+      const want=EXT_DONE.indexOf(t.stage)>=0;
+      if(want&&!n.done) n.doneAt=today;
+      if(!want) n.doneAt=null;
+      n.done=want;
+      n.text=extTitle(n);
+      extSyncNote(n,t.note,src,t.extId);
+      cur.set(t.extId,n);
+    });
+    const ids=new Set(pay.tasks.map(t=>t.extId));
+    cur.forEach((n,k)=>{ if(!ids.has(k)&&!n.extGone){ n.extGone=true; n.text=extTitle(n); } });
+    // 取りこみが作った小分類で、中身が空になったものは片づける（手で作った分類は残す）
+    parent.children=parent.children.filter(c=>!(c.extSrc===src&&c.extGroup&&!c.children.length));
+    save(); refresh();
+    const c=extCfg(); c.lastAt=new Date().toISOString(); extSaveCfg(c);
+    return {add:plan.add.length, upd:plan.upd.length, same:plan.same.length, gone:plan.gone.length};
+  }
+  // URL から読む（同じサイトに置いた JSON なら合いことば不要）
+  async function extFetch(url){
+    const r=await fetch(url,{cache:"no-store"});
+    if(!r.ok) throw new Error("読めませんでした（"+r.status+"）");
+    return extParse(await r.text());
+  }
+
+  // ---- 画面 ----
+  function extOpen(){ const c=extCfg(); ext={step:"input",text:"",url:c.url,auto:c.auto,err:null,plan:null,busy:false};
+    $("#ext-modal").hidden=false; extRender(); }
+  function extClose(){ $("#ext-modal").hidden=true; ext=null; }
+  function extGo(raw){
+    try{ const pay=extParse(raw); const plan=extPlan(pay);
+      ext.plan=plan; ext.err=null; ext.step="review"; extRender(); }
+    catch(err){ ext.err=(err&&err.message)||"読み取れませんでした"; extRender(); }
+  }
+  function extRender(){
+    const body=$("#ext-body"), ttl=$("#ext-title"); if(!body||!ext) return;
+    const bak=extBak();
+    if(ext.step==="input"){
+      ttl.textContent="外部ボードから取りこむ";
+      body.innerHTML=`<div class="tri-note">ボードが書き出した JSON を読んで、大分類「${esc(EXT_PARENT)}」の下に入れます。<br>
+          同じ <b>extId</b> のタスクは上書き、ないものは追加。<b>手で作ったタスクにはさわりません。</b></div>
+        ${ext.err?`<div class="ext-err">${esc(ext.err)}</div>`:""}
+        <div class="ext-row">
+          <input type="url" id="ext-url" placeholder="JSON の URL（例：https://dayce.app/aibijo-board.json）" value="${esc(ext.url||"")}">
+          <button data-ext="url" ${ext.busy?"disabled":""}>${ext.busy?"読み中…":"URLから読む"}</button>
+        </div>
+        <label class="ext-chk"><input type="checkbox" id="ext-auto" ${ext.auto?"checked":""}> 開いたときに、このURLから自動で取りこむ</label>
+        <textarea class="vo-text" id="ext-text" placeholder="または、ここに JSON を貼りつける">${esc(ext.text||"")}</textarea>
+        <div class="ext-row" style="margin-top:10px">
+          <button data-ext="file">ファイルを選ぶ</button>
+          ${bak?`<button class="ext-link" data-ext="restore">前回の取りこみを取り消す（${esc(extWhen(bak.at))}）</button>`:""}
+        </div>
+        <div class="tri-bar"><button class="primary" data-ext="check">中身を見る</button></div>`;
+      const ta=$("#ext-text"); if(ta) ta.oninput=()=>{ ext.text=ta.value; };
+      const u=$("#ext-url"); if(u) u.oninput=()=>{ ext.url=u.value.trim(); };
+      const au=$("#ext-auto"); if(au) au.onchange=()=>{ ext.auto=au.checked; const c=extCfg(); c.auto=au.checked; c.url=ext.url; extSaveCfg(c); };
+      return;
+    }
+    if(ext.step==="done"){
+      const r=ext.result||{};
+      ttl.textContent="取りこみました";
+      body.innerHTML=`<div class="ext-sum">
+          <span>追加 ${r.add||0}</span><span>上書き ${r.upd||0}</span><span>変わらず ${r.same||0}</span><span>消えた印 ${r.gone||0}</span></div>
+        <div class="tri-note">いつもどおり保存・同期されます。元にもどしたいときは下のボタン、または <b>Ctrl/⌘+Z</b> でも戻せます。</div>
+        <div class="tri-bar"><button data-ext="restore">取りこみを取り消す</button><button class="primary" data-ext="close">とじる</button></div>`;
+      return;
+    }
+    const pl=ext.plan, pay=pl.pay;
+    ttl.textContent="この内容で取りこみますか？";
+    const row=(tag,cls,t,sub)=>`<div class="ext-item"><span class="ext-tag ${cls}">${tag}</span>
+        <div><div>${esc(t)}</div>${sub?`<div class="ext-sub">${esc(sub)}</div>`:""}</div></div>`;
+    const sub=(t)=>[t.group?"分類: "+t.group:"", t.stage?EXT_STAGE[t.stage]:"", t.due?"期限 "+t.due:"", t.link?"リンクあり":""].filter(Boolean).join(" ・ ");
+    const rows=[
+      ...pl.add.map(t=>row("追加","add",t.text,sub(t))),
+      ...pl.upd.map(t=>row("上書き","upd",t.text,sub(t))),
+      ...pl.gone.map(n=>row("消えた","gone",(n.extText||n.text),"ボードから無くなりました（消さずに印だけ付けます）")),
+    ];
+    const warn=[];
+    if(pl.newParent) warn.push(`大分類「${EXT_PARENT}」を新しく作ります`);
+    if(pl.newGroups.length) warn.push(`小分類を作ります：${pl.newGroups.join("、")}`);
+    body.innerHTML=`<div class="ext-sum">
+        <span>追加 ${pl.add.length}</span><span>上書き ${pl.upd.length}</span><span>変わらず ${pl.same.length}</span><span>消えた印 ${pl.gone.length}</span></div>
+      <div class="tri-note">もと：<b>${esc(pay.source)}</b>${pay.exportedAt?`（${esc(pay.exportedAt)}）`:""}
+        ${warn.length?"<br>"+esc(warn.join(" / ")):""}
+        <br>取りこむ前の状態は自動で1つ前の版として残します。</div>
+      <div class="tri-list">${rows.join("")||`<div class="dash-empty">変わるところはありません</div>`}</div>
+      <div class="tri-bar"><button data-ext="back">もどる</button>
+        <button class="primary" data-ext="apply" ${rows.length?"":"disabled"}>この内容で取りこむ</button></div>`;
+  }
+  $("#ext-body").addEventListener("click",async(e)=>{
+    if(!ext) return;
+    const t=e.target.closest("[data-ext]"); if(!t) return;
+    const a=t.dataset.ext;
+    if(a==="check"){ const ta=$("#ext-text"); const v=ta?ta.value:(ext.text||"");
+      if(!v.trim()){ ext.err="先に JSON を貼るか、ファイル／URL を選んでください"; extRender(); return; }
+      ext.text=v; extGo(v); return; }
+    if(a==="file"){ $("#ext-file").click(); return; }
+    if(a==="url"){
+      const u=($("#ext-url")||{}).value||ext.url||"";
+      if(!u.trim()){ ext.err="URL を入れてください"; extRender(); return; }
+      ext.url=u.trim(); const c=extCfg(); c.url=ext.url; c.auto=ext.auto; extSaveCfg(c);
+      ext.busy=true; ext.err=null; extRender();
+      try{ const pay=await extFetch(ext.url); ext.busy=false; ext.plan=extPlan(pay); ext.step="review"; extRender(); }
+      catch(err){ ext.busy=false; ext.err="URLから読めませんでした："+((err&&err.message)||"")+"（同じサイトに置いた JSON だと確実です）"; extRender(); }
+      return; }
+    if(a==="back"){ ext.step="input"; ext.err=null; extRender(); return; }
+    if(a==="apply"){ ext.result=extApply(ext.plan); ext.step="done"; extRender();
+      toast(`取りこみ完了：追加 ${ext.result.add} / 上書き ${ext.result.upd}`); return; }
+    if(a==="restore"){ if(extRestore()) extClose(); return; }
+    if(a==="close"){ extClose(); return; }
+  });
+  $("#ext-file").addEventListener("change",(e)=>{
+    const f=e.target.files[0]; e.target.value=""; if(!f||!ext) return;
+    const rd=new FileReader();
+    rd.onload=()=>{ ext.text=String(rd.result||""); extGo(ext.text); };
+    rd.onerror=()=>{ ext.err="ファイルを読めませんでした"; extRender(); };
+    rd.readAsText(f);
+  });
+  $("#btn-ext").addEventListener("click",extOpen);
+  $("#ext-close").addEventListener("click",extClose);
+  $("#ext-modal").addEventListener("click",(e)=>{ if(e.target===$("#ext-modal")) extClose(); });
+
+  // 開いたときの自動取りこみ（チェックを入れたときだけ）
+  (async function extAuto(){
+    const c=extCfg(); if(!c.auto||!c.url) return;
+    try{
+      const pay=await extFetch(c.url); const plan=extPlan(pay);
+      if(!plan.add.length&&!plan.upd.length&&!plan.gone.length) return;
+      const r=extApply(plan);
+      toast(`ボードから取りこみました：追加 ${r.add} / 上書き ${r.upd}`);
+    }catch(e){ /* つながらないときは何もしない */ }
+  })();
+
   window.addEventListener("resize",()=>{ applyMetrics(); relayout(); });
 
   // ================= マインドマップを画像／PDFで保存 =================
@@ -2545,7 +2840,7 @@
   // 「…」メニュー：スマホで隠しているボタンをここから呼ぶ
   $("#btn-more").addEventListener("click",(e)=>{
     const items=[["btn-journal","ジャーナルへ"],["btn-cloud","クラウド同期"],["btn-image","画像・PDFで保存"],
-      ["btn-sticky","付箋メモを貼る"],["btn-tidy","整列する"],["btn-export","書き出し（JSON）"],
+      ["btn-ext","ボードから取りこみ"],["btn-sticky","付箋メモを貼る"],["btn-tidy","整列する"],["btn-export","書き出し（JSON）"],
       ["btn-import","読み込み（JSON）"],["btn-help","キー操作のヒント"]];
     const html=items.filter(([id])=>{ const el=$("#"+id); return el && !el.hidden; })
       .map(([id,label])=>{ const el=$("#"+id); const svg=el?(el.querySelector("svg")||{}).outerHTML||"":"";
