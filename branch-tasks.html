@@ -268,6 +268,7 @@
   .due-chip { color:var(--muted); background:var(--surface-2); border:1px solid var(--border); }
   .due-chip.today { color:#fff; background:var(--accent); border-color:var(--accent); }
   .due-chip.overdue { color:#fff; background:var(--danger); border-color:var(--danger); }
+  .due-chip.done { background:transparent; border-color:var(--border); color:var(--faint); text-decoration:line-through; }
   .link-chip { display:inline-flex; align-items:center; gap:3px; text-decoration:none; cursor:pointer;
     color:color-mix(in srgb,var(--accent) 70%,var(--ink)); background:color-mix(in srgb,var(--accent) 13%,transparent);
     border:1px solid color-mix(in srgb,var(--accent) 32%,transparent); }
@@ -1193,7 +1194,8 @@
     if((isTask||isIdea)&&node.priority) chips.push(`<span class="meta-flag">${ICON.flag}</span>`);
     if(isTask&&node.triage) chips.push(`<span class="chip tri-chip n${node.triage}">${TRI_MARK[node.triage]}</span>`);
     if(isTask&&node.repeat) chips.push(`<span class="chip cadence-chip">${repeatLabel(node)}</span>`);
-    if(isTask&&node.due){ const dl=dueLabel(node.due); if(dl) chips.push(`<span class="chip due-chip ${dl.cls}">${dl.text}</span>`); }
+    // 完了ずみなら期限は赤くしない（終わったのに警告に見えるのを防ぐ）
+    if(isTask&&node.due){ const dl=dueLabel(node.due); if(dl) chips.push(`<span class="chip due-chip ${isDone(node)?"done":dl.cls}">${dl.text}</span>`); }
     if(node.collapsed&&kids) chips.push(`<span class="chip count-chip">${kids}</span>`);
     if(node.link) chips.push(`<a class="chip link-chip" href="${esc(node.link)}" target="_blank" rel="noopener noreferrer" data-role="link" title="${esc(node.link)}">${ICON.link}リンク</a>`);
     const meta=chips.length?`<div class="node-meta">${chips.join("")}</div>`:"";
