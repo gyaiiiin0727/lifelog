@@ -1019,6 +1019,7 @@
     // 外部ボード連携の印（持っていないノードには付けない＝データを太らせない）
     ["extSrc","extId","extText","extStage","extGroup"].forEach(k=>{ if(typeof n[k]!=="string"||!n[k]) delete n[k]; });
     if(n.extGone) n.extGone=true; else delete n.extGone;
+    if(n.row) n.row=true; else delete n.row; // 子を横一列に並べる（カンバン風）
     n.oy=(typeof n.oy==="number"&&isFinite(n.oy))?n.oy:0;
     n.children.forEach(normNode); return n;
   }
@@ -1248,6 +1249,11 @@
     if(node.ox||node.oy) shiftSubtree(node,node.ox||0,node.oy||0);
     vkids(node).forEach(applyOffsets);
   }
+  // 枝ぜんたいの横幅（row＝横並びの列を正しい間隔で置くために使う）
+  function subW(node){ const kids=vkids(node), nw=nodeWidth(node._depth);
+    if(node.row&&kids.some(k=>!k.below)){ let w=nw; kids.filter(k=>!k.below).forEach(k=>{ w+=H_GAP+subW(k); });
+      kids.filter(k=>k.below).forEach(k=>{ w=Math.max(w,VINDENT+subW(k)); }); return w; }
+    let w=nw; kids.forEach(k=>{ w=Math.max(w, k.below?VINDENT+subW(k):nw+H_GAP+subW(k)); }); return w; }
   function stackH(list){ return list.reduce((s,k)=>s+k._sub,0)+Math.max(0,list.length-1)*V_GAP; }
   function calcSub(node){
     const kids=vkids(node);
@@ -1258,7 +1264,10 @@
       node._top=h; node._sub=h+V_GAP+stackH(kids); return node._sub;
     }
     const below=kids.filter(k=>k.below);
-    if(node._depth===0){ // 中心：左右に扇形
+    if(node.row){ // 横並び：子の列を左から右へ。高さはいちばん高い列に合わせる
+      const side=kids.filter(k=>!k.below);
+      node._top=Math.max(h,...side.map(k=>k._sub));
+    } else if(node._depth===0){ // 中心：左右に扇形
       const R=kids.filter(k=>!k.below&&k._dir!=="left"), L=kids.filter(k=>!k.below&&k._dir==="left");
       node._top=Math.max(h,stackH(R),stackH(L));
     } else { // 通常の枝：横に扇形
@@ -1278,8 +1287,16 @@
       kids.forEach(k=>{ place(k,cx,cur); cur+=k._sub+V_GAP; });
       return;
     }
-    node._y=top+node._top/2;
     const below=kids.filter(k=>k.below);
+    if(node.row){ // 横並び：上をそろえて、列を左から右へ
+      node._y=top+node._h/2;
+      let cx=x+nodeWidth(node._depth)+H_GAP;
+      kids.filter(k=>!k.below).forEach(k=>{ place(k,cx,top); cx+=subW(k)+H_GAP; });
+      let cur=top+node._top+V_GAP; const bx=x+VINDENT;
+      below.forEach(k=>{ place(k,bx,cur); cur+=k._sub+V_GAP; });
+      return;
+    }
+    node._y=top+node._top/2;
     if(node._depth===0){
       const R=kids.filter(k=>!k.below&&k._dir!=="left"), L=kids.filter(k=>!k.below&&k._dir==="left");
       let cur=node._y-stackH(R)/2; const rx=x+nodeWidth(node._depth)+H_GAP;
@@ -1330,6 +1347,7 @@
     (function walk(node){
       if(node.collapsed) return;
       const vert=vertParent(node);
+      let prev=null; // 横並びのときは「前の列 → 次の列」とつなぐ
       vkids(node).forEach(ch=>{
         const col=(typeof ch._col==="string"&&ch._col.indexOf("var")===0)?(getComputedStyle(document.documentElement).getPropertyValue("--link").trim()||"#B9C1CC"):ch._col;
         let path;
@@ -1337,6 +1355,10 @@
           const sx=node._x+18, sy=node._y+node._h/2, ex=ch._x, ey=ch._y;
           const r=Math.max(0,Math.min(8,Math.abs(ex-sx)/2,Math.abs(ey-sy)/2));
           path=`M ${sx} ${sy} V ${ey-r} Q ${sx} ${ey} ${sx+r} ${ey} H ${ex}`;
+        } else if(node.row){
+          const from=prev||node; const sx=from._x+nodeWidth(from._depth), sy=from._y, ex=ch._x, ey=ch._y;
+          path=Math.abs(ey-sy)<0.5?`M ${sx} ${sy} H ${ex}`:`M ${sx} ${sy} H ${(sx+ex)/2} V ${ey} H ${ex}`;
+          prev=ch;
         } else {
           const leftSide=ch._x<node._x;
           const sx=leftSide?node._x:(node._x+nodeWidth(node._depth));
@@ -2860,11 +2882,14 @@
     const items=[["btn-journal","ジャーナルへ"],["btn-cloud","クラウド同期"],["btn-image","画像・PDFで保存"],
       ["btn-ext","ボードから取りこみ"],["btn-sticky","付箋メモを貼る"],["btn-tidy","整列する"],["btn-export","書き出し（JSON）"],
       ["btn-import","読み込み（JSON）"],["btn-help","キー操作のヒント"]];
+    const selN=(view==="map"&&selectedId)?(locate(selectedId)||{}).node:null;
+    const rowItem=(selN&&selN.children.length)?`<button data-row="1"><svg viewBox="0 0 24 24" fill="none"><path d="M3 6h5v12H3zM10 6h5v12h-5zM17 6h4v12h-4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>${selN.row?"選んだ枝を縦に戻す":"選んだ枝を横並びにする"}</span></button>`:"";
     const memoItem=(view==="map")?`<button data-memo="1"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h10l4 4v12H5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg><span>${memoHidden()?"メモを表示する":"メモを隠す"}</span></button>`:"";
     const html=items.filter(([id])=>{ const el=$("#"+id); return el && !el.hidden; })
       .map(([id,label])=>{ const el=$("#"+id); const svg=el?(el.querySelector("svg")||{}).outerHTML||"":"";
         return `<button data-more="${id}">${svg}<span>${label}</span></button>`; }).join("");
-    openPop(e.currentTarget,`<div class="more-menu">${memoItem}${html}</div>`,(ev)=>{
+    openPop(e.currentTarget,`<div class="more-menu">${rowItem}${memoItem}${html}</div>`,(ev)=>{
+      if(ev.target.closest("[data-row]")){ closePop(); selN.row=!selN.row; save(); render(); toast(selN.row?"横並びにしました（⌘/Ctrl+Z で戻せます）":"縦に戻しました"); return; }
       if(ev.target.closest("[data-memo]")){ closePop(); const show=memoHidden();
         try{ localStorage.setItem("branch.map.memo",show?"1":"0"); }catch(e){}
         needCenter=true; render(); toast(show?"メモを表示しました":"メモを隠しました"); return; }
