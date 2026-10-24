@@ -113,6 +113,9 @@
   .theme-del:hover { color:var(--danger); border-color:var(--danger); }
   .theme-del svg { width:14px; height:14px; }
   .jump-bar { flex-direction:column; align-items:stretch; gap:6px; }
+  /* 中身が長くても画面の幅をこえない（こえるとスマホでページ全体が縮んで表示される） */
+  .jump-bar { min-width:0; max-width:100vw; overflow:hidden; box-sizing:border-box; }
+  .jb-row { min-width:0; max-width:100%; }
   .jump-bar .theme-chip { color:var(--ink); }
   .jump-bar .theme-chip.on { color:#fff; }
   .jump-bar .jb-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px; vertical-align:1px; }
