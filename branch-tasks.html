@@ -631,6 +631,7 @@
     .tb-label { font-size:10px; }
     .theme-chip { flex:none; height:27px; font-size:12px; padding:0 10px; max-width:150px; }
     .jb-row.sub { padding-left:8px; }
+    .jb-row.sub:has(.jb-empty) { display:none; }
     .jb-row.sub .theme-chip { height:24px; font-size:11.5px; padding:0 9px; }
     .theme-add { height:27px; font-size:11.5px; padding:0 10px; flex:none; }
     .theme-del { width:27px; height:27px; flex:none; }
@@ -1159,11 +1160,15 @@
     else if(selectedId&&els.has(selectedId)) els.get(selectedId).classList.add("selected");
     applyMulti();
   }
+  // スマホ向け：タスクマップではメモを隠せる（branch.map.memo＝"1"表示/"0"隠す。未設定はスマホで隠す）
+  function memoHidden(){ if(isThink()) return false; let v=null; try{ v=localStorage.getItem("branch.map.memo"); }catch(e){}
+    return v===null ? window.innerWidth<640 : v==="0"; }
+  function vkids(node){ if(node.collapsed) return []; return memoHidden()?node.children.filter(k=>k.type!=="memo"):node.children; }
   function build(node,depth,inherited,dir){
     const own=node.color||inherited;
     node._depth=depth; node._col=own||"var(--accent)"; node._dir=dir;
     const el=nodeEl(node,depth); el.__node=node; nodesLayer.appendChild(el); els.set(node.id,el);
-    if(!node.collapsed) node.children.forEach(k=>build(k,depth+1,own||null, depth===0?(k.side==="left"?"left":"right"):(dir||"right")));
+    vkids(node).forEach(k=>build(k,depth+1,own||null, depth===0?(k.side==="left"?"left":"right"):(dir||"right")));
   }
   function nodeEl(node,depth){
     const isRoot=node.type==="root"||depth===0;
@@ -1232,14 +1237,14 @@
   // Children of the root & top-level 項目 fan out to the right (mind-map).
   // Children of 中分類/タスク（depth>=2）stack vertically just below-and-right (outline).
   function vertParent(node){ return false; } // 縦積みは各ノードの below フラグで制御（両マップ統一）
-  function shiftSubtree(node,ddx,ddy){ if(node._x!==undefined){ node._x+=ddx; node._y+=ddy; } (node.collapsed?[]:node.children).forEach(k=>shiftSubtree(k,ddx,ddy)); }
+  function shiftSubtree(node,ddx,ddy){ if(node._x!==undefined){ node._x+=ddx; node._y+=ddy; } vkids(node).forEach(k=>shiftSubtree(k,ddx,ddy)); }
   function applyOffsets(node){ // 各ノードのox/oyぶん、そのノードと子孫をまとめてずらす（pre-order）
     if(node.ox||node.oy) shiftSubtree(node,node.ox||0,node.oy||0);
-    (node.collapsed?[]:node.children).forEach(applyOffsets);
+    vkids(node).forEach(applyOffsets);
   }
   function stackH(list){ return list.reduce((s,k)=>s+k._sub,0)+Math.max(0,list.length-1)*V_GAP; }
   function calcSub(node){
-    const kids=node.collapsed?[]:node.children;
+    const kids=vkids(node);
     const h=node._h||40;
     if(!kids.length){ node._sub=h; node._top=h; return node._sub; }
     kids.forEach(calcSub);
@@ -1259,7 +1264,7 @@
   }
   function place(node,x,top){
     node._x=x;
-    const kids=node.collapsed?[]:node.children;
+    const kids=vkids(node);
     if(!kids.length){ node._y=top+node._sub/2; return; }
     if(vertParent(node)){
       node._y=top+node._h/2;
@@ -1319,7 +1324,7 @@
     (function walk(node){
       if(node.collapsed) return;
       const vert=vertParent(node);
-      node.children.forEach(ch=>{
+      vkids(node).forEach(ch=>{
         const col=(typeof ch._col==="string"&&ch._col.indexOf("var")===0)?(getComputedStyle(document.documentElement).getPropertyValue("--link").trim()||"#B9C1CC"):ch._col;
         let path;
         if(vert||ch.below){
@@ -2256,7 +2261,9 @@
     let el=els.get(id);
     if(!el){ const p=pathTo(id); if(!p) return; p.forEach(n=>n.collapsed=false); save(); render(); el=els.get(id); } // 畳んであったら開いてから
     if(!el) return; const n=el.__node; selectNode(id);
-    stage.scrollLeft=Math.max(0, n._x*zoom - stage.clientWidth*0.28);
+    const mob=window.innerWidth<640;
+    if(mob&&zoom<0.75){ zoom=0.8; canvas.style.zoom=zoom; updateZoomLbl(); } // スマホは読める大きさまで寄せる
+    stage.scrollLeft=Math.max(0, n._x*zoom - (mob?12:stage.clientWidth*0.28));
     stage.scrollTop=Math.max(0, n._y*zoom - stage.clientHeight/2); }
   $("#jump-bar").addEventListener("click",(e)=>{
     const b=e.target.closest("[data-jb]"); if(b){ jumpBranchId=b.dataset.jb; jumpToNode(b.dataset.jb); renderJumpBar(); return; }
@@ -2844,10 +2851,14 @@
     const items=[["btn-journal","ジャーナルへ"],["btn-cloud","クラウド同期"],["btn-image","画像・PDFで保存"],
       ["btn-ext","ボードから取りこみ"],["btn-sticky","付箋メモを貼る"],["btn-tidy","整列する"],["btn-export","書き出し（JSON）"],
       ["btn-import","読み込み（JSON）"],["btn-help","キー操作のヒント"]];
+    const memoItem=(view==="map")?`<button data-memo="1"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h10l4 4v12H5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg><span>${memoHidden()?"メモを表示する":"メモを隠す"}</span></button>`:"";
     const html=items.filter(([id])=>{ const el=$("#"+id); return el && !el.hidden; })
       .map(([id,label])=>{ const el=$("#"+id); const svg=el?(el.querySelector("svg")||{}).outerHTML||"":"";
         return `<button data-more="${id}">${svg}<span>${label}</span></button>`; }).join("");
-    openPop(e.currentTarget,`<div class="more-menu">${html}</div>`,(ev)=>{
+    openPop(e.currentTarget,`<div class="more-menu">${memoItem}${html}</div>`,(ev)=>{
+      if(ev.target.closest("[data-memo]")){ closePop(); const show=memoHidden();
+        try{ localStorage.setItem("branch.map.memo",show?"1":"0"); }catch(e){}
+        needCenter=true; render(); toast(show?"メモを表示しました":"メモを隠しました"); return; }
       const b=ev.target.closest("[data-more]"); if(!b) return; closePop();
       const el=$("#"+b.dataset.more); if(el) el.click();
     });
