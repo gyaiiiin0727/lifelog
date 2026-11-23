@@ -86,6 +86,19 @@ svg text{fill:var(--ink);font-size:13px;font-weight:600}
 .empty{font-size:15px;font-weight:600;padding:6px 0}
 details.dn{margin-top:6px;border-top:2px solid var(--grid);padding-top:6px}
 details.dn summary{cursor:pointer;font-weight:800;font-size:15px;color:var(--grn)}
+.focus{background:var(--card);border:4px solid var(--grn);border-radius:18px;padding:20px 22px;margin:4px 0 20px}
+.fk{font-size:17px;font-weight:800;color:var(--grn);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.fcount{color:var(--ink)}
+.ft{font-size:30px;font-weight:900;line-height:1.35;margin:8px 0 12px}
+.fstep{font-size:20px;font-weight:700;background:var(--grn-bg);border:2px solid var(--grn);border-radius:12px;padding:12px 14px}
+.fl{display:block;font-size:15px;font-weight:900;color:var(--grn);margin-bottom:2px}
+.fmeta{display:flex;flex-wrap:wrap;gap:14px;font-size:17px;font-weight:700;margin:12px 0 4px}
+.fbtn{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.btn.big{font-size:19px;padding:12px 22px}
+.btn.ok{background:var(--grn);color:var(--card);border-color:var(--grn)}
+.fnext{font-size:16px;font-weight:700;margin-top:14px;padding-top:12px;border-top:2px solid var(--grid)}
+details.more>summary{cursor:pointer;font-size:18px;font-weight:800;padding:12px 16px;border:2px solid var(--line);border-radius:12px;background:var(--card);list-style:none}
+details.more>summary::before{content:"▶ "} details.more[open]>summary::before{content:"▼ "}
 .themes{display:flex;flex-direction:column;gap:16px}
 .theme{background:var(--card);border:2px solid var(--line);border-left:10px solid var(--tc);border-radius:14px;padding:14px 16px}
 .thd{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
@@ -205,6 +218,26 @@ function render(){
   let streak=0; { let i=dayTotal(T)>0?0:1; while(i<DAYS&&dayTotal(dayKeys[DAYS-1-i])>0){streak++;i++;} }
 
   let h="";
+  // ★ 結局これ：「今日の3つ」メモ（Claudeが書く）から、まだの1つを大きく出す
+  const LB0=/^([^：:]{1,8})[：:]\s*(.*)$/;
+  let f3=null; (function fw(n){ for(const c of n.children||[]){ if(f3) return; if(/^今日の3つ/.test(c.text||"")) f3=c; else fw(c);} })(s.root);
+  const FK="branch.dash.fdone."+T, SK="branch.dash.fskip."+T; let fd=[],fs=[]; try{fd=JSON.parse(localStorage.getItem(FK)||"[]");fs=JSON.parse(localStorage.getItem(SK)||"[]");}catch(e){}
+  if(f3){
+    const items=(f3.children||[]).filter(k=>!LB0.test(k.text||"")).map(k=>{const L={};(k.children||[]).forEach(x=>{const m=String(x.text||"").match(LB0); if(m) L[m[1]]=m[2];}); return {id:k.id,text:k.text,L};});
+    const left=items.filter(o=>!fd.includes(o.id)).sort((a,b)=>fs.filter(x=>x===a.id).length-fs.filter(x=>x===b.id).length);
+    const cur=left[0];
+    h+=`<section class="focus">`;
+    if(cur){
+      h+=`<div class="fk">いまやるのは、これ 1つだけ<span class="fcount">のこり ${left.length} / ${items.length}</span></div>
+        <div class="ft">${esc(cur.text)}</div>
+        ${cur.L["一歩"]?`<div class="fstep"><span class="fl">まず これだけ</span>${esc(cur.L["一歩"])}</div>`:""}
+        <div class="fmeta">${cur.L["時間"]?`<span>⏱ ${esc(cur.L["時間"])}</span>`:""}${cur.L["なぜ"]?`<span>💡 ${esc(cur.L["なぜ"])}</span>`:""}</div>
+        <div class="fbtn"><button class="btn big ok" data-fdone="${cur.id}">おわった！</button>${left.length>1?`<button class="btn big" data-fskip="${cur.id}">いまは無理 → 次へ</button>`:""}</div>
+        ${left.length>1?`<div class="fnext">そのあと：${left.slice(1).map(o=>esc(o.text)).join("　→　")}</div>`:""}`;
+    } else h+=`<div class="ft">🎉 今日の3つ、ぜんぶ終わり！</div><div class="fnext">今日はもう十分。あとは休んでOK。</div>`;
+    h+=`</section>`;
+  }
+  h+=`<details class="more" ${localStorage.getItem("branch.dash.more")==="1"?"open":""}><summary>ぜんぶの状況を見る</summary>`;
   // ⓪ 状況ボード：テーマ（大分類）ごとに、大きなトピックの状態を並べる
   // ブランチの「状況：…」メモを読む。子が「ラベル：本文」だけ＝トピック1つ。
   // 子に「トピック名」ノード（その下に ラベル：本文）があれば、それぞれがトピック。
@@ -291,7 +324,11 @@ function render(){
 
   // ⑦ 日記
   h+=`<h2>📝 最近の話し合いメモ</h2><div class="card diary" id="diary"></div>`;
+  h+=`</details>`;
   $("#app").innerHTML=h;
+  document.querySelectorAll("[data-fdone]").forEach(el=>el.onclick=()=>{ fd.push(el.dataset.fdone); try{localStorage.setItem(FK,JSON.stringify(fd));}catch(e){} render(); });
+  document.querySelectorAll("[data-fskip]").forEach(el=>el.onclick=()=>{ fs.push(el.dataset.fskip); try{localStorage.setItem(SK,JSON.stringify(fs));}catch(e){} render(); });
+  const mo=document.querySelector("details.more"); if(mo) mo.ontoggle=()=>{ try{localStorage.setItem("branch.dash.more",mo.open?"1":"0");}catch(e){} if(mo.open&&!window.__rd){window.__rd=1;render();} };
 
   drawChart(dayKeys,perDay,cats);
   // 習慣
