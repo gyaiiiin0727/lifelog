@@ -131,22 +131,23 @@ details.dn summary{cursor:pointer;font-size:14px;color:var(--acc)}
 .ring{position:relative;width:84px;height:84px;flex:0 0 84px}
 .ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:18px;font-weight:800}
 .fk{letter-spacing:.06em}
-.yt{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:12px;margin-bottom:8px}
+.yt{display:flex;flex-direction:column;gap:12px;margin-bottom:8px}
 .ytc{background:var(--card);border-radius:20px;padding:16px 16px 14px;border:1px solid var(--line)}
 .ytc .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 .ytc .nm{font-size:16px;font-weight:800}
 .ytc .rd{text-align:right}
 .ytc .rd b{display:block;font-size:34px;font-weight:800;line-height:1;color:var(--acc)}
 .ytc .rd span{font-size:12px;color:var(--ink2)}
-.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:12px}
+.calw{overflow-x:auto;margin-top:12px;padding-bottom:4px;scrollbar-width:thin}
+.cal{display:grid;grid-auto-flow:column;grid-template-rows:auto auto;grid-auto-columns:minmax(24px,1fr);gap:4px 4px;min-width:max-content;width:100%}
 .cal .h{font-size:11px;color:var(--ink2);text-align:center}
-.cal .c{aspect-ratio:1;border-radius:8px;background:var(--bar-empty);display:grid;place-items:center;font-size:11px;color:var(--ink2)}
-.cal .c.x{background:transparent}
-.cal .c.on{background:var(--acc);color:var(--on-acc);font-weight:800;font-size:14px}
+.cal .h.we{color:var(--acc)}
+.cal .c{height:34px;border-radius:8px;background:var(--bar-empty);display:grid;place-items:center;font-size:11px;color:var(--ink2)}
+.cal .c.on{background:var(--acc);color:var(--on-acc);font-weight:800;font-size:13px}
 .cal .c.sch{background:transparent;box-shadow:inset 0 0 0 2px var(--acc);color:var(--acc);font-weight:700}
-.cal .c.miss{background:var(--bar-empty)}
 .cal .c.today{box-shadow:inset 0 0 0 2px var(--ink);color:var(--ink);font-weight:800}
 .cal .c.on.today{box-shadow:inset 0 0 0 2px var(--ink)}
+.cal .dn{font-size:10px;color:var(--ink2);text-align:center}
 .ytf{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--ink2);margin-top:10px}
 .ytf b{color:var(--ink)}
 .ytf .warn{color:var(--red);font-weight:700}
@@ -282,16 +283,14 @@ function render(){
     ytm.children.filter(ch=>!LB0.test(ch.text||"")).forEach(ch=>{ const L=(ch.children||[]).map(k=>{const m=String(k.text||"").match(LB0);return m?{l:m[1],b:m[2]}:{l:"",b:k.text||""}});
       const posted=new Set(lst(L,"出した")), sched=new Set(lst(L,"予約"));
       const rdy=(L.find(x=>x.l==="準備")||{}).b||""; const rn=(rdy.match(/\d+/)||["0"])[0]; const rl=rdy.replace(/\d+\s*本?/,"").trim()||"準備OK";
-      let cells=["月","火","水","木","金","土","日"].map(w=>`<div class="h">${w}</div>`).join("");
-      for(let i=0;i<lead;i++) cells+=`<div class="c x"></div>`;
-      let monthN=0;
-      for(let d=1;d<=dim;d++){ const k=Y+"-"+String(M+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+      let cells="", monthN=0;
+      for(let d=1;d<=dim;d++){ const dt=new Date(Y,M,d), k=ymd(dt), wd=dt.getDay();
         const on=posted.has(k), sc=!on&&sched.has(k), isT=k===T; if(on) monthN++;
-        cells+=`<div class="c ${on?"on":sc?"sch":""} ${isT?"today":""}" title="${md(k)}${on?" 出した":sc?" 予約":""}">${on?"✓":d}</div>`; }
+        cells+=`<div class="h ${wd===0||wd===6?"we":""}">${"日月火水木金土"[wd]}</div><div class="c ${on?"on":sc?"sch":""} ${isT?"today":""}" ${isT?'data-today="1"':""} title="${md(k)}${on?" 出した":sc?" 予約":""}">${on?"✓":d}</div>`; }
       let st=0; { let x=new Date(now); if(!posted.has(ymd(x))&&!sched.has(ymd(x))) x=addDays(x,-1); while(posted.has(ymd(x))||(ymd(x)===T&&sched.has(ymd(x)))){st++;x=addDays(x,-1);} }
       let free=null; for(let i=0;i<60;i++){const k=ymd(addDays(now,i)); if(!posted.has(k)&&!sched.has(k)){free=k;break;}}
       h+=`<div class="ytc"><div class="top"><div><div class="nm">${esc(ch.text)}</div></div><div class="rd"><b>${esc(rn)}</b><span>${esc(rl)}</span></div></div>
-        <div class="cal">${cells}</div>
+        <div class="calw"><div class="cal">${cells}</div></div>
         <div class="ytf"><span>今月 <b>${monthN}</b> 日出した</span><span>連続 <b>${st}</b> 日</span>${free?`<span class="${free===T?"warn":""}">次の空き <b>${free===T?"今日":mdw(free)}</b></span>`:""}</div></div>`; });
     h+=`</div>`;
   }
@@ -384,6 +383,7 @@ function render(){
   h+=`<h2>最近の話し合いメモ</h2><div class="card diary" id="diary"></div>`;
   h+=`</details>`;
   $("#app").innerHTML=h;
+  document.querySelectorAll(".calw").forEach(w=>{const t=w.querySelector("[data-today]"); if(t&&w.scrollWidth>w.clientWidth) w.scrollLeft=Math.max(0,t.offsetLeft-w.clientWidth/2);});
   document.querySelectorAll("[data-fdone]").forEach(el=>el.onclick=()=>{ fd.push(el.dataset.fdone); try{localStorage.setItem(FK,JSON.stringify(fd));}catch(e){} render(); });
   document.querySelectorAll("[data-fskip]").forEach(el=>el.onclick=()=>{ fs.push(el.dataset.fskip); try{localStorage.setItem(SK,JSON.stringify(fs));}catch(e){} render(); });
   const mo=document.querySelector("details.more"); if(mo) mo.ontoggle=()=>{ try{localStorage.setItem("branch.dash.more",mo.open?"1":"0");}catch(e){} if(mo.open&&!window.__rd){window.__rd=1;render();} };
