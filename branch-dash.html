@@ -177,7 +177,7 @@ details.dn summary{cursor:pointer;font-size:14px;color:var(--acc)}
     <h1>ブランチ</h1>
     <span class="sub" id="synced"></span>
     <button class="btn" id="reload">最新にする</button>
-    <a class="btn" href="branch-tasks.html">ブランチを開く</a>
+    <a class="btn" href="branch-tasks.html" onclick="this.href='branch-tasks.html?t='+Date.now()">ブランチを開く</a>
   </header>
   <div id="app"><div class="msg">読み込み中…</div></div>
 </div>
@@ -453,7 +453,7 @@ function drawChart(keys,perDay,cats){
 }
 
 async function boot(full){ if(full){ $("#reload").textContent="読み込み中…"; } render(); if(await pull()) render(); $("#reload").textContent="最新にする"; }
-$("#reload").onclick=()=>boot(true);
+$("#reload").onclick=()=>{ $("#reload").textContent="読み込み中…"; location.replace("branch-dash.html?t="+Date.now()); };
 let rt; addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(render,200)});
 boot(false);
 })();
