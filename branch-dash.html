@@ -194,6 +194,24 @@ const md=s=>{const p=s.split("-");return (+p[1])+"/"+(+p[2])};
 const mdw=s=>{const d=new Date(s+"T00:00");return md(s)+"（"+WD[d.getDay()]+"）"};
 const clean=t=>String(t||"").replace(/^［[^］]*］\s*/,"");
 
+// 「おわった！」をブランチ本体にも書く（直前にクラウドの最新を読んでから、その1か所だけ変えて送る）
+async function markDone(id,T){
+  const t=localStorage.getItem(CL_TOKEN); const toast=m=>{ let el=document.getElementById("fsync"); if(!el){el=document.createElement("div");el.id="fsync";el.style.cssText="position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#111;color:#fff;padding:8px 14px;border-radius:999px;font-size:13px;z-index:99";document.body.appendChild(el);} el.textContent=m; clearTimeout(el._t); el._t=setTimeout(()=>el.remove(),3500); };
+  if(!t){ toast("この端末はブランチとつながっていないので、ここだけに記録しました"); return; }
+  try{
+    if(!(await pull())) throw new Error("読めない");
+    const s=JSON.parse(localStorage.getItem(KEY)); let hit=null; const norm=x=>clean(x).replace(/\s/g,"");
+    (function fw(n){ for(const c of n.children||[]){ if(c.id===id) hit=c; fw(c);} })(s.root);
+    if(!hit) throw new Error("見つからない");
+    hit.done=true; hit.doneAt=T;
+    const key=norm(hit.text); (function fw(n){ for(const c of n.children||[]){ if(c!==hit&&c.type==="task"&&!c.done&&!c.repeat&&norm(c.text)===key){ c.done=true; c.doneAt=T; } fw(c);} })(s.root);
+    const cur=JSON.stringify(s); localStorage.setItem(KEY,cur);
+    const r=await fetch(API+"/api/sync/upload",{method:"POST",headers:{"Authorization":"Bearer "+t,"Content-Type":"application/json"},body:JSON.stringify({data:{[KEY]:cur}})});
+    if(!r.ok) throw new Error("送れない "+r.status); const d=await r.json().catch(()=>({})); if(d.syncedAt) localStorage.setItem(CL_AT,d.syncedAt);
+    toast("ブランチにも「済み」を書きました");
+  }catch(e){ toast("ブランチへの記録に失敗（"+e.message+"）。この端末には残っています"); }
+}
+
 // クラウドから最新を読む（読むだけ・書きこまない）
 async function pull(){
   const t=localStorage.getItem(CL_TOKEN); if(!t) return false;
@@ -266,8 +284,8 @@ function render(){
   const FK="branch.dash.fdone."+T, SK="branch.dash.fskip."+T; let fd=[],fs=[]; try{fd=JSON.parse(localStorage.getItem(FK)||"[]");fs=JSON.parse(localStorage.getItem(SK)||"[]");}catch(e){}
   let fdoneN=0,ftotal=0;
   if(f3){
-    const items=(f3.children||[]).filter(k=>!LB0.test(k.text||"")).map(k=>{const L={};(k.children||[]).forEach(x=>{const m=String(x.text||"").match(LB0); if(m) L[m[1]]=m[2];}); return {id:k.id,text:k.text,L};});
-    const left=items.filter(o=>!fd.includes(o.id)).sort((a,b)=>fs.filter(x=>x===a.id).length-fs.filter(x=>x===b.id).length);
+    const items=(f3.children||[]).filter(k=>!LB0.test(k.text||"")).map(k=>{const L={};(k.children||[]).forEach(x=>{const m=String(x.text||"").match(LB0); if(m) L[m[1]]=m[2];}); return {id:k.id,text:k.text,L,done:!!k.done};});
+    const left=items.filter(o=>!fd.includes(o.id)&&!o.done).sort((a,b)=>fs.filter(x=>x===a.id).length-fs.filter(x=>x===b.id).length);
     const cur=left[0]; fdoneN=items.length-left.length; ftotal=items.length;
     h+=`<section class="focus">`;
     if(cur){
@@ -407,7 +425,7 @@ function render(){
   h+=`</details>`;
   $("#app").innerHTML=h;
   document.querySelectorAll(".calw").forEach(w=>{const t=w.querySelector("[data-today]"); if(t&&w.scrollWidth>w.clientWidth) w.scrollLeft=Math.max(0,t.offsetLeft-w.clientWidth/2);});
-  document.querySelectorAll("[data-fdone]").forEach(el=>el.onclick=()=>{ fd.push(el.dataset.fdone); try{localStorage.setItem(FK,JSON.stringify(fd));}catch(e){} render(); });
+  document.querySelectorAll("[data-fdone]").forEach(el=>el.onclick=()=>{ const id=el.dataset.fdone; fd.push(id); try{localStorage.setItem(FK,JSON.stringify(fd));}catch(e){} render(); markDone(id,T); });
   document.querySelectorAll("[data-fskip]").forEach(el=>el.onclick=()=>{ fs.push(el.dataset.fskip); try{localStorage.setItem(SK,JSON.stringify(fs));}catch(e){} render(); });
   const mo=document.querySelector("details.more"); if(mo) mo.ontoggle=()=>{ try{localStorage.setItem("branch.dash.more",mo.open?"1":"0");}catch(e){} if(mo.open&&!window.__rd){window.__rd=1;render();} };
 
