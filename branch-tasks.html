@@ -1173,9 +1173,12 @@
     applyMulti();
   }
   // スマホ向け：タスクマップではメモを隠せる（branch.map.memo＝"1"表示/"0"隠す。未設定はスマホで隠す）
-  function memoHidden(){ if(isThink()) return false; let v=null; try{ v=localStorage.getItem("branch.map.memo"); }catch(e){}
+  // すっきり表示（11/26〜・既定オン）：終わったタスク・「完了済」フォルダ・メモを隠す（branch.map.clean＝"0"でオフ）
+  function cleanMode(){ if(isThink()) return false; let v=null; try{ v=localStorage.getItem("branch.map.clean"); }catch(e){} return v!=="0"; }
+  function memoHidden(){ if(isThink()) return false; if(cleanMode()) return true; let v=null; try{ v=localStorage.getItem("branch.map.memo"); }catch(e){}
     return v===null ? window.innerWidth<640 : v==="0"; }
-  function vkids(node){ if(node.collapsed) return []; return memoHidden()?node.children.filter(k=>k.type!=="memo"):node.children; }
+  function cleanHide(k){ return cleanMode() && ((k.type==="task"&&!k.repeat&&k.done) || (k.type==="group"&&/^完了済/.test(k.text||""))); }
+  function vkids(node){ if(node.collapsed) return []; const hm=memoHidden(); return node.children.filter(k=>!(hm&&k.type==="memo")&&!cleanHide(k)); }
   function build(node,depth,inherited,dir){
     const own=node.color||inherited;
     node._depth=depth; node._col=own||"var(--accent)"; node._dir=dir;
@@ -1204,7 +1207,7 @@
     else if(isIdea) lead=`<span class="idea-dot"></span>`;
 
     const hideM=memoHidden(), hmemos=hideM?node.children.filter(k=>k.type==="memo"):[];
-    const kids=node.children.length-hmemos.length; // 隠したメモは数えない（開いても何も出ないのを防ぐ）
+    const kids=node.children.filter(k=>!(hideM&&k.type==="memo")&&!cleanHide(k)).length; // 隠したものは数えない（開いても何も出ないのを防ぐ）
     const collapseBtn=kids?`<button class="node-collapse ${node.collapsed?"closed":""}" data-role="collapse" title="${node.collapsed?"開く":"畳む"}">${ICON.chevron}</button>`:"";
     const grip=!isRoot?`<button class="node-grip" data-role="grip" title="ドラッグで移動・付け替え">${ICON.grip}</button>`:"";
 
@@ -1469,7 +1472,8 @@
     const id=nodeDiv.dataset.id; clearSelection(); selectNode(id);
     const mc=e.target.closest('[data-role="memo"]');
     if(mc){ const {node}=locate(id); const ms=node.children.filter(k=>k.type==="memo");
-      openPop(mc,`<div class="memo-pop">${ms.map(m=>`<p>${esc(m.text||"（空のメモ）")}</p>`).join("")}</div>`); return; }
+      const mrow=(m,d)=>`<p style="margin-left:${d*14}px${d?";opacity:.85":""}">${esc(m.text||"（空のメモ）")}</p>`+(m.children||[]).map(k=>mrow(k,d+1)).join("");
+      openPop(mc,`<div class="memo-pop">${ms.map(m=>mrow(m,0)).join("")}</div>`); return; }
     if(e.target.closest('[data-role="collapse"]')){ const {node}=locate(id); node.collapsed=!node.collapsed; save(); render(); return; }
     if(e.target.closest('[data-role="check"]')){ const {node}=locate(id); applyToggle(node); save(); render(); return; }
     const act=e.target.closest("[data-act]");
@@ -2280,7 +2284,8 @@
     const act=activeBranch();
     const p=selectedId?pathTo(selectedId):null;
     const actMidId=(p&&p.length>2&&p[2].type==="group")?p[2].id:null;
-    let h=`<div class="jb-row"><span class="tb-label">大分類へ移動</span>`+branches.map(b=>{
+    const cm=cleanMode();
+    let h=`<div class="jb-row"><button class="theme-chip${cm?" on":""}" data-clean="1" title="終わったもの・メモを隠す／全部出す"${cm?' style="background:var(--accent);border-color:var(--accent)"':""}>${cm?"✓ すっきり表示":"全部表示中（すっきりにする）"}</button><span class="tb-label">大分類へ移動</span>`+branches.map(b=>{
       const col=b.color||"var(--accent)", on=!!act&&b.id===act.id;
       return `<button class="theme-chip${on?" on":""}" data-jb="${b.id}"${on?` style="background:${col};border-color:${col}"`:""}>`+
         `<span class="jb-dot" style="background:${on?"rgba(255,255,255,.9)":col}"></span>${esc(b.text||"（無題）")}</button>`;
@@ -2304,6 +2309,7 @@
     stage.scrollLeft=Math.max(0, n._x*zoom - (mob?12:stage.clientWidth*0.28));
     stage.scrollTop=Math.max(0, n._y*zoom - stage.clientHeight/2); }
   $("#jump-bar").addEventListener("click",(e)=>{
+    if(e.target.closest("[data-clean]")){ const on=cleanMode(); try{ localStorage.setItem("branch.map.clean",on?"0":"1"); }catch(_){} needCenter=true; render(); toast(on?"全部表示にしました（終わったもの・メモも出ます）":"すっきり表示にしました（終わったもの・メモを隠します）"); return; }
     const b=e.target.closest("[data-jb]"); if(b){ jumpBranchId=b.dataset.jb; jumpToNode(b.dataset.jb); renderJumpBar(); return; }
     const m=e.target.closest("[data-jb2]"); if(m){ jumpToNode(m.dataset.jb2); renderJumpBar(); } });
 
@@ -2891,7 +2897,7 @@
       ["btn-import","読み込み（JSON）"],["btn-help","キー操作のヒント"]];
     const selN=(view==="map"&&selectedId)?(locate(selectedId)||{}).node:null;
     const rowItem=(selN&&selN.children.length)?`<button data-row="1"><svg viewBox="0 0 24 24" fill="none"><path d="M3 6h5v12H3zM10 6h5v12h-5zM17 6h4v12h-4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>${selN.row?"選んだ枝を縦に戻す":"選んだ枝を横並びにする"}</span></button>`:"";
-    const memoItem=(view==="map")?`<button data-memo="1"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h10l4 4v12H5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg><span>${memoHidden()?"メモを表示する":"メモを隠す"}</span></button>`:"";
+    const memoItem=(view==="map"&&!cleanMode())?`<button data-memo="1"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h10l4 4v12H5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg><span>${memoHidden()?"メモを表示する":"メモを隠す"}</span></button>`:"";
     const html=items.filter(([id])=>{ const el=$("#"+id); return el && !el.hidden; })
       .map(([id,label])=>{ const el=$("#"+id); const svg=el?(el.querySelector("svg")||{}).outerHTML||"":"";
         return `<button data-more="${id}">${svg}<span>${label}</span></button>`; }).join("");
