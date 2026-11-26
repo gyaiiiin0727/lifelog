@@ -131,24 +131,24 @@ details.dn summary{cursor:pointer;font-size:14px;color:var(--acc)}
 .ring{position:relative;width:84px;height:84px;flex:0 0 84px}
 .ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:18px;font-weight:800}
 .fk{letter-spacing:.06em}
-.yt{display:flex;flex-direction:column;gap:12px;margin-bottom:8px}
-.ytc{background:var(--card);border-radius:20px;padding:16px 16px 14px;border:1px solid var(--line)}
-.ytc .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-.ytc .nm{font-size:16px;font-weight:800}
+.yt{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.ytc{background:var(--card);border-radius:16px;padding:12px 14px 10px;border:1px solid var(--line)}
+.ytc .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ytc .nm{font-size:14px;font-weight:800}
 .ytc .rd{text-align:right}
-.ytc .rd b{display:block;font-size:34px;font-weight:800;line-height:1;color:var(--acc)}
-.ytc .rd span{font-size:12px;color:var(--ink2)}
-.calw{overflow-x:auto;margin-top:12px;padding-bottom:4px;scrollbar-width:thin}
-.cal{display:grid;grid-auto-flow:column;grid-template-rows:auto auto;grid-auto-columns:minmax(24px,1fr);gap:4px 4px;min-width:max-content;width:100%}
-.cal .h{font-size:11px;color:var(--ink2);text-align:center}
+.ytc .rd b{display:inline;font-size:22px;font-weight:800;line-height:1;color:var(--acc)}
+.ytc .rd span{font-size:12px;color:var(--ink2);margin-left:4px}
+.calw{overflow-x:auto;margin-top:8px;padding-bottom:4px;scrollbar-width:thin}
+.cal{display:grid;grid-auto-flow:column;grid-template-rows:auto auto;grid-auto-columns:minmax(16px,1fr);gap:2px 3px;min-width:max-content;width:100%}
+.cal .h{font-size:9px;color:var(--ink2);text-align:center}
 .cal .h.we{color:var(--acc)}
-.cal .c{height:34px;border-radius:8px;background:var(--bar-empty);display:grid;place-items:center;font-size:11px;color:var(--ink2)}
-.cal .c.on{background:var(--acc);color:var(--on-acc);font-weight:800;font-size:13px}
+.cal .c{height:20px;border-radius:5px;background:var(--bar-empty);display:grid;place-items:center;font-size:9px;color:var(--ink2)}
+.cal .c.on{background:var(--acc);color:var(--on-acc);font-weight:800;font-size:10px}
 .cal .c.sch{background:transparent;box-shadow:inset 0 0 0 2px var(--acc);color:var(--acc);font-weight:700}
 .cal .c.today{box-shadow:inset 0 0 0 2px var(--ink);color:var(--ink);font-weight:800}
 .cal .c.on.today{box-shadow:inset 0 0 0 2px var(--ink)}
 .cal .dn{font-size:10px;color:var(--ink2);text-align:center}
-.ytf{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--ink2);margin-top:10px}
+.ytf{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:12px;color:var(--ink2);margin-top:6px}
 .ytf b{color:var(--ink)}
 .ytf .warn{color:var(--red);font-weight:700}
 .msg{padding:20px;font-size:16px;color:var(--ink2)}
@@ -274,12 +274,12 @@ function render(){
       ${ftotal?`<div class="ring"><svg width="84" height="84" viewBox="0 0 84 84"><circle cx="42" cy="42" r="${R}" stroke="var(--bar-empty)" stroke-width="8" fill="none"/><circle cx="42" cy="42" r="${R}" stroke="var(--acc)" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="${(C*frac).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 42 42)" ${frac?"":'opacity="0"'}/></svg><b>${fdoneN}/${ftotal}</b></div>`:""}</div>`;
     h=hero+h; }
   // ▶ YouTube：メモ「YouTube カレンダー」（チャンネルごと：出した：M/D …／予約：M/D …／準備：…）
-  let ytm=null; (function yw(n){ for(const c of n.children||[]){ if(ytm) return; if(/^YouTube ?カレンダー/.test(c.text||"")) ytm=c; else yw(c);} })(s.root);
+  let ytm=null; (function yw(n){ for(const c of n.children||[]){ if(ytm) return; if(/^(YouTube ?|投稿)カレンダー/.test(c.text||"")) ytm=c; else yw(c);} })(s.root);
   if(ytm&&(ytm.children||[]).length){
     const Y=now.getFullYear(), M=now.getMonth(), dim=new Date(Y,M+1,0).getDate(), lead=(new Date(Y,M,1).getDay()+6)%7;
     const toK=t=>{const m=String(t).match(/(\d{1,2})\/(\d{1,2})/); if(!m) return null; let y=Y; if(+m[1]-1>M+6) y--; if(+m[1]-1<M-6) y++; return y+"-"+String(+m[1]).padStart(2,"0")+"-"+String(+m[2]).padStart(2,"0");};
     const lst=(L,lab)=>{const o=L.find(x=>x.l===lab); return o?o.b.split(/[\s、,・]+/).map(toK).filter(Boolean):[];};
-    h+=`<h2>YouTube</h2><div class="yt">`;
+    h+=`<h2>投稿カレンダー</h2><div class="yt">`;
     ytm.children.filter(ch=>!LB0.test(ch.text||"")).forEach(ch=>{ const L=(ch.children||[]).map(k=>{const m=String(k.text||"").match(LB0);return m?{l:m[1],b:m[2]}:{l:"",b:k.text||""}});
       const posted=new Set(lst(L,"出した")), sched=new Set(lst(L,"予約"));
       const rdy=(L.find(x=>x.l==="準備")||{}).b||""; const rn=(rdy.match(/\d+/)||["0"])[0]; const rl=rdy.replace(/\d+\s*本?/,"").trim()||"準備OK";
