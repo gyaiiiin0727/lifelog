@@ -6,133 +6,134 @@
 <title>ブランチ ダッシュボード</title>
 <style>
 :root{
-  --bg:#F6F5F1; --card:#FFFFFF; --ink:#1B1B1B; --ink2:#333; --line:#1B1B1B;
-  --red-bg:#FDE3DE; --red:#9E1B0B; --yel-bg:#FFF1C9; --yel:#6B4A00;
-  --grn-bg:#DDF3E4; --grn:#145A2C; --blu-bg:#DDE7FF; --blu:#1D3A99;
-  --bar-empty:#E6E3DA; --grid:#D9D5CB;
+  --bg:#FFFFFF; --card:#F5F6F8; --card2:#FFFFFF; --ink:#1C2430; --ink2:#7A8494; --line:#E6E9EE; --grid:#ECEEF2;
+  --acc:#2F80ED; --acc-bg:#E8F1FD;
+  --red:#E5484D; --yel:#E8A317; --grn:#30A46C; --blu:#2F80ED; --neu:#9AA3AF;
+  --red-bg:#FDECEC; --yel-bg:#FDF4E1; --grn-bg:#E6F6EE; --blu-bg:#E8F1FD; --bar-empty:#E6E9EE;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#141414; --card:#1F1F1F; --ink:#F4F4F4; --ink2:#E2E2E2; --line:#EDEDED;
-  --red-bg:#4A1A12; --red:#FFC2B5; --yel-bg:#433405; --yel:#FFE08A;
-  --grn-bg:#123321; --grn:#AFEBC4; --blu-bg:#17254F; --blu:#C3D3FF;
-  --bar-empty:#333; --grid:#3A3A3A;
+  --bg:#121417; --card:#1B1E23; --card2:#23272D; --ink:#EEF1F5; --ink2:#9099A6; --line:#2C3138; --grid:#2A2F36;
+  --acc:#6AA8FF; --acc-bg:#1D2A40;
+  --red:#FF6B6E; --yel:#F5B942; --grn:#4CC38A; --blu:#6AA8FF; --neu:#7D8794;
+  --red-bg:#3A1F21; --yel-bg:#3A2F17; --grn-bg:#17301F; --blu-bg:#1D2A40; --bar-empty:#2C3138;
 }}
 *{box-sizing:border-box}
-body{margin:0;overflow-wrap:anywhere;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif}
-.wrap{max-width:1100px;margin:0 auto;padding:16px}
-header{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:14px}
-h1{font-size:22px;margin:0;flex:1 1 auto}
-.sub{font-size:15px;font-weight:600}
-.btn{font:inherit;font-size:15px;font-weight:700;padding:8px 14px;border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer;text-decoration:none}
-h2{font-size:19px;margin:26px 0 10px;display:flex;align-items:center;gap:8px}
-.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.tile{border:2px solid;border-radius:14px;padding:12px 14px}
-.tile .k{font-size:15px;font-weight:700}
-.tile .v{font-size:38px;font-weight:800;line-height:1.1}
-.tile .v small{font-size:17px;font-weight:700}
-.t-red{background:var(--red-bg);color:var(--red);border-color:var(--red)}
-.t-yel{background:var(--yel-bg);color:var(--yel);border-color:var(--yel)}
-.t-grn{background:var(--grn-bg);color:var(--grn);border-color:var(--grn)}
-.t-blu{background:var(--blu-bg);color:var(--blu);border-color:var(--blu)}
-.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px}
-.today{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:10px}
-.trow{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-top:2px solid var(--grid);font-size:16px}
-.trow:first-of-type{border-top:0}
-.box{flex:0 0 22px;height:22px;border:2px solid var(--line);border-radius:6px;display:grid;place-items:center;font-weight:900;font-size:14px;margin-top:1px}
-.box.on{background:var(--grn);border-color:var(--grn);color:var(--card)}
-.trow.done .tx{text-decoration:line-through}
-.tag{display:inline-block;font-size:13px;font-weight:800;padding:1px 7px;border-radius:6px;border:2px solid;margin-left:4px;white-space:nowrap}
-.tag.late{background:var(--red-bg);color:var(--red);border-color:var(--red)}
-.tag.rep{background:var(--blu-bg);color:var(--blu);border-color:var(--blu)}
-.tag.pri{background:var(--yel-bg);color:var(--yel);border-color:var(--yel)}
-.cathead{display:flex;align-items:center;gap:8px;font-weight:800;font-size:17px;margin-bottom:4px}
-.dot{width:14px;height:14px;border-radius:50%;flex:0 0 14px}
-.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(250px,100%),1fr));gap:10px}
-.cat{border-left-width:10px}
-.nums{display:flex;gap:14px;font-size:15px;font-weight:700;margin:4px 0 8px}
-.nums b{font-size:24px}
-.pbar{height:14px;border-radius:7px;background:var(--bar-empty);overflow:hidden;border:2px solid var(--line)}
-.pbar i{display:block;height:100%}
-.next{margin:10px 0 0;padding:0;list-style:none;font-size:15px}
-.next li{padding:5px 0;border-top:2px solid var(--grid)}
-.chartbox{position:relative}
-svg text{fill:var(--ink);font-size:13px;font-weight:600}
-.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:15px;font-weight:700;margin-top:8px}
-.legend span{display:inline-flex;align-items:center;gap:6px}
-.tip{position:absolute;pointer-events:none;background:var(--card);border:2px solid var(--line);border-radius:10px;padding:8px 10px;font-size:15px;display:none;z-index:5;min-width:140px}
-.habits{overflow-x:auto}
-.habit{display:grid;grid-template-columns:minmax(150px,1.2fr) 3fr;gap:10px;align-items:center;padding:7px 0;border-top:2px solid var(--grid)}
-.habit:first-child{border-top:0}
-.hname{font-weight:700;font-size:15px}
-.cells{display:grid;grid-template-columns:repeat(14,minmax(18px,1fr));gap:4px}
-.cell{aspect-ratio:1;border-radius:5px;border:2px solid var(--grid)}
-.cell.on{border-color:transparent}
-.cell.off{background:transparent}
-.cell.na{border-style:dashed;opacity:.45}
-.cell.today{outline:3px solid var(--line);outline-offset:1px}
-.dlabels{display:grid;grid-template-columns:repeat(14,minmax(18px,1fr));gap:4px;font-size:13px;font-weight:700;text-align:center}
-.tl{border-left:4px solid var(--line);margin-left:8px;padding-left:16px}
-.tlday{position:relative;padding:6px 0 10px}
-.tlday:before{content:"";position:absolute;left:-25px;top:11px;width:14px;height:14px;border-radius:50%;background:var(--card);border:3px solid var(--line)}
-.tlday .d{font-weight:800;font-size:16px}
-.tlday ul{margin:4px 0 0;padding:0;list-style:none}
-.tlday li{font-size:15px;padding:2px 0}
-.diary .topic{padding:8px 0;border-top:2px solid var(--grid)}
-.diary .topic:first-child{border-top:0}
-.diary .tt{font-weight:800;font-size:16px}
-.diary .kid{font-size:15px;margin:3px 0 0 12px}
-.k-good{color:var(--grn);font-weight:800}.k-bad{color:var(--red);font-weight:800}.k-dec{color:var(--blu);font-weight:800}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.empty{font-size:15px;font-weight:600;padding:6px 0}
-details.dn{margin-top:6px;border-top:2px solid var(--grid);padding-top:6px}
-details.dn summary{cursor:pointer;font-weight:800;font-size:15px;color:var(--grn)}
-.focus{background:var(--card);border:4px solid var(--grn);border-radius:18px;padding:20px 22px;margin:4px 0 20px}
-.fk{font-size:17px;font-weight:800;color:var(--grn);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.fcount{color:var(--ink)}
-.ft{font-size:30px;font-weight:900;line-height:1.35;margin:8px 0 12px}
-.fstep{font-size:20px;font-weight:700;background:var(--grn-bg);border:2px solid var(--grn);border-radius:12px;padding:12px 14px}
-.fl{display:block;font-size:15px;font-weight:900;color:var(--grn);margin-bottom:2px}
-.fmeta{display:flex;flex-wrap:wrap;gap:14px;font-size:17px;font-weight:700;margin:12px 0 4px}
-.fbtn{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
-.btn.big{font-size:19px;padding:12px 22px}
-.btn.ok{background:var(--grn);color:var(--card);border-color:var(--grn)}
-.fnext{font-size:16px;font-weight:700;margin-top:14px;padding-top:12px;border-top:2px solid var(--grid)}
-details.more>summary{cursor:pointer;font-size:18px;font-weight:800;padding:12px 16px;border:2px solid var(--line);border-radius:12px;background:var(--card);list-style:none}
-details.more>summary::before{content:"▶ "} details.more[open]>summary::before{content:"▼ "}
-.themes{display:flex;flex-direction:column;gap:16px}
-.theme{background:var(--card);border:2px solid var(--line);border-left:10px solid var(--tc);border-radius:14px;padding:14px 16px}
-.thd{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
-.tname{font-size:22px;font-weight:900;display:flex;align-items:center;gap:8px}
-.tsum{display:flex;flex-wrap:wrap;gap:6px}
-.tone{font-size:16px;font-weight:700;margin:-4px 0 10px}
+body{margin:0;overflow-wrap:anywhere;background:var(--bg);color:var(--ink);font:16px/1.6 "Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto;padding:20px 16px 40px}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:18px}
+h1{font-size:22px;font-weight:600;margin:0;flex:1 1 auto;letter-spacing:.01em}
+.sub{font-size:13px;color:var(--ink2)}
+.btn{font:inherit;font-size:14px;font-weight:500;padding:8px 14px;border:0;border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer;text-decoration:none;transition:background .15s}
+.btn:hover{background:var(--line)}
+h2{font-size:17px;font-weight:600;margin:32px 0 12px;display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%;flex:0 0 10px}
+/* 今の1つ */
+.focus{background:var(--card);border-radius:20px;padding:22px 22px 20px;margin:4px 0 24px}
+.fk{font-size:13px;font-weight:600;color:var(--acc);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.fcount{color:var(--ink2);font-weight:500}
+.ft{font-size:28px;font-weight:700;line-height:1.35;margin:8px 0 14px;letter-spacing:.01em}
+.fstep{font-size:17px;background:var(--acc-bg);border-radius:12px;padding:12px 14px}
+.fl{display:block;font-size:12px;font-weight:600;color:var(--acc);margin-bottom:2px}
+.fmeta{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;color:var(--ink2);margin:12px 0 4px}
+.fbtn{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.btn.big{font-size:16px;padding:12px 22px;border-radius:12px;background:var(--card2)}
+.btn.ok{background:var(--acc);color:#fff;font-weight:600}
+.btn.ok:hover{filter:brightness(1.05);background:var(--acc)}
+.fnext{font-size:14px;color:var(--ink2);margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}
+details.more{margin-top:4px}
+details.more>summary{cursor:pointer;font-size:15px;font-weight:500;padding:12px 16px;border-radius:12px;background:var(--card);list-style:none;color:var(--ink2)}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::before{content:"›  ";display:inline-block;transition:transform .15s}
+details.more[open]>summary::before{transform:rotate(90deg)}
+/* テーマ */
+.themes{display:flex;flex-direction:column;gap:14px}
+.theme{background:var(--card);border-radius:20px;padding:18px 18px 16px}
+.thd{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.tname{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px}
+.tsum{display:flex;flex-wrap:wrap;gap:12px}
+.tone{font-size:14px;color:var(--ink2);margin:0 0 12px}
 .topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:10px;align-items:start}
-.sb{background:var(--card);border:2px solid;border-top-width:6px;border-radius:12px;padding:10px 12px}
-.sb .hd{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
-.sb .ttl{font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px}
-.badge{font-size:15px;font-weight:800;border:2px solid;border-radius:8px;padding:1px 10px;white-space:nowrap}
+.sb{background:var(--card2);border-radius:14px;padding:12px 14px}
+.sb .hd{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px}
+.sb .ttl{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);white-space:nowrap}
+.badge::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--neu)}
+.badge.s-red::before{background:var(--red)} .badge.s-yel::before{background:var(--yel)} .badge.s-grn::before{background:var(--grn)} .badge.s-blu::before{background:var(--blu)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
-.chip{font-size:15px;font-weight:700;border:2px solid;border-radius:8px;padding:1px 9px}
-.sb.s-red,.sb.s-yel,.sb.s-grn,.sb.s-blu,.sb.s-neu{color:var(--ink);background:var(--card)}
-.s-neu{background:var(--card);color:var(--ink);border-color:var(--ink)}
-.srow{display:grid;grid-template-columns:72px 1fr;gap:8px;font-size:16px;padding:6px 0;border-top:2px solid var(--grid)}
-.srow .l{font-weight:800}
-.srow.warn{color:var(--red)} .srow.wait{color:var(--yel)}
-.supd{font-size:14px;font-weight:700;margin-top:4px}
-.s-red{background:var(--red-bg);color:var(--red);border-color:var(--red)}
-.s-yel{background:var(--yel-bg);color:var(--yel);border-color:var(--yel)}
-.s-grn{background:var(--grn-bg);color:var(--grn);border-color:var(--grn)}
-.s-blu{background:var(--blu-bg);color:var(--blu);border-color:var(--blu)}
-.msg{padding:20px;font-size:17px;font-weight:700}
+.chip{font-size:13px;border-radius:999px;padding:2px 10px;background:var(--card);color:var(--ink)}
+.srow{display:grid;grid-template-columns:56px 1fr;gap:8px;font-size:14px;padding:7px 0;border-top:1px solid var(--grid)}
+.srow .l{color:var(--ink2)}
+.srow.warn .l{color:var(--red)} .srow.wait .l{color:var(--yel)}
+.supd{font-size:12px;color:var(--ink2);margin-top:4px}
+/* 数字タイル */
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.tile{background:var(--card);border-radius:16px;padding:14px 16px}
+.tile .k{font-size:13px;color:var(--ink2)}
+.tile .v{font-size:32px;font-weight:700;line-height:1.2}
+.tile .v small{font-size:14px;font-weight:500;color:var(--ink2)}
+.t-red .v{color:var(--red)} .t-grn .v{color:var(--grn)} .t-blu .v{color:var(--acc)} .t-yel .v{color:var(--yel)}
+.card{background:var(--card);border-radius:16px;padding:16px}
+.today{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:10px}
+.trow{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--grid);font-size:15px}
+.trow:first-of-type{border-top:0}
+.box{flex:0 0 20px;height:20px;border:1.5px solid var(--neu);border-radius:50%;display:grid;place-items:center;font-size:12px;margin-top:2px;color:#fff}
+.box.on{background:var(--acc);border-color:var(--acc)}
+.trow.done .tx{text-decoration:line-through;color:var(--ink2)}
+.tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px;margin-left:6px;white-space:nowrap;background:var(--card2);color:var(--ink2)}
+.tag.late{background:var(--red-bg);color:var(--red)}
+.tag.pri{background:var(--yel-bg);color:var(--yel)}
+.cathead{display:flex;align-items:center;gap:8px;font-weight:600;font-size:16px;margin-bottom:4px}
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(250px,100%),1fr));gap:10px}
+.cat{border-left:0 !important}
+.nums{display:flex;gap:14px;font-size:13px;color:var(--ink2);margin:4px 0 8px}
+.nums b{font-size:22px;color:var(--ink)}
+.pbar{height:8px;border-radius:4px;background:var(--bar-empty);overflow:hidden}
+.pbar i{display:block;height:100%;border-radius:4px}
+.next{margin:10px 0 0;padding:0;list-style:none;font-size:14px}
+.next li{padding:6px 0;border-top:1px solid var(--grid)}
+.chartbox{position:relative}
+svg text{fill:var(--ink2);font-size:12px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--ink2);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.tip{position:absolute;pointer-events:none;background:var(--card2);border-radius:10px;padding:8px 10px;font-size:13px;display:none;z-index:5;min-width:140px;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.habits{overflow-x:auto}
+.habit{display:grid;grid-template-columns:minmax(150px,1.2fr) 3fr;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--grid)}
+.habit:first-child{border-top:0}
+.hname{font-size:14px}
+.cells{display:grid;grid-template-columns:repeat(14,minmax(18px,1fr));gap:4px}
+.cell{aspect-ratio:1;border-radius:6px;background:var(--bar-empty)}
+.cell.on{border-color:transparent}
+.cell.off{background:var(--bar-empty)}
+.cell.na{opacity:.35}
+.cell.today{outline:2px solid var(--acc);outline-offset:1px}
+.dlabels{display:grid;grid-template-columns:repeat(14,minmax(18px,1fr));gap:4px;font-size:11px;color:var(--ink2);text-align:center}
+.tl{border-left:2px solid var(--line);margin-left:6px;padding-left:16px}
+.tlday{position:relative;padding:6px 0 10px}
+.tlday:before{content:"";position:absolute;left:-23px;top:12px;width:10px;height:10px;border-radius:50%;background:var(--acc)}
+.tlday .d{font-weight:600;font-size:15px}
+.tlday ul{margin:4px 0 0;padding:0;list-style:none}
+.tlday li{font-size:14px;padding:2px 0}
+.diary .topic{padding:8px 0;border-top:1px solid var(--grid)}
+.diary .topic:first-child{border-top:0}
+.diary .tt{font-weight:600;font-size:15px}
+.diary .kid{font-size:14px;margin:3px 0 0 12px}
+.k-good{color:var(--grn);font-weight:600}.k-bad{color:var(--red);font-weight:600}.k-dec{color:var(--acc);font-weight:600}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.empty{font-size:14px;color:var(--ink2);padding:6px 0}
+details.dn{margin-top:6px;border-top:1px solid var(--grid);padding-top:6px}
+details.dn summary{cursor:pointer;font-size:14px;color:var(--acc)}
+.msg{padding:20px;font-size:16px;color:var(--ink2)}
 @media (max-width:700px){
   .tiles{grid-template-columns:repeat(2,1fr)} .two{grid-template-columns:1fr}
-  .habit{grid-template-columns:1fr} .tile .v{font-size:32px}
+  .habit{grid-template-columns:1fr} .tile .v{font-size:28px}
+  .ft{font-size:24px}
 }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>🌿 ブランチ ダッシュボード</h1>
+    <h1>ブランチ</h1>
     <span class="sub" id="synced"></span>
     <button class="btn" id="reload">最新にする</button>
     <a class="btn" href="branch-tasks.html">ブランチを開く</a>
@@ -262,7 +263,7 @@ function render(){
   if(themes.size){
     const list=[...themes.values()].map(th=>{th.topics.sort((a,b)=>a.ord-b.ord);th.ord=Math.min(...th.topics.map(x=>x.ord));return th;})
       .sort((a,b)=>a.ord-b.ord||(a.top.text>b.top.text?1:-1));
-    h+=`<h2>🧭 いまの状況</h2><div class="themes">`;
+    h+=`<h2>いまの状況</h2><div class="themes">`;
     list.forEach(th=>{ const col=th.top.color||"#888";
       const cnt={}; th.topics.forEach(x=>{const k=x.st||"ようす見";cnt[k]=(cnt[k]||0)+1;});
       h+=`<section class="theme" style="--tc:${col}"><div class="thd"><span class="tname"><span class="dot" style="background:${col}"></span>${esc(th.top.text)}</span>
@@ -276,7 +277,7 @@ function render(){
           ${rows.map(o=>`<div class="srow ${/止まり|困り/.test(o.l)?"warn":/待ち/.test(o.l)?"wait":""}"><span class="l">${esc(o.l)}</span><span>${esc(o.b)}</span></div>`).join("")}
           ${c.upd?`<div class="supd">更新 ${esc(c.upd)}</div>`:""}</div>`; });
       h+=`</div></section>`; });
-    h+=`</div><h2>📈 数字で見る</h2>`;
+    h+=`</div><h2>数字で見る</h2>`;
   }
   // ① 数字タイル
   h+=`<div class="tiles">
@@ -287,7 +288,7 @@ function render(){
   </div>`;
 
   // ② 今日やること（項目ごと）
-  h+=`<h2>📌 今日やること</h2>`;
+  h+=`<h2>今日やること</h2>`;
   if(!todayU.length) h+=`<div class="card empty">今日の予定はありません。</div>`;
   else{
     h+=`<div class="today">`;
@@ -303,7 +304,7 @@ function render(){
   }
 
   // ③ 項目ごとの進み具合
-  h+=`<h2>🗂 項目ごとの進み具合</h2><div class="cats">`;
+  h+=`<h2>項目ごとの進み具合</h2><div class="cats">`;
   cats.forEach(c=>{ const sp=c.tasks.filter(o=>!o.n.repeat); const open=sp.filter(o=>!o.n.done); const done=sp.length-open.length;
     const pct=sp.length?Math.round(done/sp.length*100):0;
     const next=open.filter(o=>!hasOpenKid(o.n)).sort((a,b)=>(b.n.priority-a.n.priority)||((a.n.due||"9")<(b.n.due||"9")?-1:(a.n.due||"9")>(b.n.due||"9")?1:0)).slice(0,3);
@@ -315,15 +316,15 @@ function render(){
   h+=`</div>`;
 
   // ④ 30日の完了数
-  h+=`<h2>📊 この30日でおわった数</h2><div class="card chartbox" id="chart"></div>`;
+  h+=`<h2>この30日でおわった数</h2><div class="card chartbox" id="chart"></div>`;
 
   // ⑤ 習慣 と ⑥ 予定
   const reps=all.filter(o=>o.n.repeat);
-  h+=`<div class="two"><div><h2>🔁 くりかえしタスク（14日）</h2><div class="card habits" id="habits"></div></div>`;
-  h+=`<div><h2>🗓 これからの予定（14日）</h2><div class="card" id="plan"></div></div></div>`;
+  h+=`<div class="two"><div><h2>くりかえしタスク（14日）</h2><div class="card habits" id="habits"></div></div>`;
+  h+=`<div><h2>これからの予定（14日）</h2><div class="card" id="plan"></div></div></div>`;
 
   // ⑦ 日記
-  h+=`<h2>📝 最近の話し合いメモ</h2><div class="card diary" id="diary"></div>`;
+  h+=`<h2>最近の話し合いメモ</h2><div class="card diary" id="diary"></div>`;
   h+=`</details>`;
   $("#app").innerHTML=h;
   document.querySelectorAll("[data-fdone]").forEach(el=>el.onclick=()=>{ fd.push(el.dataset.fdone); try{localStorage.setItem(FK,JSON.stringify(fd));}catch(e){} render(); });
