@@ -151,6 +151,18 @@ details.dn summary{cursor:pointer;font-size:14px;color:var(--acc)}
 .ytf{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:12px;color:var(--ink2);margin-top:6px}
 .ytf b{color:var(--ink)}
 .ytf .warn{color:var(--red);font-weight:700}
+.otask{margin-top:12px}
+.otask>summary{cursor:pointer;list-style:none;font-size:14px;color:var(--ink2);padding:8px 12px;border-radius:10px;background:var(--card2);display:inline-block}
+.otask>summary::-webkit-details-marker{display:none}
+.otask>summary::before{content:"› ";display:inline-block;transition:transform .15s}
+.otask[open]>summary::before{transform:rotate(90deg)}
+.otask>summary b{color:var(--acc)}
+.otask ul{list-style:none;margin:8px 0 0;padding:0}
+.otask li{display:flex;align-items:center;gap:8px;padding:7px 4px;border-top:1px solid var(--grid);font-size:14px}
+.otask li:first-child{border-top:0}
+.otask .ck{flex:0 0 14px;height:14px;border-radius:50%;border:1.5px solid var(--neu)}
+.otask .tx{flex:1 1 auto}
+.otask .mid{font-size:11px;color:var(--ink2);white-space:nowrap}
 .msg{padding:20px;font-size:16px;color:var(--ink2)}
 @media (max-width:700px){
   .tiles{grid-template-columns:repeat(2,1fr)} .two{grid-template-columns:1fr}
@@ -332,7 +344,18 @@ function render(){
           ${chips.length?`<div class="chips">${chips.map(o=>`<span class="chip ${c.cls}">${esc(o.b)}</span>`).join("")}</div>`:""}
           ${rows.map(o=>`<div class="srow ${/止まり|困り/.test(o.l)?"warn":/待ち/.test(o.l)?"wait":""}"><span class="l">${esc(o.l)}</span><span>${esc(o.b)}</span></div>`).join("")}
           ${c.upd?`<div class="supd">更新 ${esc(c.upd)}</div>`:""}</div>`; });
-      h+=`</div></section>`; });
+      h+=`</div>`;
+      // ▼ この分類の「まだのタスク」だけを短く（メモ・終わったもの・完了済は出さない）
+      const open=[]; (function tw(n,mid){ for(const c of n.children||[]){ if(c.type==="group"&&/^完了済/.test(c.text||"")) continue;
+        if(c.type==="task"&&!c.done&&!c.repeat&&!c.extGone) open.push({n:c,mid});
+        if(c.type!=="memo") tw(c, c.type==="group"?(c.text||""):mid); } })(th.top,"");
+      if(open.length){
+        open.sort((a,b)=>(b.n.priority?1:0)-(a.n.priority?1:0)||String(a.n.due||"9").localeCompare(String(b.n.due||"9")));
+        const short=t=>{t=clean(t).split(/[（(：:→＝]/)[0].trim()||clean(t); return t.length>34?t.slice(0,33)+"…":t;};
+        const midShort=t=>{t=String(t).split(/[（(—\-＝]/)[0].trim(); return t.length>12?t.slice(0,11)+"…":t;};
+        h+=`<details class="otask"><summary>まだのタスク <b>${open.length}</b></summary><ul>${open.map(o=>`<li><span class="ck"></span><span class="tx">${esc(short(o.n.text))}</span>${o.n.priority?`<span class="tag pri">★</span>`:""}${o.n.due?`<span class="tag ${o.n.due<T?"late":""}">${md(o.n.due)}</span>`:""}${o.mid?`<span class="mid">${esc(midShort(o.mid))}</span>`:""}</li>`).join("")}</ul></details>`;
+      }
+      h+=`</section>`; });
     h+=`</div><h2>数字で見る</h2>`;
   }
   // ① 数字タイル
