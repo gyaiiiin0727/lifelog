@@ -160,6 +160,9 @@ details.dn summary{cursor:pointer;font-size:14px;color:var(--acc)}
 .otask ul{list-style:none;margin:8px 0 0;padding:0}
 .otask li{display:flex;align-items:center;gap:8px;padding:7px 4px;border-top:1px solid var(--grid);font-size:14px}
 .otask li:first-child{border-top:0}
+.otask li[data-odone]{cursor:pointer;transition:opacity .3s}
+.otask li.gone{opacity:0}
+.otask li[data-odone]:hover .ck{border-color:var(--acc);background:var(--acc)}
 .otask .ck{flex:0 0 14px;height:14px;border-radius:50%;border:1.5px solid var(--neu)}
 .otask .tx{flex:1 1 auto}
 .otask .mid{font-size:11px;color:var(--ink2);white-space:nowrap}
@@ -365,13 +368,13 @@ function render(){
       h+=`</div>`;
       // ▼ この分類の「まだのタスク」だけを短く（メモ・終わったもの・完了済は出さない）
       const open=[]; (function tw(n,mid){ for(const c of n.children||[]){ if(c.type==="group"&&/^完了済/.test(c.text||"")) continue;
-        if(c.type==="task"&&!c.done&&!c.repeat&&!c.extGone) open.push({n:c,mid});
+        if(c.type==="task"&&!c.done&&!c.repeat&&!c.extGone&&!fd.includes(c.id)) open.push({n:c,mid});
         if(c.type!=="memo") tw(c, c.type==="group"?(c.text||""):mid); } })(th.top,"");
       if(open.length){
         open.sort((a,b)=>(b.n.priority?1:0)-(a.n.priority?1:0)||String(a.n.due||"9").localeCompare(String(b.n.due||"9")));
         const short=t=>{t=clean(t).split(/[（(：:→＝]/)[0].trim()||clean(t); return t.length>34?t.slice(0,33)+"…":t;};
         const midShort=t=>{t=String(t).split(/[（(—\-＝]/)[0].trim(); return t.length>12?t.slice(0,11)+"…":t;};
-        h+=`<details class="otask"><summary>まだのタスク <b>${open.length}</b></summary><ul>${open.map(o=>`<li><span class="ck"></span><span class="tx">${esc(short(o.n.text))}</span>${o.n.priority?`<span class="tag pri">★</span>`:""}${o.n.due?`<span class="tag ${o.n.due<T?"late":""}">${md(o.n.due)}</span>`:""}${o.mid?`<span class="mid">${esc(midShort(o.mid))}</span>`:""}</li>`).join("")}</ul></details>`;
+        h+=`<details class="otask"><summary>まだのタスク <b>${open.length}</b></summary><ul>${open.map(o=>`<li data-odone="${esc(o.n.id)}" title="押すと「済み」になって消えます"><span class="ck"></span><span class="tx">${esc(short(o.n.text))}</span>${o.n.priority?`<span class="tag pri">★</span>`:""}${o.n.due?`<span class="tag ${o.n.due<T?"late":""}">${md(o.n.due)}</span>`:""}${o.mid?`<span class="mid">${esc(midShort(o.mid))}</span>`:""}</li>`).join("")}</ul></details>`;
       }
       h+=`</section>`; });
     h+=`</div><h2>数字で見る</h2>`;
@@ -426,6 +429,7 @@ function render(){
   $("#app").innerHTML=h;
   document.querySelectorAll(".calw").forEach(w=>{const t=w.querySelector("[data-today]"); if(t&&w.scrollWidth>w.clientWidth) w.scrollLeft=Math.max(0,t.offsetLeft-w.clientWidth/2);});
   document.querySelectorAll("[data-fdone]").forEach(el=>el.onclick=()=>{ const id=el.dataset.fdone; fd.push(id); try{localStorage.setItem(FK,JSON.stringify(fd));}catch(e){} render(); markDone(id,T); });
+  document.querySelectorAll("[data-odone]").forEach(el=>el.onclick=()=>{ const id=el.dataset.odone; if(fd.includes(id)) return; fd.push(id); try{localStorage.setItem(FK,JSON.stringify(fd));}catch(e){} el.classList.add("gone"); const ul=el.parentElement, b=ul&&ul.parentElement.querySelector("summary b"); setTimeout(()=>{ el.remove(); if(b){ const n=ul.children.length; b.textContent=n; if(!n) ul.parentElement.remove(); } },350); markDone(id,T); });
   document.querySelectorAll("[data-fskip]").forEach(el=>el.onclick=()=>{ fs.push(el.dataset.fskip); try{localStorage.setItem(SK,JSON.stringify(fs));}catch(e){} render(); });
   const mo=document.querySelector("details.more"); if(mo) mo.ontoggle=()=>{ try{localStorage.setItem("branch.dash.more",mo.open?"1":"0");}catch(e){} if(mo.open&&!window.__rd){window.__rd=1;render();} };
 
